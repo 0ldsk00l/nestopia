@@ -193,9 +193,6 @@ CC  = "$(MSVCBINDIRPREFIX)/CL.exe"
 CXX  = "$(MSVCBINDIRPREFIX)/CL.exe"
 LD   = "$(MSVCBINDIRPREFIX)/lib.exe"
 
-PATH := $(shell IFS=$$'\n'; cygpath "$(MSVCBINDIRPREFIX)"):$(PATH)
-INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/include")
-
 export INCLUDE := $(INCLUDE);$(XDK)/xbox/include
 export LIB := $(XDK)/xbox/lib
 PSS_STYLE :=2
