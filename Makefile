@@ -9,8 +9,15 @@ CFLAGS = -c -O3 -g3
 CFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
 CFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/linux/unzip 
 CFLAGS += -Isource/core/vssystem -Isource/linux -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/linux/7zip 
-CFLAGS += `sdl-config --cflags` `pkg-config --cflags gtk+-2.0`
+CFLAGS += `sdl-config --cflags` `pkg-config --cflags gtk+-3.0`
 CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
+
+#GTK3 migration
+#CFLAGS+= -DGTK_DISABLE_SINGLE_INCLUDES
+#CFLAGS+= -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
+#CFLAGS+= -DGSEAL_ENABLE
+#CFLAGS+= -DGDK_PIXBUF_DISABLE_DEPRECATED
+#CFLAGS+= -DG_DISABLE_DEPRECATED 
 
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
@@ -18,7 +25,7 @@ CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-func
 CPPFLAGS = -Wno-deprecated -fno-rtti
 
 EXE  = nst
-LIBS = -lm -lz -lasound  `sdl-config --libs` `pkg-config --libs gtk+-2.0`
+LIBS = -lm -lz -lasound  `sdl-config --libs` `pkg-config --libs gtk+-3.0`
 
 # OpenGL Support
 CFLAGS += -DINCLUDE_OPENGL

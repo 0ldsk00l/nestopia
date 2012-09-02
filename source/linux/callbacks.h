@@ -90,7 +90,7 @@ on_ratecombo_configure_event           (GtkWidget       *widget,
                                         gpointer         user_data);
 
 void
-on_mainwindow_destroy                  (GtkObject       *object,
+on_mainwindow_destroy                  (GObject       *object,
                                         gpointer         user_data);
 
 void

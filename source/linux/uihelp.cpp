@@ -113,7 +113,7 @@ void on_videocombo_changed(GtkComboBox     *combobox, gpointer         user_data
 	 sSettings->SetVideoMode(gtk_combo_box_get_active(combobox));
 }
 
-void on_mainwindow_destroy(GtkObject *object, gpointer user_data)
+void on_mainwindow_destroy(GObject *object, gpointer user_data)
 {
 	gtk_widget_destroy(mainwindow);
 	NstScheduleQuit();
@@ -148,7 +148,7 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 		NstStopPlaying();
 	}
 	
-	dialog = gtk_file_chooser_dialog_new ("Choose a game",
+	dialog = gtk_file_chooser_dialog_new ("Select a ROM",
 					      GTK_WINDOW(mainwindow),
 					      GTK_FILE_CHOOSER_ACTION_OPEN,
 					      GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -156,7 +156,7 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 					      NULL);
 
 	filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filter, "NES files + archives");
+	gtk_file_filter_set_name(filter, "NES ROMs and archives");
 	gtk_file_filter_add_pattern(filter, "*.nes");
 	gtk_file_filter_add_pattern(filter, "*.fds");
 	gtk_file_filter_add_pattern(filter, "*.unf");
@@ -400,6 +400,7 @@ static void load_file_by_uri(char *filename)
 	NstLoadGame(transname);
 }
 
+/* Does this drag'n'drop function even make sense? Maybe I'll bring this back later if I do gtkglext stuff
 static void ui_drag_data_recieved(GtkWidget *widget, GdkDragContext *dc, gint x, gint y, GtkSelectionData *selection_data, guint info, guint t, gpointer data)
 {
 	GtkWidget *source_widget;
@@ -440,13 +441,13 @@ static void ui_drag_data_recieved(GtkWidget *widget, GdkDragContext *dc, gint x,
 			}
 		}
 	}
-}
+} */
 
 void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst::CheatMgr *cheatmgr)
 {
 	GtkTargetEntry target_entry[1];
 
-	gtk_set_locale();
+	//gtk_set_locale();
 	gtk_init(&argc, &argv);
 
 	sSettings = settings;
@@ -522,9 +523,10 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	target_entry[0].flags = 0;
 	target_entry[0].info = DRAG_TAR_INFO_0;
 
+	/* This is the other piece of the drag'n'drop code that I don't really care about
 	gtk_drag_dest_set(notebook_main, (GtkDestDefaults)(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP), 
 		target_entry, sizeof(target_entry) / sizeof(GtkTargetEntry), (GdkDragAction)(GDK_ACTION_MOVE | GDK_ACTION_COPY));
-        gtk_signal_connect(GTK_OBJECT(notebook_main), "drag_data_received", GTK_SIGNAL_FUNC(ui_drag_data_recieved), NULL);
+        gtk_signal_connect(GTK_OBJECT(notebook_main), "drag_data_received", GTK_SIGNAL_FUNC(ui_drag_data_recieved), NULL); */
 
 	// show the window
 	gtk_widget_show(mainwindow);

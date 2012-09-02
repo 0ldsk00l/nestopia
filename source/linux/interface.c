@@ -21,7 +21,7 @@
 
 #define GLADE_HOOKUP_OBJECT(component,widget,name) \
   g_object_set_data_full (G_OBJECT (component), name, \
-    gtk_widget_ref (widget), (GDestroyNotify) gtk_widget_unref)
+    g_object_ref (widget), (GDestroyNotify) g_object_unref)
 
 #define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
   g_object_set_data (G_OBJECT (component), name, widget)
@@ -33,7 +33,7 @@ create_mainwindow (void)
   AtkObject *atko;
   GtkWidget *notebook1;
   GtkWidget *fixed1;
-  GtkObject *nsfspinbutton_adj;
+  GObject *nsfspinbutton_adj;
   GtkWidget *nsfspinbutton;
   GtkWidget *nsfmaker;
   GtkWidget *nsfauthor;
@@ -87,7 +87,7 @@ create_mainwindow (void)
   GtkWidget *misctab;
 
   mainwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (mainwindow), _("NEStopia"));
+  gtk_window_set_title (GTK_WINDOW (mainwindow), _("Nestopia"));
 
   notebook1 = gtk_notebook_new ();
   gtk_widget_show (notebook1);
@@ -153,14 +153,14 @@ create_mainwindow (void)
   gtk_widget_show (fixed2);
   gtk_container_add (GTK_CONTAINER (notebook1), fixed2);
 
-  scaleamtcombo = gtk_combo_box_new_text ();
+  scaleamtcombo = gtk_combo_box_text_new ();
   gtk_widget_show (scaleamtcombo);
   gtk_fixed_put (GTK_FIXED (fixed2), scaleamtcombo, 64, 56);
   gtk_widget_set_size_request (scaleamtcombo, 80, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scaleamtcombo), _("1x"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scaleamtcombo), _("2x"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scaleamtcombo), _("3x"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scaleamtcombo), _("4x"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scaleamtcombo), _("1x"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scaleamtcombo), _("2x"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scaleamtcombo), _("3x"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scaleamtcombo), _("4x"));
 
   label16 = gtk_label_new (_("Scale"));
   gtk_widget_show (label16);
@@ -172,32 +172,32 @@ create_mainwindow (void)
   gtk_fixed_put (GTK_FIXED (fixed2), label8, 0, 16);
   gtk_widget_set_size_request (label8, 64, 24);
 
-  scalecombo = gtk_combo_box_new_text ();
+  scalecombo = gtk_combo_box_text_new ();
   gtk_widget_show (scalecombo);
   gtk_fixed_put (GTK_FIXED (fixed2), scalecombo, 64, 8);
   gtk_widget_set_size_request (scalecombo, 152, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scalecombo), _("None"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scalecombo), _("NTSC"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scalecombo), _("Scale x"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (scalecombo), _("Scale HQ x"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), _("None"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), _("NTSC"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), _("Scale?x"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), _("hq?x"));
 
   check_fullscreen = gtk_check_button_new_with_mnemonic (_("Full screen"));
   gtk_widget_show (check_fullscreen);
   gtk_fixed_put (GTK_FIXED (fixed2), check_fullscreen, 8, 96);
   gtk_widget_set_size_request (check_fullscreen, 96, 24);
 
-  unlimitsprcheck = gtk_check_button_new_with_mnemonic (_("Unlimit sprites"));
+  unlimitsprcheck = gtk_check_button_new_with_mnemonic (_("Unlimited sprites"));
   gtk_widget_show (unlimitsprcheck);
   gtk_fixed_put (GTK_FIXED (fixed2), unlimitsprcheck, 8, 120);
   gtk_widget_set_size_request (unlimitsprcheck, 128, 24);
 
-  videocombo = gtk_combo_box_new_text ();
+  videocombo = gtk_combo_box_text_new ();
   gtk_widget_show (videocombo);
   gtk_fixed_put (GTK_FIXED (fixed2), videocombo, 344, 104);
   gtk_widget_set_size_request (videocombo, 136, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (videocombo), _("Auto"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (videocombo), _("NTSC"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (videocombo), _("PAL"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (videocombo), _("Auto"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (videocombo), _("NTSC"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (videocombo), _("PAL"));
 
   label11 = gtk_label_new (_("Region"));
   gtk_widget_show (label11);
@@ -214,23 +214,23 @@ create_mainwindow (void)
   gtk_fixed_put (GTK_FIXED (fixed2), label10, 288, 56);
   gtk_widget_set_size_request (label10, 48, 16);
 
-  ntsccombo = gtk_combo_box_new_text ();
+  ntsccombo = gtk_combo_box_text_new ();
   gtk_widget_show (ntsccombo);
   gtk_fixed_put (GTK_FIXED (fixed2), ntsccombo, 344, 56);
   gtk_widget_set_size_request (ntsccombo, 136, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (ntsccombo), _("Composite"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (ntsccombo), _("S-Video"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (ntsccombo), _("RGB"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ntsccombo), _("Composite"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ntsccombo), _("S-Video"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ntsccombo), _("RGB"));
 
-  rendercombo = gtk_combo_box_new_text ();
+  rendercombo = gtk_combo_box_text_new ();
   gtk_widget_show (rendercombo);
   gtk_fixed_put (GTK_FIXED (fixed2), rendercombo, 344, 8);
   gtk_widget_set_size_request (rendercombo, 136, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (rendercombo), _("Soft"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (rendercombo), _("OpenGL"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (rendercombo), _("OpenGL bilinear"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (rendercombo), _("Soft"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (rendercombo), _("OpenGL"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (rendercombo), _("OpenGL bilinear"));
 
-  label9 = gtk_label_new (_("Render type"));
+  label9 = gtk_label_new (_("Renderer"));
   gtk_widget_show (label9);
   gtk_fixed_put (GTK_FIXED (fixed2), label9, 240, 16);
   gtk_widget_set_size_request (label9, 96, 24);
@@ -258,44 +258,44 @@ create_mainwindow (void)
   gtk_fixed_put (GTK_FIXED (fixed3), configlabel, 8, 96);
   gtk_widget_set_size_request (configlabel, 264, 24);
 
-  configcombo = gtk_combo_box_new_text ();
+  configcombo = gtk_combo_box_text_new ();
   gtk_widget_show (configcombo);
   gtk_fixed_put (GTK_FIXED (fixed3), configcombo, 8, 48);
   gtk_widget_set_size_request (configcombo, 224, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 Up"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 Down"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 Left"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 Right"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 A"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 B"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 START"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 1 SELECT"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 Up"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 Down"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 Left"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 Right"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 A"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 B"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 START"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Player 2 SELECT"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Movie Save"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Movie Load"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Movie Stop"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Reset"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Flip FDS Sides"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Save state"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Load state"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Toggle fullscreen"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Stop game"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Stop game and exit NEStopia"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Start rewinder"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Stop rewinder"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Quicksave slot 1"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Quicksave slot 2"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Quickload slot 1"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Quickload slot 2"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Vs. System coin 1"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (configcombo), _("Vs. System coin 2"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 Up"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 Down"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 Left"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 Right"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 A"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 B"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 START"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 SELECT"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 Up"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 Down"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(configcombo), _("Player 2 Left"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 Right"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 A"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 B"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 START"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 SELECT"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Movie Save"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Movie Load"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Movie Stop"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Reset"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Flip FDS Sides"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Save state"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Load state"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Toggle fullscreen"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Stop game"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Stop game and exit NEStopia"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Start rewinder"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Stop rewinder"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Quicksave slot 1"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Quicksave slot 2"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Quickload slot 1"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Quickload slot 2"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Vs. System coin 1"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Vs. System coin 2"));
 
   label3 = gtk_label_new (_("Input"));
   gtk_widget_show (label3);
@@ -351,22 +351,22 @@ create_mainwindow (void)
   gtk_fixed_put (GTK_FIXED (fixed4), stereocheck, 8, 40);
   gtk_widget_set_size_request (stereocheck, 118, 21);
 
-  ratecombo = gtk_combo_box_new_text ();
+  ratecombo = gtk_combo_box_text_new ();
   gtk_widget_show (ratecombo);
   gtk_fixed_put (GTK_FIXED (fixed4), ratecombo, 328, 104);
   gtk_widget_set_size_request (ratecombo, 144, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (ratecombo), _("11025"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (ratecombo), _("22050"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (ratecombo), _("44100"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (ratecombo), _("48000"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ratecombo), _("11025"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ratecombo), _("22050"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ratecombo), _("44100"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ratecombo), _("48000"));
 
-  sndapicombo = gtk_combo_box_new_text ();
+  sndapicombo = gtk_combo_box_text_new ();
   gtk_widget_show (sndapicombo);
   gtk_fixed_put (GTK_FIXED (fixed4), sndapicombo, 8, 8);
   gtk_widget_set_size_request (sndapicombo, 160, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (sndapicombo), _("SDL"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (sndapicombo), _("ALSA"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (sndapicombo), _("OSS"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sndapicombo), _("SDL"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sndapicombo), _("ALSA"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sndapicombo), _("OSS"));
 
   label4 = gtk_label_new (_("Audio"));
   gtk_widget_show (label4);
@@ -391,21 +391,21 @@ create_mainwindow (void)
   gtk_fixed_put (GTK_FIXED (fixed7), label23, 8, 88);
   gtk_widget_set_size_request (label23, 104, 16);
 
-  favorcombo = gtk_combo_box_new_text ();
+  favorcombo = gtk_combo_box_text_new ();
   gtk_widget_show (favorcombo);
   gtk_fixed_put (GTK_FIXED (fixed7), favorcombo, 88, 16);
   gtk_widget_set_size_request (favorcombo, 128, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (favorcombo), _("NES (NTSC)"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (favorcombo), _("NES (PAL)"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (favorcombo), _("Famicom"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (favorcombo), _("Dendy"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (favorcombo), _("NES (NTSC)"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (favorcombo), _("NES (PAL)"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (favorcombo), _("Famicom"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (favorcombo), _("Dendy"));
 
-  spatchcombo = gtk_combo_box_new_text ();
+  spatchcombo = gtk_combo_box_text_new ();
   gtk_widget_show (spatchcombo);
   gtk_fixed_put (GTK_FIXED (fixed7), spatchcombo, 120, 80);
   gtk_widget_set_size_request (spatchcombo, 128, 32);
-  gtk_combo_box_append_text (GTK_COMBO_BOX (spatchcombo), _("Off"));
-  gtk_combo_box_append_text (GTK_COMBO_BOX (spatchcombo), _("On"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (spatchcombo), _("Off"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (spatchcombo), _("On"));
 
   misctab = gtk_label_new (_("Extras"));
   gtk_widget_show (misctab);
