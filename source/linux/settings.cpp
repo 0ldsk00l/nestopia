@@ -37,15 +37,15 @@ Settings::Settings()
 	stereo = 1;
 	volume = 100;
 	rate = 2;
-	rendertype = 0;
-	scaleamt = 0;
+	rendertype = 1;
+	scaleamt = 1;
 	configitem = 0;
 	prefsys = 0;
 	spatch = 0;
 	exciter = 0;
 	litesurr = 0;
 	surmult = 40;
-	sndapi = 0;
+	sndapi = 1;
 
 	// try the recommended place for settings
 	home = getenv("HOME");
