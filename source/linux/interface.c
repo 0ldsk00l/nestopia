@@ -367,7 +367,7 @@ create_mainwindow (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sndapicombo), _("SDL"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sndapicombo), _("ALSA"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (sndapicombo), _("OSS"));
-
+  
   label4 = gtk_label_new (_("Audio"));
   gtk_widget_show (label4);
   gtk_notebook_set_tab_label (GTK_NOTEBOOK (notebook1), gtk_notebook_get_nth_page (GTK_NOTEBOOK (notebook1), 3), label4);

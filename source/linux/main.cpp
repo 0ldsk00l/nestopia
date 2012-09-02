@@ -43,7 +43,7 @@
 #include "main.h"
 #include "GL/glu.h"
 
-#define NST_VERSION "1.4.0 [release H]"
+#define NST_VERSION "1.4.0 (Undead)"
 
 extern "C" {
 #include <gtk/gtk.h>
@@ -1437,7 +1437,7 @@ void SetupVideo()
 	// set the render state
 	if (NES_FAILED(video.SetRenderState( renderState )))
 	{
-		std::cout << "NEStopia core rejected render state\n";
+		std::cout << "Nestopia core rejected render state\n";
 		::exit(0);
 	}
 
@@ -1517,7 +1517,7 @@ void configure_savename( const char* filename )
 
 
 	// also generate the window caption
-	sprintf(caption, "NEStopia %s: %s", NST_VERSION, capname);
+	sprintf(caption, "Nestopia %s: %s", NST_VERSION, capname);
 
 	strcpy(rootname, savename);
 	strcat(savename, ".sav");
