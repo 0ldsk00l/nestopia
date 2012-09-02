@@ -1,0 +1,713 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  
+  <xs:simpleType name="crc">
+    <xs:restriction base="xs:hexBinary">
+      <xs:length value="4" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:simpleType name="sha1">
+    <xs:restriction base="xs:hexBinary">
+      <xs:length value="20" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="properties">
+    <xs:sequence>
+      <xs:element name="property" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="name" type="xs:token" use="required" />
+          <xs:attribute name="value" type="xs:token" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:simpleType name="dump">
+    <xs:restriction base="xs:token">
+      <xs:enumeration value="ok" />
+      <xs:enumeration value="bad" />
+      <xs:enumeration value="unknown" />
+    </xs:restriction>
+  </xs:simpleType>
+
+  <xs:complexType name="ic" abstract="true">
+    <xs:sequence>
+      <xs:element name="pin" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:attribute name="number" type="xs:nonNegativeInteger" use="required" />
+          <xs:attribute name="function" type="xs:token" use="required" />
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="package">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <!-- UNCOMMENT for type check -->
+          <!--           
+          <xs:enumeration value="DIP" />
+          <xs:enumeration value="QPF" />
+          <xs:enumeration value="epoxy" />
+          -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:complexType name="rom">
+    <xs:complexContent>
+      <xs:extension base="ic">
+        <xs:attribute name="id" type="xs:nonNegativeInteger" />
+        <xs:attribute name="name" type="xs:token" />
+        <xs:attribute name="size" type="xs:token" />
+        <xs:attribute name="file" type="xs:string" />
+        <xs:attribute name="crc" type="crc" />
+        <xs:attribute name="sha1" type="sha1" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ram">
+    <xs:complexContent>
+      <xs:extension base="rom">
+        <xs:attribute name="battery" type="xs:nonNegativeInteger" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="board">
+    <xs:sequence>
+      <xs:element name="prg" type="rom" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="prg.pin">
+          <xs:selector xpath="pin" />
+          <xs:field xpath="@number" />
+        </xs:unique>
+      </xs:element>
+      <xs:element name="chr" type="rom" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="chr.pin">
+          <xs:selector xpath="pin" />
+          <xs:field xpath="@number" />
+        </xs:unique>
+      </xs:element>
+      <xs:element name="vram" type="ram" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="vram.pin">
+          <xs:selector xpath="pin" />
+          <xs:field xpath="@number" />
+        </xs:unique>
+      </xs:element>
+      <xs:element name="wram" type="ram" minOccurs="0" maxOccurs="unbounded">
+        <xs:unique name="wram.pin">
+          <xs:selector xpath="pin" />
+          <xs:field xpath="@number" />
+        </xs:unique>
+      </xs:element>
+      <xs:element name="chip" minOccurs="0" maxOccurs="unbounded">
+        <xs:complexType>
+          <xs:complexContent>
+            <xs:extension base="ic">
+              <xs:sequence>
+                <xs:element name="sample" minOccurs="0" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:attribute name="id" type="xs:nonNegativeInteger" />
+                    <xs:attribute name="file" type="xs:string" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:sequence>
+              <xs:attribute name="type" type="xs:token" use="required" />
+              <xs:attribute name="battery" type="xs:nonNegativeInteger" />
+            </xs:extension>
+          </xs:complexContent>
+        </xs:complexType>
+        <xs:unique name="chip.pin">
+          <xs:selector xpath="pin" />
+          <xs:field xpath="@number" />
+        </xs:unique>
+      </xs:element>
+      <xs:element name="cic" minOccurs="0">
+        <xs:complexType>
+          <xs:attribute name="type" type="xs:token" use="required" />
+        </xs:complexType>
+      </xs:element>
+      <xs:element name="pad" minOccurs="0">
+        <xs:complexType>
+          <xs:attribute name="h" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:integer">
+                <xs:minInclusive value="0" />
+                <xs:maxInclusive value="1" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+          <xs:attribute name="v" use="required">
+            <xs:simpleType>
+              <xs:restriction base="xs:integer">
+                <xs:minInclusive value="0" />
+                <xs:maxInclusive value="1" />
+              </xs:restriction>
+            </xs:simpleType>
+          </xs:attribute>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+    <xs:attribute name="type">
+      <xs:simpleType>
+        <xs:restriction base="xs:token">
+          <!-- UNCOMMENT for type check -->
+          <!--
+          <xs:enumeration value="ACCLAIM-AOROM" />
+          <xs:enumeration value="ACCLAIM-MC-ACC" />
+          <xs:enumeration value="ACCLAIM-TLROM" />
+          <xs:enumeration value="AGCI-47516" />
+          <xs:enumeration value="AGCI-50282" />
+          <xs:enumeration value="AVE-74*161" />
+          <xs:enumeration value="AVE-MB-91" />
+          <xs:enumeration value="AVE-NINA-01" />
+          <xs:enumeration value="AVE-NINA-02" />
+          <xs:enumeration value="AVE-NINA-03" />
+          <xs:enumeration value="AVE-NINA-06" />
+          <xs:enumeration value="AVE-NINA-07" />
+          <xs:enumeration value="BANDAI-74*161/161/32" />
+          <xs:enumeration value="BANDAI-CNROM" />
+          <xs:enumeration value="BANDAI-FCG-1" />
+          <xs:enumeration value="BANDAI-FCG-2" />
+          <xs:enumeration value="BANDAI-GNROM" />
+          <xs:enumeration value="BANDAI-JUMP2" />
+          <xs:enumeration value="BANDAI-LZ93D50+24C01" />
+          <xs:enumeration value="BANDAI-LZ93D50+24C02" />
+          <xs:enumeration value="BANDAI-NROM-128" />
+          <xs:enumeration value="BANDAI-NROM-256" />
+          <xs:enumeration value="BANDAI-PT-554" />
+          <xs:enumeration value="BMC-190IN1" />
+          <xs:enumeration value="BMC-42IN1RESETSWITCH" />
+          <xs:enumeration value="BMC-64IN1NOREPEAT" />
+          <xs:enumeration value="BMC-70IN1" />
+          <xs:enumeration value="BMC-70IN1B" />
+          <xs:enumeration value="BMC-8157" />
+          <xs:enumeration value="BMC-A65AS" />          
+          <xs:enumeration value="BMC-BS-5" />
+          <xs:enumeration value="BMC-D1038" />
+          <xs:enumeration value="BMC-FK23C"	/>
+          <xs:enumeration value="BMC-GHOSTBUSTERS63IN1" />
+          <xs:enumeration value="BMC-GS-2004" />
+          <xs:enumeration value="BMC-GS-2013" />
+          <xs:enumeration value="BMC-N625092" />
+          <xs:enumeration value="BMC-NOVELDIAMOND9999999IN1" />
+          <xs:enumeration value="BMC-SUPER24IN1SC03" />
+          <xs:enumeration value="BMC-SUPERHIK8IN1" />
+          <xs:enumeration value="BMC-SUPERVISION16IN1" />
+          <xs:enumeration value="BMC-T-262" />
+          <xs:enumeration value="BMC-WS" />
+          <xs:enumeration value="BTL-MARIO1-MALEE2" />
+          <xs:enumeration value="CAMERICA-ALGN" />
+          <xs:enumeration value="CAMERICA-ALGQ" />
+          <xs:enumeration value="CAMERICA-BF9093" />
+          <xs:enumeration value="CAMERICA-BF9096" />
+          <xs:enumeration value="CAMERICA-BF9097" />
+          <xs:enumeration value="CAMERICA-GAMEGENIE" />
+          <xs:enumeration value="COLORDREAMS-74*377" />
+          <xs:enumeration value="DREAMTECH01" />
+          <xs:enumeration value="HVC-AMROM" />
+          <xs:enumeration value="HVC-AN1ROM" />
+          <xs:enumeration value="HVC-ANROM" />
+          <xs:enumeration value="HVC-AOROM" />
+          <xs:enumeration value="HVC-BNROM" />
+          <xs:enumeration value="HVC-CNROM" />
+          <xs:enumeration value="HVC-CPROM" />
+          <xs:enumeration value="HVC-DE1ROM" />
+          <xs:enumeration value="HVC-DEROM" />
+          <xs:enumeration value="HVC-DRROM" />
+          <xs:enumeration value="HVC-EKROM" />
+          <xs:enumeration value="HVC-ELROM" />
+          <xs:enumeration value="HVC-ETROM" />
+          <xs:enumeration value="HVC-EWROM" />
+          <xs:enumeration value="HVC-FAMILYBASIC" />
+          <xs:enumeration value="HVC-FJROM" />
+          <xs:enumeration value="HVC-FKROM" />
+          <xs:enumeration value="HVC-GNROM" />
+          <xs:enumeration value="HVC-HKROM" />
+          <xs:enumeration value="HVC-HROM" />
+          <xs:enumeration value="HVC-JLROM" />
+          <xs:enumeration value="HVC-JSROM" />
+          <xs:enumeration value="HVC-MHROM" />
+          <xs:enumeration value="HVC-NROM" />
+          <xs:enumeration value="HVC-NROM-128" />
+          <xs:enumeration value="HVC-NROM-256" />
+          <xs:enumeration value="HVC-NTBROM" />
+          <xs:enumeration value="HVC-PEEOROM" />
+          <xs:enumeration value="HVC-PNROM" />
+          <xs:enumeration value="HVC-RROM" />
+          <xs:enumeration value="HVC-RROM-128" />
+          <xs:enumeration value="HVC-SAROM" />
+          <xs:enumeration value="HVC-SBROM" />
+          <xs:enumeration value="HVC-SC1ROM" />
+          <xs:enumeration value="HVC-SCROM" />
+          <xs:enumeration value="HVC-SEROM" />
+          <xs:enumeration value="HVC-SF1ROM" />
+          <xs:enumeration value="HVC-SFROM" />
+          <xs:enumeration value="HVC-SGROM" />
+          <xs:enumeration value="HVC-SH1ROM" />
+          <xs:enumeration value="HVC-SHROM" />
+          <xs:enumeration value="HVC-SJROM" />
+          <xs:enumeration value="HVC-SKROM" />
+          <xs:enumeration value="HVC-SL1ROM" />
+          <xs:enumeration value="HVC-SL2ROM" />
+          <xs:enumeration value="HVC-SL3ROM" />
+          <xs:enumeration value="HVC-SLROM" />
+          <xs:enumeration value="HVC-SLRROM" />
+          <xs:enumeration value="HVC-SNROM" />
+          <xs:enumeration value="HVC-SOROM" />
+          <xs:enumeration value="HVC-SROM" />
+          <xs:enumeration value="HVC-STROM" />
+          <xs:enumeration value="HVC-SUROM" />
+          <xs:enumeration value="HVC-SXROM" />
+          <xs:enumeration value="HVC-TBROM" />
+          <xs:enumeration value="HVC-TEROM" />
+          <xs:enumeration value="HVC-TFROM" />
+          <xs:enumeration value="HVC-TGROM" />
+          <xs:enumeration value="HVC-TKROM" />
+          <xs:enumeration value="HVC-TKSROM" />
+          <xs:enumeration value="HVC-TL1ROM" />
+          <xs:enumeration value="HVC-TL2ROM" />
+          <xs:enumeration value="HVC-TLROM" />
+          <xs:enumeration value="HVC-TLSROM" />
+          <xs:enumeration value="HVC-TNROM" />
+          <xs:enumeration value="HVC-TQROM" />
+          <xs:enumeration value="HVC-TR1ROM" />
+          <xs:enumeration value="HVC-TSROM" />
+          <xs:enumeration value="HVC-TVROM" />
+          <xs:enumeration value="HVC-UN1ROM" />
+          <xs:enumeration value="HVC-UNROM" />
+          <xs:enumeration value="HVC-UOROM" />
+          <xs:enumeration value="IREM-74*161/161/21/138" />
+          <xs:enumeration value="IREM-BNROM" />
+          <xs:enumeration value="IREM-G101" />
+          <xs:enumeration value="IREM-G101-A" />
+          <xs:enumeration value="IREM-G101-B" />
+          <xs:enumeration value="IREM-HOLYDIVER" />
+          <xs:enumeration value="IREM-NROM-128" />
+          <xs:enumeration value="IREM-NROM-256" />
+          <xs:enumeration value="IREM-UNROM" />
+          <xs:enumeration value="JALECO-JF-01" />
+          <xs:enumeration value="JALECO-JF-02" />
+          <xs:enumeration value="JALECO-JF-03" />
+          <xs:enumeration value="JALECO-JF-04" />
+          <xs:enumeration value="JALECO-JF-05" />
+          <xs:enumeration value="JALECO-JF-06" />
+          <xs:enumeration value="JALECO-JF-07" />
+          <xs:enumeration value="JALECO-JF-08" />
+          <xs:enumeration value="JALECO-JF-09" />
+          <xs:enumeration value="JALECO-JF-10" />
+          <xs:enumeration value="JALECO-JF-11" />
+          <xs:enumeration value="JALECO-JF-12" />
+          <xs:enumeration value="JALECO-JF-13" />
+          <xs:enumeration value="JALECO-JF-14" />
+          <xs:enumeration value="JALECO-JF-15" />
+          <xs:enumeration value="JALECO-JF-16" />
+          <xs:enumeration value="JALECO-JF-17" />
+          <xs:enumeration value="JALECO-JF-18" />
+          <xs:enumeration value="JALECO-JF-19" />
+          <xs:enumeration value="JALECO-JF-20" />
+          <xs:enumeration value="JALECO-JF-21" />
+          <xs:enumeration value="JALECO-JF-22" />
+          <xs:enumeration value="JALECO-JF-23" />
+          <xs:enumeration value="JALECO-JF-24" />
+          <xs:enumeration value="JALECO-JF-25" />
+          <xs:enumeration value="JALECO-JF-26" />
+          <xs:enumeration value="JALECO-JF-27" />
+          <xs:enumeration value="JALECO-JF-28" />
+          <xs:enumeration value="JALECO-JF-29" />
+          <xs:enumeration value="JALECO-JF-30" />
+          <xs:enumeration value="JALECO-JF-31" />
+          <xs:enumeration value="JALECO-JF-32" />
+          <xs:enumeration value="JALECO-JF-33" />
+          <xs:enumeration value="JALECO-JF-34" />
+          <xs:enumeration value="JALECO-JF-35" />
+          <xs:enumeration value="JALECO-JF-36" />
+          <xs:enumeration value="JALECO-JF-37" />
+          <xs:enumeration value="JALECO-JF-38" />
+          <xs:enumeration value="JALECO-JF-39" />
+          <xs:enumeration value="JALECO-JF-40" />
+          <xs:enumeration value="JALECO-JF-41" />
+          <xs:enumeration value="KONAMI-74*139/74" />
+          <xs:enumeration value="KONAMI-CNROM" />
+          <xs:enumeration value="KONAMI-NROM-128" />
+          <xs:enumeration value="KONAMI-SLROM" />
+          <xs:enumeration value="KONAMI-TLROM" />
+          <xs:enumeration value="KONAMI-UNROM" />
+          <xs:enumeration value="KONAMI-VRC-1" />
+          <xs:enumeration value="KONAMI-VRC-2" />
+          <xs:enumeration value="KONAMI-VRC-3" />
+          <xs:enumeration value="KONAMI-VRC-4" />
+          <xs:enumeration value="KONAMI-VRC-6" />
+          <xs:enumeration value="KONAMI-VRC-7" />
+          <xs:enumeration value="MLT-ACTION52" />
+          <xs:enumeration value="MLT-CALTRON6IN1" />
+          <xs:enumeration value="MLT-MAXI15" />
+          <xs:enumeration value="NAMCOT-163" />
+          <xs:enumeration value="NAMCOT-3301" />
+          <xs:enumeration value="NAMCOT-3302" />
+          <xs:enumeration value="NAMCOT-3303" />
+          <xs:enumeration value="NAMCOT-3305" />
+          <xs:enumeration value="NAMCOT-3311" />
+          <xs:enumeration value="NAMCOT-3401" />
+          <xs:enumeration value="NAMCOT-3405" />
+          <xs:enumeration value="NAMCOT-3406" />
+          <xs:enumeration value="NAMCOT-3407" />
+          <xs:enumeration value="NAMCOT-3411" />
+          <xs:enumeration value="NAMCOT-3413" />
+          <xs:enumeration value="NAMCOT-3414" />
+          <xs:enumeration value="NAMCOT-3415" />
+          <xs:enumeration value="NAMCOT-3416" />
+          <xs:enumeration value="NAMCOT-3417" />
+          <xs:enumeration value="NAMCOT-3425" />
+          <xs:enumeration value="NAMCOT-3433" />
+          <xs:enumeration value="NAMCOT-3443" />
+          <xs:enumeration value="NAMCOT-3446" />
+          <xs:enumeration value="NAMCOT-3451" />
+          <xs:enumeration value="NES-AMROM" />
+          <xs:enumeration value="NES-AN1ROM" />
+          <xs:enumeration value="NES-ANROM" />
+          <xs:enumeration value="NES-AOROM" />
+          <xs:enumeration value="NES-B4" />
+          <xs:enumeration value="NES-BNROM" />
+          <xs:enumeration value="NES-BTR" />
+          <xs:enumeration value="NES-CNROM" />
+          <xs:enumeration value="NES-CPROM" />
+          <xs:enumeration value="NES-DE1ROM" />
+          <xs:enumeration value="NES-DEROM" />
+          <xs:enumeration value="NES-DRROM" />
+          <xs:enumeration value="NES-EKROM" />
+          <xs:enumeration value="NES-ELROM" />
+          <xs:enumeration value="NES-ETROM" />
+          <xs:enumeration value="NES-EVENT" />
+          <xs:enumeration value="NES-EWROM" />
+          <xs:enumeration value="NES-FJROM" />
+          <xs:enumeration value="NES-FKROM" />
+          <xs:enumeration value="NES-GNROM" />
+          <xs:enumeration value="NES-HKROM" />
+          <xs:enumeration value="NES-HROM" />
+          <xs:enumeration value="NES-JLROM" />
+          <xs:enumeration value="NES-JSROM" />
+          <xs:enumeration value="NES-MHROM" />
+          <xs:enumeration value="NES-NROM" />
+          <xs:enumeration value="NES-NROM-128" />
+          <xs:enumeration value="NES-NROM-256" />
+          <xs:enumeration value="NES-NTBROM" />
+          <xs:enumeration value="NES-PEEOROM" />
+          <xs:enumeration value="NES-PNROM" />
+          <xs:enumeration value="NES-QJ" />
+          <xs:enumeration value="NES-RROM" />
+          <xs:enumeration value="NES-RROM-128" />
+          <xs:enumeration value="NES-SAROM" />
+          <xs:enumeration value="NES-SBROM" />
+          <xs:enumeration value="NES-SC1ROM" />
+          <xs:enumeration value="NES-SCROM" />
+          <xs:enumeration value="NES-SEROM" />
+          <xs:enumeration value="NES-SF1ROM" />
+          <xs:enumeration value="NES-SFROM" />
+          <xs:enumeration value="NES-SGROM" />
+          <xs:enumeration value="NES-SH1ROM" />
+          <xs:enumeration value="NES-SHROM" />
+          <xs:enumeration value="NES-SJROM" />
+          <xs:enumeration value="NES-SKROM" />
+          <xs:enumeration value="NES-SL1ROM" />
+          <xs:enumeration value="NES-SL2ROM" />
+          <xs:enumeration value="NES-SL3ROM" />
+          <xs:enumeration value="NES-SLROM" />
+          <xs:enumeration value="NES-SLRROM" />
+          <xs:enumeration value="NES-SNROM" />
+          <xs:enumeration value="NES-SOROM" />
+          <xs:enumeration value="NES-SROM" />
+          <xs:enumeration value="NES-STROM" />
+          <xs:enumeration value="NES-SUROM" />
+          <xs:enumeration value="NES-SXROM" />
+          <xs:enumeration value="NES-TBROM" />
+          <xs:enumeration value="NES-TEROM" />
+          <xs:enumeration value="NES-TFROM" />
+          <xs:enumeration value="NES-TGROM" />
+          <xs:enumeration value="NES-TKROM" />
+          <xs:enumeration value="NES-TKSROM" />
+          <xs:enumeration value="NES-TL1ROM" />
+          <xs:enumeration value="NES-TL2ROM" />
+          <xs:enumeration value="NES-TLROM" />
+          <xs:enumeration value="NES-TLSROM" />
+          <xs:enumeration value="NES-TNROM" />
+          <xs:enumeration value="NES-TQROM" />
+          <xs:enumeration value="NES-TR1ROM" />
+          <xs:enumeration value="NES-TSROM" />
+          <xs:enumeration value="NES-TVROM" />
+          <xs:enumeration value="NES-UN1ROM" />
+          <xs:enumeration value="NES-UNROM" />
+          <xs:enumeration value="NES-UOROM" />
+          <xs:enumeration value="NTDEC-N715062" />
+          <xs:enumeration value="NES-WH" />
+          <xs:enumeration value="PAL-MH" />
+          <xs:enumeration value="PAL-ZZ" />
+          <xs:enumeration value="SACHEN-8259A" />
+          <xs:enumeration value="SACHEN-8259B" />
+          <xs:enumeration value="SACHEN-8259C" />
+          <xs:enumeration value="SACHEN-8259D" />
+          <xs:enumeration value="SACHEN-CNROM" />
+          <xs:enumeration value="SETA-NROM-128" />
+          <xs:enumeration value="SUNSOFT-1" />
+          <xs:enumeration value="SUNSOFT-2" />
+          <xs:enumeration value="SUNSOFT-3" />
+          <xs:enumeration value="SUNSOFT-4" />
+          <xs:enumeration value="SUNSOFT-5B" />
+          <xs:enumeration value="SUNSOFT-FME-7" />
+          <xs:enumeration value="SUNSOFT-NROM-256" />
+          <xs:enumeration value="TAITO-74*139/74" />
+          <xs:enumeration value="TAITO-74*161/161/32" />
+          <xs:enumeration value="TAITO-CNROM" />
+          <xs:enumeration value="TAITO-NROM-128" />
+          <xs:enumeration value="TAITO-NROM-256" />
+          <xs:enumeration value="TAITO-TC0190FMC"  />
+          <xs:enumeration value="TAITO-TC0190FMC+PAL16R4" />
+          <xs:enumeration value="TAITO-UNROM" />
+          <xs:enumeration value="TAITO-X1-005" />
+          <xs:enumeration value="TAITO-X1-017" />
+          <xs:enumeration value="TENGEN-800002" />
+          <xs:enumeration value="TENGEN-800003" />
+          <xs:enumeration value="TENGEN-800004" />
+          <xs:enumeration value="TENGEN-800008" />
+          <xs:enumeration value="TENGEN-800030" />
+          <xs:enumeration value="TENGEN-800032" />
+          <xs:enumeration value="TENGEN-800037" />
+          <xs:enumeration value="TENGEN-800042" />
+          <xs:enumeration value="UNL-22211" />
+          <xs:enumeration value="UNL-603-5052" />
+          <xs:enumeration value="UNL-8237" />
+          <xs:enumeration value="UNL-A9746" />
+          <xs:enumeration value="UNL-AX5705" />
+          <xs:enumeration value="UNL-CC-21" />
+          <xs:enumeration value="UNL-EDU2000" />
+          <xs:enumeration value="UNL-H2288" />
+          <xs:enumeration value="UNL-KOF97" />
+          <xs:enumeration value="UNL-KS7032" />
+          <xs:enumeration value="UNL-N625092" />          
+          <xs:enumeration value="UNL-SA-0036" />
+          <xs:enumeration value="UNL-SA-0037" />
+          <xs:enumeration value="UNL-SA-016-1M" />
+          <xs:enumeration value="UNL-SA-72007" />
+          <xs:enumeration value="UNL-SA-72008" />
+          <xs:enumeration value="UNL-SA-NROM" />
+          <xs:enumeration value="UNL-SACHEN-74LS374N" />
+          <xs:enumeration value="UNL-SACHEN-8259A" />
+          <xs:enumeration value="UNL-SACHEN-8259B" />
+          <xs:enumeration value="UNL-SACHEN-8259C" />
+          <xs:enumeration value="UNL-SACHEN-8259D" />
+          <xs:enumeration value="UNL-SHERO" />
+          <xs:enumeration value="UNL-SL1632" />
+          <xs:enumeration value="UNL-SMB2J" />
+          <xs:enumeration value="UNL-T-230" />
+          <xs:enumeration value="UNL-TC-U01-1.5M" />
+          <xs:enumeration value="UNL-TEK90" />
+          <xs:enumeration value="UNL-TF1201" />
+          <xs:enumeration value="VIRGIN-SNROM" />
+          -->
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+    <xs:attribute name="pcb" type="xs:token" />
+    <xs:attribute name="mapper">
+      <xs:simpleType>
+        <xs:restriction base="xs:integer">
+          <xs:minInclusive value="0" />
+          <xs:maxInclusive value="255" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:attribute>
+  </xs:complexType>
+
+  <xs:element name="database">
+    <xs:complexType>
+      <xs:sequence>
+        <xs:element name="game" minOccurs="0" maxOccurs="unbounded">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="peripherals" minOccurs="0">
+                <xs:complexType>
+                  <xs:sequence>
+                    <xs:element name="device" maxOccurs="unbounded">
+                      <xs:complexType>
+                        <xs:attribute name="type" use="required">
+                          <xs:simpleType>
+                            <xs:restriction base="xs:token">
+                              <!-- UNCOMMENT for type check -->
+                              <!--
+                              <xs:enumeration value="3dglasses" />
+                              <xs:enumeration value="arkanoid" />
+                              <xs:enumeration value="bandaihypershot" />
+                              <xs:enumeration value="barcodeworld" />
+                              <xs:enumeration value="crazyclimber" />
+                              <xs:enumeration value="doremikko" />
+                              <xs:enumeration value="excitingboxing" />
+                              <xs:enumeration value="familykeyboard" />
+                              <xs:enumeration value="familyfunfitness" />
+                              <xs:enumeration value="familytrainer" />
+                              <xs:enumeration value="fourplayer" />
+                              <xs:enumeration value="horitrack" />
+                              <xs:enumeration value="konamihypershot" />
+                              <xs:enumeration value="mahjong" />
+                              <xs:enumeration value="miraclepiano" />
+                              <xs:enumeration value="oekakidstablet" />
+                              <xs:enumeration value="pachinko" />
+                              <xs:enumeration value="partytap" />
+                              <xs:enumeration value="pokkunmoguraa" />
+                              <xs:enumeration value="powerglove" />
+                              <xs:enumeration value="powerpad" />
+                              <xs:enumeration value="rob" />
+                              <xs:enumeration value="suborkeyboard" />
+                              <xs:enumeration value="subormouse" />
+                              <xs:enumeration value="topriderbike" />
+                              <xs:enumeration value="turbofile" />
+                              <xs:enumeration value="zapper" />   
+                            -->
+                            </xs:restriction>
+                          </xs:simpleType>
+                        </xs:attribute>
+                        <xs:attribute name="name" type="xs:token" />
+                      </xs:complexType>
+                    </xs:element>
+                  </xs:sequence>
+                </xs:complexType>
+                <xs:unique name="device.type">
+                  <xs:selector xpath="device" />
+                  <xs:field xpath="@type" />
+                </xs:unique>
+              </xs:element>
+              <xs:choice>
+                <xs:element name="cartridge" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="board" type="board">
+                        <xs:unique name="cartridge.prg.id">
+                          <xs:selector xpath="prg" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                        <xs:unique name="cartridge.chr.id">
+                          <xs:selector xpath="chr" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                        <xs:unique name="cartridge.vram.id">
+                          <xs:selector xpath="vram" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                        <xs:unique name="cartridge.wram.id">
+                          <xs:selector xpath="wram" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                      </xs:element>
+                      <xs:element name="properties" type="properties" minOccurs="0" />
+                    </xs:sequence>
+                    <xs:attribute name="system">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:enumeration value="Famicom" />
+                          <xs:enumeration value="NES-NTSC" />
+                          <xs:enumeration value="NES-PAL" />
+                          <xs:enumeration value="NES-PAL-A" />
+                          <xs:enumeration value="NES-PAL-B" />
+                          <xs:enumeration value="Dendy" />
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="revision" type="xs:token" />
+                    <xs:attribute name="dumper" type="xs:token" />
+                    <xs:attribute name="datedumped" type="xs:token" />
+                    <xs:attribute name="dump" type="dump" default="ok" />
+                    <xs:attribute name="crc" type="crc" />
+                    <xs:attribute name="sha1" type="sha1" />
+                  </xs:complexType>
+                </xs:element>
+                <xs:element name="arcade" maxOccurs="unbounded">
+                  <xs:complexType>
+                    <xs:sequence>
+                      <xs:element name="board" type="board">
+                        <xs:unique name="arcade.prg.id">
+                          <xs:selector xpath="prg" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                        <xs:unique name="arcade.chr.id">
+                          <xs:selector xpath="chr" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                        <xs:unique name="arcade.vram.id">
+                          <xs:selector xpath="vram" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                        <xs:unique name="arcade.wram.id">
+                          <xs:selector xpath="wram" />
+                          <xs:field xpath="@id" />
+                        </xs:unique>
+                      </xs:element>
+                      <xs:element name="properties" type="properties" minOccurs="0" />
+                    </xs:sequence>
+                    <xs:attribute name="system" use="required">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:enumeration value="VS-Unisystem" />
+                          <xs:enumeration value="VS-Dualsystem" />
+                          <xs:enumeration value="Playchoice-10" />
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="revision" type="xs:token" />
+                    <xs:attribute name="ppu">
+                      <xs:simpleType>
+                        <xs:restriction base="xs:token">
+                          <xs:enumeration value="RP2C03B" />
+                          <xs:enumeration value="RP2C03G" />
+                          <xs:enumeration value="RP2C04-0001" />
+                          <xs:enumeration value="RP2C04-0002" />
+                          <xs:enumeration value="RP2C04-0003" />
+                          <xs:enumeration value="RP2C04-0004" />
+                          <xs:enumeration value="RC2C03B" />
+                          <xs:enumeration value="RC2C03C" />
+                          <xs:enumeration value="RC2C05-01" />
+                          <xs:enumeration value="RC2C05-02" />
+                          <xs:enumeration value="RC2C05-03" />
+                          <xs:enumeration value="RC2C05-04" />
+                          <xs:enumeration value="RC2C05-05" />
+                        </xs:restriction>
+                      </xs:simpleType>
+                    </xs:attribute>
+                    <xs:attribute name="dumper" type="xs:token" />
+                    <xs:attribute name="datedumped" type="xs:token" />
+                    <xs:attribute name="dump" type="dump" default="ok" />
+                    <xs:attribute name="crc" type="crc" />
+                    <xs:attribute name="sha1" type="sha1" />
+                  </xs:complexType>
+                </xs:element>
+              </xs:choice>
+            </xs:sequence>
+            <xs:attribute name="name" type="xs:token" />
+            <xs:attribute name="altname" type="xs:token" />
+            <xs:attribute name="class" type="xs:token" />
+            <xs:attribute name="subclass" type="xs:token" />
+            <xs:attribute name="catalog" type="xs:token" />
+            <xs:attribute name="publisher" type="xs:token" />
+            <xs:attribute name="developer" type="xs:token" />
+            <xs:attribute name="portdeveloper" type="xs:token" />
+            <xs:attribute name="region" type="xs:token" />
+            <xs:attribute name="players" type="xs:positiveInteger" />
+            <xs:attribute name="date" type="xs:token" />
+          </xs:complexType>
+        </xs:element>
+      </xs:sequence>
+      <xs:attribute name="version" type="xs:token" fixed="1.0" use="required" />
+      <xs:attribute name="conformance" default="strict">
+        <xs:simpleType>
+          <xs:restriction base="xs:token">
+            <xs:enumeration value="strict" />
+            <xs:enumeration value="loose" />
+          </xs:restriction>
+        </xs:simpleType>
+      </xs:attribute>
+      <xs:attribute name="author" type="xs:token" />
+      <xs:attribute name="agent" type="xs:token" />
+    </xs:complexType>        
+  </xs:element>
+
+</xs:schema> 

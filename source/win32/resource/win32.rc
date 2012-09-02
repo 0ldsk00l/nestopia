@@ -1,0 +1,162 @@
+// Microsoft Visual C++ generated resource script.
+//
+#include "resource.h"
+
+#define APSTUDIO_READONLY_SYMBOLS
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 2 resource.
+//
+#include "afxres.h"
+
+/////////////////////////////////////////////////////////////////////////////
+#undef APSTUDIO_READONLY_SYMBOLS
+
+/////////////////////////////////////////////////////////////////////////////
+// Neutral resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
+LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
+#pragma code_page(1252)
+#endif //_WIN32
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Cursor
+//
+
+IDC_CURSOR_GUN          CURSOR                  "gun.cur"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Bitmap
+//
+
+IDB_LAUNCHERTREE_CLOSED BITMAP                  "FolderClosed.bmp"
+IDB_LAUNCHERTREE_OPEN   BITMAP                  "FolderOpen.bmp"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Icon
+//
+
+// Icon with lowest ID value placed first to ensure application icon
+// remains consistent on all systems.
+IDI_APP                 ICON                    "application.ico"
+IDI_APP_J               ICON                    "application_j.ico"
+IDI_NES                 ICON                    "nes.ico"
+IDI_NES_J               ICON                    "nes_j.ico"
+IDI_UNF                 ICON                    "unf.ico"
+IDI_UNF_J               ICON                    "unf_j.ico"
+IDI_FDS                 ICON                    "fds.ico"
+IDI_NSF                 ICON                    "nsf.ico"
+IDI_NSF_J               ICON                    "nsf_j.ico"
+IDI_PAD                 ICON                    "window.ico"
+IDI_PAD_J               ICON                    "window_j.ico"
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// IMAGEDATABASE
+//
+
+IDR_IMAGEDATABASE       IMAGEDATABASE           "..\\..\\core\\database\\NstDatabase.zip"
+#endif    // Neutral resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+/////////////////////////////////////////////////////////////////////////////
+// English (U.S.) resources
+
+#if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
+LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
+#pragma code_page(1252)
+#endif //_WIN32
+
+#ifdef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// TEXTINCLUDE
+//
+
+1 TEXTINCLUDE 
+BEGIN
+    "resource.h\0"
+END
+
+2 TEXTINCLUDE 
+BEGIN
+    "#include ""afxres.h""\r\n"
+    "\0"
+END
+
+3 TEXTINCLUDE 
+BEGIN
+    "\r\n"
+    "\0"
+END
+
+#endif    // APSTUDIO_INVOKED
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// Version
+//
+
+VS_VERSION_INFO VERSIONINFO
+ FILEVERSION 0,0,0,1
+ PRODUCTVERSION 0,1,4,0
+ FILEFLAGSMASK 0x17L
+#ifdef _DEBUG
+ FILEFLAGS 0x1L
+#else
+ FILEFLAGS 0x0L
+#endif
+ FILEOS 0x4L
+ FILETYPE 0x1L
+ FILESUBTYPE 0x0L
+BEGIN
+    BLOCK "StringFileInfo"
+    BEGIN
+        BLOCK "040904b0"
+        BEGIN
+            VALUE "Comments", "http://nestopia.sourceforge.net/"
+            VALUE "FileDescription", "Nestopia"
+            VALUE "FileVersion", "0.01"
+            VALUE "InternalName", "Nestopia"
+            VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
+            VALUE "OriginalFilename", "Nestopia.exe"
+            VALUE "ProductName", "Nestopia"
+            VALUE "ProductVersion", "1.40"
+        END
+    END
+    BLOCK "VarFileInfo"
+    BEGIN
+        VALUE "Translation", 0x409, 1200
+    END
+END
+
+
+/////////////////////////////////////////////////////////////////////////////
+//
+// LICENSE
+//
+
+IDR_LICENSE             LICENSE                 "copying.zip"
+#endif    // English (U.S.) resources
+/////////////////////////////////////////////////////////////////////////////
+
+
+
+#ifndef APSTUDIO_INVOKED
+/////////////////////////////////////////////////////////////////////////////
+//
+// Generated from the TEXTINCLUDE 3 resource.
+//
+
+
+/////////////////////////////////////////////////////////////////////////////
+#endif    // not APSTUDIO_INVOKED
+

@@ -1,0 +1,920 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+  <head>
+    <title>Nestopia Documentation</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    <style type="text/css">
+      td { padding-left:6px; padding-right:6px }
+      .fineprint { font-size:75% }
+      .heading { text-align:center }
+    </style>
+  </head>
+  <body>
+    <h1 class="heading"><a name="pagetop" id="pagetop">Nestopia Documentation</a></h1>
+    <p class="heading">
+      <em>
+        version 1.40<br>
+        last updated 8 June, 2008<br>
+        <br>
+          Site: <a href="http://nestopia.sourceforge.net/">http://nestopia.sourceforge.net/</a><br>
+        Mail: martin-freij at home.se<br>
+      </em>
+    </p>
+    <hr>
+    <p>
+      This program is free software; you can redistribute it
+      and/or modify it under the terms of the GNU General Public License as published
+      by the Free Software Foundation; either version 2 of the License, or (at your
+      option) any later version. This program is distributed in the hope that it will
+      be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of
+      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public
+      License for more details. You should have received a copy of the GNU General
+      Public License along with this program; if not, write to the Free Software
+      Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111-1307 USA
+    </p>
+    <hr>
+    <h2>Table of Contents</h2>
+    <ul>
+      <li><a href="#introduction">Introduction</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#systemRequirements">System Requirements</a></li>
+      <li><a href="#troubleshooting">Troubleshooting</a></li>
+      <li><a href="#credits">Credits</a></li>
+    </ul>
+    <p>
+      For recent changes refer to the changelog.txt file.
+    </p>
+    <hr>
+    <h2><a name="introduction" id="introduction">Introduction</a></h2>
+    <p>
+      Nestopia is an open source NES/Famicom emulator written in standard C++, 
+      focused on delivering as accurate emulation as possible. Development began in 
+      mid 2002, initially released for the Windows platform a year later.
+      It has since been ported to other platforms, including Linux and Mac OS X.
+      See credits section for the list of authors involved.
+      <br>
+      <br>
+      <a href="#pagetop">Back to Top</a>
+    </p>
+    <hr>
+    <h2><a name="features" id="features">Features</a></h2>    
+    <h4>Boards:</h4>
+    <ul>
+      <li>ACCLAIM-AOROM</li>               
+      <li>ACCLAIM-MC-ACC</li>              
+      <li>ACCLAIM-TLROM</li>               
+      <li>AGCI-47516</li>                  
+      <li>AGCI-50282</li>                  
+      <li>AVE-74*161</li>                  
+      <li>AVE-NINA-01</li>                 
+      <li>AVE-NINA-02</li>                 
+      <li>AVE-NINA-03</li>                 
+      <li>AVE-NINA-06</li>                 
+      <li>AVE-NINA-07</li>                 
+      <li>AVE-MB-91</li>                  
+      <li>BANDAI-74*161/161/32</li>        
+      <li>BANDAI-CNROM</li>                
+      <li>BANDAI-FCG-1</li>                
+      <li>BANDAI-FCG-2</li>                
+      <li>BANDAI-GNROM</li>                
+      <li>BANDAI-JUMP2</li>                
+      <li>BANDAI-LZ93D50+24C01</li>        
+      <li>BANDAI-LZ93D50+24C02</li>        
+      <li>BANDAI-NROM-128</li>             
+      <li>BANDAI-NROM-256</li>             
+      <li>BANDAI-PT-554</li>               
+      <li>BMC-190IN1</li>                  
+      <li>BMC-42IN1RESETSWITCH</li>        
+      <li>BMC-64IN1NOREPEAT</li>           
+      <li>BMC-70IN1</li>                   
+      <li>BMC-70IN1B</li>                  
+      <li>BMC-8157</li>                    
+      <li>BMC-A65AS</li>
+      <li>BMC-BS-5</li>
+      <li>BMC-D1038</li>                   
+      <li>BMC-FK23C</li>                   
+      <li>BMC-GHOSTBUSTERS63IN1</li>       
+      <li>BMC-GS-2004</li>                 
+      <li>BMC-GS-2013</li>                 
+      <li>BMC-NOVELDIAMOND9999999IN1</li>  
+      <li>BMC-SUPER24IN1SC03</li>          
+      <li>BMC-SUPERHIK8IN1</li>            
+      <li>BMC-SUPERVISION16IN1</li>        
+      <li>BMC-T-262</li>                   
+      <li>BMC-WS</li>                      
+      <li>BTL-MARIO1-MALEE2</li>           
+      <li>CAMERICA-ALGN</li>               
+      <li>CAMERICA-ALGQ</li>               
+      <li>CAMERICA-BF9093</li>             
+      <li>CAMERICA-BF9096</li>             
+      <li>CAMERICA-BF9097</li>             
+      <li>CAMERICA-GAMEGENIE</li>          
+      <li>COLORDREAMS-74*377</li>          
+      <li>DREAMTECH01</li>                 
+      <li>HVC-AMROM</li>                   
+      <li>HVC-AN1ROM</li>                  
+      <li>HVC-ANROM</li>                   
+      <li>HVC-AOROM</li>                   
+      <li>HVC-BNROM</li>                   
+      <li>HVC-CNROM</li>                   
+      <li>HVC-CPROM</li>                   
+      <li>HVC-DE1ROM</li>                  
+      <li>HVC-DEROM</li>                   
+      <li>HVC-DRROM</li>                   
+      <li>HVC-EKROM</li>                   
+      <li>HVC-ELROM</li>                   
+      <li>HVC-ETROM</li>                   
+      <li>HVC-EWROM</li>                   
+      <li>HVC-FAMILYBASIC</li>             
+      <li>HVC-FJROM</li>                   
+      <li>HVC-FKROM</li>                   
+      <li>HVC-GNROM</li>                   
+      <li>HVC-HKROM</li>                   
+      <li>HVC-HROM</li>                    
+      <li>HVC-JLROM</li>                   
+      <li>HVC-JSROM</li>                   
+      <li>HVC-MHROM</li>                   
+      <li>HVC-NROM</li>                    
+      <li>HVC-NROM-128</li>                
+      <li>HVC-NROM-256</li>                
+      <li>HVC-NTBROM</li>                  
+      <li>HVC-PEEOROM</li>                 
+      <li>HVC-PNROM</li>                   
+      <li>HVC-RROM</li>                    
+      <li>HVC-RROM-128</li>                
+      <li>HVC-SAROM</li>                   
+      <li>HVC-SBROM</li>                   
+      <li>HVC-SC1ROM</li>                  
+      <li>HVC-SCROM</li>                   
+      <li>HVC-SEROM</li>                   
+      <li>HVC-SF1ROM</li>                  
+      <li>HVC-SFROM</li>                   
+      <li>HVC-SGROM</li>                   
+      <li>HVC-SH1ROM</li>                  
+      <li>HVC-SHROM</li>                   
+      <li>HVC-SJROM</li>                   
+      <li>HVC-SKROM</li>                   
+      <li>HVC-SL1ROM</li>                  
+      <li>HVC-SL2ROM</li>                  
+      <li>HVC-SL3ROM</li>                  
+      <li>HVC-SLROM</li>                   
+      <li>HVC-SLRROM</li>                  
+      <li>HVC-SNROM</li>                   
+      <li>HVC-SOROM</li>                   
+      <li>HVC-SROM</li>                    
+      <li>HVC-STROM</li>                   
+      <li>HVC-SUROM</li>                   
+      <li>HVC-SXROM</li>                   
+      <li>HVC-TBROM</li>                   
+      <li>HVC-TEROM</li>                   
+      <li>HVC-TFROM</li>                   
+      <li>HVC-TGROM</li>                   
+      <li>HVC-TKROM</li>                   
+      <li>HVC-TKSROM</li>                  
+      <li>HVC-TL1ROM</li>                  
+      <li>HVC-TL2ROM</li>                  
+      <li>HVC-TLROM</li>                   
+      <li>HVC-TLSROM</li>                  
+      <li>HVC-TNROM</li>                   
+      <li>HVC-TQROM</li>                   
+      <li>HVC-TR1ROM</li>                  
+      <li>HVC-TSROM</li>                   
+      <li>HVC-TVROM</li>                   
+      <li>HVC-UN1ROM</li>                  
+      <li>HVC-UNROM</li>                   
+      <li>HVC-UOROM</li>                   
+      <li>IREM-74*161/161/21/138</li>      
+      <li>IREM-BNROM</li>                  
+      <li>IREM-G101</li>                   
+      <li>IREM-G101-A</li>                 
+      <li>IREM-G101-B</li>                 
+      <li>IREM-HOLYDIVER</li>              
+      <li>IREM-NROM-128</li>               
+      <li>IREM-NROM-256</li>               
+      <li>IREM-UNROM</li>                  
+      <li>JALECO-JF-01</li>                
+      <li>JALECO-JF-02</li>                
+      <li>JALECO-JF-03</li>                
+      <li>JALECO-JF-04</li>                
+      <li>JALECO-JF-05</li>                
+      <li>JALECO-JF-06</li>                
+      <li>JALECO-JF-07</li>                
+      <li>JALECO-JF-08</li>                
+      <li>JALECO-JF-09</li>                
+      <li>JALECO-JF-10</li>                
+      <li>JALECO-JF-11</li>                
+      <li>JALECO-JF-12</li>                
+      <li>JALECO-JF-13</li>                
+      <li>JALECO-JF-14</li>                
+      <li>JALECO-JF-15</li>                
+      <li>JALECO-JF-16</li>                
+      <li>JALECO-JF-17</li>                
+      <li>JALECO-JF-18</li>                
+      <li>JALECO-JF-19</li>                
+      <li>JALECO-JF-20</li>                
+      <li>JALECO-JF-21</li>                
+      <li>JALECO-JF-22</li>                
+      <li>JALECO-JF-23</li>                
+      <li>JALECO-JF-24</li>                
+      <li>JALECO-JF-25</li>                
+      <li>JALECO-JF-26</li>                
+      <li>JALECO-JF-27</li>                
+      <li>JALECO-JF-28</li>                
+      <li>JALECO-JF-29</li>                
+      <li>JALECO-JF-30</li>                
+      <li>JALECO-JF-31</li>                
+      <li>JALECO-JF-32</li>                
+      <li>JALECO-JF-33</li>                
+      <li>JALECO-JF-34</li>                
+      <li>JALECO-JF-35</li>                
+      <li>JALECO-JF-36</li>                
+      <li>JALECO-JF-37</li>                
+      <li>JALECO-JF-38</li>                
+      <li>JALECO-JF-39</li>                
+      <li>JALECO-JF-40</li>                
+      <li>JALECO-JF-41</li>                
+      <li>KONAMI-74*139/74</li>            
+      <li>KONAMI-CNROM</li>                
+      <li>KONAMI-NROM-128</li>             
+      <li>KONAMI-SLROM</li>                
+      <li>KONAMI-TLROM</li>                
+      <li>KONAMI-UNROM</li>                
+      <li>KONAMI-VRC-1</li>                
+      <li>KONAMI-VRC-2</li>               
+      <li>KONAMI-VRC-3</li>                
+      <li>KONAMI-VRC-4</li>               
+      <li>KONAMI-VRC-6</li>               
+      <li>KONAMI-VRC-7</li>                
+      <li>MLT-ACTION52</li>                
+      <li>MLT-CALTRON6IN1</li>             
+      <li>MLT-MAXI15</li>                  
+      <li>NAMCOT-163</li>                  
+      <li>NAMCOT-3301</li>                 
+      <li>NAMCOT-3302</li>                 
+      <li>NAMCOT-3303</li>                 
+      <li>NAMCOT-3305</li>                 
+      <li>NAMCOT-3311</li>                 
+      <li>NAMCOT-3401</li>                 
+      <li>NAMCOT-3405</li>                 
+      <li>NAMCOT-3406</li>                 
+      <li>NAMCOT-3407</li>                 
+      <li>NAMCOT-3411</li>                 
+      <li>NAMCOT-3413</li>                 
+      <li>NAMCOT-3414</li>                 
+      <li>NAMCOT-3415</li>                 
+      <li>NAMCOT-3416</li>                 
+      <li>NAMCOT-3417</li>                 
+      <li>NAMCOT-3425</li>                 
+      <li>NAMCOT-3433</li>                 
+      <li>NAMCOT-3443</li>                 
+      <li>NAMCOT-3446</li>                 
+      <li>NAMCOT-3451</li>                 
+      <li>NES-AMROM</li>                   
+      <li>NES-AN1ROM</li>                  
+      <li>NES-ANROM</li>                   
+      <li>NES-AOROM</li>                   
+      <li>NES-B4</li>                      
+      <li>NES-BNROM</li>                   
+      <li>NES-BTR</li>                     
+      <li>NES-CNROM</li>                   
+      <li>NES-CPROM</li>                   
+      <li>NES-DE1ROM</li>                  
+      <li>NES-DEROM</li>                   
+      <li>NES-DRROM</li>                   
+      <li>NES-EKROM</li>                   
+      <li>NES-ELROM</li>                   
+      <li>NES-ETROM</li>                   
+      <li>NES-EVENT</li>                   
+      <li>NES-EWROM</li>                   
+      <li>NES-FJROM</li>                   
+      <li>NES-FKROM</li>                   
+      <li>NES-GNROM</li>                   
+      <li>NES-HKROM</li>                   
+      <li>NES-HROM</li>                    
+      <li>NES-JLROM</li>                   
+      <li>NES-JSROM</li>                   
+      <li>NES-MHROM</li>                   
+      <li>NES-NROM</li>                    
+      <li>NES-NROM-128</li>                
+      <li>NES-NROM-256</li>                
+      <li>NES-NTBROM</li>                  
+      <li>NES-PEEOROM</li>                 
+      <li>NES-PNROM</li>                   
+      <li>NES-QJ</li>                      
+      <li>NES-RROM</li>                    
+      <li>NES-RROM-128</li>                
+      <li>NES-SAROM</li>                   
+      <li>NES-SBROM</li>                   
+      <li>NES-SC1ROM</li>                  
+      <li>NES-SCROM</li>                   
+      <li>NES-SEROM</li>                   
+      <li>NES-SF1ROM</li>                  
+      <li>NES-SFROM</li>                   
+      <li>NES-SGROM</li>                   
+      <li>NES-SH1ROM</li>                  
+      <li>NES-SHROM</li>                   
+      <li>NES-SJROM</li>                   
+      <li>NES-SKROM</li>                   
+      <li>NES-SL1ROM</li>                  
+      <li>NES-SL2ROM</li>                  
+      <li>NES-SL3ROM</li>                  
+      <li>NES-SLROM</li>                   
+      <li>NES-SLRROM</li>                  
+      <li>NES-SNROM</li>                   
+      <li>NES-SOROM</li>                   
+      <li>NES-SROM</li>                    
+      <li>NES-STROM</li>                   
+      <li>NES-SUROM</li>                   
+      <li>NES-SXROM</li>                   
+      <li>NES-TBROM</li>                   
+      <li>NES-TEROM</li>                   
+      <li>NES-TFROM</li>                   
+      <li>NES-TGROM</li>                   
+      <li>NES-TKROM</li>                   
+      <li>NES-TKSROM</li>                  
+      <li>NES-TL1ROM</li>                  
+      <li>NES-TL2ROM</li>                  
+      <li>NES-TLROM</li>                   
+      <li>NES-TLSROM</li>                  
+      <li>NES-TNROM</li>                   
+      <li>NES-TQROM</li>                   
+      <li>NES-TR1ROM</li>                  
+      <li>NES-TSROM</li>                   
+      <li>NES-TVROM</li>                   
+      <li>NES-UN1ROM</li>                  
+      <li>NES-UNROM</li>                   
+      <li>NES-UOROM</li>                   
+      <li>NES-WH</li>                      
+      <li>NTDEC-N715062</li>
+      <li>PAL-MH</li>                      
+      <li>PAL-ZZ</li>                      
+      <li>SACHEN-8259A</li>                
+      <li>SACHEN-8259B</li>                
+      <li>SACHEN-8259C</li>                
+      <li>SACHEN-8259D</li>                
+      <li>SACHEN-CNROM</li>                
+      <li>SETA-NROM-128</li>               
+      <li>SUNSOFT-1</li>                   
+      <li>SUNSOFT-2</li>                   
+      <li>SUNSOFT-3</li>                   
+      <li>SUNSOFT-4</li>                   
+      <li>SUNSOFT-5B</li>                   
+      <li>SUNSOFT-FME-7</li>               
+      <li>SUNSOFT-NROM-256</li>            
+      <li>TAITO-74*139/74</li>             
+      <li>TAITO-74*161/161/32</li>         
+      <li>TAITO-CNROM</li>                 
+      <li>TAITO-NROM-128</li>              
+      <li>TAITO-NROM-256</li>              
+      <li>TAITO-TC0190FMC</li>             
+      <li>TAITO-TC0190FMC+PAL16R4</li>     
+      <li>TAITO-UNROM</li>                 
+      <li>TAITO-X1-005</li>                
+      <li>TAITO-X1-017</li>                
+      <li>TENGEN-800002</li>               
+      <li>TENGEN-800003</li>               
+      <li>TENGEN-800004</li>               
+      <li>TENGEN-800008</li>               
+      <li>TENGEN-800030</li>               
+      <li>TENGEN-800032</li>               
+      <li>TENGEN-800037</li>               
+      <li>TENGEN-800042</li>               
+      <li>UNL-22211</li>                   
+      <li>UNL-603-5052</li>                
+      <li>UNL-8237</li>                    
+      <li>UNL-A9746</li>
+      <li>UNL-AX5705</li>
+      <li>UNL-CC-21</li>                   
+      <li>UNL-EDU2000</li>                 
+      <li>UNL-H2288</li>                   
+      <li>UNL-KOF97</li>                   
+      <li>UNL-KS7032</li>
+      <li>UNL-N625092</li>                  
+      <li>UNL-SA-0036</li>                 
+      <li>UNL-SA-0037</li>                 
+      <li>UNL-SA-016-1M</li>               
+      <li>UNL-SA-72007</li>                
+      <li>UNL-SA-72008</li>                
+      <li>UNL-SA-NROM</li>                 
+      <li>UNL-SACHEN-74LS374N</li>         
+      <li>UNL-SACHEN-8259A</li>            
+      <li>UNL-SACHEN-8259B</li>            
+      <li>UNL-SACHEN-8259C</li>            
+      <li>UNL-SACHEN-8259D</li>            
+      <li>UNL-SHERO</li>                   
+      <li>UNL-SL1632</li>                  
+      <li>UNL-SMB2J</li>                   
+      <li>UNL-T-230</li>                   
+      <li>UNL-TC-U01-1.5M</li>             
+      <li>UNL-TEK90</li>                   
+      <li>UNL-TF1201</li>                  
+      <li>VIRGIN-SNROM</li>                
+    </ul>    
+    <h4>iNES Mappers:</h4>
+    <ul>
+      <li>0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16,</li>
+      <li>17, 18, 19,*21, 22,*23, 24,*25, 26, 27, 32, 33, 34, 36,</li>
+      <li>37, 38, 39, 40, 41, 42, 43, 44, 45, 46, 47, 48, 49, 50,</li>
+      <li>51, 52, 53, 54, 55, 56, 57, 58, 60, 61, 62, 63, 64, 65,</li>
+      <li>66, 67, 68, 69, 70, 71, 72, 73, 74, 75, 76, 77, 78, 79,</li>
+      <li>80, 82, 83, 85, 86, 87, 88, 89, 90, 91, 92, 93, 94, 95,</li>
+      <li>96, 97, 99, 103, 104, 105, 106, 107, 108, 112, 113, 114,</li>
+      <li>115, 116, 117, 118, 119, 120, 121, 123, 126, 132, 133, 134,</li>
+      <li>136, 137, 138, 139, 140, 141, 142, 143, 144, 145, 146, 147,</li>
+      <li>148, 149, 150, 151, 152, 153, 154, 155, 156, 157, 158, 159,</li>
+      <li>163, 164, 165, 166, 167, 170, 171, 172, 173, 175, 176, 177,</li>
+      <li>178, 179, 180, 182, 183, 184,*185, 186, 187, 188, 189, 191,</li>
+      <li>192, 193, 194, 195, 196, 197, 198, 199, 200, 201, 202, 203,</li>
+      <li>204, 205, 206, 207, 208, 209, 211, 212, 213, 214, 215, 216,</li>
+      <li>217, 219, 221, 222, 223, 224, 225, 226, 227, 228, 229, 230,</li>
+      <li>231, 232, 233, 234, 235, 236, 238, 240, 241, 242, 243, 244,</li>
+      <li>245, 246, 249, 250, 252, 254, 255</li>
+    </ul>      
+    <p class="fineprint">
+        &nbsp;&nbsp;&nbsp;&nbsp;* only supported if PIN wiring info is available through a database or ROM set.<br>
+    </p>    
+    <h4>External Sound Chips:</h4>
+    <ul>
+      <li>Konami VRC6</li>
+      <li>Konami VRC7</li>
+      <li>MMC5</li>
+      <li>Namcot 163 </li>
+      <li>RP2C33</li>
+      <li>Sunsoft 5B</li>
+    </ul>
+    <h4>Controllers:</h4>    
+    <ul>
+      <li>Arkanoid <span class="fineprint">(1)</span></li>
+      <li>Crazy Climber Sticks</li>
+      <li>Doremikko Keyboard</li>
+      <li>Exciting Boxing Bop Bag</li>
+      <li>Family BASIC Keyboard</li>
+      <li>Family Computer Robot / R.O.B.</li>
+      <li>Family Trainer / Family Fun Fitness / Power Pad</li>
+      <li>Hori Track <span class="fineprint">(1)</span></li>
+      <li>Hyper Shot</li>
+      <li>Light Gun <span class="fineprint">(1)</span></li>
+      <li>Mahjong Controller</li>
+      <li>Oeka Kids Tablet <span class="fineprint">(1)</span></li>
+      <li>Pachinko Controller <span class="fineprint">(2)</span></li>
+      <li>Party Tap</li>
+      <li>Pokkun Moguraa</li>
+      <li>Power Glove <span class="fineprint">(1)</span></li>
+      <li>Standard Pad</li>
+      <li>Subor Keyboard + Mouse</li>
+      <li>Top Rider Bike</li>
+    </ul>
+    <p class="fineprint">
+        &nbsp;&nbsp;&nbsp;&nbsp;(1) Using the mouse<br>
+        &nbsp;&nbsp;&nbsp;&nbsp;(2) Using the mouse wheel<br>
+    </p>
+    <h4>Other Peripherals/Systems:</h4>
+    <ul>
+      <li>Bandai Karaoke Studio</li>
+      <li>Barcode Battler</li>
+      <li>Data Recorder</li>
+      <li>Datach Joint ROM System</li>
+      <li>Famicom Disk System</li>
+      <li>Game Genie &amp; Pro Action Rocky</li>
+      <li>Turbo File</li>
+      <li>VS System </li>
+    </ul>    
+    <h4>Image File Formats:</h4>
+    <ul>
+      <li>ROM images backed by XML descriptor (.zip)</li>
+      <li>UNIF (.unf)</li>
+      <li>iNES (.nes)</li>
+      <li>FDS with/without headers (.fds)</li>
+    </ul>    
+    <h4>Extras:</h4>
+    <ul>
+      <li>Savestates / Saveslots</li>
+      <li>PNG/JPEG/BMP File Screenshots</li>
+      <li>Movie/AVI File Recording</li>
+      <li>WAVE File Recording</li>
+      <li>ZIP/RAR/7zip Archive Support</li>
+      <li>On-the-fly IPS Patching</li>
+      <li>Netplay</li>
+      <li>NSF Player</li>
+      <li>Video Filters including NTSC video emulation</li>
+      <li>Real-time Rewinding</li>
+      <li>Cheat Searching</li>
+      <li>Databases of cartridge info</li>
+      <li>File Launcher</li>
+      <li>Palette Editor</li>
+      <li>iNES File Header Editor</li>
+    </ul>    
+    <h4>Recognized VS System Games:</h4>
+    <table border="1">
+      <tr><th>Name</th>                         <th style="width:100px">Dip Switch Info</th></tr>
+      <tr><td>Battle City</td>                  <td align="center">partial</td></tr>
+      <tr><td>Castlevania</td>                  <td align="center">full</td></tr>
+      <tr><td>Clu Clu Land</td>                 <td align="center">partial</td></tr>
+      <tr><td>Dr. Mario</td>                    <td align="center">full</td></tr>
+      <tr><td>Duck Hunt</td>                    <td align="center">full</td></tr>
+      <tr><td>Excitebike</td>                   <td align="center">full</td></tr>
+      <tr><td>Freedom Force</td>                <td align="center">partial</td></tr>
+      <tr><td>Golf</td>                         <td align="center">full</td></tr>
+      <tr><td>Goonies</td>                      <td align="center">full</td></tr>
+      <tr><td>Gradius</td>                      <td align="center">full</td></tr>
+      <tr><td>Gumshoe</td>                      <td align="center">full</td></tr>
+      <tr><td>Hogan's Alley</td>                <td align="center">full</td></tr>
+      <tr><td>Ice Climber</td>                  <td align="center">full</td></tr>
+      <tr><td>Lady Golf</td>                    <td align="center">full</td></tr>
+      <tr><td>Mach Rider</td>                   <td align="center">partial</td></tr>
+      <tr><td>Mach Rider - Fighting Course</td> <td align="center">partial</td></tr>
+      <tr><td>Mighty Bomb Jack</td>             <td align="center">partial</td></tr>
+      <tr><td>Ninja Jajamaru Kun</td>           <td align="center">partial</td></tr>
+      <tr><td>Pinball</td>                      <td align="center">partial</td></tr>
+      <tr><td>Platoon</td>                      <td align="center">partial</td></tr>
+      <tr><td>Raid on Bungeling Bay</td>        <td align="center">partial</td></tr>
+      <tr><td>RBI Baseball</td>                 <td align="center">full</td></tr>
+      <tr><td>Sky Kid</td>                      <td align="center">full</td></tr>
+      <tr><td>Slalom</td>                       <td align="center">full</td></tr>
+      <tr><td>Soccer</td>                       <td align="center">full</td></tr>
+      <tr><td>Star Luster</td>                  <td align="center">partial</td></tr>
+      <tr><td>Stroke and Match Golf</td>        <td align="center">full</td></tr>
+      <tr><td>Super Mario Bros</td>             <td align="center">full</td></tr>
+      <tr><td>Super Xevious</td>                <td align="center">partial</td></tr>
+      <tr><td>Tetris</td>                       <td align="center">partial</td></tr>
+      <tr><td>TKO Boxing</td>                   <td align="center">partial</td></tr>
+      <tr><td>Top Gun</td>                      <td align="center">full</td></tr>
+    </table>
+    <h4>Games with Sound Sample Support:</h4>
+    <table border="1">
+      <tr>
+          <th>Game</th>
+          <th style="width:100px">File Archive Name</th>
+          <th style="width:100px">Number of Samples</th>
+      </tr>
+      <tr>
+          <td>Family Trainer - Aerobics Studio</td>
+          <td>ftaerobi</td>
+          <td align="center">8</td>
+      </tr>
+      <tr>
+          <td>Moero!! Pro Yakyuu</td>
+          <td>moepro</td>
+          <td align="center">16</td>
+      </tr>
+      <tr>
+          <td>Moero!! Pro Yakyuu '88 - Ketteiban</td> 
+          <td rowspan="4">moepro88</td>
+          <td rowspan="4" align="center">20</td>
+      </tr>
+      <tr>
+          <td>Moe Pro! '90 - Kandou Hen</td>
+      </tr>
+      <tr>
+          <td>Moe Pro! - Saikyou Hen</td>
+      </tr>
+      <tr>
+          <td>Shin Moero!! Pro Yakyuu</td>          
+      </tr>
+      <tr>
+          <td>Moero!! Pro Tennis</td>
+          <td>mptennis</td>
+          <td align="center">19</td>
+      </tr>
+      <tr>
+          <td>Terao no Dosukoi Oozumou</td>
+          <td>terao</td>
+          <td align="center">6</td>
+      </tr>
+    </table>
+    <p class="fineprint">
+      Samples must be in <strong>MS Wave</strong> format and use indexed naming convention, i.e. <strong>00.wav</strong>, <strong>01.wav</strong> and so on.<br>
+      The compression format may be <strong>zip</strong>, <strong>rar</strong> or <strong>7zip</strong>. The archives must be placed in the directory specified<br>
+      in the <strong>Paths Settings</strong> (defaulted to <strong>.\samples</strong>).
+    </p>
+    <h4>Mappers/Boards with DIP switches:</h4>
+    <ul>
+      <li>57, 60, 83, 90, 105, 150, 209, 211, 230, 233, 236</li>
+      <li>UNIF Boards: 8157, BS-5, FK23C, StreetHeroes</li>
+      <li>Family BASIC, Playbox BASIC, VS System</li>
+    </ul>
+    <p>
+      <a href="#pagetop">Back to Top</a>
+    </p>
+    <hr>
+    <h2><a name="systemRequirements" id="systemRequirements">System Requirements</a></h2>
+    <table border="1">
+      <tr>
+        <th colspan="2">Minimum</th>
+      </tr>
+      <tr>
+          <td>Processor</td>
+          <td>Pentium III +800 MHz or comparable AMD</td>
+      </tr>
+      <tr>
+        <td>Video</td>
+        <td>Direct3D 9.0 compatible graphic card</td>
+      </tr>
+      <tr>
+        <td>OS</td>
+        <td>Windows 98/Me/2000/XP <span class="fineprint">(*)</span></td>
+      </tr>
+      <tr>
+        <td>Software</td>
+        <td>DirectX 9.0c or later</td>
+      </tr>
+    </table>
+    <p class="fineprint">
+      (*) Win98/Me users need to obtain the Unicode Layer DLL (unicows.dll)
+      from Microsoft's site and place it in the same directory as Nestopia.
+      It can be downloaded from <a href="http://download.microsoft.com/download/b/7/5/b75eace3-00e2-4aa0-9a6f-0b6882c71642/unicows.exe">here</a>.
+    </p>
+    <table border="1">
+      <tr>
+        <th colspan="2">Recommended</th>
+      </tr>
+      <tr>
+        <td>Processor</td>
+        <td>Pentium 4 +1400 MHz or comparable AMD</td>
+      </tr>
+      <tr>
+        <td>Video</td>
+        <td>Direct3D 9.0 compatible graphic card</td>
+      </tr>
+      <tr>
+        <td>Sound</td>
+        <td>DirectSound 8.1 compatible sound card</td>
+      </tr>
+      <tr>
+        <td>OS</td>
+        <td>Windows XP</td>
+      </tr>
+      <tr>
+        <td>Software</td>
+        <td>DirectX 9.0c or later</td>
+      </tr>
+    </table>
+    <p>
+      <a href="#pagetop">Back to Top</a>
+    </p>
+    <hr>
+    <h2><a name="troubleshooting" id="troubleshooting">Troubleshooting</a></h2>
+    <p>
+      If you experience slow performance with Nestopia, here are a couple of
+      things you can try to speed it up:
+    </p>
+    <ul>
+      <li>Lower the screen resolution and/or pixel bit-depth (video dialog).</li>
+      <li>Disable video filtering effects (video dialog).</li>
+      <li>Change the NES screen memory location (video dialog)</li>
+      <li>Enable triple-buffering (timing dialog).</li>
+      <li>Enable auto-frame-skipping (timing dialog).</li>
+      <li>Disable vsync (timing dialog).</li>
+      <li>Disable the rewinder (timing dialog).</li>
+      <li>Change the application priority to "above normal" or "high" (preferences dialog).</li>
+      <li>Lower the sound frequency and/or sample bit-depth or disable sound output completely (sound dialog).</li>
+      <li>If your video driver has an option for vsync, make sure it's set to be application-controlled.</li>
+    </ul>
+    <p>
+      If you have trouble running a particular game, possible reasons could be:
+    </p>
+    <ul>
+      <li>It's a bad dump.</li>
+      <li>The image comes with incorrect or insufficient emulation information.</li>
+      <li>Does it work on the actual hardware? If not, it's not supposed to work on Nestopia either.</li>
+      <li>It has been hacked solely for the purpose of making it run on another emulator.</li>
+      <li>Wrong region setting, try switching to/from PAL.</li>
+      <li>Proper controller(s) connected? For instance, it could be a keyboard-only program or a game that only responds to the secondary controller.</li>
+      <li>Is the 'no sprite limit' option enabled? Try disabling it, some games might depend on this hardware limitation.</li>
+      <li>The database may have an error in it. Try turning it off temporarily.</li>
+      <li>It's unsupported by Nestopia.</li>
+    </ul>
+    <p>
+      Misc:
+    </p>
+    <ul>
+      <li>If the gridlines are not drawn properly in the launcher dialog, follow <a href="http://support.microsoft.com/default.aspx?scid=kb;en-us;813791">this link</a>.</li>
+    </ul>
+    <p>
+      <a href="#pagetop">Back to Top</a>
+    </p>
+    <hr>
+    <h2><a name="credits" id="credits">Credits</a></h2>
+    <table border="1">
+      <tr>
+        <th>Author</th>
+        <th>Contribution</th>
+      </tr>
+      <tr>
+        <td>[yang]</td>
+        <td>Image file database</td>
+      </tr>
+      <tr>
+        <td>Alexander Roshal</td>
+        <td><a href="http://www.rarlab.com">UnRAR</a></td>
+      </tr>
+      <tr>
+        <td>Andrea Mazzoleni</td>
+        <td><a href="http://scale2x.sourceforge.net/">ScaleX filters</a></td>
+      </tr>
+      <tr>
+        <td>Bootgod</td>
+        <td>Cartridges info</td>
+      </tr>
+      <tr>
+        <td>Brad Taylor</td>
+        <td>PPU and APU technical documents</td>
+      </tr>
+      <tr>
+        <td>CaH4e3</td>
+        <td>Mapper info</td>
+      </tr>
+      <tr>
+        <td>Chris Covell</td>
+        <td>General info</td>
+      </tr>
+      <tr>
+        <td>Christophe Thibault</td>
+        <td><a href="http://www.kaillera.com/">Kaillera</a></td>
+      </tr>      
+      <tr>
+        <td>Derek Liauw Kie Fa</td>
+        <td>2xSaI filter</td>
+      </tr>
+      <tr>
+        <td>Enri</td>
+        <td>Famicom peripherals info</td>
+      </tr>
+      <tr>
+        <td>FireBug</td>
+        <td>Mapper documents</td>
+      </tr>
+      <tr>
+        <td>Gilles Vollant</td>
+        <td><a href="http://www.winimage.com/zLibDll/minizip.html">UnZIP library</a></td>
+      </tr>
+      <tr>
+        <td>Goroh</td>
+        <td>Various technical documents</td>
+      </tr>
+      <tr>
+        <td>hap</td>
+        <td>D7756C info</td>
+      </tr>
+      <tr>
+        <td>Hellsbane</td>
+        <td>Testing</td>
+      </tr>
+      <tr>
+        <td>Igor Pavlov</td>
+        <td><a href="http://www.7-zip.org">7-Zip</a></td>
+      </tr>
+      <tr>
+        <td>Jean-loup Gailly</td>
+        <td><a href="http://www.zlib.net/">zlib</a></td>
+      </tr>
+      <tr>
+        <td>Jeremy Chadwick</td>
+        <td>NES technical document</td>
+      </tr>
+      <tr>
+        <td>John West</td>
+        <td>65xx/85xx technical document</td>
+      </tr>
+      <tr>
+        <td>Kevin Horton</td>
+        <td>Mapper technical documents</td>
+      </tr>
+      <tr>
+        <td>Ki</td>
+        <td>CPU and APU info</td>
+      </tr>
+      <tr>
+        <td>Loopy</td>
+        <td>PPU info</td>
+      </tr>
+      <tr>
+        <td>MAME dev. team</td>
+        <td>VS System info</td>
+      </tr>
+      <tr>
+        <td>Marat Fayzullin</td>
+        <td>NES technical document</td>
+      </tr>
+      <tr>
+        <td>Mark Adler</td>
+        <td><a href="http://www.zlib.net/">zlib</a></td>
+      </tr>
+      <tr>
+        <td>Mark Knibbs</td>
+        <td>Various info</td>
+      </tr>
+      <tr>
+        <td>Marko M&auml;kel&auml;</td>
+        <td>65xx/85xx technical document</td>
+      </tr>
+      <tr>
+        <td>Matthew Conte</td>
+        <td>APU info</td>
+      </tr>
+      <tr>
+        <td>Maxim Stepin</td>
+        <td><a href="http://www.hiend3d.com/hq2x.html">hqx filters</a></td>
+      </tr>
+      <tr>
+        <td>NewRisingSun</td>
+        <td>NTSC info</td>
+      </tr>
+      <tr>
+        <td>Norix</td>
+        <td>Mapper, FDS sound and Famicom peripherals info</td>
+      </tr>
+      <tr>
+        <td>Pongbashi</td>
+        <td>Famicom, cartridges, and sound sample info</td>
+      </tr>
+      <tr>
+        <td>Quietust</td>
+        <td>PPU info</td>
+      </tr>
+      <tr>
+        <td>Richard Hoelscher</td>
+        <td>Famicom four-player adapter technical document</td>
+      </tr>
+      <tr>
+        <td>Shay Green (aka blargg)</td>
+        <td><a href="http://www.slack.net/~ant/">nes_ntsc</a>, APU and PPU info</td>
+      </tr>
+      <tr>
+        <td>The Mad Dumper</td>
+        <td>Mapper info</td>
+      </tr>
+      <tr>
+        <td>Xodnizel</td>
+        <td>Mapper info</td>
+      </tr>
+    </table>
+    <h2><a name="translations" id="translations">Translations</a></h2>
+    <table border="1">
+      <tr>
+        <th>Author</th>
+        <th>Language</th>
+      </tr>
+      <tr>
+        <td>Benjamin Siskoo</td>
+        <td><a href="http://www.tradu-france.com">French</a></td>
+      </tr>
+      <tr>
+        <td>Gubei Vadim</td>
+        <td>Russian</td>
+      </tr>
+      <tr>
+        <td>Martin</td>
+        <td>Polish</td>
+      </tr>
+      <tr>
+        <td>Nekokabu</td>
+        <td><a href="http://nekokabu.s7.xrea.com/">Japanese</a></td>
+      </tr>
+      <tr>
+        <td>nhlay</td>
+        <td>Chinese (traditional)</td>
+      </tr>
+      <tr>
+        <td>Vecna</td>
+        <td>Italian</td>
+      </tr>
+      <tr>
+        <td>yoyo</td>
+        <td>Chinese (simplified)</td>
+      </tr>                    
+    </table>
+    <h2><a name="ports" id="ports">Ports</a></h2>
+    <table border="1">
+      <tr>
+        <th>Author</th>
+        <th>Platform</th>
+      </tr>
+      <tr>
+        <td>Arbee</td>
+        <td><a href="http://rbelmont.mameworld.info/?page_id=200">Linux</a></td>
+      </tr>
+      <tr>
+        <td>Daemoncollector</td>
+        <td><a href="http://opennestopia.staulkor.com/">Mac OS X</a></td>
+      </tr>      
+      <tr>
+        <td>Richard Bannister</td>
+        <td><a href="http://www.bannister.org/software/nestopia.htm">Mac OS X</a> (alt. license)</td>
+      </tr>
+    </table>    
+    <p>
+      <br>
+      <a href="#pagetop">Back to Top</a>
+    </p>
+    <hr>
+    <p>
+      Nestopia is Copyright &copy; 2003-2008 by Martin Freij.<br>
+      <br>
+      NES is either a trademark or registered trademark of Nintendo of America Inc.<br>
+      Famicom is either a trademark or registered trademark of Nintendo Co., LTD.<br>
+      All other trademarks are property of their respective owners.<br>
+      Nestopia is not affiliated with or endorsed by any of the companies mentioned.
+    </p>
+  </body>
+</html>
