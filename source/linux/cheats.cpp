@@ -93,7 +93,7 @@ static void enable_toggle(GtkCellRendererToggle *cell_renderer, gchar *path, gpo
 	gtk_tree_store_set(treestore, &treeiters[item], 0, cheatlist[item].enabled, -1);
 }
 
-static void on_cheatwin_destroy(GtkObject *object, gpointer user_data)
+static void on_cheatwin_destroy(GObject *object, gpointer user_data)
 {
 	treeiters.clear();
 	sIsOpen = false;
@@ -139,11 +139,11 @@ void CheatMgr::ShowManager()
 	g_signal_connect((gpointer)cheatwin, "destroy", G_CALLBACK(on_cheatwin_destroy), NULL);
 
 	// set various widgets' user data to our "this" pointer
-	gtk_object_set_user_data(GTK_OBJECT(ggokbut), (gpointer)this);
+/* FIXTHIS	gtk_object_set_user_data(GTK_OBJECT(ggokbut), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(parokbut), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(chopen), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(chsave), (gpointer)this);
-	gtk_object_set_user_data(GTK_OBJECT(chdelete), (gpointer)this);
+	gtk_object_set_user_data(GTK_OBJECT(chdelete), (gpointer)this); */
 
 	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW (cheattree), FALSE);
 
