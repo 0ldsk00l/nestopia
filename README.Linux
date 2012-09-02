@@ -1,0 +1,288 @@
+NEStopia v1.4.0
+Linux version H - October 22, 2008
+
+NEStopia by Martin Freij
+Linux port by R. Belmont
+LZMA SDK (7zip support) by Igor Pavlov
+======================================
+
+This program is free software; you can redistribute it and/or modify it under the terms of the GNU General 
+Public License as published by the Free Software Foundation; either version 2 of the License, or (at your 
+option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY 
+WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
+
+See the GNU General Public License for more details.  You should have received a copy of the GNU General 
+Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, 
+Suite 330, Boston, MA 02111-1307 USA.
+
+
+Nestopia is a portable open source NES/Famicom emulator written in C++. It's designed to be as accurate as 
+possible and supports a large number of peripherals. The hardware is emulated at cycle-by-cycle granularity, 
+ensuring full support for software that do mid-scanline and other timing trickery. 
+
+As Nestopia/Linux is under the GPL I welcome submission of patches.  To improve the chances that they will
+be accepted, please try to match the existing coding style.  I am very strict about things like always having
+braces after an if () even when the clause is only 1 line.
+
+
+System requirements
+===================
+
+Intel or AMD processor, at least 700 MHz.  Recommended 1 GHz+ for best performance.
+128 MB RAM
+A kernel 2.6.x based Linux distribution
+GCC 3.4.x or later (4.x recommended)
+A Linux-compatible soundcard capable of 16-bit output with either OSS or ALSA
+[Optional] One or more gamepads/controllers recognized by Linux with at least a D-pad or stick and 4 buttons
+[Optional] Hardware-accelerated OpenGL
+
+
+Building
+========
+
+* Get the official 1.40 source from http://nestopia.sourceforge.net/
+* Unpack it
+* Unpack this overlay over it
+* Go to the directory where you unpacked this and type "make".  ("make -j3" for
+  dual-core, "make -j5" for quad).
+
+Before running the emulator, copy the following files to a folder named .nestopia
+in your home directory:
+
+- NstDatabase.xml
+- The Disk System BIOS (disksys.rom)
+- The default inputs file (nstcontrols)
+
+Marty and I try to ensure maximum portability of the code, but at this time it
+has not been tested on big-endian targets, although the Mac version obviously 
+runs fine on big-endian.
+
+Changes from Linux revision G
+=============================
+- Complains more if it's unable to write to the settings file
+- Fixed bug where keyboard input could stick
+
+
+Changes from preview #5
+=======================
+
+* Linux shell
+- XML ROM support
+- Archive browser comes up automatically if you select a zip or 7zip archive with multiple NES files in it
+- Option to select favored console
+- More flexible video configuration including OpenGL hardware scaling
+- Input mapping in the GUI
+- Core logging is now enabled to the terminal you start NEStopia from for easier diagnosis of problems
+- Cheat Manager with flexible support and import/export capability (.xml cheat files will interchange with
+  the Windows version just fine)
+- Automatic soft-patching added
+- Coin inputs added for Vs. system
+- Audio filters added for fun
+- [Release B] Cleaned up some crashy issues with the control configurator
+- [Release C] Proper default nstcontrols file included
+- [Release D] Fixed ability to remap "meta" keys (keys that control NEStopia itself), fixed documentation on defaults.
+- [Release E] Fixed quicksave/quickload
+- [Release E] Refactored to get UI code out of main.cpp
+- [Release E] Added SDL audio driver, should be most compatible
+- [Release F] Fixed keyboard to ignore numlock/capslock
+- [Release G] Settings window auto-hides during emulation [enik]
+- [Release G] Taskbar description is set properly for the game window [enik]
+- [Release G] Cheat Manager now shows descriptions on imported XML files.  Also fixed a CM crash.
+
+* Core (since 1.37)
+
+ Additions:
+
+  - ROM sets and external database support using new XML format
+    co-developed with Bootgod.    
+  - Mapper 36, 103, 104, 106, 120, 126, 175, 176, 223 and 224. 
+    Info from mad dumper, CaH4e3 and Temryu.
+  - UNIF boards GS-2013 and BS-5. info from CaH4e3.
+  - Emulation of bus conflicts for certain boards.  
+  - Database entries.
+  - Core API documentation in HTML through cppdoc.
+  - UPS patching format support.
+  - Database lookup on soft-patching.
+  - Database entries. Info from Bootgod.
+  - More recognized boards. Info from Bootgod.
+  - Preliminary Dendy console support. Fixes Magistr (Subor) and
+    some other 'clone exclusives'. Info from Flamer and HardWareMan.
+  - DMC DMA read conflicts. Info from blargg and bunnyboy.
+  - Mapper 177, 179, 219 and 221. Info from CaH4e3.
+  - Database entries.
+
+ Changes:
+
+  - PPU power/reset timing and register states. Info from blargg.
+  - Misc IRQ/NMI/BRK/DMA special-case behavior. Info from blargg.
+  - NTSC/PAL switch during emulation will now force a hard-reset.
+  - Misc mapper emulation improvements. Info from Bootgod.
+  - NES-EVENT board timer more accurate.
+  - Board names. Info from Bootgod.
+  - Refactoring and mapper codebase overhaul.
+  - Speed optimizations (accuracy NOT compromised!).
+  - Mappers 21, 23, 25 and 185 no longer supported using plain iNES
+    files because of format restrictions.
+  - FDS saves through UPS instead of IPS. 
+  - Database entries. Info from Bootgod.
+  - Refactoring.
+  - Better and more flexible PPU address line implementation at the
+    expense of some speed.
+  - Database entries.
+  - Refactoring.
+  
+ Fixes:
+
+  - MMC3 soft-reset IRQ bug.
+  - Database entries.
+  - FDS file saving bug.
+  - NTSC burst phase incrementing bug.
+  - Potential memory leak in database loader.
+  - UTF16 to wchar_t portability fix in XML parser.
+  - Const-correctness bug caught by GCC 4.0.
+  - Wrong palette sometimes when switching to/from VS images.
+  - Wrong image information sometimes, e.g. battery when there isn't any.
+  - Save state NTSC/PAL mode saving.
+  - Minor save state inaccuracy fix with tape recording.
+
+
+
+Options in this preview (more to come)
+======================================
+
+"Emulator" tab
+--------------
+Open...  brings up a standard open file window.  You may choose .nes, .fds, .unf, or .unif format game ROMs, or
+.nsf format NES music.  You may also open .zip or .7z format archives.  If the archive only contains one 
+recognized file, that file will simply open.  If the archive contains multiple recognized files, the 
+archive browser will appear and let you choose which file to open. 
+
+If you choose a game, the Play Game! button will become available, and clicking it will start the emulation.
+
+If you choose a disk (.fds), you must have the Disk System BIOS disksys.rom located in ~/.nestopia/, and
+then the Play Game! button will become available.
+
+If you choose a .NSF file, the Play button with the VCR "Play" symbol will become active, and so will the 
+song selector widget next to it.  Click it to begin playing the music.	You will also see the file's title,
+composer, and copyright information.
+
+The Cheats... button will open the Cheat Manager. 
+
+In the Cheat Manager, the Import button will import an .XML NEStopia format cheat file and Export will save one
+with the current cheats.  You may add cheats in Game Genie or Pro-Action Rocky formats.  The "Check" button 
+checks if a code is valid and Add adds it to the list if it's valid.  "Remove code" deletes the cheat selected
+in the list.
+
+NOTE: all cheats are deleted from memory when a new game is loaded, so use Export before then to keep 
+them around!
+
+
+"Video" tab
+-----------
+Scaler lets you choose the scale effect you'd prefer - None, Scale x, or Scale HQ x.
+
+Scale lets you choose the scale factor.  Note that scalers "None" and "NTSC" will ignore this setting unless 
+you pick OpenGL for render type.
+
+Render type lets you choose software or OpenGL hardware drawing.  OpenGL gives you additional flexibilty and
+possibly some performance.
+
+NTSC monitor type gives 3 easy presets for the NTSC emulation - you must choose a scale type of NTSC for this
+to take effect.
+
+Region lets you choose auto-detection, NTSC, or PAL for the region of a game.  If you force an NTSC game to 
+PAL it will play too slowly, and a PAL game forced to NTSC will play too quickly.
+
+The full screen checkbox indicates if the game will play in a window or full screen.
+
+The Unlimited sprites checkbox makes NEStopia not emulate the hardware sprite flicker of the NES that occurs
+in some games.
+
+
+"Input" tab
+-----------
+The Use Controllers checkbox enables using joypads.
+
+The drop-down lets you pick a control to remap.  To remap it, click the "Change" button.  A small window
+will appear and you will have 5 seconds to select a keypress, joypad axis movement, or joypad button to
+assign to the control.
+
+Note: the PS3 Sixaxis and Dual Shock 3 controllers map buttons as both buttons and axises, so you may
+need to tap a button a few times before it shows up as "JxBx" (button) instead of "JxAx" (axis).
+
+The default nstcontrols file contains player 1 mappings for a Sixaxis or Dual Shock 3 using the left 
+analog stick to move and the X, O, SELECT, and START buttons as B, A, SELECT, and START respectively.
+
+
+"Audio" tab
+-----------
+The Use ALSA checkbox lets you use the ALSA API for audio output, otherwise old reliable OSS is used.
+
+The Stereo checkbox selects mono (more correct, the NES was mono) or a fake stereo effect.  This can be 
+toggled "live" while an NSF file is playing to hear the difference.
+
+The Output rate lets you choose the sample rate.  44100 is normally recommended, and 48000 for Sound Blaster
+Live and Audigy cards, but if your system is slower you may save some CPU by selecting a lower rate.
+
+The Volume slider does exactly what you'd think, and it also can be changed "live" during NSF playback.
+
+The Lite Surround checkbox and slider control the "Lite Surround" effect.  Again you can change them "live"
+during NSF playback.
+
+The "Stereo exciter" checkbox tries to add some synthetic stereo imaging, and it can be changed "live" during
+NSF playback as well.
+
+
+"Extras" tab
+-----------
+The "Preferred System" lets you pick what system NEStopia will emulate if a game doesn't match the database.
+You may choose NES (NTSC), NES (PAL), Famicom, or Dendy (a Russian NES clone with some unique attributes).
+
+"Soft patching" enables automatic soft patching.  To make this work, place a .ips or .ups file (case matters!)
+in the same directory as the game (or the archive the game is in).  The patch must be named exactly the same 
+thing as the game with the final extension replaced with .ips or .ups!  Examples:
+
+For "Super Mario Bros (U).nes", the patch must be named "Super Mario Bros (U).ips" (or .ups).
+
+For "Super Mario Bros (U).nes" inside the archive CoolGames.zip, the patch still must be named 
+"Super Mario Bros (U).ips", and placed in the same directory as the archive.
+
+For "Doki Doki Panic (J).rom.stuff.nes", the patch must be "Doki Doki Panic (J).rom.stuff.ips" (or .ups).
+Note that only the final extension is removed!
+
+
+While Playing a Game
+--------------------
+
+NOTE: these are the defaults, most can be remapped.
+
+F1 = start saving a NEStopia movie file (.nsv)
+F2 = load and play a NEStopia movie file (.nsv)
+F3 = stop the current movie playback or recording and close out the file on disk.  Normal user control resumes
+at this point, so if you have a movie of a heroic speedrun you can press F3 after the person gets past the
+area you always hated and take over from there ;-)
+F4 = reset the emulated NES
+F5 = switch sides of the current .fds disk.
+F7 = save the state (.nst)
+F8 = load a saved state (.nst)
+5 = insert coin slot 1 for Vs. games
+6 = insert coin slot 2 for Vs. games
+7 = quick save to slot 1
+8 = quick save to slot 2
+9 = load quick save slot 1
+0 = load quick save slot 2
+
+Alt+Tab = toggle full-screen mode
+
+Esc = stop emulation and unload the cartridge
+
+Backspace = switch to rewind mode.  If you make a mistake, you can go backwards in time and correct it!
+\ = return to normal forwards mode after rewinding.
+
+Battery save, Save state and movie files are 100% compatible between NEStopia on x86 Linux and the Windows 
+original, so feel free to trade and swap with your Windows-using friends.
+
+Cartridges with batteries are automatically saved to a .sav file when you exit the emulator.  These .sav
+files are also compatible with the Windows version.
+
+
