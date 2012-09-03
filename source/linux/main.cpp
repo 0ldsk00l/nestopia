@@ -43,7 +43,7 @@
 #include "main.h"
 #include "GL/glu.h"
 
-#define NST_VERSION "1.4.0 (Undead)"
+#define NST_VERSION "1.4.0-undead"
 
 extern "C" {
 #include <gtk/gtk.h>
@@ -1489,6 +1489,10 @@ void SetupInput()
 void configure_savename( const char* filename )
 {
 	int i = 0;
+	char savedir[1024], *homedir;
+
+	homedir = getenv("HOME");
+	sprintf(savedir, "%s/.nestopia/", homedir);
 
 	strcpy(savename, filename);
 
@@ -1514,8 +1518,11 @@ void configure_savename( const char* filename )
 			break;
 		}
 	}
-
-
+	
+	//Save to the home directory instead of the location of the rom
+	strcat(savedir, capname);
+	strcpy(savename, savedir);
+	
 	// also generate the window caption
 	sprintf(caption, "Nestopia %s: %s", NST_VERSION, capname);
 
