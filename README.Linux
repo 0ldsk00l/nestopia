@@ -1,8 +1,9 @@
-NEStopia v1.4.0
-Linux version H - October 22, 2008
+Nestopia v1.4.0
+Linux version "undead" - September 3, 2012
 
 NEStopia by Martin Freij
 Linux port by R. Belmont
+Resurrected by R. Danbrook
 LZMA SDK (7zip support) by Igor Pavlov
 ======================================
 
@@ -56,6 +57,16 @@ in your home directory:
 Marty and I try to ensure maximum portability of the code, but at this time it
 has not been tested on big-endian targets, although the Mac version obviously 
 runs fine on big-endian.
+
+Changes from Linux revision H
+=============================
+- Ported to GTK+3
+- Added install/uninstall targets to Makefile
+- Changed default sound API to ALSA
+- Changed default renderer to OpenGL with a scale factor of 2
+- Changed binary name to "nestopia"
+- SRAM now saves to ~/.nestopia (useful for people who have roms on a read-only network share)
+
 
 Changes from Linux revision G
 =============================

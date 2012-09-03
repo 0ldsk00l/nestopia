@@ -138,8 +138,12 @@ void CheatMgr::ShowManager()
 
 	g_signal_connect((gpointer)cheatwin, "destroy", G_CALLBACK(on_cheatwin_destroy), NULL);
 
+	/* The cheats dialog seems to still work the same without this codeblock.
+	 * I have no idea why. Not a GTK+ expert. Maybe I'll figure it out later.
+	 * Either way, these functions are deprecated and no longer exist in GTK+3,
+	 * so this will need to change in the future if it's ever re-enabled.
 	// set various widgets' user data to our "this" pointer
-/* FIXTHIS	gtk_object_set_user_data(GTK_OBJECT(ggokbut), (gpointer)this);
+	gtk_object_set_user_data(GTK_OBJECT(ggokbut), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(parokbut), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(chopen), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(chsave), (gpointer)this);
