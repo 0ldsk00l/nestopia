@@ -24,8 +24,10 @@ CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-func
 
 CPPFLAGS = -Wno-deprecated -fno-rtti
 
-EXE  = nst
+EXE  = nestopia
 LIBS = -lm -lz -lasound  `sdl-config --libs` `pkg-config --libs gtk+-3.0`
+
+PREFIX = /usr/local
 
 # OpenGL Support
 CFLAGS += -DINCLUDE_OPENGL
@@ -176,6 +178,16 @@ $(sort $(OBJDIRS)):
 $(EXE): $(OBJS)
 	@echo Linking $@...
 	@$(CPP) -g -o $(EXE) $^ $(LIBS)
+
+install:
+	mkdir -p $(PREFIX)/share/nestopia
+	install -m 0755 nestopia $(PREFIX)/bin
+	install -m 0644 nstcontrols $(PREFIX)/share/nestopia
+	install -m 0644 NstDatabase.xml $(PREFIX)/share/nestopia
+	
+uninstall:
+	rm $(PREFIX)/bin/nestopia
+	rm -rf $(PREFIX)/share/nestopia
 
 clean:
 	-@rm -f $(OBJS) $(EXE) $(GENNSTCONTROLS)

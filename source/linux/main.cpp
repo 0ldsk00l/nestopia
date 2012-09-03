@@ -1,6 +1,7 @@
 /*
-	NEStopia / Linux
-	Port by R. Belmont
+	Nestopia / Linux
+	Original Port by R. Belmont
+	Resurrected by R. Danbrook
 	
 	main.cpp - main file
 */
