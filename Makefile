@@ -1,6 +1,7 @@
 #
 # Makefile for Linux Nestopia v1.40
-# By R. Belmont
+# By R. Belmont 2008
+# By R. Danbrook 2012
 #
 
 CC   = gcc
@@ -11,13 +12,6 @@ CFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/b
 CFLAGS += -Isource/core/vssystem -Isource/linux -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/linux/7zip 
 CFLAGS += `sdl-config --cflags` `pkg-config --cflags gtk+-3.0`
 CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
-
-#GTK3 migration
-#CFLAGS+= -DGTK_DISABLE_SINGLE_INCLUDES
-#CFLAGS+= -DGDK_DISABLE_DEPRECATED -DGTK_DISABLE_DEPRECATED
-#CFLAGS+= -DGSEAL_ENABLE
-#CFLAGS+= -DGDK_PIXBUF_DISABLE_DEPRECATED
-#CFLAGS+= -DG_DISABLE_DEPRECATED 
 
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
@@ -182,7 +176,6 @@ $(EXE): $(OBJS)
 install:
 	mkdir -p $(PREFIX)/share/nestopia
 	install -m 0755 nestopia $(PREFIX)/bin
-	install -m 0644 nstcontrols $(PREFIX)/share/nestopia
 	install -m 0644 NstDatabase.xml $(PREFIX)/share/nestopia
 	
 uninstall:
@@ -191,4 +184,3 @@ uninstall:
 
 clean:
 	-@rm -f $(OBJS) $(EXE) $(GENNSTCONTROLS)
-

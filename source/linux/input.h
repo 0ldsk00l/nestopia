@@ -41,6 +41,7 @@ struct InputDefT
 
 
 InputDefT *parse_input_file();
+void create_input_file();
 void write_output_file(InputDefT *ctl_defs);
 bool translate_event(char *linebuf, InputDefT *pcontrol, int &icontrol, int ccontrol);
 

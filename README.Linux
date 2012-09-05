@@ -1,7 +1,7 @@
 Nestopia v1.4.0
 Linux version "undead" - September 3, 2012
 
-NEStopia by Martin Freij
+Nestopia by Martin Freij
 Linux port by R. Belmont
 Resurrected by R. Danbrook
 LZMA SDK (7zip support) by Igor Pavlov
@@ -16,15 +16,12 @@ See the GNU General Public License for more details.  You should have received a
 Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, 
 Suite 330, Boston, MA 02111-1307 USA.
 
+Notes
+=====
 
 Nestopia is a portable open source NES/Famicom emulator written in C++. It's designed to be as accurate as 
 possible and supports a large number of peripherals. The hardware is emulated at cycle-by-cycle granularity, 
-ensuring full support for software that do mid-scanline and other timing trickery. 
-
-As Nestopia/Linux is under the GPL I welcome submission of patches.  To improve the chances that they will
-be accepted, please try to match the existing coding style.  I am very strict about things like always having
-braces after an if () even when the clause is only 1 line.
-
+ensuring full support for software that does mid-scanline and other timing trickery. 
 
 System requirements
 ===================
@@ -38,25 +35,21 @@ A Linux-compatible soundcard capable of 16-bit output with either OSS or ALSA
 [Optional] Hardware-accelerated OpenGL
 
 
-Building
-========
+Compiling
+=========
 
-* Get the official 1.40 source from http://nestopia.sourceforge.net/
-* Unpack it
-* Unpack this overlay over it
+* Make sure you have the proper development libraries installed. In Debian:
+	apt-get install libgtk-3-dev libsdl1.2-dev
+
+* You can also compile against GTK+2 if you desire. Just change the Makefile.
+
 * Go to the directory where you unpacked this and type "make".  ("make -j3" for
   dual-core, "make -j5" for quad).
 
-Before running the emulator, copy the following files to a folder named .nestopia
-in your home directory:
+It helps greatly if you copy these files to ~/.nestopia:
 
 - NstDatabase.xml
-- The Disk System BIOS (disksys.rom)
-- The default inputs file (nstcontrols)
-
-Marty and I try to ensure maximum portability of the code, but at this time it
-has not been tested on big-endian targets, although the Mac version obviously 
-runs fine on big-endian.
+- The Famicom Disk System BIOS (disksys.rom - not included)
 
 Changes from Linux revision H
 =============================
@@ -65,14 +58,13 @@ Changes from Linux revision H
 - Changed default sound API to ALSA
 - Changed default renderer to OpenGL with a scale factor of 2
 - Changed binary name to "nestopia"
-- SRAM now saves to ~/.nestopia (useful for people who have roms on a read-only network share)
-
+- SRAM now saves to ~/.nestopia (for people who have roms on a read-only network share)
+- Automatically install a new nstcontrols file to ~/.nestopia if it doesn't exist
 
 Changes from Linux revision G
 =============================
 - Complains more if it's unable to write to the settings file
 - Fixed bug where keyboard input could stick
-
 
 Changes from preview #5
 =======================

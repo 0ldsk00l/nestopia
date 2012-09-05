@@ -1031,14 +1031,32 @@ int main(int argc, char *argv[])
 	static SDL_Event event;
 	int i;
 	void* userData = (void*) 0xDEADC0DE;
+	char dirname[1024], *home;
 
 	// read the key/controller mapping
 	ctl_defs = parse_input_file();
-	if (!ctl_defs)
+/*	if (!ctl_defs)
 	{
 		std::cout << "Couldn't read ~/.nestopia/nstcontrols file\n";
 		return -1;
-	}
+	} */
+	if (!ctl_defs)
+	{
+		std::cout << "~/.nestopia/nstcontrols not found, creating a new one.\n";
+		
+		// make sure the output directory exists
+		home = getenv("HOME");
+		sprintf(dirname, "%s/.nestopia/", home);
+		mkdir(dirname, 0700);
+		create_input_file();
+		
+		ctl_defs = parse_input_file();
+		if (!ctl_defs)
+		{
+			std::cout << "Reading ~/.nestopia/nstcontrols file: FAIL\n";
+			return -1;
+		}
+	} 
 
 	playing = 0;
 	intbuffer = NULL;
