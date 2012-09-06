@@ -122,7 +122,8 @@
    #define NST_NO_INLINE __attribute__((noinline))
    #endif
 
-   #define NST_SINGLE_CALL __attribute__((always_inline))
+//	Commenting this fixes a lot of warnings on newer versions of GCC
+//   #define NST_SINGLE_CALL __attribute__((always_inline))
 
    #if (NST_GCC >= 304) && defined(__i386__)
    #define NST_REGCALL __attribute__((regparm(2)))

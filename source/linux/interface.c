@@ -272,7 +272,7 @@ create_mainwindow (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 1 SELECT"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 Up"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 Down"));
-  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(configcombo), _("Player 2 Left"));
+  gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 Left"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 Right"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 A"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), _("Player 2 B"));
@@ -321,12 +321,12 @@ create_mainwindow (void)
   gtk_widget_set_size_request (volumelabel, 40, 24);
   gtk_label_set_justify (GTK_LABEL (volumelabel), GTK_JUSTIFY_CENTER);
 
-  volumescroll = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
+  volumescroll = gtk_scrollbar_new (GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
   gtk_widget_show (volumescroll);
   gtk_fixed_put (GTK_FIXED (fixed4), volumescroll, 256, 16);
   gtk_widget_set_size_request (volumescroll, 176, 24);
 
-  surrscroll = gtk_hscrollbar_new (GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
+  surrscroll = gtk_scrollbar_new (GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
   gtk_widget_show (surrscroll);
   gtk_fixed_put (GTK_FIXED (fixed4), surrscroll, 8, 88);
   gtk_widget_set_size_request (surrscroll, 176, 16);
