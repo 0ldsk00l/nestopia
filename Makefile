@@ -16,7 +16,7 @@ CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-func
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
 
-CPPFLAGS = -Wno-deprecated -fno-rtti
+CPPFLAGS = -Wno-deprecated -Wno-write-strings -fno-rtti
 
 EXE  = nestopia
 LIBS = -lm -lz -lasound  `sdl-config --libs` `pkg-config --libs gtk+-3.0`

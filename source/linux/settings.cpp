@@ -54,7 +54,7 @@ Settings::Settings()
 	f = fopen(dirname, "rb");
 	if (f == NULL)
 	{
-		std::cout << "Settings file missing, using defaults\n";
+		std::cout << "~/.nestopia/nstsettings not found, creating a new one.\n";
 		return;
 	}
 
