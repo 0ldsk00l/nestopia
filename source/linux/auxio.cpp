@@ -702,17 +702,18 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 void auxio_load_db(void)
 {
 	Nes::Api::Cartridge::Database database( emulator );
-	char dirname[1024], *home;
+	char dirname[1024], datadirname[1024], *pwd;
 
 	if (nstDBFile)
 	{
 		return;
 	}
 
-	home = getenv("HOME");
-	sprintf(dirname, "%s/.nestopia/NstDatabase.xml", home);
+	pwd = getenv("PWD");
+	sprintf(dirname, "%s/NstDatabase.xml", pwd);
+	sprintf(datadirname, "%s/NstDatabase.xml", DATADIR);
 
-	nstDBFile = new std::ifstream(dirname, std::ifstream::in|std::ifstream::binary);
+	nstDBFile = new std::ifstream(datadirname, std::ifstream::in|std::ifstream::binary);
 
 	if (nstDBFile->is_open())
 	{
@@ -721,9 +722,20 @@ void auxio_load_db(void)
 	}
 	else
 	{
-		std::cout << "Couldn't find ~/.nestopia/NstDatabase.xml\nPAL detection and auto-ROM-fixing will be disabled\n";
-		delete nstDBFile;
-		nstDBFile = NULL;
+		printf("NstDatabase.xml not found in %s\n", DATADIR);
+		nstDBFile = new std::ifstream(dirname, std::ifstream::in|std::ifstream::binary);
+
+		if (nstDBFile->is_open())
+		{
+			database.Load(*nstDBFile);
+			database.Enable(true);
+		}
+		else
+		{
+			printf("NstDatabase.xml not found in %s\nPAL detection and auto-ROM-fixing will be disabled\n", pwd);
+			delete nstDBFile;
+			nstDBFile = NULL;
+		}
 	}
 }
 

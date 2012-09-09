@@ -1511,7 +1511,7 @@ void configure_savename( const char* filename )
 	char savedir[1024], *homedir;
 
 	homedir = getenv("HOME");
-	sprintf(savedir, "%s/.nestopia/", homedir);
+	sprintf(savedir, "%s/.nestopia/save", homedir);
 
 	strcpy(savename, filename);
 

@@ -167,7 +167,7 @@ create_mainwindow (void)
   gtk_fixed_put (GTK_FIXED (fixed2), label16, 8, 64);
   gtk_widget_set_size_request (label16, 47, 17);
 
-  label8 = gtk_label_new (_("Scaler"));
+  label8 = gtk_label_new (_("Filter"));
   gtk_widget_show (label8);
   gtk_fixed_put (GTK_FIXED (fixed2), label8, 0, 16);
   gtk_widget_set_size_request (label8, 64, 24);
@@ -181,7 +181,7 @@ create_mainwindow (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), _("Scale?x"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), _("hq?x"));
 
-  check_fullscreen = gtk_check_button_new_with_mnemonic (_("Full screen"));
+  check_fullscreen = gtk_check_button_new_with_mnemonic (_("Fullscreen"));
   gtk_widget_show (check_fullscreen);
   gtk_fixed_put (GTK_FIXED (fixed2), check_fullscreen, 8, 96);
   gtk_widget_set_size_request (check_fullscreen, 96, 24);
@@ -232,7 +232,7 @@ create_mainwindow (void)
 
   label9 = gtk_label_new (_("Renderer"));
   gtk_widget_show (label9);
-  gtk_fixed_put (GTK_FIXED (fixed2), label9, 240, 16);
+  gtk_fixed_put (GTK_FIXED (fixed2), label9, 252, 16);
   gtk_widget_set_size_request (label9, 96, 24);
 
   label2 = gtk_label_new (_("Video"));

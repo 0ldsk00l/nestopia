@@ -22,10 +22,15 @@ EXE  = nestopia
 LIBS = -lm -lz -lasound  `sdl-config --libs` `pkg-config --libs gtk+-3.0`
 
 PREFIX = /usr/local
+BINDIR = $(PREFIX)/bin
+DATADIR = $(PREFIX)/share/nestopia
 
 # OpenGL Support
 CFLAGS += -DINCLUDE_OPENGL
 LIBS   += -lGL -lGLU
+
+# Allow files to go into a data directory
+CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
 OBJS = objs/linux/main.o objs/linux/oss.o objs/linux/interface.o objs/linux/support.o objs/linux/settings.o 
@@ -174,13 +179,13 @@ $(EXE): $(OBJS)
 	@$(CPP) -g -o $(EXE) $^ $(LIBS)
 
 install:
-	mkdir -p $(PREFIX)/share/nestopia
-	install -m 0755 nestopia $(PREFIX)/bin
-	install -m 0644 NstDatabase.xml $(PREFIX)/share/nestopia
+	mkdir -p $(DATADIR)
+	install -m 0755 $(EXE) $(BINDIR)
+	install -m 0644 NstDatabase.xml $(DATADIR)
 	
 uninstall:
-	rm $(PREFIX)/bin/nestopia
-	rm -rf $(PREFIX)/share/nestopia
+	rm $(BINDIR)/$(EXE)
+	rm -rf $(DATADIR)
 
 clean:
 	-@rm -f $(OBJS) $(EXE) $(GENNSTCONTROLS)
