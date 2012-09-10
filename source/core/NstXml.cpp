@@ -213,7 +213,7 @@ namespace Nes
 
 		const Xml::Output& Xml::Output::operator << (wchar_t c) const
 		{
-			const uint v = (WCHAR_MIN < 0 ? (c + (WCHAR_MAX-WCHAR_MIN+1)) & 0xFFFFU : c);
+			const unsigned long int v = ((long)WCHAR_MIN < 0 ? (c + ((long)WCHAR_MAX-(long)WCHAR_MIN+1)) & 0xFFFFU : c);
 
 			if (v < 0x80)
 			{

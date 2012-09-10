@@ -1,5 +1,5 @@
-Nestopia v1.4.0
-Linux version "undead" - September 3, 2012
+Nestopia - Undead Edition v1.4.0
+Linux version "1.4.0-undead" - September 10, 2012
 
 Nestopia by Martin Freij
 Linux port by R. Belmont
@@ -7,21 +7,17 @@ Resurrected by R. Danbrook
 LZMA SDK (7zip support) by Igor Pavlov
 ======================================
 
-This program is free software; you can redistribute it and/or modify it under the terms of the GNU General 
-Public License as published by the Free Software Foundation; either version 2 of the License, or (at your 
-option) any later version. This program is distributed in the hope that it will be useful, but WITHOUT ANY 
-WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. 
-
-See the GNU General Public License for more details.  You should have received a copy of the GNU General 
-Public License along with this program; if not, write to the Free Software Foundation, Inc., 59 Temple Place, 
-Suite 330, Boston, MA 02111-1307 USA.
+This program is licensed under the GNU GPLv2. For details, read COPYING.
 
 Notes
 =====
 
-Nestopia is a portable open source NES/Famicom emulator written in C++. It's designed to be as accurate as 
+Nestopia is a portable open source NES/Famicom emulator written in C++. It is designed to be as accurate as 
 possible and supports a large number of peripherals. The hardware is emulated at cycle-by-cycle granularity, 
-ensuring full support for software that does mid-scanline and other timing trickery. 
+ensuring full support for software that does mid-scanline and other timing trickery.
+
+Nestopia Undead is a fork of the original source code, plus R. Belmont's Linux port overlay, all included
+in one convenient source tree with enhancements.
 
 System requirements
 ===================
@@ -48,18 +44,19 @@ Compiling
 
 It helps greatly if you copy these files to ~/.nestopia:
 
-- NstDatabase.xml
-- The Famicom Disk System BIOS (disksys.rom - not included)
+- The Famicom Disk System BIOS (disksys.rom - not included - needed for FDS support)
 
 Changes from Linux revision H
 =============================
 - Ported to GTK+3
 - Added install/uninstall targets to Makefile
-- Changed default sound API to ALSA
+- Changed default sound API to ALSA (SDL audio has problems on some computers)
 - Changed default renderer to OpenGL with a scale factor of 2
 - Changed binary name to "nestopia"
-- SRAM now saves to ~/.nestopia (for people who have roms on a read-only network share)
+- SRAM now saves to ~/.nestopia/save (for people who have roms on a read-only network share)
 - Automatically install a new nstcontrols file to ~/.nestopia if it doesn't exist
+- Install NstDatabase.xml to a proper location on the filesystem instead of forcing the user to manually copy it to ~/.nestopia
+- Fixed numerous compiler warnings.
 
 Changes from Linux revision G
 =============================
@@ -182,23 +179,23 @@ them around!
 
 "Video" tab
 -----------
-Scaler lets you choose the scale effect you'd prefer - None, Scale x, or Scale HQ x.
+Filter: lets you choose the scale effect you'd prefer - None, NTSC, Scale?x, or hq?x.
 
-Scale lets you choose the scale factor.  Note that scalers "None" and "NTSC" will ignore this setting unless 
+Scale: lets you choose the scale factor.  Note that scalers "None" and "NTSC" will ignore this setting unless 
 you pick OpenGL for render type.
 
-Render type lets you choose software or OpenGL hardware drawing.  OpenGL gives you additional flexibilty and
+Renderer: lets you choose software or OpenGL hardware drawing.  OpenGL gives you additional flexibilty and
 possibly some performance.
 
-NTSC monitor type gives 3 easy presets for the NTSC emulation - you must choose a scale type of NTSC for this
+NTSC type: gives 3 easy presets for the NTSC emulation - you must choose a scale type of NTSC for this
 to take effect.
 
-Region lets you choose auto-detection, NTSC, or PAL for the region of a game.  If you force an NTSC game to 
+Region: lets you choose auto-detection, NTSC, or PAL for the region of a game.  If you force an NTSC game to 
 PAL it will play too slowly, and a PAL game forced to NTSC will play too quickly.
 
 The full screen checkbox indicates if the game will play in a window or full screen.
 
-The Unlimited sprites checkbox makes NEStopia not emulate the hardware sprite flicker of the NES that occurs
+The Unlimited sprites checkbox makes Nestopia not emulate the hardware sprite flicker of the NES that occurs
 in some games.
 
 
@@ -238,7 +235,7 @@ NSF playback as well.
 
 "Extras" tab
 -----------
-The "Preferred System" lets you pick what system NEStopia will emulate if a game doesn't match the database.
+The "Preferred System" lets you pick what system Nestopia will emulate if a game doesn't match the database.
 You may choose NES (NTSC), NES (PAL), Famicom, or Dendy (a Russian NES clone with some unique attributes).
 
 "Soft patching" enables automatic soft patching.  To make this work, place a .ips or .ups file (case matters!)
@@ -259,33 +256,29 @@ While Playing a Game
 
 NOTE: these are the defaults, most can be remapped.
 
-F1 = start saving a NEStopia movie file (.nsv)
-F2 = load and play a NEStopia movie file (.nsv)
-F3 = stop the current movie playback or recording and close out the file on disk.  Normal user control resumes
+F1 = switch sides of the current .fds disk.
+F2 = reset the emulated NES
+F3 = save the state (.nst)
+F4 = load a saved state (.nst)
+F5 = quick save to slot 1
+F6 = quick save to slot 2
+F7 = load quick save slot 1
+F8 = load quick save slot 2
+F9 = start saving a NEStopia movie file (.nsv)
+F10 = load and play a NEStopia movie file (.nsv)
+F11 = stop the current movie playback or recording and close out the file on disk.  Normal user control resumes
 at this point, so if you have a movie of a heroic speedrun you can press F3 after the person gets past the
 area you always hated and take over from there ;-)
-F4 = reset the emulated NES
-F5 = switch sides of the current .fds disk.
-F7 = save the state (.nst)
-F8 = load a saved state (.nst)
-5 = insert coin slot 1 for Vs. games
-6 = insert coin slot 2 for Vs. games
-7 = quick save to slot 1
-8 = quick save to slot 2
-9 = load quick save slot 1
-0 = load quick save slot 2
-
-Alt+Tab = toggle full-screen mode
+1 = insert coin slot 1 for Vs. games
+2 = insert coin slot 2 for Vs. games
 
 Esc = stop emulation and unload the cartridge
 
 Backspace = switch to rewind mode.  If you make a mistake, you can go backwards in time and correct it!
 \ = return to normal forwards mode after rewinding.
 
-Battery save, Save state and movie files are 100% compatible between NEStopia on x86 Linux and the Windows 
+Battery save, Save state and movie files are 100% compatible between Nestopia on x86 Linux and the Windows 
 original, so feel free to trade and swap with your Windows-using friends.
 
 Cartridges with batteries are automatically saved to a .sav file when you exit the emulator.  These .sav
 files are also compatible with the Windows version.
-
-

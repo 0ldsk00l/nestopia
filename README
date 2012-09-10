@@ -1,7 +1,11 @@
-Nestopia Linux - Undead Edition
--------------------------------
+Nestopia - Undead Edition
+-------------------------
 
 Nestopia has been abandoned for years. It's a great emulator,
-and losing it would be a shame. The purpose of this project
-is to keep Nestopia alive as long as possible and make sure
-it continues to work on modern Linux distributions.
+and losing it would be a shame. The purpose of this project is to
+keep Nestopia alive as long as possible and make sure it continues
+to work on modern Linux distributions. In the future, Windows
+builds may be maintained as well.
+
+Enhancements will be made in an attempt to make this the best,
+most user-friendly, standalone NES emulator on the Linux platform.
