@@ -44,7 +44,7 @@
 #include "main.h"
 #include "GL/glu.h"
 
-#define NST_VERSION "1.4.0-undead"
+#define NST_VERSION "1.41"
 
 extern "C" {
 #include <gtk/gtk.h>
@@ -1031,15 +1031,11 @@ int main(int argc, char *argv[])
 	static SDL_Event event;
 	int i;
 	void* userData = (void*) 0xDEADC0DE;
-	char dirname[1024], *home;
+	char dirname[1024], savedirname[1024], *home;
 
 	// read the key/controller mapping
 	ctl_defs = parse_input_file();
-/*	if (!ctl_defs)
-	{
-		std::cout << "Couldn't read ~/.nestopia/nstcontrols file\n";
-		return -1;
-	} */
+
 	if (!ctl_defs)
 	{
 		std::cout << "~/.nestopia/nstcontrols not found, creating a new one.\n";
@@ -1047,7 +1043,9 @@ int main(int argc, char *argv[])
 		// make sure the output directory exists
 		home = getenv("HOME");
 		sprintf(dirname, "%s/.nestopia/", home);
+		sprintf(savedirname, "%ssave/", dirname);
 		mkdir(dirname, 0700);
+		mkdir(savedirname, 0700);
 		create_input_file();
 		
 		ctl_defs = parse_input_file();
@@ -1511,7 +1509,7 @@ void configure_savename( const char* filename )
 	char savedir[1024], *homedir;
 
 	homedir = getenv("HOME");
-	sprintf(savedir, "%s/.nestopia/save", homedir);
+	sprintf(savedir, "%s/.nestopia/save/", homedir);
 
 	strcpy(savename, filename);
 
@@ -1543,7 +1541,7 @@ void configure_savename( const char* filename )
 	strcpy(savename, savedir);
 	
 	// also generate the window caption
-	sprintf(caption, "Nestopia %s: %s", NST_VERSION, capname);
+	sprintf(caption, "Nestopia Undead %s: %s", NST_VERSION, capname);
 
 	strcpy(rootname, savename);
 	strcat(savename, ".sav");
