@@ -22,6 +22,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#include <stdio.h>
 #include "NstObjectHeap.hpp"
 #include "NstResourceVersion.hpp"
 
@@ -37,7 +38,7 @@ namespace Nestopia
 		{
 			NST_ASSERT( path );
 
-			char buffer[] = "xx.xx";
+			char buffer[] = "xxxx.xxxx.xxxx.xxxx\0";
 
 			if (uint size = ::GetFileVersionInfoSize( path, 0 ))
 			{
@@ -52,16 +53,34 @@ namespace Nestopia
 					{
 						info = *static_cast<const VS_FIXEDFILEINFO*>(ptr);
 
-						char* string = buffer;
+						//fetches the version numbers
+						WORD v1 = HIWORD(versiontype == PRODUCT ? info.dwProductVersionMS : info.dwFileVersionMS);
+						WORD v2 = LOWORD(versiontype == PRODUCT ? info.dwProductVersionMS : info.dwFileVersionMS);
+						WORD v3 = HIWORD(versiontype == PRODUCT ? info.dwProductVersionLS : info.dwFileVersionLS);
+						WORD v4 = LOWORD(versiontype == PRODUCT ? info.dwProductVersionLS : info.dwFileVersionLS);
 
-						if (HIWORD(info.dwFileVersionMS))
-							*string++ = '0' + HIWORD(versiontype == PRODUCT ? info.dwProductVersionMS : info.dwFileVersionMS);
-
-						string[0] = '0' + LOWORD(versiontype == PRODUCT ? info.dwProductVersionMS : info.dwFileVersionMS);
-						string[1] = '.';
-						string[2] = '0' + HIWORD(versiontype == PRODUCT ? info.dwProductVersionLS : info.dwFileVersionLS);
-						string[3] = '0' + LOWORD(versiontype == PRODUCT ? info.dwProductVersionLS : info.dwFileVersionLS);
-						string[4] = '\0';
+						if (v1)
+						{
+							if (v4)
+							{
+								sprintf(buffer, "%d.%d.%d.%d", v1, v2, v3, v4); //maps 1,2,0,4 to "1.2.0.4"
+							}
+							else
+							{
+								sprintf(buffer, "%d.%d.%d", v1, v2, v3);	//maps 1,2,0,0 to "1.2.0"
+							}
+						}
+						else
+						{
+							if (v4)
+							{
+								sprintf(buffer, "%d.%d.%d", v2, v3, v4);	//maps 0,1,2,3 to "1.2.3"
+							}
+							else
+							{
+								sprintf(buffer, "%d.%d", v2, v3);	//maps 0,1,2,0 to "1.2"
+							}
+						}
 					}
 				}
 			}

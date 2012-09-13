@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 #include "language/resource.h"
+#include "NstResourceString.hpp"
 #include "NstIoLog.hpp"
 #include "NstApplicationException.hpp"
 #include "NstDirect2D.hpp"
@@ -275,21 +276,50 @@ namespace Nestopia
 				lastResult = device.RenderScreen( state, indexBuffer.NumStrips(), vertexBuffer.NumVertices() );
 		}
 
+		/**
+		 * Selects a video adapter and creates a new video device. Selection is ignored if the adapter is already selected.
+		 *
+		 * @param adapter The video adapter to select.
+		 * @throws Application::Exception If an error occured creating or resetting the new video device.
+		 * @see Application::Exception
+		 */
 		void Direct2D::SelectAdapter(const Adapters::const_iterator adapter)
 		{
 			if (device.GetOrdinal() != adapter->ordinal)
 			{
 				InvalidateObjects();
+				
 				device.Create( base, *adapter );
-				lastResult = INVALID_RECT;
+				if (FAILED(device.Reset()))
+					throw Application::Exception( L"Couldn't reset the new video device!" );
+
+				ValidateObjects();
+				lastResult = D3D_OK;
+				//lastResult = INVALID_RECT;	//removed when implementing support for multiple monitor adapters
+			}
+			else
+			{
+				Io::Log() << "Selection of video adapter with ordinal \"" << adapter->ordinal << "\" was ignored as it is already selected.\r\n";
 			}
 		}
 
+		/**
+		 * Verifies if a switch to a fullscreen mode can be made or if the mode is already set to fullscreen.
+		 * 
+		 * @param mode The video mode to set to fullscreen.
+		 * @return True if switched to the fullscreen mode can be made. False if the mode is already set to fullscreen.
+		 */
 		bool Direct2D::CanSwitchFullscreen(const Adapter::Modes::const_iterator mode) const
 		{
 			return device.CanSwitchFullscreen( *mode );
 		}
 
+		/**
+		 * Switches to a fullscreen mode. Switch is ignored if the specific mode is already set to fullscreen.
+		 * 
+		 * @param mode The video mode to set to fullscreen.
+		 * @return True if switched to fullscreen. False if the mode is already set in fullscreen.
+		 */
 		bool Direct2D::SwitchFullscreen(const Adapter::Modes::const_iterator mode)
 		{
 			if (CanSwitchFullscreen( mode ))
@@ -304,6 +334,11 @@ namespace Nestopia
 			return false;
 		}
 
+		/**
+		 * Switches to window mode. Switch is ignored if already in window mode.
+		 * 
+		 * @return True if switched to window mode. False if the mode is already in window mode.
+		 */
 		bool Direct2D::SwitchWindowed()
 		{
 			if (!device.GetPresentation().Windowed)
@@ -328,7 +363,7 @@ namespace Nestopia
 			}
 		}
 
-		bool Direct2D::Reset()
+		bool Direct2D::Repair()
 		{
 			if (FAILED(lastResult) && lastResult != INVALID_RECT)
 			{
@@ -514,6 +549,11 @@ namespace Nestopia
 			}
 		}
 
+		/**
+		 * Lists all video adapters and stores their information and properties.
+		 *
+		 * @param d3d The Direct3D9 object to fetch video adapters from.
+		 */
 		const Direct2D::Adapters Direct2D::Base::EnumerateAdapters(IDirect3D9& d3d)
 		{
 			NST_COMPILE_ASSERT( D3DADAPTER_DEFAULT == 0 );
@@ -521,21 +561,31 @@ namespace Nestopia
 			Io::Log() << "Direct3D: initializing..\r\n";
 
 			Adapters adapters;
-
 			for (uint ordinal=0, numAdapters=d3d.GetAdapterCount(); ordinal < NST_MIN(numAdapters,255); ++ordinal)
 			{
 				D3DADAPTER_IDENTIFIER9 identifier;
 
 				if (SUCCEEDED(d3d.GetAdapterIdentifier( ordinal, 0, &identifier )))
 				{
-					if (!adapters.empty() && adapters.back().guid == identifier.DeviceIdentifier)
-						continue;
+					uint guidIndex = 1;	//the index of adapters of the same GUID
+					if (!adapters.empty())
+					{
+						for (Adapters::iterator adapterIterator = adapters.begin(); adapterIterator != adapters.end(); adapterIterator++)	//for each previous found adapter
+						{
+							if (adapterIterator->guid == identifier.DeviceIdentifier)	//if the adapter is of the same GUID
+							{
+								guidIndex++;
+							}
+						}
+					}
 
 					Io::Log() << "Direct3D: enumerating device - name: "
-                              << (*identifier.Description ? identifier.Description : "unknown")
-                              << ", GUID: "
-                              << System::Guid( identifier.DeviceIdentifier ).GetString()
-                              << "\r\n";
+										<< (*identifier.Description ? identifier.Description : "unknown")
+										<< ", GUID: "
+										<< System::Guid( identifier.DeviceIdentifier ).GetString()
+										<< ", index: "
+										<< guidIndex
+										<< "\r\n";
 
 					Adapter::Modes modes;
 
@@ -583,7 +633,10 @@ namespace Nestopia
 						Adapter& adapter = adapters.back();
 
 						adapter.guid                = identifier.DeviceIdentifier;
+						adapter.guidIndex           = guidIndex;
 						adapter.name                = (*identifier.Description ? identifier.Description : "Unknown");
+						adapter.name.Trim();
+						adapter.name                << Resource::String( IDS_DIALOG_VIDEO_ADAPTER_INDEX_SUFFIX ).Invoke( ValueString(guidIndex) );	//appends the GUID index suffix
 						adapter.ordinal             = ordinal;
 						adapter.deviceType          = (caps.DeviceType != D3DDEVTYPE_REF ? Adapter::DEVICE_HAL : Adapter::DEVICE_HEL);
 						adapter.maxScreenSize       = Point(caps.MaxTextureWidth,caps.MaxTextureHeight);
@@ -603,13 +656,13 @@ namespace Nestopia
 						Io::Log log;
 
 						log << "Direct3D: dynamic textures: " << (adapter.videoMemScreen ? "supported\r\n" : "unsupported\r\n")
-							<< "Direct3D: texture bilinear filtering: " << ((adapter.filters & Adapter::FILTER_BILINEAR) ? "supported\r\n" : "unsupported\r\n")
-							<< "Direct3D: max texture dimensions: " << caps.MaxTextureWidth << 'x' << caps.MaxTextureHeight
-							<< "\r\nDirect3D: scanline effect: " << (adapter.canDoScanlineEffect ? "supported\r\n" : "unsupported\r\n")
-							<< "Direct3D: vsync on every second refresh: " << (adapter.intervalTwo ? "supported\r\n" : "unsupported\r\n")
-							<< "Direct3D: vsync on every third refresh: " << (adapter.intervalThree ? "supported\r\n" : "unsupported\r\n")
-							<< "Direct3D: found " << modes.size() << " display modes\r\n"
-							<< "Direct3D: supported monitor frequencies: ";
+								<< "Direct3D: texture bilinear filtering: " << ((adapter.filters & Adapter::FILTER_BILINEAR) ? "supported\r\n" : "unsupported\r\n")
+								<< "Direct3D: max texture dimensions: " << caps.MaxTextureWidth << 'x' << caps.MaxTextureHeight
+								<< "\r\nDirect3D: scanline effect: " << (adapter.canDoScanlineEffect ? "supported\r\n" : "unsupported\r\n")
+								<< "Direct3D: vsync on every second refresh: " << (adapter.intervalTwo ? "supported\r\n" : "unsupported\r\n")
+								<< "Direct3D: vsync on every third refresh: " << (adapter.intervalThree ? "supported\r\n" : "unsupported\r\n")
+								<< "Direct3D: found " << modes.size() << " display modes\r\n"
+								<< "Direct3D: supported monitor frequencies: ";
 
 						Mode::Rates rates;
 
@@ -713,7 +766,7 @@ namespace Nestopia
 
 			dialogBoxMode = false;
 
-			Create( base, base.GetAdapter(0) );
+			Create( base, base.GetAdapter(0) );	//always connects to first video device at start up
 		}
 
 		void Direct2D::Device::Create(IDirect3D9& d3d,const Adapter& adapter)
@@ -1086,6 +1139,12 @@ namespace Nestopia
 			return !presentation.Windowed && dialogBoxMode != enable;
 		}
 
+		/**
+		 * Verifies if a switch to a fullscreen mode can be made or if the mode is already set to fullscreen.
+		 * 
+		 * @param mode The video mode to set to fullscreen.
+		 * @return True if switched to the fullscreen mode can be made. False if the mode is already set to fullscreen.
+		 */
 		bool Direct2D::Device::CanSwitchFullscreen(const Mode& mode) const
 		{
 			return
@@ -1098,6 +1157,13 @@ namespace Nestopia
 			);
 		}
 
+		/**
+		 * Switches to fullscreen mode. Creates fonts to be displayed in fullscreen.
+		 * 
+		 * @param mode The video mode to set to fullscreen.
+		 * @throws Application::Exception If failed switch to fullscreen.
+		 * @see Application::Exception
+		 */
 		void Direct2D::Device::SwitchFullscreen(const Mode& mode)
 		{
 			presentation.Windowed = false;
@@ -1130,6 +1196,12 @@ namespace Nestopia
 			return Reset();
 		}
 
+		/**
+		 * Switches to window mode. Destroys any fullscreen fonts and creates fonts to be displayed in status bar.
+		 * 
+		 * @throws Application::Exception If failed switch to window mode.
+		 * @see Application::Exception
+		 */
 		void Direct2D::Device::SwitchWindowed()
 		{
 			fonts.Destroy( false );

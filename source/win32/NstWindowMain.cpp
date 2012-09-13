@@ -240,11 +240,15 @@ namespace Nestopia
 						if (emulator.IsGame())
 						{
 							for (uint skips=frameClock.GameSynchronize( video.ThrottleRequired(frameClock.GetRefreshRate()) ); skips; --skips)
+							{
+								input.Poll();
 								emulator.Execute( NULL, sound.GetOutput(), input.GetOutput() );
+							}
 
+							input.Poll();
 							emulator.Execute( video.GetOutput(), sound.GetOutput(), input.GetOutput() );
 							video.PresentScreen();
-							input.Poll();
+							
 						}
 						else
 						{
@@ -284,40 +288,25 @@ namespace Nestopia
 
 		bool Main::OnStartEmulation()
 		{
-			if (window.Enabled() && (CanRunInBackground() || (window.Active() && !window.Minimized() && (Windowed() || !menu.Visible()))))
+			
+			if (window.Enabled())
 			{
-				int priority;
-
-				switch (preferences.GetPriority())
+				bool fActive = (window.Active() && !window.Minimized() && (Windowed() || !menu.Visible()));
+				if (CanRunInBackground() || fActive)
 				{
-					case Managers::Preferences::PRIORITY_HIGH:
+					bool fRealtime = (emulator.IsGame() && (!CanRunInBackground() || fActive));
+					::SetThreadPriority( ::GetCurrentThread(), fRealtime ? THREAD_PRIORITY_TIME_CRITICAL : THREAD_PRIORITY_HIGHEST );
+					::SetPriorityClass(::GetCurrentProcess(), fRealtime ? REALTIME_PRIORITY_CLASS : HIGH_PRIORITY_CLASS );
 
-						if (emulator.IsGame() && !CanRunInBackground())
-						{
-							priority = THREAD_PRIORITY_HIGHEST;
-							break;
-						}
+					frameClock.StartEmulation();
+					video.StartEmulation();
+					input.StartEmulation();
+					sound.StartEmulation();
 
-					case Managers::Preferences::PRIORITY_ABOVE_NORMAL:
-
-						priority = THREAD_PRIORITY_ABOVE_NORMAL;
-						break;
-
-					default:
-
-						priority = THREAD_PRIORITY_NORMAL;
-						break;
+					return true;
 				}
-
-				::SetThreadPriority( ::GetCurrentThread(), priority );
-
-				frameClock.StartEmulation();
-				video.StartEmulation();
-				input.StartEmulation();
-				sound.StartEmulation();
-
-				return true;
 			}
+
 
 			return false;
 		}
@@ -325,6 +314,7 @@ namespace Nestopia
 		void Main::OnStopEmulation()
 		{
 			::SetThreadPriority( ::GetCurrentThread(), THREAD_PRIORITY_NORMAL );
+			::SetPriorityClass(::GetCurrentProcess(), NORMAL_PRIORITY_CLASS );
 
 			sound.StopEmulation();
 			video.StopEmulation();

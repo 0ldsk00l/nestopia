@@ -58,7 +58,6 @@ namespace Nes
 				strobe = 0;
 				stream = 0xFF;
 				state = 0;
-				timeStamp = 0;
 				mic = 0;
 			}
 
@@ -80,8 +79,6 @@ namespace Nes
 
 					strobe = data[0] & 0x1;
 					stream = data[1] ^ 0xFF;
-
-					timeStamp = 0;
 				}
 			}
 
@@ -93,50 +90,40 @@ namespace Nes
 			{
 				input = i;
 				mic = 0;
-
-				if (timeStamp)
-					--timeStamp;
 			}
 
 			void Pad::Poll()
 			{
-				const uint nextStamp = cpu.GetCycles() / 0x10000;
-
-				if (timeStamp <= nextStamp)
+				if (input)
 				{
-					timeStamp = nextStamp;
+					Controllers::Pad& pad = input->pad[type - Api::Input::PAD1];
+					input = NULL;
 
-					if (input)
+					if (Controllers::Pad::callback( pad, type - Api::Input::PAD1 ))
 					{
-						Controllers::Pad& pad = input->pad[type - Api::Input::PAD1];
-						input = NULL;
+						uint buttons = pad.buttons;
 
-						if (Controllers::Pad::callback( pad, type - Api::Input::PAD1 ))
+						enum
 						{
-							uint buttons = pad.buttons;
+							UP    = Controllers::Pad::UP,
+							RIGHT = Controllers::Pad::RIGHT,
+							DOWN  = Controllers::Pad::DOWN,
+							LEFT  = Controllers::Pad::LEFT
+						};
 
-							enum
-							{
-								UP    = Controllers::Pad::UP,
-								RIGHT = Controllers::Pad::RIGHT,
-								DOWN  = Controllers::Pad::DOWN,
-								LEFT  = Controllers::Pad::LEFT
-							};
+						if (!pad.allowSimulAxes)
+						{
+							if ((buttons & (UP|DOWN)) == (UP|DOWN))
+								buttons &= (UP|DOWN) ^ 0xFFU;
 
-							if (!pad.allowSimulAxes)
-							{
-								if ((buttons & (UP|DOWN)) == (UP|DOWN))
-									buttons &= (UP|DOWN) ^ 0xFFU;
-
-								if ((buttons & (LEFT|RIGHT)) == (LEFT|RIGHT))
-									buttons &= (LEFT|RIGHT) ^ 0xFFU;
-							}
-
-							state = buttons;
+							if ((buttons & (LEFT|RIGHT)) == (LEFT|RIGHT))
+								buttons &= (LEFT|RIGHT) ^ 0xFFU;
 						}
 
-						mic |= pad.mic;
+						state = buttons;
 					}
+
+					mic |= pad.mic;
 				}
 			}
 

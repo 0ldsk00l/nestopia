@@ -42,6 +42,7 @@
 #pragma warning( pop )
 #endif
 
+#define DIRECTSOUND_VERSION 0x0800
 #include <dsound.h>
 
 namespace Nestopia
