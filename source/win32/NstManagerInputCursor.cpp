@@ -129,7 +129,7 @@ namespace Nestopia
 		{
 			deadline = NO_DEADLINE;
 
-			if (window.Focused())
+			if (window.Active())
 			{
 				Window::Point pos;
 				::GetCursorPos( &pos );

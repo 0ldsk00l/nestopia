@@ -113,7 +113,6 @@ namespace Nestopia
 		)
 		:
 		Manager      ( e, m, this, &Input::OnEmuEvent ),
-		polled       ( false ),
 		cursor       ( w, si, so ),
 		directInput  ( w ),
 		dialog       ( new Window::Input(directInput,e,cfg) ),
@@ -888,15 +887,6 @@ namespace Nestopia
 			commands.Poll();
 		}
 
-		inline void Input::CheckPoll()
-		{
-			if (!polled)
-			{
-				polled = true;
-				ForcePoll();
-			}
-		}
-
 		bool NST_CALLBACK Input::Callbacks::PollPad(UserData data,Pad& pad,uint index)
 		{
 			NST_COMPILE_ASSERT
@@ -911,7 +901,7 @@ namespace Nestopia
 
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(index,0);
 
@@ -1009,7 +999,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::POWERPAD_KEYS);
 
@@ -1028,7 +1018,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::POWERGLOVE_KEYS);
 
@@ -1102,7 +1092,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::HORITRACK_KEYS);
 
@@ -1146,7 +1136,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::PACHINKO_KEYS);
 
@@ -1171,7 +1161,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys[2] =
 			{
@@ -1203,7 +1193,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::CRAZYCLIMBER_KEYS);
 
@@ -1232,7 +1222,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::POWERPAD_KEYS);
 
@@ -1251,7 +1241,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const uchar* const NST_RESTRICT buffer = input.directInput.GetKeyboardBuffer();
 
@@ -1405,7 +1395,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const uchar* const NST_RESTRICT buffer = input.directInput.GetKeyboardBuffer();
 
@@ -1556,7 +1546,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const uchar* const NST_RESTRICT keyboard = input.directInput.GetKeyboardBuffer();
 
@@ -1674,7 +1664,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::MAHJONG_KEYS);
 
@@ -1725,7 +1715,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::EXCITINGBOXING_KEYS);
 
@@ -1759,7 +1749,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::PAD1_KEYS);
 
@@ -1783,7 +1773,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::POKKUNMOGURAA_KEYS);
 
@@ -1822,7 +1812,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::PARTYTAP_KEYS);
 
@@ -1844,7 +1834,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::EMULATION_KEYS);
 
@@ -1862,7 +1852,7 @@ namespace Nestopia
 		{
 			Input& input = *static_cast<Input*>(data);
 
-			input.CheckPoll();
+			input.ForcePoll();
 
 			const Key* const NST_RESTRICT keys = input.dialog->GetSettings().GetKeys(Settings::KARAOKESTUDIO_KEYS);
 

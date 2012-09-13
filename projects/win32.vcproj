@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
+	Version="9.00"
 	Name="Win32"
 	ProjectGUID="{7557C437-7013-4A87-B7C5-EA50699FC7B4}"
 	RootNamespace="Win32"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -20,6 +21,7 @@
 			OutputDirectory="$(SolutionDir)debugout\"
 			IntermediateDirectory="debug\win32\"
 			ConfigurationType="1"
+			UseOfMFC="0"
 			CharacterSet="1"
 			>
 			<Tool
@@ -42,6 +44,7 @@
 				AdditionalOptions="/vmb"
 				Optimization="0"
 				EnableIntrinsicFunctions="true"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include&quot;"
 				PreprocessorDefinitions="NST_DEBUG"
 				StringPooling="true"
 				MinimalRebuild="true"
@@ -76,13 +79,15 @@
 				AdditionalDependencies="libcmtd.lib unicows.lib kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib $(NOINHERIT)"
 				OutputFile="$(OutDir)nestopia.exe"
 				LinkIncremental="2"
-				AdditionalLibraryDirectories="$(SolutionDir)..\lib"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86&quot;;&quot;$(SolutionDir)..\lib&quot;"
 				IgnoreAllDefaultLibraries="false"
 				IgnoreDefaultLibraryNames="libc"
 				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
-				OptimizeForWindows98="1"
+				OptimizeForWindows98="0"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				SupportUnloadOfDelayLoadedDLL="false"
 				TargetMachine="1"
 			/>
@@ -105,9 +110,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -144,6 +146,7 @@
 				EnableIntrinsicFunctions="true"
 				FavorSizeOrSpeed="2"
 				OmitFramePointers="true"
+				AdditionalIncludeDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Include&quot;"
 				PreprocessorDefinitions="NDEBUG;_SECURE_SCL=0"
 				StringPooling="true"
 				RuntimeLibrary="0"
@@ -179,7 +182,7 @@
 				ShowProgress="0"
 				OutputFile="$(OutDir)nestopia.exe"
 				LinkIncremental="1"
-				AdditionalLibraryDirectories="$(SolutionDir)..\lib"
+				AdditionalLibraryDirectories="&quot;C:\Program Files (x86)\Microsoft DirectX SDK (February 2010)\Lib\x86&quot;;&quot;$(SolutionDir)..\lib&quot;"
 				GenerateManifest="true"
 				AdditionalManifestDependencies=""
 				IgnoreAllDefaultLibraries="false"
@@ -189,7 +192,9 @@
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
-				OptimizeForWindows98="1"
+				OptimizeForWindows98="0"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				SupportUnloadOfDelayLoadedDLL="false"
 				TargetMachine="1"
 			/>
@@ -210,9 +215,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -1213,6 +1215,28 @@
 				Name="Files"
 				>
 				<File
+					RelativePath="..\dll\7zxa.dll"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\source\win32\resource\copying.zip"
 					>
 				</File>
@@ -1221,8 +1245,74 @@
 					>
 				</File>
 				<File
+					RelativePath="..\dll\kailleraclient.dll"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
 					RelativePath="..\source\core\database\NstDatabase.zip"
 					>
+				</File>
+				<File
+					RelativePath="..\doc\releasenotes.txt"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
+				</File>
+				<File
+					RelativePath="..\dll\unrar.dll"
+					>
+					<FileConfiguration
+						Name="Debug|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
+					<FileConfiguration
+						Name="Release|Win32"
+						>
+						<Tool
+							Name="VCCustomBuildTool"
+							CommandLine="copy /Y &quot;$(InputPath)&quot; &quot;$(OutDir)&quot;&#x0D;&#x0A;"
+							Outputs="$(OutDir)\$(InputFileName)"
+						/>
+					</FileConfiguration>
 				</File>
 			</Filter>
 		</Filter>

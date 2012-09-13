@@ -46,6 +46,11 @@ It helps greatly if you copy these files to ~/.nestopia:
 
 - The Famicom Disk System BIOS (disksys.rom - not included - needed for FDS support)
 
+Changes from 1.40-undead
+=============================
+- Fixed a braindead SRAM path issue
+- Merged win32 fixes from Unofficial Build 1.41.1
+
 Changes from Linux revision H
 =============================
 - Ported to GTK+3

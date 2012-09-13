@@ -1,14 +1,11 @@
 ﻿
-Microsoft Visual Studio Solution File, Format Version 9.00
-# Visual Studio 2005
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Win32", "Win32.vcproj", "{7557C437-7013-4A87-B7C5-EA50699FC7B4}"
-	ProjectSection(ProjectDependencies) = postProject
-		{CCC3A09C-0F7A-4E12-8594-11F2C60D71DA} = {CCC3A09C-0F7A-4E12-8594-11F2C60D71DA}
-	EndProjectSection
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "win32", "win32.vcxproj", "{7557C437-7013-4A87-B7C5-EA50699FC7B4}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Core", "Core.vcproj", "{CCC3A09C-0F7A-4E12-8594-11F2C60D71DA}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "core", "core.vcxproj", "{CCC3A09C-0F7A-4E12-8594-11F2C60D71DA}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Language", "Language.vcproj", "{C456E741-CF7A-455E-884B-B0F9F86E7C86}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "language", "language.vcxproj", "{C456E741-CF7A-455E-884B-B0F9F86E7C86}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

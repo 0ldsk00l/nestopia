@@ -63,7 +63,6 @@ namespace Nestopia
 
 		private:
 
-			inline void CheckPoll();
 			void ForcePoll();
 
 			bool SetAdapter(uint) const;
@@ -274,7 +273,6 @@ namespace Nestopia
 				}
 			};
 
-			ibool polled;
 			AutoFire autoFire;
 			Cursor cursor;
 			Nes::Input::Controllers nesControllers;
@@ -298,10 +296,7 @@ namespace Nestopia
 
 			void Poll()
 			{
-				polled ^= 1;
-
-				if (polled)
-					ForcePoll();
+				ForcePoll();
 
 				if (cursor.MustAutoHide())
 					cursor.AutoHide();

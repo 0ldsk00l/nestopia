@@ -105,6 +105,8 @@ namespace Nestopia
 					FILTER_BILINEAR
 				};
 
+				/** used to identify multiple monitors on the same video adapter */
+				uint guidIndex;
 				uint ordinal;
 				DeviceType deviceType;
 				Point maxScreenSize;
@@ -139,7 +141,7 @@ namespace Nestopia
 			void UpdateFullscreenView(const Rect&,const Point&,const Rect&,uint,int,Adapter::Filter,bool);
 			void UpdateFrameRate(uint,bool,bool);
 			void EnableDialogBoxMode(bool);
-			bool Reset();
+			bool Repair();
 
 			enum ScreenShotResult
 			{
