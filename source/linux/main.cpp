@@ -44,7 +44,7 @@
 #include "main.h"
 #include "GL/glu.h"
 
-#define NST_VERSION "1.41"
+#define NST_VERSION "1.42"
 
 extern "C" {
 #include <gtk/gtk.h>
@@ -1189,7 +1189,7 @@ int main(int argc, char *argv[])
 		}
 		else
 		{
-			gtk_main_iteration_do(FALSE);
+			gtk_main_iteration_do(TRUE);
 		}
 	}
 
@@ -1541,7 +1541,7 @@ void configure_savename( const char* filename )
 	strcpy(savename, savedir);
 	
 	// also generate the window caption
-	sprintf(caption, "Nestopia Undead %s: %s", NST_VERSION, capname);
+	sprintf(caption, "Nestopia Undead %s - %s", NST_VERSION, capname);
 
 	strcpy(rootname, savename);
 	strcat(savename, ".sav");

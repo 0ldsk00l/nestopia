@@ -149,7 +149,7 @@ void auxio_do_state_load(void)
 					      NULL);
 
 	filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filter, "NEStopia save states");
+	gtk_file_filter_set_name(filter, "Nestopia save states");
 	gtk_file_filter_add_pattern(filter, "*.nst");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 
@@ -239,7 +239,7 @@ void auxio_do_movie_load(void)
 					      NULL);
 
 	filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filter, "NEStopia movies");
+	gtk_file_filter_set_name(filter, "Nestopia movies");
 	gtk_file_filter_add_pattern(filter, "*.nsv");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 
