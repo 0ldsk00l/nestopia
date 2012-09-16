@@ -193,6 +193,14 @@ static bool match_event(const EventVec &evtvec, const SDL_Event &evt)
 				return true;
 				}
 			break;
+			
+		case SDL_JOYHATMOTION:
+			if (evtT.jhat.which == evt.jhat.which
+				&& evtT.jhat.hat == evt.jhat.hat)
+				{
+				return true;
+				}
+			break;
 		
 		case SDL_JOYAXISMOTION:
 			if (evtT.jaxis.which == evt.jaxis.which
@@ -311,6 +319,12 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 							evt.jaxis.which + 1, evt.jaxis.axis, dir);
 						sprintf(input, "_J%dA%d%c", evt.jaxis.which, evt.jaxis.axis, dir);
 					}
+					break;
+
+				case SDL_JOYHATMOTION:
+					sprintf(match, "joy %d hat %d %d",
+						evt.jhat.which + 1, evt.jhat.value);
+					sprintf(input, "_J%dH%d%d", evt.jbutton.which, evt.jhat.hat, evt.jhat.value);
 					break;
 
 				case SDL_JOYBUTTONDOWN:
@@ -447,8 +461,9 @@ void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 			{
 				joy[ijoy] = SDL_JoystickOpen(ijoy);
 				int caxis = SDL_JoystickNumAxes(joy[ijoy]);
-				fprintf(stderr, "Joystick %d is '%s' has %d axes and %d buttons.\n",
-				 ijoy + 1, SDL_JoystickName(ijoy), caxis, SDL_JoystickNumButtons(joy[ijoy]));
+				int chat = SDL_JoystickNumHats(joy[ijoy]);
+				fprintf(stderr, "Joystick %d is '%s' has %d axes, %d hat(s), and %d buttons.\n",
+				 ijoy + 1, SDL_JoystickName(ijoy), caxis, chat, SDL_JoystickNumButtons(joy[ijoy]));
 
 				// calibrate - read axis positions and store as "centered"
 				// we expect joysticks to be centered in (-DEADZONE, DEADZONE) but

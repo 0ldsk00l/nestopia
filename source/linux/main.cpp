@@ -817,6 +817,15 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 					&& pind->evt.jbutton.button == evt.jbutton.button;
 				on = (evt.jbutton.state == SDL_PRESSED);
 				break;
+			
+			case SDL_JOYHATMOTION:
+				match = pind->evt.type == SDL_JOYHATMOTION
+					&& pind->evt.jhat.which == evt.jhat.which
+					&& pind->evt.jhat.hat == evt.jhat.hat
+					&& pind->evt.jhat.value == evt.jhat.value;
+				match = pind->evt.type == SDL_JOYHATMOTION && pind->evt.jhat.value == evt.jhat.value;
+				on = (evt.jhat.value != SDL_HAT_CENTERED);
+				break;
 
 			case SDL_JOYAXISMOTION:
 			{
@@ -1123,8 +1132,9 @@ int main(int argc, char *argv[])
 							event.key.keysym.mod = (SDLMod)((int)event.key.keysym.mod & (~(KMOD_NUM | KMOD_CAPS | KMOD_MODE)));
 							
 							// (intentional fallthrough)
+						case SDL_JOYHATMOTION:
 						case SDL_JOYAXISMOTION:
-					    case SDL_JOYBUTTONDOWN:
+						case SDL_JOYBUTTONDOWN:
 						case SDL_JOYBUTTONUP:
 							nst_dispatch(cNstPads, event);
 							break;
