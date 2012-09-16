@@ -117,6 +117,12 @@ static bool translate_joy(const char* str, SDL_Event &evt)
 		evt.jaxis.axis = str[2] - '0';
 		evt.jaxis.value = (str[3] == 'M' || str[3] == '-') ? -1 : 1;
 	}
+	else if (str[1] == 'H')	// hat
+	{
+		evt.type = SDL_JOYHATMOTION;
+		evt.jhat.hat = str[2] - '0';
+		evt.jhat.value = str[3] - '0';
+	}
 	else if (str[1] == 'B')	// button
 	{
 		evt.type = SDL_JOYBUTTONDOWN;
@@ -126,7 +132,7 @@ static bool translate_joy(const char* str, SDL_Event &evt)
 	}
 	else
 	{
-		std::cout << "Malformed joypad widget (A for axis, B for button)\n";
+		std::cout << "Malformed joypad widget (A for axis, H for hat, B for button)\n";
 		return false;
 	}
 
@@ -406,6 +412,11 @@ void write_output_file(InputDefT *ctl_defs)
   		else if (ctl_defs[i].evt.type == SDL_JOYAXISMOTION) 
 		{
 			sprintf(ctrl, "_J%dA%d%s\t", ctl_defs[i].evt.jbutton.which, ctl_defs[i].evt.jaxis.axis, (ctl_defs[i].evt.jaxis.value == 1) ? "PLUS" : "MINUS");
+		}
+		else if (ctl_defs[i].evt.type == SDL_JOYHATMOTION)
+		{
+			sprintf(ctrl, "_J%dH%d%d\t", ctl_defs[i].evt.jhat.which, ctl_defs[i].evt.jhat.hat, ctl_defs[i].evt.jhat.value);
+			
 		}
 		else if (ctl_defs[i].evt.type == SDL_JOYBUTTONDOWN)
 		{
