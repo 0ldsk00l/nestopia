@@ -785,7 +785,7 @@ static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
 static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, bool &on)
 {
 	pind = (pind == NULL) ? ctl_defs : pind + 1;
-
+	
 	bool match = false;
 	for (; pind->player != -1 && !match; ++pind)
 	{
@@ -816,15 +816,27 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 					&& pind->evt.jbutton.which == evt.jbutton.which
 					&& pind->evt.jbutton.button == evt.jbutton.button;
 				on = (evt.jbutton.state == SDL_PRESSED);
+				printf("%d", on);
 				break;
 			
 			case SDL_JOYHATMOTION:
+			// This block of code works for 4 directions but diagonal fails hard
 				match = pind->evt.type == SDL_JOYHATMOTION
 					&& pind->evt.jhat.which == evt.jhat.which
 					&& pind->evt.jhat.hat == evt.jhat.hat
 					&& pind->evt.jhat.value == evt.jhat.value;
-				match = pind->evt.type == SDL_JOYHATMOTION && pind->evt.jhat.value == evt.jhat.value;
-				on = (evt.jhat.value != SDL_HAT_CENTERED);
+				on = (evt.jhat.value == evt.jhat.value);
+				// Make it see the center position as a match, in the "off" position.
+				// Normally it won't recognize center as being the off position
+				// for the directions on the D-pad, and things get stuck.
+				if (evt.jhat.value == SDL_HAT_CENTERED) {
+					match = pind->evt.type == SDL_JOYHATMOTION
+						&& pind->evt.jhat.which == evt.jhat.which
+						&& pind->evt.jhat.hat == evt.jhat.hat;
+					on = 0;
+				}
+
+				printf("%d", on);
 				break;
 
 			case SDL_JOYAXISMOTION:
@@ -849,7 +861,6 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 	return NULL;
 }
 
-
 // try to dispatch an input event
 static void nst_dispatch(Input::Controllers *controllers, const SDL_Event &evt)
 {
@@ -865,19 +876,26 @@ static void nst_dispatch(Input::Controllers *controllers, const SDL_Event &evt)
 			if (pind->player == 0)
             {    
 				handle_input_event(controllers, (InputEvtT)pind->codeout);
+				#ifdef DEBUG_INPUT
+				printf("player %d event1: codeout %x\n", pind->player, pind->codeout);
+				#endif
 			}
 			else
             {    
 				#ifdef DEBUG_INPUT
-				printf("player %d event: codeout %x\n", pind->player, pind->codeout);
+				printf("player %d event2: codeout %x\n", pind->player, pind->codeout);
 				#endif
 				controllers->pad[pind->player - 1].buttons |= pind->codeout;
 			}
 		}
 		else
 		{
+			printf("player:%d\n", pind->player);
 			if (pind->player != 0)
             {    
+				#ifdef DEBUG_INPUT
+				printf("player %d event3: codeout %x\n\n", pind->player, pind->codeout);
+				#endif
 				controllers->pad[pind->player - 1].buttons &= ~pind->codeout;
 			}
 		}
