@@ -816,7 +816,7 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 					&& pind->evt.jbutton.which == evt.jbutton.which
 					&& pind->evt.jbutton.button == evt.jbutton.button;
 				on = (evt.jbutton.state == SDL_PRESSED);
-				printf("%d", on);
+				//printf("%d", on);
 				break;
 			
 			case SDL_JOYHATMOTION:
@@ -836,7 +836,7 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 					on = 0;
 				}
 
-				printf("%d", on);
+				//printf("%d", on);
 				break;
 
 			case SDL_JOYAXISMOTION:

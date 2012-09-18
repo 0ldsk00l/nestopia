@@ -17,8 +17,10 @@
 // Neutral resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_NEU)
+#ifdef _WIN32
 LANGUAGE LANG_NEUTRAL, SUBLANG_NEUTRAL
 #pragma code_page(1252)
+#endif //_WIN32
 
 /////////////////////////////////////////////////////////////////////////////
 //
@@ -65,11 +67,13 @@ IDR_IMAGEDATABASE       IMAGEDATABASE           "..\\..\\core\\database\\NstData
 
 
 /////////////////////////////////////////////////////////////////////////////
-// English (United States) resources
+// English (U.S.) resources
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_ENU)
+#ifdef _WIN32
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 #pragma code_page(1252)
+#endif //_WIN32
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
@@ -84,8 +88,8 @@ END
 
 2 TEXTINCLUDE 
 BEGIN
-    "#include <windows.h>\r\n"
-    "#define IDC_STATIC (-1)\r\n"
+	"#include <windows.h>\r\n"
+	"#define IDC_STATIC (-1)\r\n"
     "\0"
 END
 
@@ -105,7 +109,7 @@ END
 
 VS_VERSION_INFO VERSIONINFO
  FILEVERSION 0,0,0,1
- PRODUCTVERSION 0,1,4,2
+ PRODUCTVERSION 0,1,4,1
  FILEFLAGSMASK 0x17L
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -122,12 +126,12 @@ BEGIN
         BEGIN
             VALUE "Comments", "http://nestopia.sourceforge.net/"
             VALUE "FileDescription", "Nestopia"
-            VALUE "FileVersion", "1.41.1"
+            VALUE "FileVersion", "0.01"
             VALUE "InternalName", "Nestopia"
             VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
             VALUE "OriginalFilename", "Nestopia.exe"
             VALUE "ProductName", "Nestopia"
-            VALUE "ProductVersion", "1.41.1"
+            VALUE "ProductVersion", "1.42"
         END
     END
     BLOCK "VarFileInfo"
@@ -143,7 +147,7 @@ END
 //
 
 IDR_LICENSE             LICENSE                 "copying.zip"
-#endif    // English (United States) resources
+#endif    // English (U.S.) resources
 /////////////////////////////////////////////////////////////////////////////
 
 
