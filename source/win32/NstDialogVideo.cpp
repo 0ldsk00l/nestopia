@@ -230,35 +230,15 @@ namespace Nestopia
 
 			Configuration::ConstSection video( cfg["video"] );
 
-			//searches video adapters
-			{
-				System::Guid adapterGuid = System::Guid(video["device"].Str());
-				ulong guidIndex = video["device-index"].Int();
-				Adapters::const_iterator adapterSearchStart = adapters.begin();
+			settings.adapter = std::find
+			(
+				adapters.begin(),
+				adapters.end(),
+				System::Guid( video["device"].Str() )
+			);
+
+			if (settings.adapter == adapters.end())
 				settings.adapter = adapters.begin();
-				while (settings.adapter != adapters.end())
-				{
-					settings.adapter = std::find(adapterSearchStart, adapters.end(), adapterGuid);
-
-					if (settings.adapter != adapters.end())	//if an adapter with matching GUID was found
-					{
-						if (settings.adapter->guidIndex == guidIndex)
-						{
-							break;
-						}
-						else
-						{
-							adapterSearchStart++;	//continue searching the remaining adapters
-						}
-					}
-				}
-
-				if (settings.adapter == adapters.end())	//if no matching adapter was found
-				{
-					Io::Log() << "The setting's video adapter was not found. Uses the first adapter.\r\n";
-					settings.adapter = adapters.begin();
-				}
-			}
 
 			{
 				Configuration::ConstSection fullscreen( video["fullscreen"] );
@@ -393,11 +373,6 @@ namespace Nestopia
 		{
 		}
 
-		/**
-		 * Saves all the video settings to a configuration file.
-		 * 
-		 * @param cfg The configuration file to store the video settings to.
-		 */
 		void Video::Save(Configuration& cfg) const
 		{
 			cfg["view" ]["size"]["fullscreen"].Str() =
@@ -411,7 +386,6 @@ namespace Nestopia
 			if (settings.adapter != adapters.end())
 			{
 				video["device"].Str() = settings.adapter->guid.GetString();
-				video["device-index"].Str() = ValueString(settings.adapter->guidIndex);
 
 				if (settings.mode != settings.adapter->modes.end())
 				{
