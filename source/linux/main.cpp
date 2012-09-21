@@ -559,6 +559,7 @@ static void QuickSave(int isvst)
 	std::ofstream os(strFile.c_str());
 	// use "NO_COMPRESSION" to make it easier to hack save states
 	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::USE_COMPRESSION);
+	printf("State Saved\n");
 }
 
 
@@ -572,6 +573,7 @@ static void QuickLoad(int isvst)
 	Machine machine( emulator );
 	std::ifstream is(strFile.c_str());
 	Nes::Result res = machine.LoadState(is);
+	printf("State Loaded\n");
 }
 
 
@@ -831,7 +833,7 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 						&& pind->evt.jhat.which == evt.jhat.which
 						&& pind->evt.jhat.hat == evt.jhat.hat
 						&& pind->evt.jhat.value & SDL_HAT_UP;
-						on = evt.jhat.value & SDL_HAT_UP;
+					on = evt.jhat.value & SDL_HAT_UP;
 					if (match) {
 						return pind;
 					}
@@ -840,7 +842,7 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 						&& pind->evt.jhat.which == evt.jhat.which
 						&& pind->evt.jhat.hat == evt.jhat.hat
 						&& pind->evt.jhat.value & SDL_HAT_DOWN;
-						on = evt.jhat.value & SDL_HAT_DOWN;
+					on = evt.jhat.value & SDL_HAT_DOWN;
 					if (match) {
 						return pind;
 					}
@@ -849,7 +851,7 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 						&& pind->evt.jhat.which == evt.jhat.which
 						&& pind->evt.jhat.hat == evt.jhat.hat
 						&& pind->evt.jhat.value & SDL_HAT_LEFT;
-						on = evt.jhat.value & SDL_HAT_LEFT;
+					on = evt.jhat.value & SDL_HAT_LEFT;
 					if (match) {
 						return pind;
 					}
@@ -858,7 +860,7 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 						&& pind->evt.jhat.which == evt.jhat.which
 						&& pind->evt.jhat.hat == evt.jhat.hat
 						&& pind->evt.jhat.value & SDL_HAT_RIGHT;
-						on = evt.jhat.value & SDL_HAT_RIGHT;
+					on = evt.jhat.value & SDL_HAT_RIGHT;
 					if (match) {
 						return pind;
 					}
@@ -917,7 +919,6 @@ static void nst_dispatch(Input::Controllers *controllers, const SDL_Event &evt)
 
 		else
 		{
-			printf("player:%d\n", pind->player);
 			if (pind->player != 0)
             {    
 				#ifdef DEBUG_INPUT

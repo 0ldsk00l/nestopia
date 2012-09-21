@@ -337,6 +337,10 @@ void create_input_file()
 	fprintf(outfile, "P1DN		_J0A1PLUS	\n");
 	fprintf(outfile, "P1LT		_J0A0MINUS	\n");
 	fprintf(outfile, "P1RT		_J0A0PLUS	\n");
+	fprintf(outfile, "P1UP		_J0H01	\n");
+	fprintf(outfile, "P1DN		_J0H04	\n");
+	fprintf(outfile, "P1LT		_J0H08	\n");
+	fprintf(outfile, "P1RT		_J0H02	\n");
 	fprintf(outfile, "P1A		_J0B1	\n");
 	fprintf(outfile, "P1B		_J0B0	\n");
 	fprintf(outfile, "P1START		_J0B9\n");
