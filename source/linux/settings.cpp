@@ -16,7 +16,7 @@
 using namespace LinuxNst;
 
 #define READ_SETTING(x) fread(&x, sizeof(x), 1, f)
-#define WRITE_SETTING(x) if (fwrite(&x, sizeof(x), 1, f) != sizeof(x)) std::cout << "Error writing setting!\n"
+#define WRITE_SETTING(x) fwrite(&x, sizeof(x), 1, f)
 
 static int rates[4] = { 11025, 22050, 44100, 48000 };
 
