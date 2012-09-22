@@ -1,5 +1,5 @@
 #
-# Makefile for Linux Nestopia v1.40
+# Makefile for Linux Nestopia
 # By R. Belmont 2008
 # By R. Danbrook 2012
 #

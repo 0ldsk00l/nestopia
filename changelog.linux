@@ -45,6 +45,12 @@ It helps greatly if you copy these files to ~/.nestopia:
 
 - The Famicom Disk System BIOS (disksys.rom - not included - needed for FDS support)
 
+Changes from 1.41
+=============================
+- Added native support for D-pads (Hat Switches)
+- Fixed the 100% CPU usage bug
+- Fixed the "Error writing setting!" bug (patch from Arch Linux)
+
 Changes from 1.40-undead
 =============================
 - Fixed a braindead SRAM path issue
