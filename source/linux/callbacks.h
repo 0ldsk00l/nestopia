@@ -112,6 +112,10 @@ on_archcancel_clicked                  (GtkButton       *button,
 void
 on_cheatbutton_pressed                 (GtkButton       *button,
                                         gpointer         user_data);
+                                        
+void
+on_aboutbutton_clicked                 (GtkButton       *button,
+                                        gpointer         user_data);
 
 void
 on_parok_pressed                       (GtkButton       *button,

@@ -231,6 +231,13 @@ on_cheatbutton_pressed                 (GtkButton       *button,
 
 }
 
+void
+on_aboutbutton_clicked                 (GtkButton       *button,
+                                        gpointer         user_data)
+{
+
+}
+
 
 void
 on_parok_pressed                       (GtkButton       *button,
