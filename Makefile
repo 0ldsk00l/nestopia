@@ -181,10 +181,17 @@ $(EXE): $(OBJS)
 install:
 	mkdir -p $(DATADIR)
 	install -m 0755 $(EXE) $(BINDIR)
+	install -m 0644 source/linux/icons/nestopia.desktop $(PREFIX)/share/applications
 	install -m 0644 NstDatabase.xml $(DATADIR)
+	install -m 0644 source/linux/icons/*.png $(DATADIR)
+	install -m 0644 source/linux/icons/*.svg $(DATADIR)
+	install -m 0644 source/linux/icons/nestopia.svg /usr/share/pixmaps
+
 	
 uninstall:
 	rm $(BINDIR)/$(EXE)
+	rm $(PREFIX)/share/applications/nestopia.desktop
+	rm /usr/share/pixmaps/nestopia.svg
 	rm -rf $(DATADIR)
 
 clean:
