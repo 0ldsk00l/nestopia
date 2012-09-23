@@ -5,3 +5,4 @@
 GtkWidget* create_mainwindow (void);
 GtkWidget* create_archselect (void);
 GtkWidget* create_cheatwind (void);
+GtkWidget* create_about (void);

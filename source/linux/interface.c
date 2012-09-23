@@ -84,6 +84,7 @@ create_mainwindow (void)
   GtkWidget *label23;
   GtkWidget *favorcombo;
   GtkWidget *spatchcombo;
+  GtkWidget *aboutbutton;
   GtkWidget *misctab;
 
   mainwindow = gtk_window_new (GTK_WINDOW_TOPLEVEL);
@@ -406,6 +407,11 @@ create_mainwindow (void)
   gtk_widget_set_size_request (spatchcombo, 128, 32);
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (spatchcombo), _("Off"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (spatchcombo), _("On"));
+  
+  aboutbutton = gtk_button_new_with_mnemonic (_("About"));
+  gtk_widget_show (aboutbutton);
+  gtk_fixed_put (GTK_FIXED (fixed7), aboutbutton, 340, 16);
+  gtk_widget_set_size_request (aboutbutton, 120, 40);
 
   misctab = gtk_label_new (_("Extras"));
   gtk_widget_show (misctab);
@@ -434,6 +440,9 @@ create_mainwindow (void)
                     NULL);
   g_signal_connect ((gpointer) cheatbutton, "pressed",
                     G_CALLBACK (on_cheatbutton_pressed),
+                    NULL);
+  g_signal_connect ((gpointer) aboutbutton, "clicked",
+                    G_CALLBACK (on_aboutbutton_clicked),
                     NULL);
   g_signal_connect ((gpointer) scaleamtcombo, "changed",
                     G_CALLBACK (on_scaleamtcombo_changed),
@@ -557,6 +566,7 @@ create_mainwindow (void)
   GLADE_HOOKUP_OBJECT (mainwindow, label23, "label23");
   GLADE_HOOKUP_OBJECT (mainwindow, favorcombo, "favorcombo");
   GLADE_HOOKUP_OBJECT (mainwindow, spatchcombo, "spatchcombo");
+  GLADE_HOOKUP_OBJECT (mainwindow, aboutbutton, "aboutbutton");
   GLADE_HOOKUP_OBJECT (mainwindow, misctab, "misctab");
 
   return mainwindow;
@@ -778,3 +788,22 @@ create_cheatwind (void)
   return cheatwind;
 }
 
+GtkWidget*
+create_about (void)
+{
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("source/linux/icons/nestopia128.png", NULL);
+	
+	GtkWidget *aboutdialog = gtk_about_dialog_new();
+	
+	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
+	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia Undead");
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.42");
+	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "An accurate Nintendo Entertainment System Emulator");
+	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/");
+	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012, R. Danbrook\n(c) 2008, R. Belmont\n(c) 2008, Martin Freij");
+	g_object_unref(pixbuf), pixbuf = NULL;
+	gtk_dialog_run(GTK_DIALOG(aboutdialog));
+	gtk_widget_destroy(aboutdialog);
+	
+	return aboutdialog;
+}

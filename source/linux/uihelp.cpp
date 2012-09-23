@@ -329,6 +329,11 @@ void on_cheatbutton_pressed(GtkButton *button, gpointer user_data)
 	sCheatMgr->ShowManager();
 }
 
+void on_aboutbutton_clicked(GtkButton *button,  gpointer user_data)
+{
+	create_about();
+}
+
 gboolean
 on_volumescroll_configure_event        (GtkWidget       *widget,
                                         GdkEventConfigure *event,
