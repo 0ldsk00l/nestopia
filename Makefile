@@ -30,6 +30,7 @@ CFLAGS += -DINCLUDE_OPENGL
 LIBS   += -lGL -lGLU
 
 # Allow files to go into a data directory
+CFLAGS += -DDATADIR=\"$(DATADIR)\"
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
@@ -179,12 +180,12 @@ $(EXE): $(OBJS)
 	@$(CPP) -g -o $(EXE) $^ $(LIBS)
 
 install:
-	mkdir -p $(DATADIR)
+	mkdir -p $(DATADIR)/icons
 	install -m 0755 $(EXE) $(BINDIR)
 	install -m 0644 source/linux/icons/nestopia.desktop $(DATADIR)
 	install -m 0644 NstDatabase.xml $(DATADIR)
-	install -m 0644 source/linux/icons/*.png $(DATADIR)
-	install -m 0644 source/linux/icons/*.svg $(DATADIR)
+	install -m 0644 source/linux/icons/*.png $(DATADIR)/icons
+	install -m 0644 source/linux/icons/*.svg $(DATADIR)/icons
 	install -m 0644 source/linux/icons/nestopia.svg /usr/share/pixmaps
 	xdg-desktop-menu install --novendor $(DATADIR)/nestopia.desktop
 
