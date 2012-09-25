@@ -408,10 +408,10 @@ create_mainwindow (void)
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (spatchcombo), _("Off"));
   gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (spatchcombo), _("On"));
   
-  aboutbutton = gtk_button_new_with_mnemonic (_("About"));
+  aboutbutton = gtk_button_new_from_stock ("gtk-about");
   gtk_widget_show (aboutbutton);
   gtk_fixed_put (GTK_FIXED (fixed7), aboutbutton, 340, 16);
-  gtk_widget_set_size_request (aboutbutton, 120, 40);
+  gtk_widget_set_size_request (aboutbutton, 100, 40);
 
   misctab = gtk_label_new (_("Extras"));
   gtk_widget_show (misctab);
@@ -791,7 +791,9 @@ create_cheatwind (void)
 GtkWidget*
 create_about (void)
 {
-	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file("source/linux/icons/nestopia128.png", NULL);
+	char svgpath[1024];
+	sprintf(svgpath, "%s/icons/nestopia.svg", DATADIR);
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 256, NULL);
 	
 	GtkWidget *aboutdialog = gtk_about_dialog_new();
 	
@@ -800,7 +802,7 @@ create_about (void)
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.42");
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "An accurate Nintendo Entertainment System Emulator");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/");
-	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012, R. Danbrook\n(c) 2008, R. Belmont\n(c) 2008, Martin Freij");
+	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij");
 	g_object_unref(pixbuf), pixbuf = NULL;
 	gtk_dialog_run(GTK_DIALOG(aboutdialog));
 	gtk_widget_destroy(aboutdialog);
