@@ -18,6 +18,8 @@ CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-func
 
 CPPFLAGS = -Wno-deprecated -Wno-write-strings -fno-rtti
 
+LDFLAGS = -Wl,--as-needed
+
 EXE  = nestopia
 LIBS = -lm -lz -lasound  `sdl-config --libs` `pkg-config --libs gtk+-3.0`
 
@@ -177,7 +179,7 @@ $(sort $(OBJDIRS)):
 # link the commandline exe
 $(EXE): $(OBJS)
 	@echo Linking $@...
-	@$(CPP) -g -o $(EXE) $^ $(LIBS)
+	@$(CPP) $(LDFLAGS) -g -o $(EXE) $^ $(LIBS)
 
 install:
 	mkdir -p $(DATADIR)/icons
