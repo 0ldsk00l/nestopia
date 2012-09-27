@@ -164,10 +164,6 @@ objs/%.o: source/%.cpp
 	@echo Compiling $<...
 	@$(CXX) $(CFLAGS) $(CXXFLAGS) $< -o $@
 
-objs/%.o: source/%.o
-	@echo Compiling $<...
-	@$.o) $(CFLAGS) $.oFLAGS) $< -o $@
-
 all: maketree $(EXE) $(GENNSTCONTROLS)
 
 maketree: $(sort $(OBJDIRS))
