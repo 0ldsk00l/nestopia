@@ -175,7 +175,7 @@ $(sort $(OBJDIRS)):
 # link the commandline exe
 $(EXE): $(OBJS)
 	@echo Linking $@...
-	@$(CXX) $(LDFLAGS) -g -o $(EXE) $^ $(LIBS)
+	@$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $^ $(LIBS)
 
 install:
 	mkdir -p $(DATADIR)/icons
