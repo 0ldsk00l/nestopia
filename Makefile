@@ -6,33 +6,38 @@
 
 CC   = @gcc
 CXX  = @g++
-CFLAGS = -O3 -g3
-CFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
-CFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/linux/unzip 
-CFLAGS += -Isource/core/vssystem -Isource/linux -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/linux/7zip 
-CFLAGS += `sdl-config --cflags` `pkg-config --cflags gtk+-3.0`
+CFLAGS ?= -O3 -g3
+CXXFLAGS ?= -O3 -g3
+CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
+CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/linux/unzip
+CPPFLAGS += -Isource/core/vssystem -Isource/linux -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/linux/7zip
+SDL_CFLAGS = $(shell sdl-config --cflags)
+GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
+CFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
 CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
+CXXFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
+CXXFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
 
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
 
-CXXFLAGS = -Wno-deprecated -Wno-write-strings -fno-rtti
+CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
 
-LDFLAGS = -Wl,--as-needed
+LDFLAGS += -Wl,--as-needed
 
 EXE  = nestopia
-LIBS = -lm -lz -lasound  `sdl-config --libs` `pkg-config --libs gtk+-3.0`
+LIBS = -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share/nestopia
 
 # OpenGL Support
-CFLAGS += -DINCLUDE_OPENGL
+CPPFLAGS += -DINCLUDE_OPENGL
 LIBS   += -lGL -lGLU
 
 # Allow files to go into a data directory
-CFLAGS += -DDATADIR=\"$(DATADIR)\"
+CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 CXXFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
@@ -158,11 +163,11 @@ OBJDIRS += objs/linux objs/linux/7zip objs/linux/unzip
 # build rules
 objs/%.o: source/%.c
 	@echo Compiling $<...
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CPPFLAGS) $(CFLAGS) -c $< -o $@
 
 objs/%.o: source/%.cpp
 	@echo Compiling $<...
-	$(CXX) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
 all: maketree $(EXE) $(GENNSTCONTROLS)
 
