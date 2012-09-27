@@ -6,7 +6,7 @@
 
 CC   = @gcc
 CXX  = @g++
-CFLAGS = -c -O3 -g3
+CFLAGS = -O3 -g3
 CFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
 CFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/linux/unzip 
 CFLAGS += -Isource/core/vssystem -Isource/linux -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/linux/7zip 
@@ -158,11 +158,11 @@ OBJDIRS += objs/linux objs/linux/7zip objs/linux/unzip
 # build rules
 objs/%.o: source/%.c
 	@echo Compiling $<...
-	$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) -c $< -o $@
 
 objs/%.o: source/%.cpp
 	@echo Compiling $<...
-	$(CXX) $(CFLAGS) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $(CXXFLAGS) -c $< -o $@
 
 all: maketree $(EXE) $(GENNSTCONTROLS)
 
