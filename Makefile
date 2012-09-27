@@ -4,8 +4,8 @@
 # By R. Danbrook 2012
 #
 
-CC   = gcc
-CXX  = g++
+CC   = @gcc
+CXX  = @g++
 CFLAGS = -c -O3 -g3
 CFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
 CFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/linux/unzip 
@@ -158,11 +158,11 @@ OBJDIRS += objs/linux objs/linux/7zip objs/linux/unzip
 # build rules
 objs/%.o: source/%.c
 	@echo Compiling $<...
-	@$(CC) $(CFLAGS) $< -o $@
+	$(CC) $(CFLAGS) $< -o $@
 
 objs/%.o: source/%.cpp
 	@echo Compiling $<...
-	@$(CXX) $(CFLAGS) $(CXXFLAGS) $< -o $@
+	$(CXX) $(CFLAGS) $(CXXFLAGS) $< -o $@
 
 all: maketree $(EXE) $(GENNSTCONTROLS)
 
@@ -175,7 +175,7 @@ $(sort $(OBJDIRS)):
 # link the commandline exe
 $(EXE): $(OBJS)
 	@echo Linking $@...
-	@$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $^ $(LIBS)
 
 install:
 	mkdir -p $(DATADIR)/icons
