@@ -5,7 +5,7 @@
 #
 
 CC   = gcc
-CPP  = g++
+CXX  = g++
 CFLAGS = -c -O3 -g3
 CFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
 CFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/linux/unzip 
@@ -16,7 +16,7 @@ CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-func
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
 
-CPPFLAGS = -Wno-deprecated -Wno-write-strings -fno-rtti
+CXXFLAGS = -Wno-deprecated -Wno-write-strings -fno-rtti
 
 LDFLAGS = -Wl,--as-needed
 
@@ -33,7 +33,7 @@ LIBS   += -lGL -lGLU
 
 # Allow files to go into a data directory
 CFLAGS += -DDATADIR=\"$(DATADIR)\"
-CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
+CXXFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
 OBJS = objs/linux/main.o objs/linux/oss.o objs/linux/interface.o objs/linux/support.o objs/linux/settings.o 
@@ -162,7 +162,7 @@ objs/%.o: source/%.c
 
 objs/%.o: source/%.cpp
 	@echo Compiling $<...
-	@$(CC) $(CFLAGS) $(CPPFLAGS) $< -o $@
+	@$(CXX) $(CFLAGS) $(CXXFLAGS) $< -o $@
 
 objs/%.o: source/%.o
 	@echo Compiling $<...
@@ -179,7 +179,7 @@ $(sort $(OBJDIRS)):
 # link the commandline exe
 $(EXE): $(OBJS)
 	@echo Linking $@...
-	@$(CPP) $(LDFLAGS) -g -o $(EXE) $^ $(LIBS)
+	@$(CXX) $(LDFLAGS) -g -o $(EXE) $^ $(LIBS)
 
 install:
 	mkdir -p $(DATADIR)/icons
