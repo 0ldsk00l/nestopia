@@ -26,7 +26,7 @@ CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
 LDFLAGS += -Wl,--as-needed
 
 EXE  = nestopia
-LIBS = -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+LIBS = -lstdc++ -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
