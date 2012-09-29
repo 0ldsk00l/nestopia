@@ -44,7 +44,7 @@
 #include "main.h"
 #include "GL/glu.h"
 
-#define NST_VERSION "1.42"
+#define NST_VERSION "1.43"
 
 extern "C" {
 #include <gtk/gtk.h>
@@ -581,7 +581,7 @@ static void QuickLoad(int isvst)
 void NstPlayGame(void)
 {
 	// hide main window
-	//gtk_widget_hide(mainwindow);
+	gtk_widget_hide(mainwindow);
 
 	// process pending gtk events
 	while (gtk_events_pending())
@@ -1830,5 +1830,3 @@ void NstLoadGame(const char* filename)
 	// power on
 	machine.Power( true ); // false = power off
 }
-
-

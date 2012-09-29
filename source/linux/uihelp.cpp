@@ -181,7 +181,8 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 		g_free (filename);
 	}
 
-	gtk_widget_destroy (dialog);
+	gtk_widget_destroy(dialog);
+	NstPlayGame();
 }
 
 void on_playbutton_clicked(GtkButton *button,  gpointer user_data)
@@ -308,8 +309,8 @@ on_volumescroll_value_changed          (GtkRange        *range,
 	Sound sound( emulator );
 
 	sSettings->SetVolume((int)gtk_range_get_value(range));
-	sprintf(volumestr, "%d", sSettings->GetVolume());
-	gtk_label_set_text(GTK_LABEL(text_volume), volumestr);
+	//sprintf(volumestr, "%d", sSettings->GetVolume());
+	//gtk_label_set_text(GTK_LABEL(text_volume), volumestr);
 
 	if (NstIsPlaying())
 	{
@@ -320,8 +321,8 @@ on_volumescroll_value_changed          (GtkRange        *range,
 void on_surrscroll_value_changed(GtkRange *range, gpointer user_data)
 {
 	sSettings->SetSurrMult((int)gtk_range_get_value(range));
-	sprintf(surrmulstr, "%d", sSettings->GetSurrMult());
-	gtk_label_set_text(GTK_LABEL(text_surround), surrmulstr);
+	//sprintf(surrmulstr, "%d", sSettings->GetSurrMult());
+	//gtk_label_set_text(GTK_LABEL(text_surround), surrmulstr);
 }
 
 void on_cheatbutton_pressed(GtkButton *button, gpointer user_data)
@@ -450,7 +451,7 @@ static void ui_drag_data_recieved(GtkWidget *widget, GdkDragContext *dc, gint x,
 
 void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst::CheatMgr *cheatmgr)
 {
-	GtkTargetEntry target_entry[1];
+	//GtkTargetEntry target_entry[1];
 
 	//gtk_set_locale();
 	gtk_init(&argc, &argv);
@@ -465,7 +466,7 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	app_icon = gdk_pixbuf_new_from_inline(-1, nsticon, FALSE, NULL);
 	gtk_window_set_icon(GTK_WINDOW(mainwindow), app_icon);
 
-	// get references to all the GUI widgets
+	/*// get references to all the GUI widgets
 	notebook_main = lookup_widget(mainwindow, "notebook1"); 
 	check_fullscreen = lookup_widget(mainwindow, "check_fullscreen");
 	check_unlimitspr = lookup_widget(mainwindow, "unlimitsprcheck"); 
@@ -521,12 +522,12 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	gtk_label_set_text(GTK_LABEL(text_volume), volumestr);
 
 	sprintf(surrmulstr, "%d", sSettings->GetSurrMult());
-	gtk_label_set_text(GTK_LABEL(text_surround), surrmulstr);
+	gtk_label_set_text(GTK_LABEL(text_surround), surrmulstr);*/
 
 	// set up the Open button as a drop target
-	target_entry[0].target = (gchar *)DRAG_TAR_NAME_0;
-	target_entry[0].flags = 0;
-	target_entry[0].info = DRAG_TAR_INFO_0;
+	//target_entry[0].target = (gchar *)DRAG_TAR_NAME_0;
+	//target_entry[0].flags = 0;
+	//target_entry[0].info = DRAG_TAR_INFO_0;
 
 	/* This is the other piece of the drag'n'drop code that I don't really care about
 	gtk_drag_dest_set(notebook_main, (GtkDestDefaults)(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP), 
@@ -579,4 +580,248 @@ void UIHelp_GameLoaded(void)
 GdkPixbuf *UIHelp_GetNSTIcon()
 {
 	return app_icon;
+}
+
+GtkWidget* create_videoconfig (void) {
+
+	GtkWidget *videowindow;
+	GtkWidget *videofixed;
+
+	GtkWidget *scaleamtcombo;
+	GtkWidget *scalelabel;
+	GtkWidget *filterlabel;
+	GtkWidget *scalecombo;
+	GtkWidget *check_fullscreen;
+	GtkWidget *unlimitsprcheck;
+	GtkWidget *videocombo;
+	GtkWidget *label11;
+	GtkWidget *label17;
+	GtkWidget *label10;
+	GtkWidget *ntsccombo;
+	GtkWidget *rendercombo;
+	GtkWidget *label9;
+	GtkWidget *label2;
+	
+	videowindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(videowindow), "Video Configuration");
+	
+	videofixed = gtk_fixed_new();
+	gtk_container_add(GTK_CONTAINER(videowindow), videofixed);
+
+	scaleamtcombo = gtk_combo_box_text_new ();
+	gtk_fixed_put(GTK_FIXED (videofixed), scaleamtcombo, 64, 56);
+	gtk_widget_set_size_request(scaleamtcombo, 80, 32);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (scaleamtcombo), "1x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (scaleamtcombo), "2x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (scaleamtcombo), "3x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (scaleamtcombo), "4x");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(scaleamtcombo), sSettings->GetScaleAmt());
+
+	scalelabel = gtk_label_new("Scale");
+	gtk_fixed_put(GTK_FIXED (videofixed), scalelabel, 8, 64);
+	gtk_widget_set_size_request(scalelabel, 47, 17);
+
+	filterlabel = gtk_label_new("Filter");
+	gtk_fixed_put(GTK_FIXED (videofixed), filterlabel, 0, 16);
+	gtk_widget_set_size_request(filterlabel, 64, 24);
+
+	scalecombo = gtk_combo_box_text_new ();
+	gtk_fixed_put (GTK_FIXED (videofixed), scalecombo, 64, 8);
+	gtk_widget_set_size_request (scalecombo, 152, 32);
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), "None");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), "NTSC");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), "Scale?x");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (scalecombo), "hq?x");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(scalecombo), sSettings->GetScale());
+
+	check_fullscreen = gtk_check_button_new_with_mnemonic (_("Fullscreen"));
+	gtk_widget_show (check_fullscreen);
+	gtk_fixed_put (GTK_FIXED (videofixed), check_fullscreen, 8, 96);
+	gtk_widget_set_size_request (check_fullscreen, 96, 24);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fullscreen), sSettings->GetFullscreen());
+
+	unlimitsprcheck = gtk_check_button_new_with_mnemonic ("Unlimited sprites");
+	gtk_fixed_put (GTK_FIXED (videofixed), unlimitsprcheck, 8, 120);
+	gtk_widget_set_size_request (unlimitsprcheck, 128, 24);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unlimitsprcheck), sSettings->GetSprlimit());
+
+	videocombo = gtk_combo_box_text_new ();
+	gtk_fixed_put (GTK_FIXED (videofixed), videocombo, 344, 104);
+	gtk_widget_set_size_request (videocombo, 136, 32);
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (videocombo), "Auto");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (videocombo), "NTSC");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (videocombo), "PAL");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(videocombo), sSettings->GetVideoMode());
+
+	label11 = gtk_label_new ("Region");
+	gtk_fixed_put (GTK_FIXED (videofixed), label11, 280, 104);
+	gtk_widget_set_size_request (label11, 56, 32);
+
+	label17 = gtk_label_new ("type");
+	gtk_fixed_put (GTK_FIXED (videofixed), label17, 288, 72);
+	gtk_widget_set_size_request (label17, 47, 17);
+
+	label10 = gtk_label_new ("NTSC");
+	gtk_fixed_put (GTK_FIXED (videofixed), label10, 288, 56);
+	gtk_widget_set_size_request (label10, 48, 16);
+
+	ntsccombo = gtk_combo_box_text_new ();
+	gtk_fixed_put (GTK_FIXED (videofixed), ntsccombo, 344, 56);
+	gtk_widget_set_size_request (ntsccombo, 136, 32);
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ntsccombo), "Composite");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ntsccombo), "S-Video");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (ntsccombo), "RGB");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(ntsccombo), sSettings->GetNtscMode());
+
+	rendercombo = gtk_combo_box_text_new ();
+	gtk_fixed_put (GTK_FIXED (videofixed), rendercombo, 344, 8);
+	gtk_widget_set_size_request (rendercombo, 136, 32);
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (rendercombo), _("Soft"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (rendercombo), _("OpenGL"));
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (rendercombo), _("OpenGL bilinear"));
+	gtk_combo_box_set_active(GTK_COMBO_BOX(rendercombo), sSettings->GetRenderType());
+
+	label9 = gtk_label_new (_("Renderer"));
+	gtk_fixed_put (GTK_FIXED (videofixed), label9, 252, 16);
+	gtk_widget_set_size_request (label9, 96, 24);
+
+	gtk_widget_show_all(videowindow);
+	
+	g_signal_connect (G_OBJECT(scaleamtcombo), "changed",
+		G_CALLBACK (on_scaleamtcombo_changed), NULL);
+
+	g_signal_connect (G_OBJECT(scalecombo), "changed",
+		G_CALLBACK (on_scalecombo_changed), NULL);
+
+	g_signal_connect (G_OBJECT(check_fullscreen), "toggled",
+		G_CALLBACK (on_check_fullscreen_toggled), NULL);
+
+	g_signal_connect (G_OBJECT(unlimitsprcheck), "toggled",
+		G_CALLBACK (on_unlimitsprcheck_toggled), NULL);
+
+	g_signal_connect (G_OBJECT(videocombo), "changed",
+		G_CALLBACK (on_videocombo_changed), NULL);
+
+	g_signal_connect (G_OBJECT(ntsccombo), "changed",
+		G_CALLBACK (on_ntsccombo_changed), NULL);
+
+	g_signal_connect (G_OBJECT(rendercombo), "changed",
+		G_CALLBACK (on_rendercombo_changed), NULL);
+
+	return videowindow;
+}
+
+GtkWidget* create_audioconfig (void) {
+
+	GtkWidget *audiowindow;
+	GtkWidget *audiofixed;	
+	GtkWidget *soundlabel;
+	GtkWidget *volumelabel;
+	GtkWidget *ratelabel;
+	GtkWidget *volumescroll;
+	GtkWidget *surrscroll;
+	GtkWidget *surrcheck;
+	GtkWidget *excitecheck;
+	GtkWidget *stereocheck;
+	GtkWidget *ratecombo;
+	GtkWidget *sndapicombo;
+	//GtkWidget *okbutton;
+
+	audiowindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(audiowindow), "Audio Configuration");
+
+	audiofixed = gtk_fixed_new();
+	gtk_container_add(GTK_CONTAINER(audiowindow), audiofixed);
+
+	soundlabel = gtk_label_new("Sound API:");
+	gtk_fixed_put(GTK_FIXED(audiofixed), soundlabel, 16, 16);
+	gtk_widget_set_size_request(soundlabel, 112, 16);
+	
+	sndapicombo = gtk_combo_box_text_new();
+	gtk_fixed_put(GTK_FIXED(audiofixed), sndapicombo, 124, 8);
+	gtk_widget_set_size_request(sndapicombo, 128, 32);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "SDL");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "ALSA");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "OSS");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(sndapicombo), sSettings->GetSndAPI());
+
+	ratelabel = gtk_label_new("Output rate:");
+	gtk_fixed_put(GTK_FIXED(audiofixed), ratelabel, 16, 56);
+	gtk_widget_set_size_request(ratelabel, 112, 16);
+	
+	ratecombo = gtk_combo_box_text_new();
+	gtk_fixed_put (GTK_FIXED(audiofixed), ratecombo, 124, 48);
+	gtk_widget_set_size_request (ratecombo, 128, 32);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "11025");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "22050");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "44100");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "48000");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(ratecombo), sSettings->GetRawRate());
+	
+	volumelabel = gtk_label_new("Volume:");
+	gtk_fixed_put(GTK_FIXED(audiofixed), volumelabel, 16, 96);
+	gtk_widget_set_size_request(volumelabel, 112, 16);
+
+	volumescroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
+	gtk_widget_show(volumescroll);
+	gtk_fixed_put(GTK_FIXED(audiofixed), volumescroll, 124, 92);
+	gtk_widget_set_size_request(volumescroll, 128, 24);
+	gtk_range_set_value(GTK_RANGE(volumescroll), sSettings->GetVolume());
+
+	surrcheck = gtk_check_button_new_with_mnemonic("Lite Surround:");
+	gtk_widget_show(surrcheck);
+	gtk_fixed_put(GTK_FIXED(audiofixed), surrcheck, 8, 136);
+	gtk_widget_set_size_request(surrcheck, 116, 24);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(surrcheck), sSettings->GetUseSurround());
+
+	surrscroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
+	gtk_widget_show(surrscroll);
+	gtk_fixed_put(GTK_FIXED(audiofixed), surrscroll, 124, 136);
+	gtk_widget_set_size_request(surrscroll, 128, 24);
+	gtk_range_set_value(GTK_RANGE(surrscroll), sSettings->GetSurrMult());
+
+	stereocheck = gtk_check_button_new_with_mnemonic("Stereo");
+	gtk_fixed_put(GTK_FIXED(audiofixed), stereocheck, 300, 8);
+	gtk_widget_set_size_request(stereocheck, 128, 24);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(stereocheck), sSettings->GetStereo());
+
+	excitecheck = gtk_check_button_new_with_mnemonic("Stereo exciter");
+	gtk_fixed_put(GTK_FIXED(audiofixed), excitecheck, 300, 48);
+	gtk_widget_set_size_request(excitecheck, 128, 21);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(excitecheck), sSettings->GetUseExciter());
+	
+	/*okbutton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	gtk_fixed_put(GTK_FIXED(audiofixed), okbutton, 300, 96);
+	gtk_widget_set_size_request(okbutton, 64, 48);*/
+	
+	gtk_widget_show_all(audiowindow);
+	
+	g_signal_connect(G_OBJECT(volumescroll), "value_changed",
+		G_CALLBACK(on_volumescroll_value_changed), NULL);
+
+	g_signal_connect(G_OBJECT(volumescroll), "configure_event",
+		G_CALLBACK(on_volumescroll_configure_event), NULL);
+
+	g_signal_connect(G_OBJECT(surrscroll), "value_changed",
+		G_CALLBACK(on_surrscroll_value_changed), NULL);
+
+	g_signal_connect(G_OBJECT(surrcheck), "toggled",
+		G_CALLBACK(on_surrcheck_toggled), NULL);
+
+	g_signal_connect(G_OBJECT(excitecheck), "toggled",
+		G_CALLBACK(on_excitecheck_toggled), NULL);
+
+	g_signal_connect(G_OBJECT(stereocheck), "toggled",
+		G_CALLBACK(on_stereocheck_toggled), NULL);
+
+	g_signal_connect(G_OBJECT(ratecombo), "changed",
+		G_CALLBACK(on_ratecombo_changed), NULL);
+
+	g_signal_connect(G_OBJECT(ratecombo), "configure_event",
+		G_CALLBACK(on_ratecombo_configure_event), NULL);
+
+	g_signal_connect(G_OBJECT(sndapicombo), "changed",
+		G_CALLBACK(on_sndapicombo_changed), NULL);
+
+	return audiowindow;
 }
