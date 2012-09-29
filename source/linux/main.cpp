@@ -581,7 +581,7 @@ static void QuickLoad(int isvst)
 void NstPlayGame(void)
 {
 	// hide main window
-	gtk_widget_hide(mainwindow);
+	//gtk_widget_hide(mainwindow);
 
 	// process pending gtk events
 	while (gtk_events_pending())
