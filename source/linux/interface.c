@@ -38,9 +38,9 @@ GtkWidget* create_mainwindow (void) {
 	GtkWidget *emulator;
 	GtkWidget *run;
 	GtkWidget *pause;
-	GtkWidget *cheats;
 	GtkWidget *savestate;
 	GtkWidget *loadstate;
+	GtkWidget *cheats;
 	
 	GtkWidget *configurationmenu;
 	GtkWidget *configuration;
@@ -81,9 +81,9 @@ GtkWidget* create_mainwindow (void) {
 	emulator = gtk_menu_item_new_with_label("Emulator");
 	run = gtk_menu_item_new_with_label("Run");
 	pause = gtk_menu_item_new_with_label("Pause");
-	cheats = gtk_menu_item_new_with_label("Cheats");
 	savestate = gtk_menu_item_new_with_label("Save State");
 	loadstate = gtk_menu_item_new_with_label("Load State");
+	cheats = gtk_menu_item_new_with_label("Cheats");
 	
 	configuration = gtk_menu_item_new_with_label("Configuration");
 	videoconfig = gtk_menu_item_new_with_label("Video");
@@ -101,9 +101,9 @@ GtkWidget* create_mainwindow (void) {
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emulator), emulatormenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), run);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), pause);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), savestate);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), loadstate);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
 	
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(configuration), configurationmenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(configurationmenu), videoconfig);
@@ -185,12 +185,6 @@ void about_clicked() {
 
 GtkWidget* create_inputconfig (void) {
 	printf("Input Dialog\n");
-	//return videoconfigdialog;
-	return 0;
-}
-
-GtkWidget* create_miscconfig (void) {
-	printf("Misc Dialog\n");
 	//return videoconfigdialog;
 	return 0;
 }
@@ -753,197 +747,184 @@ create_mainwindow (void)
 GtkWidget*
 create_archselect (void)
 {
-  GtkWidget *archselect;
-  GtkWidget *fixed5;
-  GtkWidget *scrolledwindow1;
-  GtkWidget *archtree;
-  GtkWidget *label18;
-  GtkWidget *label19;
-  GtkWidget *archcancel;
-  GtkWidget *archok;
+	GtkWidget *archselect;
+	GtkWidget *fixed5;
+	GtkWidget *scrolledwindow1;
+	GtkWidget *archtree;
+	GtkWidget *label18;
+	GtkWidget *label19;
+	GtkWidget *archcancel;
+	GtkWidget *archok;
 
-  archselect = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (archselect), _("Pick game in archive"));
-  gtk_window_set_modal (GTK_WINDOW (archselect), TRUE);
+	archselect = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (archselect), _("Pick game in archive"));
+	gtk_window_set_modal (GTK_WINDOW (archselect), TRUE);
 
-  fixed5 = gtk_fixed_new ();
-  gtk_widget_show (fixed5);
-  gtk_container_add (GTK_CONTAINER (archselect), fixed5);
+	fixed5 = gtk_fixed_new ();
+	gtk_widget_show (fixed5);
+	gtk_container_add (GTK_CONTAINER (archselect), fixed5);
 
-  scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow1);
-  gtk_fixed_put (GTK_FIXED (fixed5), scrolledwindow1, 0, 0);
-  gtk_widget_set_size_request (scrolledwindow1, 336, 352);
+	scrolledwindow1 = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow1);
+	gtk_fixed_put (GTK_FIXED (fixed5), scrolledwindow1, 0, 0);
+	gtk_widget_set_size_request (scrolledwindow1, 336, 352);
 
-  archtree = gtk_tree_view_new ();
-  gtk_widget_show (archtree);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow1), archtree);
-  gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (archtree), FALSE);
+	archtree = gtk_tree_view_new ();
+	gtk_widget_show (archtree);
+	gtk_container_add (GTK_CONTAINER (scrolledwindow1), archtree);
+	gtk_tree_view_set_headers_visible (GTK_TREE_VIEW (archtree), FALSE);
 
-  label18 = gtk_label_new (_("Choose an NES cartridge"));
-  gtk_widget_show (label18);
-  gtk_fixed_put (GTK_FIXED (fixed5), label18, 344, 8);
-  gtk_widget_set_size_request (label18, 176, 24);
+	label18 = gtk_label_new (_("Choose an NES cartridge,"));
+	gtk_widget_show (label18);
+	gtk_fixed_put (GTK_FIXED (fixed5), label18, 344, 8);
+	gtk_widget_set_size_request (label18, 176, 24);
 
-  label19 = gtk_label_new (_(", disc, or music file."));
-  gtk_widget_show (label19);
-  gtk_fixed_put (GTK_FIXED (fixed5), label19, 344, 32);
-  gtk_widget_set_size_request (label19, 176, 16);
+	label19 = gtk_label_new (_("disc, or music file."));
+	gtk_widget_show (label19);
+	gtk_fixed_put (GTK_FIXED (fixed5), label19, 344, 32);
+	gtk_widget_set_size_request (label19, 176, 16);
 
-  archcancel = gtk_button_new_from_stock ("gtk-cancel");
-  gtk_widget_show (archcancel);
-  gtk_fixed_put (GTK_FIXED (fixed5), archcancel, 344, 304);
-  gtk_widget_set_size_request (archcancel, 168, 40);
+	archcancel = gtk_button_new_from_stock ("gtk-cancel");
+	gtk_widget_show (archcancel);
+	gtk_fixed_put (GTK_FIXED (fixed5), archcancel, 344, 304);
+	gtk_widget_set_size_request (archcancel, 168, 40);
 
-  archok = gtk_button_new_from_stock ("gtk-ok");
-  gtk_widget_show (archok);
-  gtk_fixed_put (GTK_FIXED (fixed5), archok, 344, 248);
-  gtk_widget_set_size_request (archok, 168, 40);
+	archok = gtk_button_new_from_stock ("gtk-ok");
+	gtk_widget_show (archok);
+	gtk_fixed_put (GTK_FIXED (fixed5), archok, 344, 248);
+	gtk_widget_set_size_request (archok, 168, 40);
 
-  g_signal_connect ((gpointer) archcancel, "clicked",
-                    G_CALLBACK (on_archcancel_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) archok, "clicked",
-                    G_CALLBACK (on_archok_clicked),
-                    NULL);
+	g_signal_connect (G_OBJECT(archcancel), "clicked",
+		G_CALLBACK (on_archcancel_clicked), NULL);
 
-  // Store pointers to all widgets, for use by lookup_widget().
-  GLADE_HOOKUP_OBJECT_NO_REF (archselect, archselect, "archselect");
-  GLADE_HOOKUP_OBJECT (archselect, fixed5, "fixed5");
-  GLADE_HOOKUP_OBJECT (archselect, scrolledwindow1, "scrolledwindow1");
-  GLADE_HOOKUP_OBJECT (archselect, archtree, "archtree");
-  GLADE_HOOKUP_OBJECT (archselect, label18, "label18");
-  GLADE_HOOKUP_OBJECT (archselect, label19, "label19");
-  GLADE_HOOKUP_OBJECT (archselect, archcancel, "archcancel");
-  GLADE_HOOKUP_OBJECT (archselect, archok, "archok");
+	g_signal_connect (G_OBJECT(archok), "clicked",
+		G_CALLBACK (on_archok_clicked), NULL);
 
   return archselect;
 }
 
-GtkWidget*
-create_cheatwind (void)
-{
-  GtkWidget *cheatwind;
-  GtkWidget *fixed6;
-  GtkWidget *ggedit;
-  GtkWidget *paredit;
-  GtkWidget *label21;
-  GtkWidget *label20;
-  GtkWidget *scrolledwindow2;
-  GtkWidget *cheattree;
-  GtkWidget *chtggvalid;
-  GtkWidget *genieok;
-  GtkWidget *parok;
-  GtkWidget *cheatok;
-  GtkWidget *cheatopen;
-  GtkWidget *cheatsave;
-  GtkWidget *parvalid;
-  GtkWidget *chdelete;
+GtkWidget* create_cheatwind (void) {
 
-  cheatwind = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-  gtk_window_set_title (GTK_WINDOW (cheatwind), _("Cheat Manager"));
-  gtk_window_set_resizable (GTK_WINDOW (cheatwind), FALSE);
+	GtkWidget *cheatwind;
+	GtkWidget *fixed6;
+	GtkWidget *ggedit;
+	GtkWidget *paredit;
+	GtkWidget *label21;
+	GtkWidget *label20;
+	GtkWidget *scrolledwindow2;
+	GtkWidget *cheattree;
+	GtkWidget *chtggvalid;
+	GtkWidget *genieok;
+	GtkWidget *parok;
+	GtkWidget *cheatok;
+	GtkWidget *cheatopen;
+	GtkWidget *cheatsave;
+	GtkWidget *parvalid;
+	GtkWidget *chdelete;
 
-  fixed6 = gtk_fixed_new ();
-  gtk_widget_show (fixed6);
-  gtk_container_add (GTK_CONTAINER (cheatwind), fixed6);
-  gtk_container_set_border_width (GTK_CONTAINER (fixed6), 8);
+	cheatwind = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (cheatwind), _("Cheat Manager"));
+	gtk_window_set_resizable (GTK_WINDOW (cheatwind), FALSE);
 
-  ggedit = gtk_entry_new ();
-  gtk_widget_show (ggedit);
-  gtk_fixed_put (GTK_FIXED (fixed6), ggedit, 136, 280);
-  gtk_widget_set_size_request (ggedit, 208, 32);
-  gtk_entry_set_invisible_char (GTK_ENTRY (ggedit), 8226);
+	fixed6 = gtk_fixed_new ();
+	gtk_widget_show (fixed6);
+	gtk_container_add (GTK_CONTAINER (cheatwind), fixed6);
+	gtk_container_set_border_width (GTK_CONTAINER (fixed6), 8);
 
-  paredit = gtk_entry_new ();
-  gtk_widget_show (paredit);
-  gtk_fixed_put (GTK_FIXED (fixed6), paredit, 136, 320);
-  gtk_widget_set_size_request (paredit, 208, 32);
-  gtk_entry_set_invisible_char (GTK_ENTRY (paredit), 8226);
+	ggedit = gtk_entry_new ();
+	gtk_widget_show (ggedit);
+	gtk_fixed_put (GTK_FIXED (fixed6), ggedit, 136, 280);
+	gtk_widget_set_size_request (ggedit, 208, 32);
+	gtk_entry_set_invisible_char (GTK_ENTRY (ggedit), 8226);
 
-  label21 = gtk_label_new (_("Pro-Action Rocky:"));
-  gtk_widget_show (label21);
-  gtk_fixed_put (GTK_FIXED (fixed6), label21, 0, 328);
-  gtk_widget_set_size_request (label21, 136, 16);
+	paredit = gtk_entry_new ();
+	gtk_widget_show (paredit);
+	gtk_fixed_put (GTK_FIXED (fixed6), paredit, 136, 320);
+	gtk_widget_set_size_request (paredit, 208, 32);
+	gtk_entry_set_invisible_char (GTK_ENTRY (paredit), 8226);
 
-  label20 = gtk_label_new (_("Game Genie:"));
-  gtk_widget_show (label20);
-  gtk_fixed_put (GTK_FIXED (fixed6), label20, 32, 288);
-  gtk_widget_set_size_request (label20, 112, 16);
+	label21 = gtk_label_new (_("Pro-Action Rocky:"));
+	gtk_widget_show (label21);
+	gtk_fixed_put (GTK_FIXED (fixed6), label21, 0, 328);
+	gtk_widget_set_size_request (label21, 136, 16);
 
-  scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
-  gtk_widget_show (scrolledwindow2);
-  gtk_fixed_put (GTK_FIXED (fixed6), scrolledwindow2, 8, 0);
-  gtk_widget_set_size_request (scrolledwindow2, 592, 232);
+	label20 = gtk_label_new (_("Game Genie:"));
+	gtk_widget_show (label20);
+	gtk_fixed_put (GTK_FIXED (fixed6), label20, 32, 288);
+	gtk_widget_set_size_request (label20, 112, 16);
 
-  cheattree = gtk_tree_view_new ();
-  gtk_widget_show (cheattree);
-  gtk_container_add (GTK_CONTAINER (scrolledwindow2), cheattree);
+	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow2);
+	gtk_fixed_put (GTK_FIXED (fixed6), scrolledwindow2, 8, 0);
+	gtk_widget_set_size_request (scrolledwindow2, 592, 232);
 
-  chtggvalid = gtk_button_new_with_mnemonic (_("Check"));
-  gtk_widget_show (chtggvalid);
-  gtk_fixed_put (GTK_FIXED (fixed6), chtggvalid, 352, 280);
-  gtk_widget_set_size_request (chtggvalid, 64, 32);
+	cheattree = gtk_tree_view_new ();
+	gtk_widget_show (cheattree);
+	gtk_container_add (GTK_CONTAINER (scrolledwindow2), cheattree);
 
-  genieok = gtk_button_new_with_mnemonic (_("Add"));
-  gtk_widget_show (genieok);
-  gtk_fixed_put (GTK_FIXED (fixed6), genieok, 416, 280);
-  gtk_widget_set_size_request (genieok, 64, 32);
+	chtggvalid = gtk_button_new_with_mnemonic (_("Check"));
+	gtk_widget_show (chtggvalid);
+	gtk_fixed_put (GTK_FIXED (fixed6), chtggvalid, 352, 280);
+	gtk_widget_set_size_request (chtggvalid, 64, 32);
 
-  parok = gtk_button_new_with_mnemonic (_("Add"));
-  gtk_widget_show (parok);
-  gtk_fixed_put (GTK_FIXED (fixed6), parok, 416, 320);
-  gtk_widget_set_size_request (parok, 64, 32);
+	genieok = gtk_button_new_with_mnemonic (_("Add"));
+	gtk_widget_show (genieok);
+	gtk_fixed_put (GTK_FIXED (fixed6), genieok, 416, 280);
+	gtk_widget_set_size_request (genieok, 64, 32);
 
-  cheatok = gtk_button_new_from_stock ("gtk-ok");
-  gtk_widget_show (cheatok);
-  gtk_fixed_put (GTK_FIXED (fixed6), cheatok, 496, 336);
-  gtk_widget_set_size_request (cheatok, 112, 32);
+	parok = gtk_button_new_with_mnemonic (_("Add"));
+	gtk_widget_show (parok);
+	gtk_fixed_put (GTK_FIXED (fixed6), parok, 416, 320);
+	gtk_widget_set_size_request (parok, 64, 32);
 
-  cheatopen = gtk_button_new_with_mnemonic (_("Import..."));
-  gtk_widget_show (cheatopen);
-  gtk_fixed_put (GTK_FIXED (fixed6), cheatopen, 496, 240);
-  gtk_widget_set_size_request (cheatopen, 112, 32);
+	cheatok = gtk_button_new_from_stock ("gtk-ok");
+	gtk_widget_show (cheatok);
+	gtk_fixed_put (GTK_FIXED (fixed6), cheatok, 496, 336);
+	gtk_widget_set_size_request (cheatok, 112, 32);
 
-  cheatsave = gtk_button_new_with_mnemonic (_("Export..."));
-  gtk_widget_show (cheatsave);
-  gtk_fixed_put (GTK_FIXED (fixed6), cheatsave, 496, 280);
-  gtk_widget_set_size_request (cheatsave, 112, 32);
+	cheatopen = gtk_button_new_with_mnemonic (_("Import..."));
+	gtk_widget_show (cheatopen);
+	gtk_fixed_put (GTK_FIXED (fixed6), cheatopen, 496, 240);
+	gtk_widget_set_size_request (cheatopen, 112, 32);
 
-  parvalid = gtk_button_new_with_mnemonic (_("Check"));
-  gtk_widget_show (parvalid);
-  gtk_fixed_put (GTK_FIXED (fixed6), parvalid, 352, 320);
-  gtk_widget_set_size_request (parvalid, 64, 32);
+	cheatsave = gtk_button_new_with_mnemonic (_("Export..."));
+	gtk_widget_show (cheatsave);
+	gtk_fixed_put (GTK_FIXED (fixed6), cheatsave, 496, 280);
+	gtk_widget_set_size_request (cheatsave, 112, 32);
 
-  chdelete = gtk_button_new_with_mnemonic (_("Remove code"));
-  gtk_widget_show (chdelete);
-  gtk_fixed_put (GTK_FIXED (fixed6), chdelete, 8, 240);
-  gtk_widget_set_size_request (chdelete, 120, 32);
+	parvalid = gtk_button_new_with_mnemonic (_("Check"));
+	gtk_widget_show (parvalid);
+	gtk_fixed_put (GTK_FIXED (fixed6), parvalid, 352, 320);
+	gtk_widget_set_size_request (parvalid, 64, 32);
 
-  g_signal_connect ((gpointer) chtggvalid, "clicked",
-                    G_CALLBACK (on_chtggvalid_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) genieok, "clicked",
-                    G_CALLBACK (on_genieok_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) parok, "clicked",
-                    G_CALLBACK (on_parok_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) cheatok, "clicked",
-                    G_CALLBACK (on_cheatok_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) cheatopen, "clicked",
-                    G_CALLBACK (on_cheatopen_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) cheatsave, "clicked",
-                    G_CALLBACK (on_cheatsave_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) parvalid, "clicked",
-                    G_CALLBACK (on_parvalid_clicked),
-                    NULL);
-  g_signal_connect ((gpointer) chdelete, "clicked",
-                    G_CALLBACK (on_chdelete_clicked),
-                    NULL);
+	chdelete = gtk_button_new_with_mnemonic (_("Remove code"));
+	gtk_widget_show (chdelete);
+	gtk_fixed_put (GTK_FIXED (fixed6), chdelete, 8, 240);
+	gtk_widget_set_size_request (chdelete, 120, 32);
+
+	g_signal_connect ((gpointer) chtggvalid, "clicked",
+		G_CALLBACK (on_chtggvalid_clicked), NULL);
+
+	g_signal_connect ((gpointer) genieok, "clicked",
+		G_CALLBACK (on_genieok_clicked), NULL);
+
+	g_signal_connect ((gpointer) parok, "clicked",
+		G_CALLBACK (on_parok_clicked), NULL);
+
+	g_signal_connect ((gpointer) cheatok, "clicked",
+		G_CALLBACK (on_cheatok_clicked), NULL);
+
+	g_signal_connect ((gpointer) cheatopen, "clicked",
+		G_CALLBACK (on_cheatopen_clicked), NULL);
+
+	g_signal_connect ((gpointer) cheatsave, "clicked",
+		G_CALLBACK (on_cheatsave_clicked), NULL);
+
+	g_signal_connect ((gpointer) parvalid, "clicked",
+		G_CALLBACK (on_parvalid_clicked), NULL);
+
+	g_signal_connect ((gpointer) chdelete, "clicked",
+		G_CALLBACK (on_chdelete_clicked), NULL);
 
   // Store pointers to all widgets, for use by lookup_widget().
   GLADE_HOOKUP_OBJECT_NO_REF (cheatwind, cheatwind, "cheatwind");
