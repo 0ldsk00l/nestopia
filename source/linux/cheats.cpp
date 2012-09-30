@@ -125,18 +125,8 @@ void CheatMgr::ShowManager()
 	sIsOpen = true;
 
 	cheatwin = create_cheatwind();
-	cheattree = lookup_widget(cheatwin, "cheattree");
-	ggedit = lookup_widget(cheatwin, "ggedit");
-	paredit = lookup_widget(cheatwin, "paredit");
-	ggokbut = lookup_widget(cheatwin, "genieok");
-	parokbut = lookup_widget(cheatwin, "parok");
-	chopen = lookup_widget(cheatwin, "cheatopen"); 
-	chsave = lookup_widget(cheatwin, "cheatsave"); 
-	chdelete = lookup_widget(cheatwin, "chdelete");  
 
-	gtk_window_set_icon(GTK_WINDOW(cheatwin), UIHelp_GetNSTIcon());
-
-	g_signal_connect((gpointer)cheatwin, "destroy", G_CALLBACK(on_cheatwin_destroy), NULL);
+	g_signal_connect(G_OBJECT(cheatwin), "destroy", G_CALLBACK(on_cheatwin_destroy), NULL);
 
 	/* The cheats dialog seems to still work the same without this codeblock.
 	 * I have no idea why. Not a GTK+ expert. Maybe I'll figure it out later.
@@ -148,40 +138,6 @@ void CheatMgr::ShowManager()
 	gtk_object_set_user_data(GTK_OBJECT(chopen), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(chsave), (gpointer)this);
 	gtk_object_set_user_data(GTK_OBJECT(chdelete), (gpointer)this); */
-
-	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW (cheattree), FALSE);
-
-	// set up our tree store
-	treestore = gtk_tree_store_new(5, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
-
-	// attach the store to the tree	
-	gtk_tree_view_set_model(GTK_TREE_VIEW(cheattree), GTK_TREE_MODEL(treestore));
-
-	// create a cell renderer using the stock text one
-	renderer = gtk_cell_renderer_text_new();
-
-	// get the stock toggle renderer
-	togglerend = gtk_cell_renderer_toggle_new();
-
-	// get us an event handler for it
-	g_signal_connect(G_OBJECT(togglerend), "toggled", G_CALLBACK(enable_toggle), NULL);
-
-	// create the display columns
-	column[0] = gtk_tree_view_column_new_with_attributes("Enable", togglerend, "active", 0, NULL);
-	column[1] = gtk_tree_view_column_new_with_attributes("Game Genie", renderer, "text",  1, NULL);
-	column[2] = gtk_tree_view_column_new_with_attributes("PAR", renderer, "text",  2, NULL);
-	column[3] = gtk_tree_view_column_new_with_attributes("Raw", renderer, "text",  3, NULL);
-	column[4] = gtk_tree_view_column_new_with_attributes("Description", renderer, "text",  4, NULL);
-
-	// add the display column and renderer to the tree view
-	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[0]);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[1]);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[2]);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[3]);
-	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[4]);
-
-	// get the selection object too
-	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(cheattree));
 
 	// add the existing cheats
 	// since AddCode inserts into the master cheatlist we cheat ourselves and
@@ -195,9 +151,6 @@ void CheatMgr::ShowManager()
 		codetoadd = templist[i].code;
 		AddCode(codetoadd, true, templist[i].enabled, templist[i].description);
 	}
-
-	// show the window
-	gtk_widget_show(cheatwin);
 }
 
 void CheatMgr::Enable(void)
@@ -348,6 +301,168 @@ void on_chdelete_clicked(GtkButton *button, gpointer user_data)
 		cheatlist.erase(cheatlist.begin()+cursel);
 		treeiters.erase(treeiters.begin()+cursel);
 	}
+}
+
+GtkWidget* create_cheatwind (void) {
+
+	GtkWidget *cheatwind;
+	GtkWidget *fixed6;
+	GtkWidget *ggedit;
+	GtkWidget *paredit;
+	GtkWidget *label21;
+	GtkWidget *label20;
+	GtkWidget *scrolledwindow2;
+	GtkWidget *cheattree;
+	GtkWidget *chtggvalid;
+	GtkWidget *genieok;
+	GtkWidget *parok;
+	GtkWidget *cheatok;
+	GtkWidget *cheatopen;
+	GtkWidget *cheatsave;
+	GtkWidget *parvalid;
+	GtkWidget *chdelete;
+
+	cheatwind = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (cheatwind), "Cheat Manager");
+	gtk_window_set_resizable (GTK_WINDOW (cheatwind), FALSE);
+
+	fixed6 = gtk_fixed_new ();
+	gtk_widget_show (fixed6);
+	gtk_container_add (GTK_CONTAINER (cheatwind), fixed6);
+	gtk_container_set_border_width (GTK_CONTAINER (fixed6), 8);
+
+	ggedit = gtk_entry_new ();
+	gtk_widget_show (ggedit);
+	gtk_fixed_put (GTK_FIXED (fixed6), ggedit, 136, 280);
+	gtk_widget_set_size_request (ggedit, 208, 32);
+	gtk_entry_set_invisible_char (GTK_ENTRY (ggedit), 8226);
+
+	paredit = gtk_entry_new ();
+	gtk_widget_show (paredit);
+	gtk_fixed_put (GTK_FIXED (fixed6), paredit, 136, 320);
+	gtk_widget_set_size_request (paredit, 208, 32);
+	gtk_entry_set_invisible_char (GTK_ENTRY (paredit), 8226);
+
+	label21 = gtk_label_new ("Pro-Action Rocky:");
+	gtk_widget_show (label21);
+	gtk_fixed_put (GTK_FIXED (fixed6), label21, 0, 328);
+	gtk_widget_set_size_request (label21, 136, 16);
+
+	label20 = gtk_label_new ("Game Genie:");
+	gtk_widget_show (label20);
+	gtk_fixed_put (GTK_FIXED (fixed6), label20, 32, 288);
+	gtk_widget_set_size_request (label20, 112, 16);
+
+	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
+	gtk_widget_show (scrolledwindow2);
+	gtk_fixed_put (GTK_FIXED (fixed6), scrolledwindow2, 8, 0);
+	gtk_widget_set_size_request (scrolledwindow2, 592, 232);
+
+	cheattree = gtk_tree_view_new ();
+	gtk_widget_show (cheattree);
+	gtk_container_add (GTK_CONTAINER (scrolledwindow2), cheattree);
+
+	chtggvalid = gtk_button_new_with_mnemonic ("Check");
+	gtk_widget_show (chtggvalid);
+	gtk_fixed_put (GTK_FIXED (fixed6), chtggvalid, 352, 280);
+	gtk_widget_set_size_request (chtggvalid, 64, 32);
+
+	genieok = gtk_button_new_with_mnemonic ("Add");
+	gtk_widget_show (genieok);
+	gtk_fixed_put (GTK_FIXED (fixed6), genieok, 416, 280);
+	gtk_widget_set_size_request (genieok, 64, 32);
+
+	parok = gtk_button_new_with_mnemonic ("Add");
+	gtk_widget_show (parok);
+	gtk_fixed_put (GTK_FIXED (fixed6), parok, 416, 320);
+	gtk_widget_set_size_request (parok, 64, 32);
+
+	cheatok = gtk_button_new_from_stock ("gtk-ok");
+	gtk_widget_show (cheatok);
+	gtk_fixed_put (GTK_FIXED (fixed6), cheatok, 496, 336);
+	gtk_widget_set_size_request (cheatok, 112, 32);
+
+	cheatopen = gtk_button_new_with_mnemonic ("Import...");
+	gtk_widget_show (cheatopen);
+	gtk_fixed_put (GTK_FIXED (fixed6), cheatopen, 496, 240);
+	gtk_widget_set_size_request (cheatopen, 112, 32);
+
+	cheatsave = gtk_button_new_with_mnemonic ("Export...");
+	gtk_widget_show (cheatsave);
+	gtk_fixed_put (GTK_FIXED (fixed6), cheatsave, 496, 280);
+	gtk_widget_set_size_request (cheatsave, 112, 32);
+
+	parvalid = gtk_button_new_with_mnemonic ("Check");
+	gtk_widget_show (parvalid);
+	gtk_fixed_put (GTK_FIXED (fixed6), parvalid, 352, 320);
+	gtk_widget_set_size_request (parvalid, 64, 32);
+
+	chdelete = gtk_button_new_with_mnemonic ("Remove code");
+	gtk_widget_show (chdelete);
+	gtk_fixed_put (GTK_FIXED (fixed6), chdelete, 8, 240);
+	gtk_widget_set_size_request (chdelete, 120, 32);
+
+	g_signal_connect(G_OBJECT(chtggvalid), "clicked",
+		G_CALLBACK(on_chtggvalid_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(genieok), "clicked",
+		G_CALLBACK(on_genieok_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(parok), "clicked",
+		G_CALLBACK(on_parok_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(cheatok), "clicked",
+		G_CALLBACK(on_cheatok_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(cheatopen), "clicked",
+		G_CALLBACK(on_cheatopen_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(cheatsave), "clicked",
+		G_CALLBACK(on_cheatsave_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(parvalid), "clicked",
+		G_CALLBACK(on_parvalid_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(chdelete), "clicked",
+		G_CALLBACK(on_chdelete_clicked), NULL);
+		
+  	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW (cheattree), FALSE);
+
+	// set up our tree store
+	treestore = gtk_tree_store_new(5, G_TYPE_BOOLEAN, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING, G_TYPE_STRING);
+
+	// attach the store to the tree	
+	gtk_tree_view_set_model(GTK_TREE_VIEW(cheattree), GTK_TREE_MODEL(treestore));
+
+	// create a cell renderer using the stock text one
+	renderer = gtk_cell_renderer_text_new();
+
+	// get the stock toggle renderer
+	togglerend = gtk_cell_renderer_toggle_new();
+
+	// get us an event handler for it
+	g_signal_connect(G_OBJECT(togglerend), "toggled", G_CALLBACK(enable_toggle), NULL);
+
+	// create the display columns
+	column[0] = gtk_tree_view_column_new_with_attributes("Enable", togglerend, "active", 0, NULL);
+	column[1] = gtk_tree_view_column_new_with_attributes("Game Genie", renderer, "text",  1, NULL);
+	column[2] = gtk_tree_view_column_new_with_attributes("PAR", renderer, "text",  2, NULL);
+	column[3] = gtk_tree_view_column_new_with_attributes("Raw", renderer, "text",  3, NULL);
+	column[4] = gtk_tree_view_column_new_with_attributes("Description", renderer, "text",  4, NULL);
+
+	// add the display column and renderer to the tree view
+	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[0]);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[1]);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[2]);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[3]);
+	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[4]);
+
+	// get the selection object too
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(cheattree));
+	
+	gtk_widget_show(cheatwind);
+
+	return cheatwind;
 }
 
 void on_cheatopen_clicked(GtkButton *button, gpointer user_data)
