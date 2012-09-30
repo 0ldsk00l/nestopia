@@ -40,7 +40,7 @@ on_rendercombo_changed                 (GtkComboBox     *combobox,
                                         gpointer         user_data);
 
 void
-on_favorcombo_changed                  (GtkComboBox     *combobox,
+on_systemcombo_changed                  (GtkComboBox     *combobox,
                                         gpointer         user_data);
 
 void
