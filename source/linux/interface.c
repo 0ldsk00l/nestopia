@@ -134,6 +134,12 @@ GtkWidget* create_mainwindow (void) {
 	g_signal_connect(G_OBJECT(run), "activate",
 		G_CALLBACK(on_playbutton_clicked), NULL);
 		
+	g_signal_connect(G_OBJECT(savestate), "activate",
+		G_CALLBACK(state_save), NULL);
+
+	g_signal_connect(G_OBJECT(loadstate), "activate",
+		G_CALLBACK(state_load), NULL);
+
 	g_signal_connect(G_OBJECT(cheats), "activate",
 		G_CALLBACK(on_cheatbutton_pressed), NULL);
 
@@ -799,9 +805,8 @@ GtkWidget* create_archselect (void) {
 	return archselect;
 }
 
-GtkWidget*
-create_about (void)
-{
+GtkWidget* create_about (void) {
+
 	char svgpath[1024];
 	sprintf(svgpath, "%s/icons/nestopia.svg", DATADIR);
 	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 256, NULL);

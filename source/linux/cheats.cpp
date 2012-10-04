@@ -56,7 +56,7 @@ extern Emulator emulator;
 extern GtkWidget *mainwindow;
 extern char rootname[512];
 
-static GtkWidget *cheatwin, *cheattree, *ggedit, *paredit, *ggokbut, *parokbut;
+static GtkWidget *cheatwin, *cheattree, *ggedit, *paredit, *genieok, *parok;
 static GtkWidget *chopen, *chsave, *chdelete;
 static GtkTreeStore *treestore;
 static GtkCellRenderer *renderer, *togglerend;
@@ -124,7 +124,7 @@ void CheatMgr::ShowManager()
 
 	sIsOpen = true;
 
-	cheatwin = create_cheatwind();
+	cheatwin = create_cheatwindow();
 
 	g_signal_connect(G_OBJECT(cheatwin), "destroy", G_CALLBACK(on_cheatwin_destroy), NULL);
 
@@ -303,103 +303,85 @@ void on_chdelete_clicked(GtkButton *button, gpointer user_data)
 	}
 }
 
-GtkWidget* create_cheatwind (void) {
+GtkWidget* create_cheatwindow (void) {
 
-	GtkWidget *cheatwind;
-	GtkWidget *fixed6;
-	GtkWidget *ggedit;
-	GtkWidget *paredit;
+	GtkWidget *cheatwindow;
+	GtkWidget *cheatfixed;
 	GtkWidget *label21;
 	GtkWidget *label20;
 	GtkWidget *scrolledwindow2;
 	GtkWidget *cheattree;
 	GtkWidget *chtggvalid;
-	GtkWidget *genieok;
-	GtkWidget *parok;
 	GtkWidget *cheatok;
 	GtkWidget *cheatopen;
 	GtkWidget *cheatsave;
 	GtkWidget *parvalid;
 	GtkWidget *chdelete;
 
-	cheatwind = gtk_window_new (GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (cheatwind), "Cheat Manager");
-	gtk_window_set_resizable (GTK_WINDOW (cheatwind), FALSE);
+	cheatwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (cheatwindow), "Cheat Manager");
+	gtk_window_set_resizable (GTK_WINDOW (cheatwindow), FALSE);
 
-	fixed6 = gtk_fixed_new ();
-	gtk_widget_show (fixed6);
-	gtk_container_add (GTK_CONTAINER (cheatwind), fixed6);
-	gtk_container_set_border_width (GTK_CONTAINER (fixed6), 8);
+	cheatfixed = gtk_fixed_new();
+	gtk_container_add (GTK_CONTAINER (cheatwindow), cheatfixed);
+	gtk_container_set_border_width (GTK_CONTAINER (cheatfixed), 8);
 
 	ggedit = gtk_entry_new ();
-	gtk_widget_show (ggedit);
-	gtk_fixed_put (GTK_FIXED (fixed6), ggedit, 136, 280);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), ggedit, 136, 280);
 	gtk_widget_set_size_request (ggedit, 208, 32);
 	gtk_entry_set_invisible_char (GTK_ENTRY (ggedit), 8226);
 
 	paredit = gtk_entry_new ();
-	gtk_widget_show (paredit);
-	gtk_fixed_put (GTK_FIXED (fixed6), paredit, 136, 320);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), paredit, 136, 320);
 	gtk_widget_set_size_request (paredit, 208, 32);
 	gtk_entry_set_invisible_char (GTK_ENTRY (paredit), 8226);
 
 	label21 = gtk_label_new ("Pro-Action Rocky:");
-	gtk_widget_show (label21);
-	gtk_fixed_put (GTK_FIXED (fixed6), label21, 0, 328);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), label21, 0, 328);
 	gtk_widget_set_size_request (label21, 136, 16);
 
 	label20 = gtk_label_new ("Game Genie:");
-	gtk_widget_show (label20);
-	gtk_fixed_put (GTK_FIXED (fixed6), label20, 32, 288);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), label20, 32, 288);
 	gtk_widget_set_size_request (label20, 112, 16);
 
 	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_widget_show (scrolledwindow2);
-	gtk_fixed_put (GTK_FIXED (fixed6), scrolledwindow2, 8, 0);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), scrolledwindow2, 8, 0);
 	gtk_widget_set_size_request (scrolledwindow2, 592, 232);
 
 	cheattree = gtk_tree_view_new ();
-	gtk_widget_show (cheattree);
 	gtk_container_add (GTK_CONTAINER (scrolledwindow2), cheattree);
 
 	chtggvalid = gtk_button_new_with_mnemonic ("Check");
-	gtk_widget_show (chtggvalid);
-	gtk_fixed_put (GTK_FIXED (fixed6), chtggvalid, 352, 280);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), chtggvalid, 352, 280);
 	gtk_widget_set_size_request (chtggvalid, 64, 32);
 
 	genieok = gtk_button_new_with_mnemonic ("Add");
-	gtk_widget_show (genieok);
-	gtk_fixed_put (GTK_FIXED (fixed6), genieok, 416, 280);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), genieok, 416, 280);
 	gtk_widget_set_size_request (genieok, 64, 32);
 
 	parok = gtk_button_new_with_mnemonic ("Add");
-	gtk_widget_show (parok);
-	gtk_fixed_put (GTK_FIXED (fixed6), parok, 416, 320);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), parok, 416, 320);
 	gtk_widget_set_size_request (parok, 64, 32);
 
 	cheatok = gtk_button_new_from_stock ("gtk-ok");
-	gtk_widget_show (cheatok);
-	gtk_fixed_put (GTK_FIXED (fixed6), cheatok, 496, 336);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), cheatok, 496, 336);
 	gtk_widget_set_size_request (cheatok, 112, 32);
 
 	cheatopen = gtk_button_new_with_mnemonic ("Import...");
-	gtk_widget_show (cheatopen);
-	gtk_fixed_put (GTK_FIXED (fixed6), cheatopen, 496, 240);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), cheatopen, 496, 240);
 	gtk_widget_set_size_request (cheatopen, 112, 32);
 
 	cheatsave = gtk_button_new_with_mnemonic ("Export...");
-	gtk_widget_show (cheatsave);
-	gtk_fixed_put (GTK_FIXED (fixed6), cheatsave, 496, 280);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), cheatsave, 496, 280);
 	gtk_widget_set_size_request (cheatsave, 112, 32);
 
 	parvalid = gtk_button_new_with_mnemonic ("Check");
-	gtk_widget_show (parvalid);
-	gtk_fixed_put (GTK_FIXED (fixed6), parvalid, 352, 320);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), parvalid, 352, 320);
 	gtk_widget_set_size_request (parvalid, 64, 32);
 
 	chdelete = gtk_button_new_with_mnemonic ("Remove code");
 	gtk_widget_show (chdelete);
-	gtk_fixed_put (GTK_FIXED (fixed6), chdelete, 8, 240);
+	gtk_fixed_put (GTK_FIXED (cheatfixed), chdelete, 8, 240);
 	gtk_widget_set_size_request (chdelete, 120, 32);
 
 	g_signal_connect(G_OBJECT(chtggvalid), "clicked",
@@ -460,9 +442,9 @@ GtkWidget* create_cheatwind (void) {
 	// get the selection object too
 	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(cheattree));
 	
-	gtk_widget_show(cheatwind);
+	gtk_widget_show_all(cheatwindow);
 
-	return cheatwind;
+	return cheatwindow;
 }
 
 void on_cheatopen_clicked(GtkButton *button, gpointer user_data)

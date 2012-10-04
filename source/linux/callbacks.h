@@ -92,6 +92,10 @@ on_ratecombo_configure_event           (GtkWidget       *widget,
 void
 on_mainwindow_destroy                  (GObject       *object,
                                         gpointer         user_data);
+                                        
+void
+on_nsfplayer_destroy					(GObject       *object,
+										gpointer         user_data);
 
 void
 on_scaleamtcombo_changed               (GtkComboBox     *combobox,
