@@ -191,6 +191,12 @@ on_mainwindow_destroy                  (GtkObject       *object,
 
 }
 
+void
+on_nsfplayer_destroy                  (GtkObject       *object,
+                                        gpointer         user_data)
+{
+
+}
 
 void
 on_scaleamtcombo_changed               (GtkComboBox     *combobox,

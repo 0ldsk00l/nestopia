@@ -71,7 +71,7 @@ static GdkPixbuf *app_icon;
 GtkWidget *mainwindow;
 static GtkWidget *check_fullscreen, *check_unlimitspr, *check_controls, *check_alsa, *check_stereo, *check_exciter, *check_surround;
 static GtkWidget *combo_ntsc, *combo_rate, *combo_scale, *combo_videomode, *button_play, *button_nsfplay, *button_nsfstop, *spin_nsf;
-static GtkWidget *text_nsftitle, *text_nsfauthor, *text_nsfmaker, *text_volume, *scroll_volume, *notebook_main;
+static GtkWidget *nsftitle, *nsfauthor, *nsfmaker, *text_volume, *scroll_volume, *notebook_main;
 static GtkWidget *combo_render, *combo_favor, *combo_scaleamt, *combo_config, *combo_spatch, *scroll_surround, *text_surround;
 static GtkWidget *combo_sndapi;
 
@@ -96,16 +96,16 @@ void on_nsfplay_clicked(GtkButton       *button,  gpointer         user_data)
 {
 	NstPlayNsf();
 
-	gtk_widget_set_sensitive(button_nsfplay, FALSE);
-	gtk_widget_set_sensitive(button_nsfstop, TRUE);
+	//gtk_widget_set_sensitive(button_nsfplay, FALSE);
+	//gtk_widget_set_sensitive(button_nsfstop, TRUE);
 }
 
 void on_nsfstop_clicked(GtkButton       *button, gpointer         user_data)
 {
 	NstStopNsf();
 
-	gtk_widget_set_sensitive(button_nsfplay, TRUE);
-	gtk_widget_set_sensitive(button_nsfstop, FALSE);
+	//gtk_widget_set_sensitive(button_nsfplay, TRUE);
+	//gtk_widget_set_sensitive(button_nsfstop, FALSE);
 }
 
 void on_videocombo_changed(GtkComboBox     *combobox, gpointer         user_data)
@@ -352,6 +352,12 @@ void on_configbutton_clicked(GtkButton *button, gpointer user_data)
 	NstLaunchConfig();
 }
 
+void on_nsfplayer_destroy(GObject *object, gpointer user_data)
+{
+	NstStopNsf();
+	//gtk_widget_destroy(nsfplayer);
+}
+
 static void load_file_by_uri(char *filename)
 {
 	char *fsub;
@@ -487,46 +493,58 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 
 void UIHelp_Unload(void)
 {
-	// disable the widgets since we unloaded them
+	/*// disable the widgets since we unloaded them
 	gtk_widget_set_sensitive(button_play, FALSE);
 	gtk_widget_set_sensitive(button_nsfplay, FALSE);
 	gtk_widget_set_sensitive(button_nsfstop, FALSE);
-	gtk_widget_set_sensitive(spin_nsf, FALSE);
+	gtk_widget_set_sensitive(spin_nsf, FALSE);*/
 
 	// and kill the NSF text since we've unloaded too
-	gtk_label_set_text(GTK_LABEL(text_nsftitle), " ");
-	gtk_label_set_text(GTK_LABEL(text_nsfauthor), " ");
-	gtk_label_set_text(GTK_LABEL(text_nsfmaker), " ");
+	//gtk_label_set_text(GTK_LABEL(nsftitle), " ");
+	//gtk_label_set_text(GTK_LABEL(nsfauthor), " ");
+	//gtk_label_set_text(GTK_LABEL(nsfmaker), " ");
 }
 
 void UIHelp_NSFLoaded(void)
 {
 	Nsf nsf( emulator );
+	
+	create_nsfplayer();
 
-	gtk_widget_set_sensitive(button_nsfplay, TRUE);
-	gtk_widget_set_sensitive(spin_nsf, TRUE);
+	//gtk_widget_set_sensitive(button_nsfplay, TRUE);
+	//gtk_widget_set_sensitive(spin_nsf, TRUE);
 
 	// show the NSF info
-	gtk_label_set_text(GTK_LABEL(text_nsftitle), nsf.GetName());
-	gtk_label_set_text(GTK_LABEL(text_nsfauthor), nsf.GetArtist());
-	gtk_label_set_text(GTK_LABEL(text_nsfmaker), nsf.GetCopyright());
+	gtk_label_set_text(GTK_LABEL(nsftitle), nsf.GetName());
+	gtk_label_set_text(GTK_LABEL(nsfauthor), nsf.GetArtist());
+	gtk_label_set_text(GTK_LABEL(nsfmaker), nsf.GetCopyright());
 
-	gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_nsf), nsf.GetCurrentSong());
-	gtk_spin_button_set_range(GTK_SPIN_BUTTON(spin_nsf), nsf.GetStartingSong(), nsf.GetNumSongs());
+	//gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_nsf), nsf.GetCurrentSong());
+	//gtk_spin_button_set_range(GTK_SPIN_BUTTON(spin_nsf), nsf.GetStartingSong(), nsf.GetNumSongs());
 }
 
 void UIHelp_GameLoaded(void)
 {
-	gtk_widget_set_sensitive(button_play, TRUE);
-	gtk_widget_set_sensitive(button_nsfstop, FALSE);
-	gtk_widget_set_sensitive(button_nsfplay, FALSE);
-	gtk_widget_set_sensitive(spin_nsf, FALSE);
+	//gtk_widget_set_sensitive(button_play, TRUE);
+	//gtk_widget_set_sensitive(button_nsfstop, FALSE);
+	//gtk_widget_set_sensitive(button_nsfplay, FALSE);
+	//gtk_widget_set_sensitive(spin_nsf, FALSE);
 }
 
 // returns NEStopia's icon for child windows to use
 GdkPixbuf *UIHelp_GetNSTIcon()
 {
 	return app_icon;
+}
+
+// These functions are dirty hacks to let the main window
+// in interace.c call C++ functions. I should probably rethink this later.
+void state_save() {
+	auxio_do_state_save();
+}
+
+void state_load() {
+	auxio_do_state_load();
 }
 
 GtkWidget* create_videoconfig (void) {
@@ -558,7 +576,7 @@ GtkWidget* create_videoconfig (void) {
 	gtk_widget_set_size_request(rendererlabel, 96, 16);
 
 	rendercombo = gtk_combo_box_text_new();
-	gtk_fixed_put(GTK_FIXED(videofixed), rendercombo, 144, 8);
+	gtk_fixed_put(GTK_FIXED(videofixed), rendercombo, 128, 8);
 	gtk_widget_set_size_request(rendercombo, 144, 32);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(rendercombo), "Soft");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(rendercombo), "OpenGL");
@@ -570,7 +588,7 @@ GtkWidget* create_videoconfig (void) {
 	gtk_widget_set_size_request(filterlabel, 96, 16);
 
 	scalecombo = gtk_combo_box_text_new ();
-	gtk_fixed_put (GTK_FIXED (videofixed), scalecombo, 144, 48);
+	gtk_fixed_put (GTK_FIXED (videofixed), scalecombo, 128, 48);
 	gtk_widget_set_size_request (scalecombo, 144, 32);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "None");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "NTSC");
@@ -583,7 +601,7 @@ GtkWidget* create_videoconfig (void) {
 	gtk_widget_set_size_request(scalelabel, 96, 16);
 	
 	scaleamtcombo = gtk_combo_box_text_new ();
-	gtk_fixed_put(GTK_FIXED(videofixed), scaleamtcombo, 144, 88);
+	gtk_fixed_put(GTK_FIXED(videofixed), scaleamtcombo, 128, 88);
 	gtk_widget_set_size_request(scaleamtcombo, 144, 32);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scaleamtcombo), "1x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scaleamtcombo), "2x");
@@ -679,7 +697,7 @@ GtkWidget* create_audioconfig (void) {
 	gtk_widget_set_size_request(soundlabel, 112, 16);
 	
 	sndapicombo = gtk_combo_box_text_new();
-	gtk_fixed_put(GTK_FIXED(audiofixed), sndapicombo, 124, 8);
+	gtk_fixed_put(GTK_FIXED(audiofixed), sndapicombo, 136, 8);
 	gtk_widget_set_size_request(sndapicombo, 128, 32);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "SDL");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "ALSA");
@@ -691,7 +709,7 @@ GtkWidget* create_audioconfig (void) {
 	gtk_widget_set_size_request(ratelabel, 112, 16);
 	
 	ratecombo = gtk_combo_box_text_new();
-	gtk_fixed_put (GTK_FIXED(audiofixed), ratecombo, 124, 48);
+	gtk_fixed_put (GTK_FIXED(audiofixed), ratecombo, 136, 48);
 	gtk_widget_set_size_request (ratecombo, 128, 32);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "11025");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "22050");
@@ -705,7 +723,7 @@ GtkWidget* create_audioconfig (void) {
 
 	volumescroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
 	gtk_widget_show(volumescroll);
-	gtk_fixed_put(GTK_FIXED(audiofixed), volumescroll, 124, 92);
+	gtk_fixed_put(GTK_FIXED(audiofixed), volumescroll, 136, 92);
 	gtk_widget_set_size_request(volumescroll, 128, 24);
 	gtk_range_set_value(GTK_RANGE(volumescroll), sSettings->GetVolume());
 
@@ -717,7 +735,7 @@ GtkWidget* create_audioconfig (void) {
 
 	surrscroll = gtk_scrollbar_new(GTK_ORIENTATION_HORIZONTAL, GTK_ADJUSTMENT (gtk_adjustment_new (0, 0, 100, 1, 5, 0)));
 	gtk_widget_show(surrscroll);
-	gtk_fixed_put(GTK_FIXED(audiofixed), surrscroll, 124, 136);
+	gtk_fixed_put(GTK_FIXED(audiofixed), surrscroll, 136, 136);
 	gtk_widget_set_size_request(surrscroll, 128, 24);
 	gtk_range_set_value(GTK_RANGE(surrscroll), sSettings->GetSurrMult());
 
@@ -816,4 +834,70 @@ GtkWidget* create_miscconfig (void) {
 		G_CALLBACK(on_spatchcombo_changed), NULL);
 	
 	return miscwindow;
+}
+
+GtkWidget* create_nsfplayer (void) {
+	
+	GtkWidget *nsfplayer;
+	GtkWidget *nsffixed;
+	
+	GtkAdjustment *nsfspinbutton_adj;
+	GtkWidget *nsfspinbutton;
+	GtkWidget *nsfstop;
+	GtkWidget *nsfplay;
+	
+	nsfplayer = gtk_window_new (GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title (GTK_WINDOW (nsfplayer), "NSF Player");
+
+	nsffixed = gtk_fixed_new();
+	gtk_container_add (GTK_CONTAINER (nsfplayer), nsffixed);
+
+	nsfmaker = gtk_label_new ("");
+	gtk_widget_show (nsfmaker);
+	gtk_fixed_put (GTK_FIXED (nsffixed), nsfmaker, 8, 64);
+	gtk_widget_set_size_request (nsfmaker, 320, 24);
+
+	nsfauthor = gtk_label_new ("");
+	gtk_widget_show (nsfauthor);
+	gtk_fixed_put (GTK_FIXED (nsffixed), nsfauthor, 8, 32);
+	gtk_widget_set_size_request (nsfauthor, 320, 24);
+	gtk_label_set_justify (GTK_LABEL (nsfauthor), GTK_JUSTIFY_CENTER);
+
+	nsftitle = gtk_label_new ("");
+	gtk_widget_show (nsftitle);
+	gtk_fixed_put (GTK_FIXED (nsffixed), nsftitle, 8, 0);
+	gtk_widget_set_size_request (nsftitle, 320, 24);
+	gtk_label_set_justify (GTK_LABEL (nsftitle), GTK_JUSTIFY_CENTER);
+
+	nsfstop = gtk_button_new_from_stock ("gtk-media-stop");
+	gtk_fixed_put (GTK_FIXED (nsffixed), nsfstop, 56, 104);
+	gtk_widget_set_size_request (nsfstop, 96, 32);
+
+	nsfplay = gtk_button_new_from_stock ("gtk-media-play");
+	gtk_fixed_put (GTK_FIXED (nsffixed), nsfplay, 160, 104);
+	gtk_widget_set_size_request (nsfplay, 88, 32);
+	
+	nsfspinbutton_adj = gtk_adjustment_new (1, 0, 100, 1, 10, 10);
+	nsfspinbutton = gtk_spin_button_new (GTK_ADJUSTMENT (nsfspinbutton_adj), 1, 0);
+	gtk_fixed_put (GTK_FIXED (nsffixed), nsfspinbutton, 272, 104);
+	gtk_widget_set_size_request (nsfspinbutton, 72, 35);
+	
+	g_signal_connect (G_OBJECT(nsfspinbutton), "change_value",
+		G_CALLBACK (on_nsfspinbutton_change_value), NULL);
+
+	g_signal_connect (G_OBJECT(nsfspinbutton), "value_changed",
+		G_CALLBACK (on_nsfspinbutton_value_changed), NULL);
+
+	g_signal_connect (G_OBJECT(nsfstop), "clicked",
+		G_CALLBACK (on_nsfstop_clicked), NULL);
+
+	g_signal_connect (G_OBJECT(nsfplay), "clicked",
+		G_CALLBACK (on_nsfplay_clicked), NULL);
+
+	g_signal_connect (G_OBJECT(nsfplayer), "destroy",
+		G_CALLBACK (on_nsfplayer_destroy), NULL);
+	
+	gtk_widget_show_all(nsfplayer);
+	
+	return nsfplayer;
 }
