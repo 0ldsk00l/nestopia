@@ -34,7 +34,6 @@ extern "C" {
 #include "7zAlloc.h"
 
 #include "interface.h"
-#include "support.h"
 #include "callbacks.h"
 }
 
@@ -48,7 +47,7 @@ static std::ifstream *moviePlayFile, *fdsBiosFile, *nstDBFile;
 static std::ofstream *movieRecFile;
 
 static bool run_picker, cancelled;
-static GtkWidget *filepicker, *tree;
+//static GtkWidget *filepicker, *tree;
 static GtkTreeStore *treestore;
 static GtkTreeIter treeiters[MAX_ITEMS];
 static GtkCellRenderer *renderer;
@@ -622,17 +621,46 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 		{
 			int sel;
 			char fname[512];
+			
+			GtkWidget *archselect;
+			GtkWidget *fixed5;
+			GtkWidget *scrolledwindow1;
+			GtkWidget *archtree;
+			GtkWidget *label18;
+			GtkWidget *label19;
+			GtkWidget *archcancel;
+			GtkWidget *archok;
 
-			filepicker = create_archselect();
-			tree = lookup_widget(filepicker, "archtree");
-			gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW (tree), FALSE);
-			g_signal_connect(G_OBJECT(tree), "button_press_event", G_CALLBACK(check_list_double), NULL);
+			archselect = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+			gtk_window_set_title(GTK_WINDOW (archselect), "Pick game in archive");
+			gtk_window_set_modal (GTK_WINDOW (archselect), TRUE);
+			
+			fixed5 = gtk_fixed_new ();
+			gtk_container_add (GTK_CONTAINER(archselect), fixed5);
+			gtk_widget_show (fixed5);
+
+			scrolledwindow1 = gtk_scrolled_window_new(NULL, NULL);
+			gtk_fixed_put (GTK_FIXED (fixed5), scrolledwindow1, 0, 0);
+			gtk_widget_set_size_request (scrolledwindow1, 336, 352);
+			gtk_widget_show (scrolledwindow1);
+
+			archtree = gtk_tree_view_new ();
+			gtk_container_add (GTK_CONTAINER (scrolledwindow1), archtree);
+			gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW (archtree), FALSE);
+			g_signal_connect(G_OBJECT(archtree), "button_press_event", G_CALLBACK(check_list_double), NULL);
+			gtk_widget_show (archtree);
 
 			// set up our tree store
 			treestore = gtk_tree_store_new(1, G_TYPE_STRING);
 
 			// attach the store to the tree	
-			gtk_tree_view_set_model(GTK_TREE_VIEW(tree), GTK_TREE_MODEL(treestore));
+			gtk_tree_view_set_model(GTK_TREE_VIEW(archtree), GTK_TREE_MODEL(treestore));
+			
+			for (int fn = 0; fn < filelist.size(); fn++)
+			{
+				gtk_tree_store_insert(treestore, &treeiters[fn], NULL, 999999);
+				gtk_tree_store_set(treestore, &treeiters[fn], 0, filelist[fn], -1);
+			}
 
 			// create a cell renderer using the stock text one
 			renderer = gtk_cell_renderer_text_new();
@@ -644,30 +672,48 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 		                                                   NULL);
 
 			// add the display column and renderer to the tree view
-			gtk_tree_view_append_column (GTK_TREE_VIEW (tree), column);
+			gtk_tree_view_append_column (GTK_TREE_VIEW (archtree), column);
+			
+			label18 = gtk_label_new ("Choose an NES cartridge,");
+			gtk_fixed_put (GTK_FIXED (fixed5), label18, 344, 8);
+			gtk_widget_set_size_request (label18, 176, 24);
+			gtk_widget_show (label18);
+
+			label19 = gtk_label_new ("disc, or music file.");
+			gtk_fixed_put (GTK_FIXED (fixed5), label19, 344, 32);
+			gtk_widget_set_size_request (label19, 176, 16);
+			gtk_widget_show (label19);
+
+			archcancel = gtk_button_new_from_stock ("gtk-cancel");
+			gtk_fixed_put (GTK_FIXED (fixed5), archcancel, 344, 304);
+			gtk_widget_set_size_request (archcancel, 168, 40);
+			gtk_widget_show (archcancel);
+
+			archok = gtk_button_new_from_stock ("gtk-ok");
+			gtk_fixed_put (GTK_FIXED (fixed5), archok, 344, 248);
+			gtk_widget_set_size_request (archok, 168, 40);
+			gtk_widget_show (archok);
 
 			// get the selection object too
-			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(tree));
-	
-			// add the filenames
-			for (int fn = 0; fn < filelist.size(); fn++)
-			{
-				gtk_tree_store_insert(treestore, &treeiters[fn], NULL, 999999);
-				gtk_tree_store_set(treestore, &treeiters[fn], 0, filelist[fn], -1);
-			}
+			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(archtree));
 
-			gtk_widget_show(filepicker);
-
+			gtk_widget_show(archselect);
 			run_picker = true;
 			cancelled = false;
 			while (run_picker)
 			{
 				gtk_main_iteration_do(FALSE);
 			}
+			
+			g_signal_connect (G_OBJECT(archcancel), "clicked",
+				G_CALLBACK (on_archcancel_clicked), NULL);
+
+			g_signal_connect (G_OBJECT(archok), "clicked",
+				G_CALLBACK (on_archok_clicked), NULL);
 
 			sel = find_current_selection();
 
-			gtk_widget_destroy(filepicker);
+			gtk_widget_destroy(archselect);
 
 			// was something picked?
 			if ((sel != -1) && (!cancelled))

@@ -32,7 +32,6 @@ extern "C" {
 #include <gtk/gtk.h>
 
 #include "interface.h"
-#include "support.h"
 #include "callbacks.h"
 }
 

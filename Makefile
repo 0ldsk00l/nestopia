@@ -41,7 +41,7 @@ CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 CXXFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
-OBJS = objs/linux/main.o objs/linux/oss.o objs/linux/interface.o objs/linux/support.o objs/linux/settings.o 
+OBJS = objs/linux/main.o objs/linux/oss.o objs/linux/interface.o objs/linux/settings.o 
 OBJS += objs/linux/auxio.o objs/linux/input.o objs/linux/kentry.o objs/linux/controlconfig.o objs/linux/cheats.o
 OBJS += objs/linux/seffect.o objs/linux/uihelp.o
 

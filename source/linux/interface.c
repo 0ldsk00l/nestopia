@@ -13,7 +13,6 @@
 
 #include "callbacks.h"
 #include "interface.h"
-#include "support.h"
 
 GtkWidget* create_mainwindow (void) {
 
@@ -163,39 +162,10 @@ GtkWidget* create_mainwindow (void) {
 	return window;
 }
 
-void videoconfig_clicked() {
-	create_videoconfig();
-}
-
-void audioconfig_clicked() {
-	create_audioconfig();
-}
-
-void inputconfig_clicked() {
-	create_inputconfig();
-}
-
-void miscconfig_clicked() {
-	create_miscconfig();
-}
-
-void about_clicked() {
-	create_about();
-}
-
 GtkWidget* create_inputconfig (void) {
 	printf("Input Dialog\n");
 	return 0;
 }
-
-//The Old
-
-#define GLADE_HOOKUP_OBJECT(component,widget,name) \
-  g_object_set_data_full (G_OBJECT (component), name, \
-    g_object_ref (widget), (GDestroyNotify) g_object_unref)
-
-#define GLADE_HOOKUP_OBJECT_NO_REF(component,widget,name) \
-  g_object_set_data (G_OBJECT (component), name, widget)
 
 /*GtkWidget*
 create_mainwindow (void)
@@ -743,7 +713,7 @@ create_mainwindow (void)
   return mainwindow;
 }*/
 
-GtkWidget* create_archselect (void) {
+/*GtkWidget* create_archselect (void) {
 
 	GtkWidget *archselect;
 	GtkWidget *fixed5;
@@ -803,7 +773,7 @@ GtkWidget* create_archselect (void) {
 	gtk_widget_show_all(archselect);
 
 	return archselect;
-}
+}*/
 
 GtkWidget* create_about (void) {
 
