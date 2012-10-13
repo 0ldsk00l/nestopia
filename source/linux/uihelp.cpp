@@ -428,64 +428,6 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	app_icon = gdk_pixbuf_new_from_inline(-1, nsticon, FALSE, NULL);
 	gtk_window_set_icon(GTK_WINDOW(mainwindow), app_icon);
 
-	/*// get references to all the GUI widgets
-	notebook_main = lookup_widget(mainwindow, "notebook1"); 
-	check_fullscreen = lookup_widget(mainwindow, "check_fullscreen");
-	check_unlimitspr = lookup_widget(mainwindow, "unlimitsprcheck"); 
-	check_controls = lookup_widget(mainwindow, "controlcheck"); 
-	check_stereo = lookup_widget(mainwindow, "stereocheck"); 
-	check_exciter = lookup_widget(mainwindow, "excitecheck"); 
-	check_surround = lookup_widget(mainwindow, "surrcheck"); 
-	combo_rate = lookup_widget(mainwindow, "ratecombo");
-	combo_scale = lookup_widget(mainwindow, "scalecombo");
-	combo_videomode = lookup_widget(mainwindow, "videocombo"); 
-	combo_ntsc = lookup_widget(mainwindow, "ntsccombo");
-	combo_render = lookup_widget(mainwindow, "rendercombo");
-	combo_favor = lookup_widget(mainwindow, "favorcombo");
-	combo_scaleamt = lookup_widget(mainwindow, "scaleamtcombo");
-	combo_config = lookup_widget(mainwindow, "configcombo");
-	combo_spatch = lookup_widget(mainwindow, "spatchcombo");
-	combo_sndapi = lookup_widget(mainwindow, "sndapicombo");
-	button_play = lookup_widget(mainwindow, "playbutton");
-	button_nsfstop = lookup_widget(mainwindow, "nsfstop"); 
-	button_nsfplay = lookup_widget(mainwindow, "nsfplay"); 
-	spin_nsf = lookup_widget(mainwindow, "nsfspinbutton");
-	text_nsftitle = lookup_widget(mainwindow, "nsftitle"); 
-	text_nsfauthor = lookup_widget(mainwindow, "nsfauthor"); 
-	text_nsfmaker = lookup_widget(mainwindow, "nsfmaker"); 
-	text_volume = lookup_widget(mainwindow, "volumelabel");
-	text_surround = lookup_widget(mainwindow, "surroundlabel");
-	scroll_volume = lookup_widget(mainwindow, "volumescroll");
-	scroll_surround = lookup_widget(mainwindow, "surrscroll");
-
-	// set them all up to reflect the saved settings
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fullscreen), sSettings->GetFullscreen());
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_unlimitspr), sSettings->GetSprlimit() ^ 1);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_controls), sSettings->GetUseJoypads());
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_stereo), sSettings->GetStereo());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_rate), sSettings->GetRawRate());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_scale), sSettings->GetScale());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_videomode), sSettings->GetVideoMode());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_ntsc), sSettings->GetNtscMode());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_render), sSettings->GetRenderType());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_favor), sSettings->GetPrefSystem());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_scaleamt), sSettings->GetScaleAmt());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_config), sSettings->GetConfigItem());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_spatch), sSettings->GetSoftPatch());
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_sndapi), sSettings->GetSndAPI());
-	gtk_widget_set_sensitive(button_play, FALSE);
-	gtk_widget_set_sensitive(button_nsfstop, FALSE);
-	gtk_widget_set_sensitive(button_nsfplay, FALSE);
-	gtk_widget_set_sensitive(spin_nsf, FALSE);
-	gtk_range_set_value(GTK_RANGE(scroll_volume), sSettings->GetVolume());
-	gtk_range_set_value(GTK_RANGE(scroll_surround), sSettings->GetSurrMult());
-
-	sprintf(volumestr, "%d", sSettings->GetVolume());
-	gtk_label_set_text(GTK_LABEL(text_volume), volumestr);
-
-	sprintf(surrmulstr, "%d", sSettings->GetSurrMult());
-	gtk_label_set_text(GTK_LABEL(text_surround), surrmulstr);*/
-
 	// show the window
 	gtk_widget_show(mainwindow);
 }
@@ -782,6 +724,93 @@ GtkWidget* create_audioconfig (void) {
 		G_CALLBACK(on_sndapicombo_changed), NULL);
 
 	return audiowindow;
+}
+
+GtkWidget* create_inputconfig (void) {
+
+	GtkWidget *inputwindow;
+	GtkWidget *fixed3;
+	GtkWidget *controlcheck;
+	GtkWidget *configbutton;
+	GtkWidget *configlabel;
+	GtkWidget *configcombo;
+	
+	inputwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW(inputwindow), "Input Configuration");
+
+	fixed3 = gtk_fixed_new ();
+	gtk_widget_show (fixed3);
+	gtk_container_add (GTK_CONTAINER (inputwindow), fixed3);
+
+	controlcheck = gtk_check_button_new_with_mnemonic ("Use controllers");
+	gtk_widget_show (controlcheck);
+	gtk_fixed_put (GTK_FIXED (fixed3), controlcheck, 8, 16);
+	gtk_widget_set_size_request (controlcheck, 136, 24);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(controlcheck), sSettings->GetUseJoypads());
+
+	configbutton = gtk_button_new_with_mnemonic ("Change...");
+	gtk_widget_show (configbutton);
+	gtk_fixed_put (GTK_FIXED (fixed3), configbutton, 296, 88);
+	gtk_widget_set_size_request (configbutton, 112, 40);
+
+	configlabel = gtk_label_new ("");
+	gtk_widget_show (configlabel);
+	gtk_fixed_put (GTK_FIXED (fixed3), configlabel, 8, 96);
+	gtk_widget_set_size_request (configlabel, 264, 24);
+
+	configcombo = gtk_combo_box_text_new ();
+	gtk_widget_show (configcombo);
+	gtk_fixed_put (GTK_FIXED (fixed3), configcombo, 8, 48);
+	gtk_widget_set_size_request (configcombo, 224, 32);
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Up");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Down");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Left");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Right");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 A");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 B");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 START");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 SELECT");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Up");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Down");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Left");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Right");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 A");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 B");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 START");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 SELECT");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Movie Save");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Movie Load");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Movie Stop");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Reset");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Flip FDS Sides");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Save state");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Load state");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Toggle fullscreen");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Stop game");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Stop game and exit NEStopia");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Start rewinder");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Stop rewinder");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quicksave slot 1");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quicksave slot 2");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quickload slot 1");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quickload slot 2");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Vs. System coin 1");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Vs. System coin 2");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(configcombo), sSettings->GetConfigItem());
+	
+	gtk_widget_show_all(inputwindow);
+	
+	
+	g_signal_connect(G_OBJECT(controlcheck), "toggled",
+		G_CALLBACK (on_controlcheck_toggled), NULL);
+
+	g_signal_connect(G_OBJECT(configbutton), "clicked",
+		G_CALLBACK (on_configbutton_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(configcombo), "changed",
+		G_CALLBACK (on_configcombo_changed), NULL);
+	
+	return inputwindow;
 }
 
 GtkWidget* create_miscconfig (void) {

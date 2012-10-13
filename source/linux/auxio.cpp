@@ -34,7 +34,7 @@ extern "C" {
 #include "7zAlloc.h"
 
 #include "interface.h"
-#include "callbacks.h"
+//#include "callbacks.h"
 }
 
 #define MAX_ITEMS	(512)
@@ -72,12 +72,14 @@ static int find_current_selection(void)
 void on_archok_clicked(GtkButton *button, gpointer user_data)
 {
 	run_picker = false;
+	printf("Got here 1\n");
 }
 
 void on_archcancel_clicked(GtkButton *button, gpointer user_data)
 {
 	run_picker = false;
 	cancelled = true;
+	printf("Got here 2\n");
 }
 
 static gint check_list_double(GtkWidget *widget, GdkEventButton *event, gpointer func_data)
@@ -704,14 +706,14 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 			{
 				gtk_main_iteration_do(FALSE);
 			}
-			
-			g_signal_connect (G_OBJECT(archcancel), "clicked",
-				G_CALLBACK (on_archcancel_clicked), NULL);
-
-			g_signal_connect (G_OBJECT(archok), "clicked",
-				G_CALLBACK (on_archok_clicked), NULL);
 
 			sel = find_current_selection();
+			
+			g_signal_connect(G_OBJECT(archcancel), "clicked",
+				G_CALLBACK(on_archcancel_clicked), NULL);
+
+			g_signal_connect(G_OBJECT(archok), "clicked",
+				G_CALLBACK(on_archok_clicked), NULL);
 
 			gtk_widget_destroy(archselect);
 
