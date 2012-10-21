@@ -64,6 +64,7 @@ Emulator emulator;
 void SetupVideo();
 void SetupSound();
 void SetupInput();
+void get_screen_res();
 
 SDL_Surface *screen;
 
@@ -581,15 +582,7 @@ static void QuickLoad(int isvst)
 // start playing
 void NstPlayGame(void)
 {
-	// hide main window
-	//gtk_widget_hide(mainwindow);
 	putenv(windowid);
-	//printf("Test windowid: %s\n", windowid);
-	// process pending gtk events
-	/*while (gtk_events_pending())
-	{
-		gtk_main_iteration();
-	}*/
 
 	// initialization
 	SetupVideo();
@@ -1120,8 +1113,10 @@ int main(int argc, char *argv[])
 
 	sSettings = new Settings;
 	sCheatMgr = new CheatMgr;
+	
+	get_screen_res();
 
-	UIHelp_Init(argc, argv, sSettings, sCheatMgr);
+	UIHelp_Init(argc, argv, sSettings, sCheatMgr, cur_Rwidth, cur_Rheight);
 	
 	// setup video lock/unlock callbacks
 	Video::Output::lockCallback.Set( VideoLock, userData );
@@ -1161,8 +1156,7 @@ int main(int argc, char *argv[])
 		if (playing)
 		{
 				gtk_main_iteration_do(FALSE);
-				//while (gtk_events_pending) {
-					//gtk_main_iteration_do(TRUE);
+
 			 	while (SDL_PollEvent(&event))
 				{
 					switch (event.type)
@@ -1262,6 +1256,73 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+void get_screen_res() {
+
+	int scalefactor = sSettings->GetScaleAmt() + 1;
+	
+	switch (sSettings->GetScale())
+	{
+		case 0:	// None (no scaling unless OpenGL)
+			if (sSettings->GetRenderType() == 0)
+			{
+				if (scalefactor > 1)
+				{
+					std::cout << "Warning: raw scale factors > 1 not allowed with pure software, use OpenGL\n";
+				}
+				cur_width = cur_Rwidth = Video::Output::WIDTH;
+				cur_height = cur_Rheight = Video::Output::HEIGHT;
+			}
+			else
+			{
+				cur_width = Video::Output::WIDTH;
+				cur_height = Video::Output::HEIGHT;
+				cur_Rwidth = cur_width * scalefactor;
+				cur_Rheight = cur_height * scalefactor;
+			}
+
+			break;
+
+		case 1: // NTSC
+			if (sSettings->GetRenderType() == 0)
+			{
+				if (scalefactor > 1)
+				{
+					std::cout << "Warning: NTSC scale factors > 1 not allowed with pure software - use OpenGL\n";
+				}
+
+				scalefactor = 1;
+			}
+
+			cur_width = Video::Output::NTSC_WIDTH;
+			cur_Rwidth = cur_width * scalefactor;
+			cur_height = Video::Output::HEIGHT;
+			cur_Rheight = cur_height * 2 * scalefactor;
+			break;
+
+		case 2: // scale x
+			if (scalefactor == 4) 
+			{
+				std::cout << "Warning: Scale x only allows scale factors of 3 or less\n";
+				scalefactor = 3;	// there is no scale4x
+			}
+
+			cur_width = cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			break;
+
+		case 3: // scale HQx
+			cur_width = cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			break;
+	}
+	
+/*	printf("cur_width: %d\n", cur_width);
+	printf("cur_Rwidth: %d\n", cur_Rwidth);
+	printf("cur_height: %d\n", cur_height);
+	printf("cur_Rheight: %d\n", cur_Rheight);
+	printf("Executed screen res update\n");*/
+}
+
 void SetupVideo()
 {
 	// renderstate structure
@@ -1329,58 +1390,21 @@ void SetupVideo()
 
 		SDL_JoystickEventState(SDL_ENABLE);	// turn on regular updates
 	}
+	
+	get_screen_res();
 
 	// compute the major video parameters from the scaler type and scale factor
 	switch (sSettings->GetScale())
 	{
 		case 0:	// None (no scaling unless OpenGL)
-			if (sSettings->GetRenderType() == 0)
-			{
-				if (scalefactor > 1)
-				{
-					std::cout << "Warning: raw scale factors > 1 not allowed with pure software, use OpenGL\n";
-				}
-				cur_width = cur_Rwidth = Video::Output::WIDTH;
-				cur_height = cur_Rheight = Video::Output::HEIGHT;
-			}
-			else
-			{
-				cur_width = Video::Output::WIDTH;
-				cur_height = Video::Output::HEIGHT;
-				cur_Rwidth = cur_width * scalefactor;
-				cur_Rheight = cur_height * scalefactor;
-			}
 			filter = Video::RenderState::FILTER_NONE;
 			break;
 
 		case 1: // NTSC
-			if (sSettings->GetRenderType() == 0)
-			{
-				if (scalefactor > 1)
-				{
-					std::cout << "Warning: NTSC scale factors > 1 not allowed with pure software - use OpenGL\n";
-				}
-
-				scalefactor = 1;
-			}
-
-			cur_width = Video::Output::NTSC_WIDTH;
-			cur_Rwidth = cur_width * scalefactor;
-			cur_height = Video::Output::HEIGHT;
-			cur_Rheight = cur_height * 2 * scalefactor;
 			filter = Video::RenderState::FILTER_NTSC;
 			break;
 
 		case 2: // scale x
-			if (scalefactor == 4) 
-			{
-				std::cout << "Warning: Scale x only allows scale factors of 3 or less\n";
-				scalefactor = 3;	// there is no scale4x
-			}
-
-			cur_width = cur_Rwidth = Video::Output::WIDTH * scalefactor;
-			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
-
 			switch (scalefactor)
 			{
 				case 2:
@@ -1398,9 +1422,6 @@ void SetupVideo()
 			break;
 
 		case 3: // scale HQx
-			cur_width = cur_Rwidth = Video::Output::WIDTH * scalefactor;
-			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
-
 			switch (scalefactor)
 			{
 				case 2:
@@ -1421,8 +1442,6 @@ void SetupVideo()
 			}
 			break;
 	}
-
-
 
 	int eFlags = SDL_HWSURFACE;
         using_opengl = (sSettings->GetRenderType() > 0);
@@ -1597,7 +1616,7 @@ void configure_savename( const char* filename )
 	strcpy(savename, savedir);
 	
 	// also generate the window caption
-	sprintf(caption, "Nestopia Undead %s - %s", NST_VERSION, capname);
+	sprintf(caption, "Nestopia");
 
 	strcpy(rootname, savename);
 	strcat(savename, ".sav");
