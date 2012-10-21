@@ -46,6 +46,7 @@
 
 extern "C" {
 #include <gtk/gtk.h>
+#include <gdk/gdkx.h>
 
 #include "interface.h"
 #include "callbacks.h"
@@ -68,13 +69,12 @@ static CheatMgr *sCheatMgr;
 static GdkPixbuf *app_icon;
 
 GtkWidget *mainwindow;
-static GtkWidget *check_fullscreen, *check_unlimitspr, *check_controls, *check_alsa, *check_stereo, *check_exciter, *check_surround;
-static GtkWidget *combo_ntsc, *combo_rate, *combo_scale, *combo_videomode, *button_play, *button_nsfplay, *button_nsfstop, *spin_nsf;
+
 static GtkWidget *nsftitle, *nsfauthor, *nsfmaker, *text_volume, *scroll_volume, *notebook_main;
-static GtkWidget *combo_render, *combo_favor, *combo_scaleamt, *combo_config, *combo_spatch, *scroll_surround, *text_surround;
-static GtkWidget *combo_sndapi;
 
 static char volumestr[5], surrmulstr[5];
+
+char windowid[24];
 
 void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
 {
@@ -430,6 +430,7 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 
 	// show the window
 	gtk_widget_show(mainwindow);
+	
 }
 
 void UIHelp_Unload(void)
@@ -928,4 +929,223 @@ GtkWidget* create_nsfplayer (void) {
 	gtk_widget_show_all(nsfplayer);
 	
 	return nsfplayer;
+}
+
+GtkWidget* create_about (void) {
+
+	char svgpath[1024];
+	sprintf(svgpath, "%s/icons/nestopia.svg", DATADIR);
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 256, NULL);
+	
+	GtkWidget *aboutdialog = gtk_about_dialog_new();
+	
+	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
+	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia Undead");
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.43");
+	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "An accurate Nintendo Entertainment System Emulator");
+	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/");
+	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
+	g_object_unref(pixbuf), pixbuf = NULL;
+	gtk_dialog_run(GTK_DIALOG(aboutdialog));
+	gtk_widget_destroy(aboutdialog);
+	
+	return aboutdialog;
+}
+
+// Ripped this straight out of FCEUX and Gens/GS
+
+unsigned short GDKToSDLKeyval(int gdk_key)
+{
+	if (!(gdk_key & 0xFF00))
+	{
+		// ASCII symbol.
+		// SDL and GDK use the same values for these keys.
+		
+		// Make sure the key value is lowercase.
+		gdk_key = tolower(gdk_key);
+		
+		// Return the key value.
+		return gdk_key;
+	}
+	
+	if (gdk_key & 0xFFFF0000)
+	{
+		// Extended X11 key. Not supported by SDL.
+#ifdef GDK_WINDOWING_X11
+		fprintf(stderr, "Unhandled extended X11 key: 0x%08X (%s)", gdk_key, XKeysymToString(gdk_key));
+#else
+		fprintf(stderr, "Unhandled extended key: 0x%08X\n", gdk_key);
+#endif
+		return 0;
+	}
+	
+	// Non-ASCII symbol.
+	static const uint16_t gdk_to_sdl_table[0x100] =
+	{
+		// 0x00 - 0x0F
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		SDLK_BACKSPACE, SDLK_TAB, SDLK_RETURN, SDLK_CLEAR,
+		0x0000, SDLK_RETURN, 0x0000, 0x0000,
+		
+		// 0x10 - 0x1F
+		0x0000, 0x0000, 0x0000, SDLK_PAUSE,
+		SDLK_SCROLLOCK, SDLK_SYSREQ, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, SDLK_ESCAPE,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		
+		// 0x20 - 0x2F
+		SDLK_COMPOSE, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		
+		// 0x30 - 0x3F [Japanese keys]
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		
+		// 0x40 - 0x4F [unused]
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		
+		// 0x50 - 0x5F
+		SDLK_HOME, SDLK_LEFT, SDLK_UP, SDLK_RIGHT,
+		SDLK_DOWN, SDLK_PAGEUP, SDLK_PAGEDOWN, SDLK_END,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		
+		// 0x60 - 0x6F
+		0x0000, SDLK_PRINT, 0x0000, SDLK_INSERT,
+		SDLK_UNDO, 0x0000, 0x0000, SDLK_MENU,
+		0x0000, SDLK_HELP, SDLK_BREAK, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		
+		// 0x70 - 0x7F [mostly unused, except for Alt Gr and Num Lock]
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, SDLK_MODE, SDLK_NUMLOCK,
+		
+		// 0x80 - 0x8F [mostly unused, except for some numeric keypad keys]
+		SDLK_KP5, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, SDLK_KP_ENTER, 0x0000, 0x0000,
+		
+		// 0x90 - 0x9F
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, SDLK_KP7, SDLK_KP4, SDLK_KP8,
+		SDLK_KP6, SDLK_KP2, SDLK_KP9, SDLK_KP3,
+		SDLK_KP1, SDLK_KP5, SDLK_KP0, SDLK_KP_PERIOD,
+		
+		// 0xA0 - 0xAF
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, SDLK_KP_MULTIPLY, SDLK_KP_PLUS,
+		0x0000, SDLK_KP_MINUS, SDLK_KP_PERIOD, SDLK_KP_DIVIDE,
+		
+		// 0xB0 - 0xBF
+		SDLK_KP0, SDLK_KP1, SDLK_KP2, SDLK_KP3,
+		SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP7,
+		SDLK_KP8, SDLK_KP9, 0x0000, 0x0000,
+		0x0000, SDLK_KP_EQUALS, SDLK_F1, SDLK_F2,
+		
+		// 0xC0 - 0xCF
+		SDLK_F3, SDLK_F4, SDLK_F5, SDLK_F6,
+		SDLK_F7, SDLK_F8, SDLK_F9, SDLK_F10,
+		SDLK_F11, SDLK_F12, SDLK_F13, SDLK_F14,
+		SDLK_F15, 0x0000, 0x0000, 0x0000,
+		
+		// 0xD0 - 0xDF [L* and R* function keys]
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		
+		// 0xE0 - 0xEF
+		0x0000, SDLK_LSHIFT, SDLK_RSHIFT, SDLK_LCTRL,
+		SDLK_RCTRL, SDLK_CAPSLOCK, 0x0000, SDLK_LMETA,
+		SDLK_RMETA, SDLK_LALT, SDLK_RALT, SDLK_LSUPER,
+		SDLK_RSUPER, 0x0000, 0x0000, 0x0000,
+		
+		// 0xF0 - 0xFF [mostly unused, except for Delete]
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, 0x0000,
+		0x0000, 0x0000, 0x0000, SDLK_DELETE,		
+	};
+	
+	unsigned short sdl_key = gdk_to_sdl_table[gdk_key & 0xFF];
+	if (sdl_key == 0)
+	{
+		// Unhandled GDK key.
+		fprintf(stderr, "Unhandled GDK key: 0x%04X (%s)", gdk_key, gdk_keyval_name(gdk_key));
+		return 0;
+	}
+	
+	// ignore pause and screenshot hotkeys since they is handled by GTK+ as accelerators
+	/*if (sdl_key == Hotkeys[HK_PAUSE] || sdl_key == Hotkeys[HK_SCREENSHOT] || 
+		sdl_key == Hotkeys[HK_SAVE_STATE] || sdl_key == Hotkeys[HK_LOAD_STATE])
+		return 0;*/
+	
+	return sdl_key;
+}
+
+// Function adapted from Gens/GS (source/gens/input/input_sdl.c)
+gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data)
+{
+	SDL_Event sdlev;
+	SDLKey sdlkey;
+	int keystate;
+	
+	switch (event->type)
+	{
+		case GDK_KEY_PRESS:
+			sdlev.type = SDL_KEYDOWN;
+			sdlev.key.state = SDL_PRESSED;
+			keystate = 1;
+			break;
+		
+		case GDK_KEY_RELEASE:
+			sdlev.type = SDL_KEYUP;
+			sdlev.key.state = SDL_RELEASED;
+			keystate = 0;
+			break;
+		
+		default:
+			fprintf(stderr, "Unhandled GDK event type: %d", event->type);
+			return FALSE;
+	}
+	
+	// Convert this keypress from GDK to SDL.
+	sdlkey = (SDLKey)GDKToSDLKeyval(event->keyval);
+	
+	// Create an SDL event from the keypress.
+	sdlev.key.keysym.sym = sdlkey;
+	if (sdlkey != 0)
+	{
+		SDL_PushEvent(&sdlev);
+		
+		// Only let the emulator handle the key event if this window has the input focus.
+		//if(keystate == 0 || gtk_window_is_active(GTK_WINDOW(mainwindow)))
+		//{
+		//	#if SDL_VERSION_ATLEAST(1, 3, 0)
+		//	SDL_GetKeyboardState(NULL)[SDL_GetScancodeFromKey(sdlkey)] = keystate;
+		//	#else
+			SDL_GetKeyState(NULL)[sdlkey] = keystate;
+		//	#endif
+		//}
+	}
+	
+	// Allow GTK+ to process this key.
+	return FALSE;
+}
+
+void set_window_id(char* sdlwindowid) {
+	//printf("%s\n", sdlwindowid);
+	sprintf(windowid, "%s", sdlwindowid);
 }

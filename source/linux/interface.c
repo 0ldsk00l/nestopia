@@ -9,10 +9,13 @@
 #include <stdio.h>
 
 #include <gdk/gdkkeysyms.h>
+#include <gdk/gdkx.h>
 #include <gtk/gtk.h>
 
 #include "callbacks.h"
 #include "interface.h"
+
+GtkWidget *drawingarea;
 
 GtkWidget* create_mainwindow (void) {
 
@@ -46,14 +49,12 @@ GtkWidget* create_mainwindow (void) {
 	GtkWidget *help;
 	GtkWidget *about;
 	
-	GtkWidget *drawingarea;
-	
 	GtkWidget *statusbar;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
 	gtk_window_set_default_size(GTK_WINDOW(window), 400, 200);
-	gtk_window_set_title(GTK_WINDOW(window), "Nestopia Undead");
+	gtk_window_set_title(GTK_WINDOW(window), "Nestopia");
 
 	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(window), box);
@@ -111,7 +112,7 @@ GtkWidget* create_mainwindow (void) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	drawingarea = gtk_drawing_area_new();
-	gtk_widget_set_size_request (drawingarea, 200, 200);
+	gtk_widget_set_size_request (drawingarea, 960, 720);
 	
 	statusbar = gtk_statusbar_new();
 	
@@ -155,28 +156,16 @@ GtkWidget* create_mainwindow (void) {
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
 
+	gtk_key_snooper_install(convertKeypress, NULL);
+
 	gtk_widget_show_all(window);
+	
+	char SDL_windowhack[32];
+	sprintf(SDL_windowhack,"SDL_WINDOWID=%ld", GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
+	set_window_id(SDL_windowhack);
+	
+	GdkColor bg = {0, 0, 0, 0};
+	gtk_widget_modify_bg(drawingarea, GTK_STATE_NORMAL, &bg);
 
 	return window;
-}
-
-GtkWidget* create_about (void) {
-
-	char svgpath[1024];
-	sprintf(svgpath, "%s/icons/nestopia.svg", DATADIR);
-	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 256, NULL);
-	
-	GtkWidget *aboutdialog = gtk_about_dialog_new();
-	
-	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
-	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia Undead");
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.43");
-	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "An accurate Nintendo Entertainment System Emulator");
-	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/");
-	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
-	g_object_unref(pixbuf), pixbuf = NULL;
-	gtk_dialog_run(GTK_DIALOG(aboutdialog));
-	gtk_widget_destroy(aboutdialog);
-	
-	return aboutdialog;
 }
