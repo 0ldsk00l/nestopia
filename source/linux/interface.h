@@ -5,6 +5,7 @@ void miscconfig_clicked();
 void about_clicked();
 void state_save();
 void state_load();
+void set_window_id(char* sdlwindowid);
 
 GtkWidget* create_mainwindow();
 GtkWidget* create_videoconfig();
@@ -15,3 +16,5 @@ GtkWidget* create_nsfplayer();
 GtkWidget* create_about();
 GtkWidget* create_archselect();
 GtkWidget* create_cheatwindow();
+
+gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data);

@@ -79,6 +79,7 @@ static SDL_Joystick *joy[10];
 
 extern int lnxdrv_apimode;
 extern GtkWidget *mainwindow;
+extern char windowid[24];
 
 static char savename[512], capname[512], gamebasename[512];
 static char caption[128];
@@ -515,7 +516,7 @@ void NstStopPlaying()
 	}
 
 	// show main window
-	gtk_widget_show(mainwindow);
+	//gtk_widget_show(mainwindow);
 
 	playing = 0;
 }
@@ -582,12 +583,13 @@ void NstPlayGame(void)
 {
 	// hide main window
 	//gtk_widget_hide(mainwindow);
-
+	putenv(windowid);
+	//printf("Test windowid: %s\n", windowid);
 	// process pending gtk events
-	while (gtk_events_pending())
+	/*while (gtk_events_pending())
 	{
 		gtk_main_iteration();
-	}
+	}*/
 
 	// initialization
 	SetupVideo();
@@ -1158,12 +1160,9 @@ int main(int argc, char *argv[])
 	{
 		if (playing)
 		{
-			if (nsf_mode)
-			{
 				gtk_main_iteration_do(FALSE);
-			}
-			else
-			{
+				//while (gtk_events_pending) {
+					//gtk_main_iteration_do(TRUE);
 			 	while (SDL_PollEvent(&event))
 				{
 					switch (event.type)
@@ -1186,12 +1185,12 @@ int main(int argc, char *argv[])
 							break;
 					}	
 				}
+				//}
 
 				if (NES_SUCCEEDED(Rewinder(emulator).Enable(true)))
 				{
 					Rewinder(emulator).EnableSound(true);
 				}
-			}
 
 			m1sdr_TimeCheck();
 			if (updateok)
@@ -1246,6 +1245,7 @@ int main(int argc, char *argv[])
 		else
 		{
 			gtk_main_iteration_do(TRUE);
+			//gtk_main_iteration();
 		}
 	}
 
