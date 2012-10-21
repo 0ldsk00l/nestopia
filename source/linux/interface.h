@@ -7,7 +7,7 @@ void state_save();
 void state_load();
 void set_window_id(char* sdlwindowid);
 
-GtkWidget* create_mainwindow();
+GtkWidget* create_mainwindow(int xres, int yres);
 GtkWidget* create_videoconfig();
 GtkWidget* create_audioconfig();
 GtkWidget* create_inputconfig();

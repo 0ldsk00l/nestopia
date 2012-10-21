@@ -17,7 +17,7 @@
 
 GtkWidget *drawingarea;
 
-GtkWidget* create_mainwindow (void) {
+GtkWidget* create_mainwindow (int xres, int yres) {
 
 	GtkWidget *window;
 	GtkWidget *box;
@@ -32,7 +32,7 @@ GtkWidget* create_mainwindow (void) {
 	
 	GtkWidget *emulatormenu;
 	GtkWidget *emulator;
-	GtkWidget *run;
+	GtkWidget *cont;
 	GtkWidget *pause;
 	GtkWidget *savestate;
 	GtkWidget *loadstate;
@@ -71,7 +71,7 @@ GtkWidget* create_mainwindow (void) {
 	quit = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
 	
 	emulator = gtk_menu_item_new_with_label("Emulator");
-	run = gtk_menu_item_new_with_label("Run");
+	cont = gtk_menu_item_new_with_label("Continue");
 	pause = gtk_menu_item_new_with_label("Pause");
 	savestate = gtk_menu_item_new_with_label("Save State");
 	loadstate = gtk_menu_item_new_with_label("Load State");
@@ -91,7 +91,7 @@ GtkWidget* create_mainwindow (void) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
 	
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emulator), emulatormenu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), run);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cont);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), pause);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), savestate);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), loadstate);
@@ -112,12 +112,13 @@ GtkWidget* create_mainwindow (void) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	drawingarea = gtk_drawing_area_new();
-	gtk_widget_set_size_request (drawingarea, 960, 720);
+	//gtk_widget_set_size_request (drawingarea, 768, 720);
+	gtk_widget_set_size_request (drawingarea, xres, yres);
 	
 	statusbar = gtk_statusbar_new();
 	
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box), drawingarea, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box), drawingarea, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
 
 	g_signal_connect_swapped(G_OBJECT(window), "destroy",
@@ -125,13 +126,13 @@ GtkWidget* create_mainwindow (void) {
 
 	g_signal_connect(G_OBJECT(open), "activate",
 		G_CALLBACK(on_open_clicked), NULL);
-		
+
 	g_signal_connect(G_OBJECT(quit), "activate",
 		G_CALLBACK(on_mainwindow_destroy), NULL);
 
-	g_signal_connect(G_OBJECT(run), "activate",
+	g_signal_connect(G_OBJECT(cont), "activate",
 		G_CALLBACK(on_playbutton_clicked), NULL);
-		
+
 	g_signal_connect(G_OBJECT(savestate), "activate",
 		G_CALLBACK(state_save), NULL);
 
@@ -143,25 +144,25 @@ GtkWidget* create_mainwindow (void) {
 
 	g_signal_connect(G_OBJECT(videoconfig), "activate",
 		G_CALLBACK(create_videoconfig), NULL);
-	
+
 	g_signal_connect(G_OBJECT(audioconfig), "activate",
 		G_CALLBACK(create_audioconfig), NULL);
-		
+
 	g_signal_connect(G_OBJECT(inputconfig), "activate",
 		G_CALLBACK(create_inputconfig), NULL);
-		
+
 	g_signal_connect(G_OBJECT(miscconfig), "activate",
 		G_CALLBACK(create_miscconfig), NULL);
-        
+
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
 
 	gtk_key_snooper_install(convertKeypress, NULL);
 
 	gtk_widget_show_all(window);
-	
+
 	char SDL_windowhack[32];
-	sprintf(SDL_windowhack,"SDL_WINDOWID=%ld", GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
+	sprintf(SDL_windowhack, "SDL_WINDOWID=%ld", GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
 	set_window_id(SDL_windowhack);
 	
 	GdkColor bg = {0, 0, 0, 0};

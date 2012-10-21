@@ -76,6 +76,8 @@ static char volumestr[5], surrmulstr[5];
 
 char windowid[24];
 
+extern int cur_width, cur_Rwidth, cur_height, cur_Rheight;
+
 void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
 {
 }
@@ -411,7 +413,7 @@ static void load_file_by_uri(char *filename)
 	NstLoadGame(transname);
 }
 
-void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst::CheatMgr *cheatmgr)
+void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst::CheatMgr *cheatmgr, int xres, int yres)
 {
 	//GtkTargetEntry target_entry[1];
 
@@ -422,7 +424,8 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	sCheatMgr = cheatmgr;
 
 	// crank up our GUI
-	mainwindow = create_mainwindow();
+	//mainwindow = create_mainwindow(768, 720);
+	mainwindow = create_mainwindow(xres, yres);
 
 	// set up the icon
 	app_icon = gdk_pixbuf_new_from_inline(-1, nsticon, FALSE, NULL);
