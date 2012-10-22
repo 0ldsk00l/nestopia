@@ -5,6 +5,8 @@ void miscconfig_clicked();
 void about_clicked();
 void state_save();
 void state_load();
+void redraw_request();
+void redraw_drawingarea(int xres, int yres);
 void set_window_id(char* sdlwindowid);
 
 GtkWidget* create_mainwindow(int xres, int yres);

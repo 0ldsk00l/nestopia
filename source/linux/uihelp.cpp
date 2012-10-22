@@ -69,6 +69,7 @@ static CheatMgr *sCheatMgr;
 static GdkPixbuf *app_icon;
 
 GtkWidget *mainwindow;
+GtkWidget *videowindow;
 
 static GtkWidget *nsftitle, *nsfauthor, *nsfmaker, *text_volume, *scroll_volume, *notebook_main;
 
@@ -76,7 +77,7 @@ static char volumestr[5], surrmulstr[5];
 
 char windowid[24];
 
-extern int cur_width, cur_Rwidth, cur_height, cur_Rheight;
+extern int xres, yres;
 
 void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
 {
@@ -189,6 +190,13 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 void on_playbutton_clicked(GtkButton *button,  gpointer user_data)
 {
 	NstPlayGame();
+}
+
+void on_okbutton_video_clicked(GtkButton *button,  gpointer user_data)
+{
+	NstPlayGame();
+	redraw_request();
+	gtk_widget_destroy(videowindow);
 }
 
 void
@@ -417,14 +425,12 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 {
 	//GtkTargetEntry target_entry[1];
 
-	//gtk_set_locale();
 	gtk_init(&argc, &argv);
 
 	sSettings = settings;
 	sCheatMgr = cheatmgr;
 
 	// crank up our GUI
-	//mainwindow = create_mainwindow(768, 720);
 	mainwindow = create_mainwindow(xres, yres);
 
 	// set up the icon
@@ -492,9 +498,12 @@ void state_load() {
 	auxio_do_state_load();
 }
 
+void redraw_request() {
+	redraw_drawingarea(xres, yres);
+}
+
 GtkWidget* create_videoconfig (void) {
 
-	GtkWidget *videowindow;
 	GtkWidget *videofixed;
 
 	GtkWidget *scaleamtcombo;
@@ -509,8 +518,10 @@ GtkWidget* create_videoconfig (void) {
 	GtkWidget *ntsccombo;
 	GtkWidget *rendercombo;
 	GtkWidget *rendererlabel;
+	GtkWidget *okbutton;
 	
 	videowindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_widget_set_size_request(videowindow, 524, 136);
 	gtk_window_set_title(GTK_WINDOW(videowindow), "Video Configuration");
 	
 	videofixed = gtk_fixed_new();
@@ -588,14 +599,20 @@ GtkWidget* create_videoconfig (void) {
 	gtk_fixed_put (GTK_FIXED (videofixed), unlimitsprcheck, 8, 152);
 	gtk_widget_set_size_request (unlimitsprcheck, 128, 24);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unlimitsprcheck), sSettings->GetSprlimit());
+	
+	okbutton = gtk_button_new_from_stock(GTK_STOCK_OK);
+	gtk_fixed_put (GTK_FIXED(videofixed), okbutton, 448, 128);
+	gtk_widget_set_size_request (okbutton, 64, 36);
 
 	gtk_widget_show_all(videowindow);
 	
 	g_signal_connect(G_OBJECT(scaleamtcombo), "changed",
 		G_CALLBACK(on_scaleamtcombo_changed), NULL);
+		//G_CALLBACK(redraw_request), NULL);
 
 	g_signal_connect(G_OBJECT(scalecombo), "changed",
 		G_CALLBACK(on_scalecombo_changed), NULL);
+		//G_CALLBACK(redraw_request), NULL);
 
 	g_signal_connect(G_OBJECT(check_fullscreen), "toggled",
 		G_CALLBACK(on_check_fullscreen_toggled), NULL);
@@ -611,6 +628,9 @@ GtkWidget* create_videoconfig (void) {
 
 	g_signal_connect(G_OBJECT(rendercombo), "changed",
 		G_CALLBACK(on_rendercombo_changed), NULL);
+		
+	g_signal_connect(G_OBJECT(okbutton), "clicked",
+		G_CALLBACK(on_okbutton_video_clicked), NULL);
 
 	return videowindow;
 }

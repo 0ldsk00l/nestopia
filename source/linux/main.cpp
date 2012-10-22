@@ -64,7 +64,9 @@ Emulator emulator;
 void SetupVideo();
 void SetupSound();
 void SetupInput();
+
 void get_screen_res();
+void redraw_window();
 
 SDL_Surface *screen;
 
@@ -77,6 +79,9 @@ static int updateok, playing = 0, cur_width, cur_Rwidth, cur_height, cur_Rheight
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 static int schedule_stop = 0;
 static SDL_Joystick *joy[10];
+
+int xres;
+int yres;
 
 extern int lnxdrv_apimode;
 extern GtkWidget *mainwindow;
@@ -1256,6 +1261,14 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
+/*void redraw_window() {
+	gtk_widget_hide(mainwindow);
+	get_screen_res();
+	printf("Got here\n");
+	gtk_widget_show(mainwindow);
+	//UIHelp_Init(argc, argv, sSettings, sCheatMgr, cur_Rwidth, cur_Rheight);
+}*/
+
 void get_screen_res() {
 
 	int scalefactor = sSettings->GetScaleAmt() + 1;
@@ -1315,12 +1328,10 @@ void get_screen_res() {
 			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
 			break;
 	}
-	
-/*	printf("cur_width: %d\n", cur_width);
-	printf("cur_Rwidth: %d\n", cur_Rwidth);
-	printf("cur_height: %d\n", cur_height);
-	printf("cur_Rheight: %d\n", cur_Rheight);
-	printf("Executed screen res update\n");*/
+
+	//This is somewhat dirty, but it makes it easier to pass the data to other functions
+	xres = cur_Rwidth;
+	yres = cur_Rheight;
 }
 
 void SetupVideo()
