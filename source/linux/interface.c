@@ -15,11 +15,11 @@
 #include "callbacks.h"
 #include "interface.h"
 
+GtkWidget *window;
 GtkWidget *drawingarea;
 
 GtkWidget* create_mainwindow (int xres, int yres) {
 
-	GtkWidget *window;
 	GtkWidget *box;
 
 	GtkWidget *menubar;
@@ -50,11 +50,14 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	GtkWidget *about;
 	
 	GtkWidget *statusbar;
+	
+	GtkSettings *gtksettings;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_position(GTK_WINDOW(window), GTK_WIN_POS_CENTER);
-	gtk_window_set_default_size(GTK_WINDOW(window), 400, 200);
+	gtk_window_set_default_size(GTK_WINDOW(window), 200, 200);
 	gtk_window_set_title(GTK_WINDOW(window), "Nestopia");
+	gtk_window_set_resizable(GTK_WINDOW(window), FALSE);
 
 	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(window), box);
@@ -71,13 +74,17 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	quit = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
 	
 	emulator = gtk_menu_item_new_with_label("Emulator");
-	cont = gtk_menu_item_new_with_label("Continue");
-	pause = gtk_menu_item_new_with_label("Pause");
-	savestate = gtk_menu_item_new_with_label("Save State");
-	loadstate = gtk_menu_item_new_with_label("Load State");
-	cheats = gtk_menu_item_new_with_label("Cheats");
+	cont = gtk_image_menu_item_new_with_label("Continue");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cont), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU));
+	pause = gtk_image_menu_item_new_from_stock(GTK_STOCK_MEDIA_PAUSE, NULL);
+	savestate = gtk_image_menu_item_new_with_label("Save State");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(savestate), gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
+	loadstate = gtk_image_menu_item_new_with_label("Load State");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(loadstate), gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_MENU));
+	cheats = gtk_image_menu_item_new_with_label("Cheats");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cheats), gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU));
 	
-	configuration = gtk_menu_item_new_with_label("Configuration");
+	configuration = gtk_menu_item_new_with_label("Config");
 	videoconfig = gtk_menu_item_new_with_label("Video");
 	audioconfig = gtk_menu_item_new_with_label("Audio");
 	inputconfig = gtk_menu_item_new_with_label("Input");
@@ -112,8 +119,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	drawingarea = gtk_drawing_area_new();
-	//gtk_widget_set_size_request (drawingarea, 768, 720);
-	gtk_widget_set_size_request (drawingarea, xres, yres);
+	gtk_widget_set_size_request(drawingarea, xres, yres);
 	
 	statusbar = gtk_statusbar_new();
 	
@@ -132,6 +138,9 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	g_signal_connect(G_OBJECT(cont), "activate",
 		G_CALLBACK(on_playbutton_clicked), NULL);
+
+	//g_signal_connect(G_OBJECT(pause), "activate",
+	//	G_CALLBACK(redraw_drawingarea), NULL);
 
 	g_signal_connect(G_OBJECT(savestate), "activate",
 		G_CALLBACK(state_save), NULL);
@@ -156,6 +165,9 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
+		
+	gtksettings = gtk_settings_get_default();
+	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
 
 	gtk_key_snooper_install(convertKeypress, NULL);
 
@@ -169,4 +181,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_widget_modify_bg(drawingarea, GTK_STATE_NORMAL, &bg);
 
 	return window;
+}
+
+void redraw_drawingarea(int xres, int yres) {
+	gtk_widget_set_size_request(drawingarea, xres, yres);
 }
