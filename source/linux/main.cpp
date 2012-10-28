@@ -587,7 +587,15 @@ static void QuickLoad(int isvst)
 // start playing
 void NstPlayGame(void)
 {
-	putenv(windowid);
+	if (sSettings->GetFullscreen())
+	{
+		unsetenv("SDL_WINDOWID");
+		NstStopPlaying();
+	}
+	else
+	{
+		putenv(windowid);
+	}
 
 	// initialization
 	SetupVideo();
