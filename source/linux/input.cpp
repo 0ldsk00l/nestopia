@@ -325,6 +325,7 @@ void create_input_file()
 	fprintf(outfile, "SAVE		_F3\n");
 	fprintf(outfile, "LOAD		_F4\n");
 	fprintf(outfile, "STOP		_ESCAPE\n");
+	fprintf(outfile, "FSCREEN	f\n");
 	fprintf(outfile, "RBACK		_BACKSPACE\n");
 	fprintf(outfile, "RFORE		\\\n");
 	fprintf(outfile, "QSAVE1		_F5\n");

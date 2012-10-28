@@ -595,6 +595,7 @@ void NstPlayGame(void)
 	else
 	{
 		putenv(windowid);
+		NstStopPlaying();
 	}
 
 	// initialization
@@ -696,6 +697,7 @@ static void ToggleFullscreen()
 
 
 	SDL_WM_SetCaption(caption, caption);
+	NstPlayGame();
 }
 
 
