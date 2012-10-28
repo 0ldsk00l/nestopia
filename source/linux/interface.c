@@ -18,12 +18,14 @@
 GtkWidget *window;
 GtkWidget *drawingarea;
 
+GdkColor bg = {0, 0, 0, 0};
+
 GtkWidget* create_mainwindow (int xres, int yres) {
 
 	GtkWidget *box;
 
 	GtkWidget *menubar;
-	//GtkWidget *sep;
+	GtkWidget *sep;
   
 	GtkWidget *filemenu;
 	GtkWidget *file;
@@ -63,7 +65,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_container_add(GTK_CONTAINER(window), box);
 
 	menubar = gtk_menu_bar_new();
-	//sep = gtk_separator_menu_item_new();
+	sep = gtk_separator_menu_item_new();
 	filemenu = gtk_menu_new();
 	emulatormenu = gtk_menu_new();
 	configurationmenu = gtk_menu_new();
@@ -95,6 +97,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
 	
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emulator), emulatormenu);
@@ -177,7 +180,6 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	sprintf(SDL_windowhack, "SDL_WINDOWID=%ld", GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
 	set_window_id(SDL_windowhack);
 	
-	GdkColor bg = {0, 0, 0, 0};
 	gtk_widget_modify_bg(drawingarea, GTK_STATE_NORMAL, &bg);
 
 	return window;
@@ -185,4 +187,5 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 void redraw_drawingarea(int xres, int yres) {
 	gtk_widget_set_size_request(drawingarea, xres, yres);
+	gtk_widget_modify_bg(drawingarea, GTK_STATE_NORMAL, &bg);
 }
