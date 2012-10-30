@@ -490,12 +490,24 @@ GdkPixbuf *UIHelp_GetNSTIcon()
 
 // These functions are dirty hacks to let the main window
 // in interace.c call C++ functions. I should probably rethink this later.
+void state_load() {
+	auxio_do_state_load();
+}
+
 void state_save() {
 	auxio_do_state_save();
 }
 
-void state_load() {
-	auxio_do_state_load();
+void movie_load() {
+	auxio_do_movie_load();
+}
+
+void movie_record() {
+	auxio_do_movie_save();
+}
+
+void movie_stop() {
+	auxio_do_movie_stop();
 }
 
 void redraw_request() {
