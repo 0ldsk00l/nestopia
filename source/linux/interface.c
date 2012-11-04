@@ -47,13 +47,6 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	GtkWidget *cheats;
 	GtkWidget *sep5;
 	GtkWidget *configuration;
-	
-	GtkWidget *configurationmenu;
-	GtkWidget *configuration1;
-	GtkWidget *videoconfig;
-	GtkWidget *audioconfig;
-	GtkWidget *inputconfig;
-	GtkWidget *miscconfig;
 
 	GtkWidget *helpmenu;
 	GtkWidget *help;
@@ -76,7 +69,6 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	filemenu = gtk_menu_new();
 	emulatormenu = gtk_menu_new();
-	configurationmenu = gtk_menu_new();
 	helpmenu = gtk_menu_new();
 
 	file = gtk_menu_item_new_with_label("File");
@@ -106,13 +98,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	sep5 = gtk_separator_menu_item_new();
 	configuration = gtk_image_menu_item_new_with_label("Configuration...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(configuration), gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU));
-	
-	configuration1 = gtk_menu_item_new_with_label("Config");
-	videoconfig = gtk_menu_item_new_with_label("Video");
-	audioconfig = gtk_menu_item_new_with_label("Audio");
-	inputconfig = gtk_menu_item_new_with_label("Input");
-	miscconfig = gtk_menu_item_new_with_label("Misc");
-  
+
 	help = gtk_menu_item_new_with_label("Help");
 	about = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, NULL);
 
@@ -135,19 +121,12 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep5);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), configuration);
-	
-	gtk_menu_item_set_submenu(GTK_MENU_ITEM(configuration1), configurationmenu);
-	gtk_menu_shell_append(GTK_MENU_SHELL(configurationmenu), videoconfig);
-	gtk_menu_shell_append(GTK_MENU_SHELL(configurationmenu), audioconfig);
-	gtk_menu_shell_append(GTK_MENU_SHELL(configurationmenu), inputconfig);
-	gtk_menu_shell_append(GTK_MENU_SHELL(configurationmenu), miscconfig);
   
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpmenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(helpmenu), about);
   
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), emulator);
-	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), configuration1);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	drawingarea = gtk_drawing_area_new();
@@ -171,8 +150,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	g_signal_connect(G_OBJECT(cont), "activate",
 		G_CALLBACK(on_playbutton_clicked), NULL);
 
-	//g_signal_connect(G_OBJECT(pause), "activate",
-	//	G_CALLBACK(redraw_drawingarea), NULL);
+	g_signal_connect(G_OBJECT(pause), "activate",
+		G_CALLBACK(pause_clicked), NULL);
 
 	g_signal_connect(G_OBJECT(loadstate), "activate",
 		G_CALLBACK(state_load), NULL);
@@ -192,17 +171,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	g_signal_connect(G_OBJECT(cheats), "activate",
 		G_CALLBACK(on_cheatbutton_pressed), NULL);
 
-	g_signal_connect(G_OBJECT(videoconfig), "activate",
-		G_CALLBACK(create_videoconfig), NULL);
-
-	g_signal_connect(G_OBJECT(audioconfig), "activate",
-		G_CALLBACK(create_audioconfig), NULL);
-
-	g_signal_connect(G_OBJECT(inputconfig), "activate",
-		G_CALLBACK(create_inputconfig), NULL);
-
-	g_signal_connect(G_OBJECT(miscconfig), "activate",
-		G_CALLBACK(create_miscconfig), NULL);
+	g_signal_connect(G_OBJECT(configuration), "activate",
+		G_CALLBACK(create_config), NULL);
 
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
