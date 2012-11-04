@@ -346,6 +346,8 @@ void create_input_file()
 	fprintf(outfile, "P1B		_J0B0	\n");
 	fprintf(outfile, "P1START		_J0B9\n");
 	fprintf(outfile, "P1SELECT	_J0B8\n");
+	fprintf(outfile, "RBACK		_J0B6\n");
+	fprintf(outfile, "RFORE		_J0B7\n");
 
 	fclose(outfile);
 }
