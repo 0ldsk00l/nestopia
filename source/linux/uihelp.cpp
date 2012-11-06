@@ -70,7 +70,6 @@ static GdkPixbuf *app_icon;
 
 GtkWidget *mainwindow;
 GtkWidget *configwindow;
-GtkWidget *videowindow;
 
 static GtkWidget *nsftitle, *nsfauthor, *nsfmaker, *text_volume, *scroll_volume;
 
@@ -300,6 +299,8 @@ void on_scaleamtcombo_changed(GtkComboBox     *combobox, gpointer         user_d
 void on_configcombo_changed(GtkComboBox     *combobox, gpointer         user_data)
 {
 	 sSettings->SetConfigItem(gtk_combo_box_get_active(combobox));
+	 int curItem = sSettings->GetConfigItem();
+	 printf("%d\n", curItem);
 }
 
 void on_spatchcombo_changed(GtkComboBox     *combobox, gpointer         user_data)
@@ -359,6 +360,42 @@ void on_ntsccombo_changed (GtkComboBox *combobox, gpointer user_data)
 
 void on_configbutton_clicked(GtkButton *button, gpointer user_data)
 {
+	NstLaunchConfig();
+}
+
+void inputcfg_clicked(GtkButton *button, int data) {
+	//printf("User Data: %s\n", user_data);
+	switch(data) {
+		case 0:
+			sSettings->SetConfigItem(0); //P1UP
+			break;
+		case 1:
+			sSettings->SetConfigItem(1); //P1DN
+			break;
+		case 2:
+			sSettings->SetConfigItem(2); //P1LT
+			break;
+		case 3:
+			sSettings->SetConfigItem(3); //P1RT
+			break;
+		case 4:
+			sSettings->SetConfigItem(4); //P1A
+			break;
+		case 5:
+			sSettings->SetConfigItem(5); //P1B
+			break;
+		case 6:
+			sSettings->SetConfigItem(6); //P1START
+			break;
+		case 7:
+			sSettings->SetConfigItem(7); //P1SELECT
+			break;
+	}
+	NstLaunchConfig();
+}
+
+void on_downbutton_clicked() {
+	sSettings->SetConfigItem(1);
 	NstLaunchConfig();
 }
 
@@ -608,10 +645,10 @@ GtkWidget* create_config(void) {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(sndapicombo), sSettings->GetSndAPI());
 	
 	GtkWidget *ratecombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "11025 kHz");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "22050 kHz");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "44100 kHz");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "48000 kHz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "11025 Hz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "22050 Hz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "44100 Hz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "48000 Hz");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(ratecombo), sSettings->GetRawRate());
 	
 	GtkWidget *audsettingslabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
@@ -651,7 +688,36 @@ GtkWidget* create_config(void) {
 	// End of the Audio stuff
     
     // The Input stuff
-    GtkWidget *inputbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	GtkWidget *inputbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+
+	GtkWidget *padbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
+
+	char svgpath[1024];
+	sprintf(svgpath, "%s/icons/nespad.svg", DATADIR);
+
+	GdkPixbuf *nespadpixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 224, NULL);
+	GtkWidget *nespad = gtk_image_new_from_pixbuf(nespadpixbuf);
+	g_object_unref(nespadpixbuf), nespadpixbuf = NULL;
+	gtk_box_pack_start(GTK_BOX(padbox), nespad, FALSE, FALSE, 0);
+	
+	GtkWidget *upbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "U", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *downbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "D", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *leftbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "L", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *rightbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "R", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *selectbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "SELECT", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *startbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "START", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *abutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "A", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *bbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "B", "halign", GTK_ALIGN_START, NULL);
+
+	gtk_box_pack_start(GTK_BOX(inputbox), padbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), upbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), downbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), leftbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), rightbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), selectbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), startbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), abutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), bbutton, FALSE, FALSE, 0);
     
     // The Misc stuff
     GtkWidget *miscbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -758,6 +824,31 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(sndapicombo), "changed",
 		G_CALLBACK(on_sndapicombo_changed), NULL);
+
+	//Input
+	g_signal_connect(G_OBJECT(upbutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(0));
+
+	g_signal_connect(G_OBJECT(downbutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(1));
+
+	g_signal_connect(G_OBJECT(leftbutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(2));
+
+	g_signal_connect(G_OBJECT(rightbutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(3));
+
+	g_signal_connect(G_OBJECT(selectbutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(7));
+
+	g_signal_connect(G_OBJECT(startbutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(6));
+
+	g_signal_connect(G_OBJECT(abutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(4));
+
+	g_signal_connect(G_OBJECT(bbutton), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(5));
 
 	//Misc
 	g_signal_connect(G_OBJECT(systemcombo), "changed",

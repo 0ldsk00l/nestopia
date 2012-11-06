@@ -319,18 +319,21 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 							evt.jaxis.which + 1, evt.jaxis.axis, dir);
 						sprintf(input, "_J%dA%d%c", evt.jaxis.which, evt.jaxis.axis, dir);
 					}
+					quit = 1;
 					break;
 
 				case SDL_JOYHATMOTION:
 					sprintf(match, "joy %d hat %d %d",
 						evt.jhat.which + 1, evt.jhat.value);
 					sprintf(input, "_J%dH%d%d", evt.jbutton.which, evt.jhat.hat, evt.jhat.value);
+					quit = 1;
 					break;
 
 				case SDL_JOYBUTTONDOWN:
 					sprintf(match, "joy %d button %d",
 						evt.jbutton.which + 1, evt.jbutton.button);
 					sprintf(input, "_J%dB%d", evt.jbutton.which, evt.jbutton.button);
+					quit = 1;					
 					break;
 
 				case SDL_QUIT:
@@ -454,7 +457,7 @@ void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 	if (usejoys)
 	{
 		int cjoy = SDL_NumJoysticks();
-		fprintf(stderr, "%d joystick(s) detected.\n", cjoy);
+		//fprintf(stderr, "%d joystick(s) detected.\n", cjoy);
 		for (int ijoy = 0; ijoy < cjoy; ++ijoy)
 		{
 			if (ijoy < 10)
@@ -462,8 +465,8 @@ void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 				joy[ijoy] = SDL_JoystickOpen(ijoy);
 				int caxis = SDL_JoystickNumAxes(joy[ijoy]);
 				int chat = SDL_JoystickNumHats(joy[ijoy]);
-				fprintf(stderr, "Joystick %d is '%s' has %d axes, %d hat(s), and %d buttons.\n",
-				 ijoy + 1, SDL_JoystickName(ijoy), caxis, chat, SDL_JoystickNumButtons(joy[ijoy]));
+				//fprintf(stderr, "Joystick %d is '%s' has %d axes, %d hat(s), and %d buttons.\n",
+				// ijoy + 1, SDL_JoystickName(ijoy), caxis, chat, SDL_JoystickNumButtons(joy[ijoy]));
 
 				// calibrate - read axis positions and store as "centered"
 				// we expect joysticks to be centered in (-DEADZONE, DEADZONE) but
@@ -478,10 +481,11 @@ void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 		}
 		SDL_JoystickEventState(SDL_ENABLE);
 	}
-	fprintf(stderr, "\n");
+	//fprintf(stderr, "\n");
 
 	// we need to set a video mode to get keyboard events
-	if (! (config_screen = SDL_SetVideoMode(win_w, win_h, 16, SDL_DOUBLEBUF)))
+	if (! (config_screen = SDL_SetVideoMode(0, 0, 8, 0)))
+	//screen = SDL_SetVideoMode(420, 200, 8, 0);
 	{
 		std::cout << "SDL_SetVideoMode failed: %s\n";
 		exit(1);
@@ -504,8 +508,8 @@ void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 		read_event(ctl_list, "META", meta->string);
 	}
 
-	fprintf(stderr, "\n");
-	printf("\n");
+	//fprintf(stderr, "\n");
+	//printf("\n");
 
 	if (usejoys)
 	{
