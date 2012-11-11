@@ -77,6 +77,8 @@ static char volumestr[5], surrmulstr[5];
 
 char windowid[24];
 
+int playernumber = 0;
+
 extern int xres, yres;
 
 void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
@@ -283,6 +285,10 @@ on_rendercombo_changed                   (GtkComboBox     *combobox,
 	 sSettings->SetRenderType(gtk_combo_box_get_active(combobox));
 }
 
+void playercombo_changed(GtkComboBox *combobox, gpointer user_data) {
+	playernumber = gtk_combo_box_get_active(combobox);
+}
+
 void
 on_systemcombo_changed                   (GtkComboBox     *combobox,
                                         gpointer         user_data)
@@ -364,32 +370,72 @@ void on_configbutton_clicked(GtkButton *button, gpointer user_data)
 }
 
 void inputcfg_clicked(GtkButton *button, int data) {
-	//printf("User Data: %s\n", user_data);
-	switch(data) {
-		case 0:
-			sSettings->SetConfigItem(0); //P1UP
-			break;
-		case 1:
-			sSettings->SetConfigItem(1); //P1DN
-			break;
-		case 2:
-			sSettings->SetConfigItem(2); //P1LT
-			break;
-		case 3:
-			sSettings->SetConfigItem(3); //P1RT
-			break;
-		case 4:
-			sSettings->SetConfigItem(4); //P1A
-			break;
-		case 5:
-			sSettings->SetConfigItem(5); //P1B
-			break;
-		case 6:
-			sSettings->SetConfigItem(6); //P1START
-			break;
-		case 7:
-			sSettings->SetConfigItem(7); //P1SELECT
-			break;
+
+	if (playernumber == 0 && data < 16) {	// Player 1
+		switch(data) {
+			case 0:
+				sSettings->SetConfigItem(0); //P1UP
+				break;
+			case 1:
+				sSettings->SetConfigItem(1); //P1DN
+				break;
+			case 2:
+				sSettings->SetConfigItem(2); //P1LT
+				break;
+			case 3:
+				sSettings->SetConfigItem(3); //P1RT
+				break;
+			case 4:
+				sSettings->SetConfigItem(4); //P1A
+				break;
+			case 5:
+				sSettings->SetConfigItem(5); //P1B
+				break;
+			case 6:
+				sSettings->SetConfigItem(6); //P1START
+				break;
+			case 7:
+				sSettings->SetConfigItem(7); //P1SELECT
+				break;
+		}
+	}
+	else if (playernumber == 1 && data < 16) {	// Player 2
+		switch(data) {
+			case 0:
+				sSettings->SetConfigItem(8); //P2UP
+				break;
+			case 1:
+				sSettings->SetConfigItem(9); //P2DN
+				break;
+			case 2:
+				sSettings->SetConfigItem(10); //P2LT
+				break;
+			case 3:
+				sSettings->SetConfigItem(11); //P2RT
+				break;
+			case 4:
+				sSettings->SetConfigItem(12); //P2A
+				break;
+			case 5:
+				sSettings->SetConfigItem(13); //P2B
+				break;
+			case 6:
+				sSettings->SetConfigItem(14); //P2START
+				break;
+			case 7:
+				sSettings->SetConfigItem(15); //P2SELECT
+				break;
+		}
+	}
+	else {
+		switch(data) {
+			case 26:
+				sSettings->SetConfigItem(26); //Rewind Start
+				break;
+			case 27:
+			sSettings->SetConfigItem(27); //Rewind Start
+				break;
+		}
 	}
 	NstLaunchConfig();
 }
@@ -700,6 +746,11 @@ GtkWidget* create_config(void) {
 	g_object_unref(nespadpixbuf), nespadpixbuf = NULL;
 	gtk_box_pack_start(GTK_BOX(padbox), nespad, FALSE, FALSE, 0);
 	
+	GtkWidget *playerselectcombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (playerselectcombo), "Player 1");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (playerselectcombo), "Player 2");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(playerselectcombo), 0);
+	
 	GtkWidget *upbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "U", "halign", GTK_ALIGN_START, NULL);
 	GtkWidget *downbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "D", "halign", GTK_ALIGN_START, NULL);
 	GtkWidget *leftbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "L", "halign", GTK_ALIGN_START, NULL);
@@ -708,8 +759,12 @@ GtkWidget* create_config(void) {
 	GtkWidget *startbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "START", "halign", GTK_ALIGN_START, NULL);
 	GtkWidget *abutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "A", "halign", GTK_ALIGN_START, NULL);
 	GtkWidget *bbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "B", "halign", GTK_ALIGN_START, NULL);
+	
+	GtkWidget *rewindstart = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Start", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *rewindstop = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Stop", "halign", GTK_ALIGN_START, NULL);
 
 	gtk_box_pack_start(GTK_BOX(inputbox), padbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), playerselectcombo, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), upbutton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), downbutton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), leftbutton, FALSE, FALSE, 0);
@@ -718,6 +773,8 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(inputbox), startbutton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), abutton, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), bbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), rewindstart, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), rewindstop, FALSE, FALSE, 0);
     
     // The Misc stuff
     GtkWidget *miscbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -771,6 +828,8 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(bigbox), notebook, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(bigbox), smallbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(smallbox), okbutton, FALSE, FALSE, 0);
+	
+	gtk_key_snooper_install(convertKeypress, NULL);
 	
 	//Video
 	g_signal_connect(G_OBJECT(scaleamtcombo), "changed",
@@ -826,6 +885,9 @@ GtkWidget* create_config(void) {
 		G_CALLBACK(on_sndapicombo_changed), NULL);
 
 	//Input
+	g_signal_connect(G_OBJECT(playerselectcombo), "changed",
+		G_CALLBACK(playercombo_changed), NULL);
+
 	g_signal_connect(G_OBJECT(upbutton), "clicked",
 		G_CALLBACK(inputcfg_clicked), gpointer(0));
 
@@ -849,6 +911,12 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(bbutton), "clicked",
 		G_CALLBACK(inputcfg_clicked), gpointer(5));
+		
+	g_signal_connect(G_OBJECT(rewindstart), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(26));
+		
+	g_signal_connect(G_OBJECT(rewindstop), "clicked",
+		G_CALLBACK(inputcfg_clicked), gpointer(27));
 
 	//Misc
 	g_signal_connect(G_OBJECT(systemcombo), "changed",
