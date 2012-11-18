@@ -46,6 +46,7 @@
 
 extern "C" {
 #include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
 #include <gdk/gdkx.h>
 
 #include "interface.h"
@@ -740,13 +741,17 @@ GtkWidget* create_config(void) {
 
 	char svgpath[1024];
 	sprintf(svgpath, "%s/icons/nespad.svg", DATADIR);
+	
+	GtkWidget *inputgamepadbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
 
 	GdkPixbuf *nespadpixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 224, NULL);
 	GtkWidget *nespad = gtk_image_new_from_pixbuf(nespadpixbuf);
 	g_object_unref(nespadpixbuf), nespadpixbuf = NULL;
 	gtk_box_pack_start(GTK_BOX(padbox), nespad, FALSE, FALSE, 0);
 	
-	GtkWidget *playerselectcombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
+	GtkWidget *inputseparator1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+	
+	GtkWidget *playerselectcombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-top", 5, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (playerselectcombo), "Player 1");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (playerselectcombo), "Player 2");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(playerselectcombo), 0);
@@ -760,21 +765,29 @@ GtkWidget* create_config(void) {
 	GtkWidget *abutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "A", "halign", GTK_ALIGN_START, NULL);
 	GtkWidget *bbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "B", "halign", GTK_ALIGN_START, NULL);
 	
+	GtkWidget *inputseparator2 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+
+	GtkWidget *inputmetabox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
+
 	GtkWidget *rewindstart = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Start", "halign", GTK_ALIGN_START, NULL);
 	GtkWidget *rewindstop = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Stop", "halign", GTK_ALIGN_START, NULL);
 
 	gtk_box_pack_start(GTK_BOX(inputbox), padbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), inputseparator1, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), playerselectcombo, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), upbutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), downbutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), leftbutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), rightbutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), selectbutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), startbutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), abutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), bbutton, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), rewindstart, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(inputbox), rewindstop, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), inputgamepadbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), inputseparator2, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), inputmetabox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), upbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), downbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), leftbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), rightbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), selectbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), startbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), bbutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputgamepadbox), abutton, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputmetabox), rewindstart, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(inputmetabox), rewindstop, FALSE, FALSE, 0);
     
     // The Misc stuff
     GtkWidget *miscbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
@@ -829,7 +842,7 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(bigbox), smallbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(smallbox), okbutton, FALSE, FALSE, 0);
 	
-	gtk_key_snooper_install(convertKeypress, NULL);
+	//gtk_key_snooper_install(convertKeypress, NULL);
 	
 	//Video
 	g_signal_connect(G_OBJECT(scaleamtcombo), "changed",
@@ -928,93 +941,6 @@ GtkWidget* create_config(void) {
 	gtk_widget_show_all(configwindow);
 
 	return configwindow;
-}
-
-GtkWidget* create_inputconfig (void) {
-
-	GtkWidget *inputwindow;
-	GtkWidget *fixed3;
-	GtkWidget *controlcheck;
-	GtkWidget *configbutton;
-	GtkWidget *configlabel;
-	GtkWidget *configcombo;
-	
-	inputwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title(GTK_WINDOW(inputwindow), "Input Configuration");
-
-	fixed3 = gtk_fixed_new ();
-	gtk_widget_show (fixed3);
-	gtk_container_add (GTK_CONTAINER (inputwindow), fixed3);
-
-	controlcheck = gtk_check_button_new_with_mnemonic ("Use controllers");
-	gtk_widget_show (controlcheck);
-	gtk_fixed_put (GTK_FIXED (fixed3), controlcheck, 8, 16);
-	gtk_widget_set_size_request (controlcheck, 136, 24);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(controlcheck), sSettings->GetUseJoypads());
-
-	configbutton = gtk_button_new_with_mnemonic ("Change...");
-	gtk_widget_show (configbutton);
-	gtk_fixed_put (GTK_FIXED (fixed3), configbutton, 296, 88);
-	gtk_widget_set_size_request (configbutton, 112, 40);
-
-	configlabel = gtk_label_new ("");
-	gtk_widget_show (configlabel);
-	gtk_fixed_put (GTK_FIXED (fixed3), configlabel, 8, 96);
-	gtk_widget_set_size_request (configlabel, 264, 24);
-
-	configcombo = gtk_combo_box_text_new ();
-	gtk_widget_show (configcombo);
-	gtk_fixed_put (GTK_FIXED (fixed3), configcombo, 8, 48);
-	gtk_widget_set_size_request (configcombo, 224, 32);
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Up");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Down");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Left");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 Right");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 A");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 B");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 START");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 1 SELECT");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Up");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Down");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Left");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 Right");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 A");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 B");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 START");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Player 2 SELECT");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Movie Save");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Movie Load");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Movie Stop");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Reset");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Flip FDS Sides");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Save state");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Load state");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Toggle fullscreen");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Stop game");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Stop game and exit NEStopia");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Start rewinder");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Stop rewinder");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quicksave slot 1");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quicksave slot 2");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quickload slot 1");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Quickload slot 2");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Vs. System coin 1");
-	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT (configcombo), "Vs. System coin 2");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(configcombo), sSettings->GetConfigItem());
-	
-	gtk_widget_show_all(inputwindow);
-	
-	
-	g_signal_connect(G_OBJECT(controlcheck), "toggled",
-		G_CALLBACK (on_controlcheck_toggled), NULL);
-
-	g_signal_connect(G_OBJECT(configbutton), "clicked",
-		G_CALLBACK (on_configbutton_clicked), NULL);
-
-	g_signal_connect(G_OBJECT(configcombo), "changed",
-		G_CALLBACK (on_configcombo_changed), NULL);
-	
-	return inputwindow;
 }
 
 GtkWidget* create_nsfplayer (void) {

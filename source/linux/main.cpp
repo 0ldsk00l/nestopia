@@ -652,7 +652,8 @@ void NstScheduleQuit(void)
 // launch the controller configurator
 void NstLaunchConfig(void)
 {
-	run_configurator(ctl_defs, sSettings->GetConfigItem(), sSettings->GetUseJoypads());
+	//run_configurator(ctl_defs, sSettings->GetConfigItem(), sSettings->GetUseJoypads());
+	run_configurator(ctl_defs, sSettings->GetConfigItem(), 1); // Force joypad detection
 }
 
 // toggle fullscreen state

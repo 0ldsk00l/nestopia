@@ -27,6 +27,12 @@
 
 #include "fonts.inc"
 
+extern "C" {
+#include <gtk/gtk.h>
+#include <gdk/gdkkeysyms.h>
+#include <gdk/gdkx.h>
+}
+
 static SDL_Surface *config_screen;
 
 static const int win_w = 360;
@@ -245,7 +251,7 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 	static struct
 	{
 		time_t t;		// time when movement counts as new
-		int which;	// which joystick?
+		int which;		// which joystick?
 		int axis;		// which axis?
 		char dir;		// direction ('+' or '-')
 	}
@@ -257,12 +263,14 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 
 	while (!quit)
 	{
+		//gtk_main_iteration_do(TRUE);
 		SDL_Event evt;
 		char match[20] = { 0 };
 		char input[20] = { 0 };
 
 		while (SDL_PollEvent(&evt))
 		{
+			//gtk_main_iteration_do(TRUE);
 			// if we've already seen this input, ignore it
 			if (match_event(evtvec, evt))
 			{
@@ -291,6 +299,7 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 					}
 					sprintf(match, "%s", SDL_GetKeyName(SDLKey(ksym)));
 				}
+				quit = 1;
 				break;
 
 				case SDL_JOYAXISMOTION:
@@ -304,7 +313,7 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 
 						time_t t = time(NULL);
 
-/*						if (lastAxis.dir == dir && lastAxis.which == evt.jaxis.which
+							/*if (lastAxis.dir == dir && lastAxis.which == evt.jaxis.which
 							&& lastAxis.axis == evt.jaxis.axis && t < lastAxis.t)
 							{
 							break;
@@ -444,6 +453,9 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 
 void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 {
+
+	unsetenv("SDL_WINDOWID");
+	
 	SDL_Joystick *joy[10];
 
 	// set up SDL
@@ -484,7 +496,7 @@ void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 	//fprintf(stderr, "\n");
 
 	// we need to set a video mode to get keyboard events
-	if (! (config_screen = SDL_SetVideoMode(0, 0, 8, 0)))
+	if (! (config_screen = SDL_SetVideoMode(336, 80, 8, 0 | SDL_NOFRAME)))
 	//screen = SDL_SetVideoMode(420, 200, 8, 0);
 	{
 		std::cout << "SDL_SetVideoMode failed: %s\n";
@@ -509,7 +521,7 @@ void run_configurator(InputDefT *ctl_list, int itemToSet, int usejoys)
 	}
 
 	//fprintf(stderr, "\n");
-	//printf("\n");
+	//printf("Test\n");
 
 	if (usejoys)
 	{
