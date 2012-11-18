@@ -732,15 +732,16 @@ GtkWidget* create_config(void) {
     // The Input stuff
 	GtkWidget *inputbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
-	GtkWidget *padbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
+	//GtkWidget *padbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_CENTER, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
 
 	char svgpath[1024];
 	sprintf(svgpath, "%s/icons/nespad.svg", DATADIR);
 	
-	GtkWidget *inputgamepadbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
+	GtkWidget *inputgamepadbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin", 10, NULL);
 
-	GtkWidget *nespad = gtk_image_new_from_file(svgpath);
-	gtk_box_pack_start(GTK_BOX(padbox), nespad, FALSE, FALSE, 0);
+	//GtkWidget *nespad = gtk_image_new_from_file(svgpath);
+	GtkWidget *nespad = gtk_widget_new(GTK_TYPE_IMAGE, "halign", GTK_ALIGN_CENTER, "expand", TRUE, "file", svgpath, "margin", 10, NULL);
+	//gtk_box_pack_start(GTK_BOX(padbox), nespad, TRUE, TRUE, 0);
 	
 	GtkWidget *inputseparator1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	
@@ -761,12 +762,13 @@ GtkWidget* create_config(void) {
 	
 	GtkWidget *inputseparator2 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 
-	GtkWidget *inputmetabox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
+	GtkWidget *inputmetabox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin", 10, NULL);
 
 	GtkWidget *rewindstart = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Start", "halign", GTK_ALIGN_START, "margin-right", 4, NULL);
 	GtkWidget *rewindstop = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Stop", "halign", GTK_ALIGN_START, NULL);
 
-	gtk_box_pack_start(GTK_BOX(inputbox), padbox, FALSE, FALSE, 0);
+	//gtk_box_pack_start(GTK_BOX(inputbox), padbox, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(inputbox), nespad, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), inputseparator1, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), playerselectcombo, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(inputbox), inputgamepadbox, FALSE, FALSE, 0);
