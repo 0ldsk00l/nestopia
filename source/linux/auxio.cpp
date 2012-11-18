@@ -72,14 +72,12 @@ static int find_current_selection(void)
 void on_archok_clicked(GtkButton *button, gpointer user_data)
 {
 	run_picker = false;
-	printf("Got here 1\n");
 }
 
 void on_archcancel_clicked(GtkButton *button, gpointer user_data)
 {
 	run_picker = false;
 	cancelled = true;
-	printf("Got here 2\n");
 }
 
 static gint check_list_double(GtkWidget *widget, GdkEventButton *event, gpointer func_data)
@@ -699,21 +697,21 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 			// get the selection object too
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(archtree));
 
-			gtk_widget_show(archselect);
-			run_picker = true;
-			cancelled = false;
-			while (run_picker)
-			{
-				gtk_main_iteration_do(FALSE);
-			}
-
-			sel = find_current_selection();
-			
 			g_signal_connect(G_OBJECT(archcancel), "clicked",
 				G_CALLBACK(on_archcancel_clicked), NULL);
 
 			g_signal_connect(G_OBJECT(archok), "clicked",
 				G_CALLBACK(on_archok_clicked), NULL);
+
+			gtk_widget_show(archselect);
+			run_picker = true;
+			cancelled = false;
+			while (run_picker)
+			{
+				gtk_main_iteration_do(TRUE);
+			}
+
+			sel = find_current_selection();
 
 			gtk_widget_destroy(archselect);
 
