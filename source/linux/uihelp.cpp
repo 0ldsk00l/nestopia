@@ -441,11 +441,6 @@ void inputcfg_clicked(GtkButton *button, int data) {
 	NstLaunchConfig();
 }
 
-void on_downbutton_clicked() {
-	sSettings->SetConfigItem(1);
-	NstLaunchConfig();
-}
-
 void on_nsfplayer_destroy(GObject *object, gpointer user_data)
 {
 	NstStopNsf();
@@ -744,9 +739,7 @@ GtkWidget* create_config(void) {
 	
 	GtkWidget *inputgamepadbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
 
-	GdkPixbuf *nespadpixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 224, NULL);
-	GtkWidget *nespad = gtk_image_new_from_pixbuf(nespadpixbuf);
-	g_object_unref(nespadpixbuf), nespadpixbuf = NULL;
+	GtkWidget *nespad = gtk_image_new_from_file(svgpath);
 	gtk_box_pack_start(GTK_BOX(padbox), nespad, FALSE, FALSE, 0);
 	
 	GtkWidget *inputseparator1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
@@ -756,20 +749,21 @@ GtkWidget* create_config(void) {
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (playerselectcombo), "Player 2");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(playerselectcombo), 0);
 	
-	GtkWidget *upbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "U", "halign", GTK_ALIGN_START, NULL);
-	GtkWidget *downbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "D", "halign", GTK_ALIGN_START, NULL);
-	GtkWidget *leftbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "L", "halign", GTK_ALIGN_START, NULL);
-	GtkWidget *rightbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "R", "halign", GTK_ALIGN_START, NULL);
-	GtkWidget *selectbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "SELECT", "halign", GTK_ALIGN_START, NULL);
-	GtkWidget *startbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "START", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *upbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "U", "halign", GTK_ALIGN_START, "margin-right", 4, "margin-left", 6, NULL);
+	GtkWidget *downbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "D", "halign", GTK_ALIGN_START, "margin-right", 4, NULL);
+	GtkWidget *leftbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "L", "halign", GTK_ALIGN_START, "margin-right", 4, NULL);
+	GtkWidget *rightbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "R", "halign", GTK_ALIGN_START, "margin-right", 16, NULL);
+	GtkWidget *selectbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "SELECT", "halign", GTK_ALIGN_START, "margin-right", 4,NULL);
+	GtkWidget *startbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "START", "halign", GTK_ALIGN_START, "margin-right", 16,NULL);
+	GtkWidget *bbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "B", "halign", GTK_ALIGN_START, "margin-right", 4, NULL);
 	GtkWidget *abutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "A", "halign", GTK_ALIGN_START, NULL);
-	GtkWidget *bbutton = gtk_widget_new(GTK_TYPE_BUTTON, "label", "B", "halign", GTK_ALIGN_START, NULL);
+
 	
 	GtkWidget *inputseparator2 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 
 	GtkWidget *inputmetabox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin-top", 10, "margin-bottom", 10, "margin-left", 10, "margin-right", 10, NULL);
 
-	GtkWidget *rewindstart = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Start", "halign", GTK_ALIGN_START, NULL);
+	GtkWidget *rewindstart = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Start", "halign", GTK_ALIGN_START, "margin-right", 4, NULL);
 	GtkWidget *rewindstop = gtk_widget_new(GTK_TYPE_BUTTON, "label", "Rewind Stop", "halign", GTK_ALIGN_START, NULL);
 
 	gtk_box_pack_start(GTK_BOX(inputbox), padbox, FALSE, FALSE, 0);

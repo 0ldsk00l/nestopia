@@ -27,12 +27,6 @@
 
 #include "fonts.inc"
 
-extern "C" {
-#include <gtk/gtk.h>
-#include <gdk/gdkkeysyms.h>
-#include <gdk/gdkx.h>
-}
-
 static SDL_Surface *config_screen;
 
 static const int win_w = 360;
@@ -263,14 +257,12 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 
 	while (!quit)
 	{
-		//gtk_main_iteration_do(TRUE);
 		SDL_Event evt;
 		char match[20] = { 0 };
 		char input[20] = { 0 };
 
 		while (SDL_PollEvent(&evt))
 		{
-			//gtk_main_iteration_do(TRUE);
 			// if we've already seen this input, ignore it
 			if (match_event(evtvec, evt))
 			{
@@ -332,7 +324,7 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 					break;
 
 				case SDL_JOYHATMOTION:
-					sprintf(match, "joy %d hat %d %d",
+					sprintf(match, "joy %d hat %d",
 						evt.jhat.which + 1, evt.jhat.value);
 					sprintf(input, "_J%dH%d%d", evt.jbutton.which, evt.jhat.hat, evt.jhat.value);
 					quit = 1;
