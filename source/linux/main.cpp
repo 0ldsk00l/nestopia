@@ -411,7 +411,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 }
 
 // do a "partial" shutdown
-static void nst_unload2(void)
+static void nst_unload(void)
 {
 	Machine machine(emulator);
 
@@ -430,13 +430,6 @@ static void nst_unload2(void)
 
 	// erase any cheats
 	sCheatMgr->Unload();
-}
-
-static void nst_unload(void)
-{
-	nst_unload2();
-
-	UIHelp_Unload();
 }
 
 // if we're in full screen, kills video temporarily
@@ -466,9 +459,12 @@ static void kill_video_if_fs(void)
 }
 
 // returns if we're currently playing a game or NSF
-bool NstIsPlaying()
-{
+bool NstIsPlaying() {
 	return playing;
+}
+
+bool NstIsLoaded() {
+	return loaded;
 }
 
 // shuts everything down
@@ -520,9 +516,6 @@ void NstStopPlaying()
 		SDL_ShowCursor(1);
 		SDL_Quit();
 	}
-
-	// show main window
-	//gtk_widget_show(mainwindow);
 
 	playing = 0;
 }
@@ -1259,7 +1252,7 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	nst_unload2();
+	nst_unload();
 
 	auxio_shutdown();
 
@@ -1689,7 +1682,7 @@ void NstLoadGame(const char* filename)
 	if (nsf_mode)
 	{
 		Nsf nsf( emulator );
-	
+
 		nsf.StopSong();
 
 		// clear the audio buffer
@@ -1748,7 +1741,6 @@ void NstLoadGame(const char* filename)
 			if (!f)
 			{
 				loaded = 0;
-				UIHelp_Unload();
 				return;
 			}
 
@@ -1855,8 +1847,6 @@ void NstLoadGame(const char* filename)
 	}
 	else
 	{
-		UIHelp_GameLoaded();
-
 		if (machine.Is(Machine::DISK))
 		{
 			Fds fds( emulator );
