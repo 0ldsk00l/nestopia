@@ -7,7 +7,9 @@ void NstStopNsf();
 void NstScheduleQuit();
 void NstStopPlaying();
 bool NstIsPlaying();
+bool NstIsLoaded();
 void NstLoadGame(const char* filename);
 void NstLaunchConfig();
+//void nst_unload3();
 
 #endif

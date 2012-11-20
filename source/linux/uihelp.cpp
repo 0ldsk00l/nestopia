@@ -72,7 +72,7 @@ static GdkPixbuf *app_icon;
 GtkWidget *mainwindow;
 GtkWidget *configwindow;
 
-static GtkWidget *nsftitle, *nsfauthor, *nsfmaker, *text_volume, *scroll_volume;
+static GtkWidget *nsfplayer, *nsftitle, *nsfauthor, *nsfmaker, *text_volume, *scroll_volume;
 
 static char volumestr[5], surrmulstr[5];
 
@@ -81,6 +81,8 @@ char windowid[24];
 int playernumber = 0;
 
 extern int xres, yres;
+
+bool wasplaying = 0;
 
 void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
 {
@@ -100,9 +102,6 @@ void on_nsfspinbutton_value_changed(GtkSpinButton   *spinbutton, gpointer       
 void on_nsfplay_clicked(GtkButton       *button,  gpointer         user_data)
 {
 	NstPlayNsf();
-
-	//gtk_widget_set_sensitive(button_nsfplay, FALSE);
-	//gtk_widget_set_sensitive(button_nsfstop, TRUE);
 }
 
 void on_nsfstop_clicked(GtkButton       *button, gpointer         user_data)
@@ -181,6 +180,8 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 		// make sure open starts in this location next time
 		set_cur_path(filename);
 
+		wasplaying = 1;
+		
 		// load the cartridge
 		NstLoadGame(filename);
 		g_free (filename);
@@ -192,14 +193,20 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 
 void on_playbutton_clicked(GtkButton *button,  gpointer user_data)
 {
-	NstPlayGame();
+	if (wasplaying) {
+		NstPlayGame();
+	}
 }
 
 void on_okbutton_clicked(GtkButton *button,  gpointer user_data)
 {
-	NstPlayGame();
-	redraw_request();
+	if (wasplaying) {
+		NstPlayGame();
+		redraw_request();
+	}
+
 	gtk_widget_destroy(configwindow);
+	gtk_main_iteration_do(FALSE);
 }
 
 void
@@ -307,7 +314,7 @@ void on_configcombo_changed(GtkComboBox     *combobox, gpointer         user_dat
 {
 	 sSettings->SetConfigItem(gtk_combo_box_get_active(combobox));
 	 int curItem = sSettings->GetConfigItem();
-	 printf("%d\n", curItem);
+	 //printf("%d\n", curItem);
 }
 
 void on_spatchcombo_changed(GtkComboBox     *combobox, gpointer         user_data)
@@ -522,44 +529,16 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	
 }
 
-void UIHelp_Unload(void)
-{
-	/*// disable the widgets since we unloaded them
-	gtk_widget_set_sensitive(button_play, FALSE);
-	gtk_widget_set_sensitive(button_nsfplay, FALSE);
-	gtk_widget_set_sensitive(button_nsfstop, FALSE);
-	gtk_widget_set_sensitive(spin_nsf, FALSE);*/
-
-	// and kill the NSF text since we've unloaded too
-	//gtk_label_set_text(GTK_LABEL(nsftitle), " ");
-	//gtk_label_set_text(GTK_LABEL(nsfauthor), " ");
-	//gtk_label_set_text(GTK_LABEL(nsfmaker), " ");
-}
-
 void UIHelp_NSFLoaded(void)
 {
 	Nsf nsf( emulator );
 	
 	create_nsfplayer();
 
-	//gtk_widget_set_sensitive(button_nsfplay, TRUE);
-	//gtk_widget_set_sensitive(spin_nsf, TRUE);
-
 	// show the NSF info
 	gtk_label_set_text(GTK_LABEL(nsftitle), nsf.GetName());
 	gtk_label_set_text(GTK_LABEL(nsfauthor), nsf.GetArtist());
 	gtk_label_set_text(GTK_LABEL(nsfmaker), nsf.GetCopyright());
-
-	//gtk_spin_button_set_value(GTK_SPIN_BUTTON(spin_nsf), nsf.GetCurrentSong());
-	//gtk_spin_button_set_range(GTK_SPIN_BUTTON(spin_nsf), nsf.GetStartingSong(), nsf.GetNumSongs());
-}
-
-void UIHelp_GameLoaded(void)
-{
-	//gtk_widget_set_sensitive(button_play, TRUE);
-	//gtk_widget_set_sensitive(button_nsfstop, FALSE);
-	//gtk_widget_set_sensitive(button_nsfplay, FALSE);
-	//gtk_widget_set_sensitive(spin_nsf, FALSE);
 }
 
 // returns NEStopia's icon for child windows to use
@@ -600,8 +579,16 @@ void redraw_request() {
 
 GtkWidget* create_config(void) {
 
-	NstStopPlaying();
-
+	// Pause if playing
+	bool playing = NstIsPlaying();
+	if (playing) {
+		NstStopPlaying();
+		wasplaying = 1;
+	}
+	else {	// Set it back to 0 in case the game was paused and the config is opened again
+		wasplaying = 0;
+	}
+	
 	configwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(configwindow), "Configuration");
 	
@@ -744,6 +731,7 @@ GtkWidget* create_config(void) {
 	GtkWidget *inputgamepadbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin", 10, NULL);
 
 	GtkWidget *nespad = gtk_widget_new(GTK_TYPE_IMAGE, "halign", GTK_ALIGN_CENTER, "expand", TRUE, "file", svgpath, "margin", 10, NULL);
+	//gtk_widget_set_size_request(nespad, 300, 400);
 	
 	GtkWidget *inputseparator1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
 	
@@ -939,15 +927,25 @@ GtkWidget* create_config(void) {
 }
 
 GtkWidget* create_nsfplayer (void) {
-	
-	GtkWidget *nsfplayer;
+
+	// Pause if playing
+	bool playing = NstIsPlaying();
+	if (playing) {
+		NstStopPlaying();
+		wasplaying = 1;
+	}
+	else {	// Set it back to 0 in case the game was paused and the config is opened again
+		wasplaying = 0;
+	}
+
+	//GtkWidget *nsfplayer;
 	GtkWidget *nsffixed;
-	
+
 	GtkAdjustment *nsfspinbutton_adj;
 	GtkWidget *nsfspinbutton;
 	GtkWidget *nsfstop;
 	GtkWidget *nsfplay;
-	
+
 	nsfplayer = gtk_window_new (GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (nsfplayer), "NSF Player");
 
@@ -998,9 +996,9 @@ GtkWidget* create_nsfplayer (void) {
 
 	g_signal_connect (G_OBJECT(nsfplayer), "destroy",
 		G_CALLBACK (on_nsfplayer_destroy), NULL);
-	
+
 	gtk_widget_show_all(nsfplayer);
-	
+
 	return nsfplayer;
 }
 
