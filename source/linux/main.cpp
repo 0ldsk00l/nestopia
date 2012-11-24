@@ -48,6 +48,7 @@
 
 extern "C" {
 #include <gtk/gtk.h>
+#include <gdk/gdk.h>
 
 #include "callbacks.h"
 }
@@ -64,9 +65,6 @@ Emulator emulator;
 void SetupVideo();
 void SetupSound();
 void SetupInput();
-
-void get_screen_res();
-void redraw_window();
 
 SDL_Surface *screen;
 
@@ -1123,6 +1121,8 @@ int main(int argc, char *argv[])
 	sSettings = new Settings;
 	sCheatMgr = new CheatMgr;
 	
+	gtk_init(&argc, &argv);
+	
 	get_screen_res();
 
 	UIHelp_Init(argc, argv, sSettings, sCheatMgr, cur_Rwidth, cur_Rheight);
@@ -1469,6 +1469,14 @@ void SetupVideo()
 
 	if (sSettings->GetFullscreen())
 	{
+		GdkScreen *gdkscreen = gdk_screen_get_default();
+		
+		int fullscreen = sSettings->GetFullscreen();
+
+		if (fullscreen == 1) {	// Force native resolution in fullscreen mode
+			cur_Rwidth = gdk_screen_get_width(gdkscreen);
+			cur_Rheight = gdk_screen_get_height(gdkscreen);
+		}
 		screen = SDL_SetVideoMode(cur_Rwidth, cur_Rheight, 16, SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_FULLSCREEN | eFlags);
 	}
 	else
