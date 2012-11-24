@@ -188,25 +188,28 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 	}
 
 	gtk_widget_destroy(dialog);
-	NstPlayGame();
+
+	if (wasplaying) {
+		NstPlayGame();
+	}
 }
 
 void on_playbutton_clicked(GtkButton *button,  gpointer user_data)
 {
-	if (wasplaying) {
-		NstPlayGame();
-	}
+	NstPlayGame();
 }
 
 void on_okbutton_clicked(GtkButton *button,  gpointer user_data)
 {
 	if (wasplaying) {
 		NstPlayGame();
-		redraw_request();
+	}
+	else {
+		get_screen_res();
 	}
 
+	redraw_request();
 	gtk_widget_destroy(configwindow);
-	gtk_main_iteration_do(FALSE);
 }
 
 void
@@ -512,7 +515,7 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 {
 	//GtkTargetEntry target_entry[1];
 
-	gtk_init(&argc, &argv);
+	//gtk_init(&argc, &argv);
 
 	sSettings = settings;
 	sCheatMgr = cheatmgr;
@@ -550,7 +553,11 @@ GdkPixbuf *UIHelp_GetNSTIcon()
 // These functions are dirty hacks to let the main window
 // in interace.c call C++ functions. I should probably rethink this later.
 void pause_clicked() {
-	NstStopPlaying();
+	bool playing = NstIsPlaying();
+	if (playing) {
+		wasplaying = 1;
+		NstStopPlaying();
+	}
 }
 
 void state_load() {
