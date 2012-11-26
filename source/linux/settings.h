@@ -11,6 +11,7 @@ namespace LinuxNst
 
 			// video accessors
 			int GetFullscreen(void) { return fullscreen; }
+			int GetFsNativeRes(void) { return fsnativeres; }
 			int GetScale(void) { return scaler; }
 			int GetSprlimit(void) { return sprlimit; }
 			int GetVideoMode(void) { return videomode; }
@@ -18,6 +19,7 @@ namespace LinuxNst
 			int GetRenderType(void) { return rendertype; }
 			int GetScaleAmt(void) { return scaleamt; }
 			void SetFullscreen(int fs) { fullscreen = fs; }
+			void SetFsNativeRes(int fsnr) { fsnativeres = fsnr; }
 			void SetScale(int scl) { scaler = scl; }
 			void SetSprlimit(int limit) { sprlimit = limit; }
 			void SetVideoMode(int mode) { videomode = mode; }
@@ -57,7 +59,7 @@ namespace LinuxNst
 		private:
 			// video settings
 			int fullscreen, scaler, sprlimit, videomode, ntscmode;
-			int rendertype, scaleamt;
+			int fsnativeres, rendertype, scaleamt;
 			// input settings
 			int controls, configitem;
 			// sound settings

@@ -47,6 +47,7 @@ Settings::Settings()
 	litesurr = 0;
 	surmult = 40;
 	sndapi = 1;
+	fsnativeres = 1;
 
 	// try the recommended place for settings
 	home = getenv("HOME");
@@ -86,6 +87,7 @@ Settings::Settings()
 	READ_SETTING(exciter);
 	READ_SETTING(litesurr);
 	READ_SETTING(surmult);
+	READ_SETTING(fsnativeres);
 
 	fclose(f);
 }
@@ -129,6 +131,7 @@ Settings::~Settings()
 	WRITE_SETTING(exciter);
 	WRITE_SETTING(litesurr);
 	WRITE_SETTING(surmult);
+	WRITE_SETTING(fsnativeres);
 
 	fclose(f);
 }

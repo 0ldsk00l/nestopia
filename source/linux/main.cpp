@@ -1475,8 +1475,9 @@ void SetupVideo()
 		GdkScreen *gdkscreen = gdk_screen_get_default();
 		
 		int fullscreen = sSettings->GetFullscreen();
+		int fsnativeres = sSettings->GetFsNativeRes();
 
-		if (fullscreen == 1 && using_opengl) {	// Force native resolution in fullscreen mode
+		if (fullscreen && fsnativeres && using_opengl) {	// Force native resolution in fullscreen mode
 			cur_Rwidth = gdk_screen_get_width(gdkscreen);
 			cur_Rheight = gdk_screen_get_height(gdkscreen);
 		}
