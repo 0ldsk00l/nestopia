@@ -36,18 +36,21 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	GtkWidget *emulator;
 	GtkWidget *cont;
 	GtkWidget *pause;
+	GtkWidget *reset;
 	GtkWidget *sep2;
 	GtkWidget *fullscreen;
 	GtkWidget *sep3;
 	GtkWidget *loadstate;
 	GtkWidget *savestate;
 	GtkWidget *sep4;
+	GtkWidget *flipdisk;
+	GtkWidget *sep5;
 	GtkWidget *movieload;
 	GtkWidget *movierecord;
 	GtkWidget *moviestop;
-	GtkWidget *sep5;
-	GtkWidget *cheats;
 	GtkWidget *sep6;
+	GtkWidget *cheats;
+	GtkWidget *sep7;
 	GtkWidget *configuration;
 
 	GtkWidget *helpmenu;
@@ -82,6 +85,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	cont = gtk_image_menu_item_new_with_label("Continue");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cont), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU));
 	pause = gtk_image_menu_item_new_from_stock(GTK_STOCK_MEDIA_PAUSE, NULL);
+	reset = gtk_image_menu_item_new_with_label("Reset");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(reset), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
 	sep2 = gtk_separator_menu_item_new();
 	fullscreen = gtk_image_menu_item_new_from_stock(GTK_STOCK_FULLSCREEN, NULL);
 	sep3 = gtk_separator_menu_item_new();
@@ -90,16 +95,19 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	savestate = gtk_image_menu_item_new_with_label("Save State...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(savestate), gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
 	sep4 = gtk_separator_menu_item_new();
+	flipdisk = gtk_image_menu_item_new_with_label("Flip FDS Disk");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(flipdisk), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
+	sep5 = gtk_separator_menu_item_new();
 	movieload = gtk_image_menu_item_new_with_label("Load Movie...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(movieload), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
 	movierecord = gtk_image_menu_item_new_with_label("Record Movie...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(movierecord), gtk_image_new_from_stock(GTK_STOCK_MEDIA_RECORD, GTK_ICON_SIZE_MENU));
 	moviestop = gtk_image_menu_item_new_with_label("Stop Movie");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(moviestop), gtk_image_new_from_stock(GTK_STOCK_MEDIA_STOP, GTK_ICON_SIZE_MENU));
-	sep5 = gtk_separator_menu_item_new();
+	sep6 = gtk_separator_menu_item_new();
 	cheats = gtk_image_menu_item_new_with_label("Cheats...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cheats), gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU));
-	sep6 = gtk_separator_menu_item_new();
+	sep7 = gtk_separator_menu_item_new();
 	configuration = gtk_image_menu_item_new_with_label("Configuration...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(configuration), gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU));
 
@@ -109,23 +117,26 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep1);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), loadstate);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), savestate);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep2);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movieload);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movierecord);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviestop);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep3);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
 	
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emulator), emulatormenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cont);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), pause);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep2);
-	//gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), fullscreen);
-	//gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep3);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), loadstate);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), savestate);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), reset);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep4);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), movieload);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), movierecord);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), moviestop);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), fullscreen);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep5);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), flipdisk);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep6);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep7);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), configuration);
   
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpmenu);
@@ -159,14 +170,20 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	g_signal_connect(G_OBJECT(pause), "activate",
 		G_CALLBACK(pause_clicked), NULL);
 		
-	//g_signal_connect(G_OBJECT(fullscreen), "activate",
-	//	G_CALLBACK(fullscreen_clicked), NULL);
+	g_signal_connect(G_OBJECT(reset), "activate",
+		G_CALLBACK(reset_clicked), NULL);
+		
+	g_signal_connect(G_OBJECT(fullscreen), "activate",
+		G_CALLBACK(fullscreen_clicked), NULL);
 
 	g_signal_connect(G_OBJECT(loadstate), "activate",
 		G_CALLBACK(state_load), NULL);
 
 	g_signal_connect(G_OBJECT(savestate), "activate",
 		G_CALLBACK(state_save), NULL);
+		
+	g_signal_connect(G_OBJECT(flipdisk), "activate",
+		G_CALLBACK(flipdisk_clicked), NULL);
 		
 	g_signal_connect(G_OBJECT(movieload), "activate",
 		G_CALLBACK(movie_load), NULL);
