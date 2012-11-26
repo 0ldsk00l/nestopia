@@ -546,6 +546,14 @@ std::string StrQuickSaveFile(int isvst)
 	return ossFile.str();
 }
 
+void FlipFDSDisk() {
+	Fds fds( emulator );
+
+	if (fds.CanChangeDiskSide()) {
+		fds.ChangeSide();
+	}
+}
+
 // save state to memory slot
 static void QuickSave(int isvst)
 {
@@ -634,6 +642,16 @@ void NstStopNsf(void)
 	memset(lbuf, 0, sizeof(lbuf));
 }
 
+void NstReset() {
+	Machine machine( emulator );
+	Fds fds( emulator );
+	machine.Reset(true);
+
+	// put the disk system back to disk 0 side 0
+	fds.EjectDisk();
+	fds.InsertDisk(0, 0);
+}
+
 // schedule a NEStopia quit
 void NstScheduleQuit(void)
 {
@@ -648,7 +666,7 @@ void NstLaunchConfig(void)
 }
 
 // toggle fullscreen state
-static void ToggleFullscreen()
+void ToggleFullscreen()
 {
 	if (SDL_NumJoysticks() > 0)
 	{
@@ -692,7 +710,6 @@ static void ToggleFullscreen()
 	NstPlayGame();
 }
 
-
 // handle input event
 static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
 {
@@ -712,25 +729,11 @@ static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
 		break;
 
 	case RESET:
-		{
-			Machine machine( emulator );
-			Fds fds( emulator );
-
-			machine.Reset(true);
-
-			// put the disk system back to disk 0 side 0
-			fds.EjectDisk();
-			fds.InsertDisk(0, 0);
-		}
+		NstReset();
 		break;
 
 	case FLIP:
-		{
-		Fds fds( emulator );
-
-		if (fds.CanChangeDiskSide())
-			fds.ChangeSide();
-		}
+		FlipFDSDisk();
 		break;
 
 	case FSCREEN:

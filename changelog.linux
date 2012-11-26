@@ -1,4 +1,4 @@
-Nestopia Undead Edition v1.42
+Nestopia Undead Edition v1.43
 
 Nestopia by Martin Freij
 Linux port by R. Belmont
@@ -42,6 +42,11 @@ Compiling
 It helps greatly if you copy these files to ~/.nestopia:
 
 - The Famicom Disk System BIOS (disksys.rom - not included - needed for FDS support)
+
+Changes from 1.42
+=============================
+- Rewrote the GUI (except for Cheats and Archive dialog)
+- Fullscreen uses native resolution
 
 Changes from 1.41
 =============================

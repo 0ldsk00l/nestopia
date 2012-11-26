@@ -560,12 +560,24 @@ void pause_clicked() {
 	}
 }
 
+void reset_clicked() {
+	NstReset();
+}
+
+void fullscreen_clicked() {
+	ToggleFullscreen();
+}
+
 void state_load() {
 	auxio_do_state_load();
 }
 
 void state_save() {
 	auxio_do_state_save();
+}
+
+void flipdisk_clicked() {
+	FlipFDSDisk();
 }
 
 void movie_load() {
