@@ -219,6 +219,10 @@ on_check_fullscreen_toggled             (GtkToggleButton *togglebutton,
 	sSettings->SetFullscreen(gtk_toggle_button_get_active(togglebutton));
 }
 
+void on_check_fsnativeres_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+	sSettings->SetFsNativeRes(gtk_toggle_button_get_active(togglebutton));
+}
+
 void
 on_unlimitsprcheck_toggled             (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
@@ -666,6 +670,9 @@ GtkWidget* create_config(void) {
 	
 	GtkWidget *check_fullscreen = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Fullscreen", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fullscreen), sSettings->GetFullscreen());
+	
+	GtkWidget *check_fsnativeres = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Native Resolution (Fullscreen)", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fsnativeres), sSettings->GetFsNativeRes());
 
 	GtkWidget *unlimitsprcheck = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Unlimited Sprites", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unlimitsprcheck), sSettings->GetSprlimit());
@@ -677,6 +684,7 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(videobox), scaleamtbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), ntscbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_fullscreen, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(videobox), check_fsnativeres, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), unlimitsprcheck, FALSE, FALSE, 0);
 	//End of the Video stuff
 
@@ -855,6 +863,9 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(check_fullscreen), "toggled",
 		G_CALLBACK(on_check_fullscreen_toggled), NULL);
+		
+	g_signal_connect(G_OBJECT(check_fsnativeres), "toggled",
+		G_CALLBACK(on_check_fsnativeres_toggled), NULL);
 
 	g_signal_connect(G_OBJECT(unlimitsprcheck), "toggled",
 		G_CALLBACK(on_unlimitsprcheck_toggled), NULL);
