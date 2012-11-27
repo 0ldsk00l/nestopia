@@ -35,6 +35,7 @@ extern "C" {
 #include "callbacks.h"
 }
 
+#include "main.h"
 #include "uihelp.h"
 
 using namespace Nes::Api;
@@ -54,6 +55,7 @@ typedef struct
 extern Emulator emulator;
 extern GtkWidget *mainwindow;
 extern char rootname[512];
+extern bool wasplaying;
 
 static GtkWidget *cheatwin, *cheattree, *ggedit, *paredit, *genieok, *parok;
 static GtkWidget *chopen, *chsave, *chdelete;
@@ -316,6 +318,15 @@ GtkWidget* create_cheatwindow (void) {
 	GtkWidget *cheatsave;
 	GtkWidget *parvalid;
 	GtkWidget *chdelete;
+
+	bool playing = NstIsPlaying();
+	if (playing) {
+		NstStopPlaying();
+		wasplaying = 1;
+	}
+	else {	// Set it back to 0 in case the game was paused and the config is opened again
+		wasplaying = 0;
+	}
 
 	cheatwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title (GTK_WINDOW (cheatwindow), "Cheat Manager");
@@ -665,6 +676,10 @@ void on_cheatsave_clicked(GtkButton *button, gpointer user_data)
 
 void on_cheatok_clicked(GtkButton *button, gpointer user_data)
 {
+	if (wasplaying) {
+		NstPlayGame();
+	}
+	
 	gtk_widget_destroy(cheatwin);
 
 	treeiters.clear();
