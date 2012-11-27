@@ -393,6 +393,9 @@ GtkWidget* create_cheatwindow (void) {
 	gtk_widget_show (chdelete);
 	gtk_fixed_put (GTK_FIXED (cheatfixed), chdelete, 8, 240);
 	gtk_widget_set_size_request (chdelete, 120, 32);
+	
+	g_signal_connect(G_OBJECT(cheatwindow), "destroy",
+		G_CALLBACK(on_cheatok_clicked), NULL);
 
 	g_signal_connect(G_OBJECT(chtggvalid), "clicked",
 		G_CALLBACK(on_chtggvalid_clicked), NULL);

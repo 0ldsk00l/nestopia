@@ -863,6 +863,13 @@ GtkWidget* create_config(void) {
 	GdkPixbuf *app_icon = get_icon();
 	gtk_window_set_icon(GTK_WINDOW(configwindow), app_icon);
 	
+	//Config
+	g_signal_connect(G_OBJECT(okbutton), "clicked",
+		G_CALLBACK(on_okbutton_clicked), NULL);
+
+	g_signal_connect(G_OBJECT(configwindow), "destroy",
+		G_CALLBACK(on_okbutton_clicked), NULL);
+	
 	//Video
 	g_signal_connect(G_OBJECT(scaleamtcombo), "changed",
 		G_CALLBACK(on_scaleamtcombo_changed), NULL);
@@ -887,10 +894,7 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(rendercombo), "changed",
 		G_CALLBACK(on_rendercombo_changed), NULL);
-		
-	g_signal_connect(G_OBJECT(okbutton), "clicked",
-		G_CALLBACK(on_okbutton_clicked), NULL);
-		
+
 	//Audio
 	g_signal_connect(G_OBJECT(volumescroll), "value_changed",
 		G_CALLBACK(on_volumescroll_value_changed), NULL);
