@@ -51,9 +51,6 @@ extern "C" {
 
 #include "interface.h"
 #include "callbacks.h"
-
-// get icon data
-#include "nsticon.c"
 }
 
 #define DRAG_TAR_NAME_0		"text/uri-list"
@@ -528,7 +525,16 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	mainwindow = create_mainwindow(xres, yres);
 
 	// set up the icon
-	app_icon = gdk_pixbuf_new_from_inline(-1, nsticon, FALSE, NULL);
+	char iconpath[1024];
+	sprintf(iconpath, "%s/icons/nestopia.svg", DATADIR);
+	
+	// Load the icon from local source dir if make install hasn't been done
+	struct stat iconstat;
+	if (stat(iconpath, &iconstat) == -1) {
+		sprintf(iconpath, "source/linux/icons/nestopia.svg");
+	}
+
+	app_icon = gdk_pixbuf_new_from_file(iconpath, NULL);
 	gtk_window_set_icon(GTK_WINDOW(mainwindow), app_icon);
 
 	// show the window
@@ -548,9 +554,8 @@ void UIHelp_NSFLoaded(void)
 	gtk_label_set_text(GTK_LABEL(nsfmaker), nsf.GetCopyright());
 }
 
-// returns NEStopia's icon for child windows to use
-GdkPixbuf *UIHelp_GetNSTIcon()
-{
+// return the icon for alternate windows to use
+GdkPixbuf *get_icon() {
 	return app_icon;
 }
 
@@ -854,6 +859,10 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(bigbox), smallbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(smallbox), okbutton, FALSE, FALSE, 0);
 	
+	//Set the icon
+	GdkPixbuf *app_icon = get_icon();
+	gtk_window_set_icon(GTK_WINDOW(configwindow), app_icon);
+	
 	//Video
 	g_signal_connect(G_OBJECT(scaleamtcombo), "changed",
 		G_CALLBACK(on_scaleamtcombo_changed), NULL);
@@ -1046,6 +1055,9 @@ GtkWidget* create_about (void) {
 	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 256, NULL);
 	
 	GtkWidget *aboutdialog = gtk_about_dialog_new();
+	
+	GdkPixbuf *app_icon = get_icon();
+	gtk_window_set_icon(GTK_WINDOW(aboutdialog), app_icon);
 	
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
 	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia Undead");

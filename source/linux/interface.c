@@ -120,10 +120,10 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), loadstate);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), savestate);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep2);
-	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movieload);
-	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movierecord);
-	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviestop);
-	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep3);
+	//gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movieload);
+	//gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movierecord);
+	//gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviestop);
+	//gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep3);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
 	
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emulator), emulatormenu);
