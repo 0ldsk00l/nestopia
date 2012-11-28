@@ -1,4 +1,176 @@
 ----------------------------------------------------------------
+1.43
+----------------------------------------------------------------
+
+Linux Shell:
+
+ Additions:
+  - Fullscreen defaults to native screen resolution
+
+ Changes:
+  - Completely rewrote the GUI (except for Cheat Manager and Archive Selector)
+    - More traditional look and feel
+    - Improved input configuration
+    - Keyboard shortcuts
+    - More functionality exposed directly through GUI
+  - Better looking icons
+
+Windows Shell:
+
+ Changes:
+  - Updated icons, about dialog, copyright
+  - Merged the remaining features from Unofficial 1.41.1
+
+----------------------------------------------------------------
+1.42
+----------------------------------------------------------------
+
+Linux Shell:
+
+ Additions:
+  - Added native support for D-pads (Hat Switches)
+  - Added an About dialog box
+  - Added icons and a desktop menu entry
+
+ Fixes:
+  - Fixed the 100% CPU usage bug
+  - Fixed the "Error writing setting!" bug (patch from Arch Linux)
+
+----------------------------------------------------------------
+1.41
+----------------------------------------------------------------
+
+Linux shell:
+
+ Fixes:
+  - Fixed a braindead SRAM path issue
+
+Windows Shell:
+
+ Changes:
+  - Merged win32 fixes from Unofficial Build 1.41.1
+
+----------------------------------------------------------------
+1.40-undead
+----------------------------------------------------------------
+
+Linux Shell:
+
+ Additions:
+  - Added install/uninstall targets to Makefile
+
+ Changes:
+  - Ported to GTK+3
+  - Changed default sound API to ALSA (SDL audio has problems on some computers)
+  - Changed default renderer to OpenGL with a scale factor of 2
+  - Changed binary name to "nestopia"
+  - SRAM now saves to ~/.nestopia/save (for people who have roms on a read-only network share)
+  - Automatically install a new nstcontrols file to ~/.nestopia if it doesn't exist
+  - Install NstDatabase.xml to a proper location on the filesystem instead of forcing the user to manually copy it to ~/.nestopia
+
+ Fixes:
+  - Fixed numerous compiler warnings.
+
+----------------------------------------------------------------
+Unofficial 1.41.1 - by Geestarraw (geestarraw@gmail.com) (May 17, 2011)
+----------------------------------------------------------------
+
+Shell:
+
+ Changes:
+ 
+  - Added fullscreen support for non-primary monitor displays.
+  - Modified Video Options dialog component layout and added device index to
+    identify mutiple monitors.
+  - Refactoring.
+  - Code documentation.
+
+ Fixes:
+ 
+  - Fixed so menu is still displayed after fullscreen monitor to monitor switch.
+
+Project:
+
+ Changes:
+ 
+  - Converted solution and projects to Visual Studio 2010.
+  - Improved version enumeration previously locked to x.xx (exactly 3 digits) to
+    be anything from y.y, y.y.y, and y.y.y.y (where y can be up to 4 digits).
+  - Changed build output target to nestopia.exe.
+  
+ Fixes:
+ 
+  - Fixed bug in version enumeration always excluding highest version number.
+  - Moved unofficial 1.41 release notes to official changelog file.
+
+----------------------------------------------------------------
+Unofficial 1.41 - by Keith Kelly (c0d3h4x0r@hotmail.com) (March 29, 2010)
+----------------------------------------------------------------
+
+This is an unofficial maintenance release I created to fix an annoying joystick lag issue.
+This lag was particularly bad when VSync was enabled.  The original Nestopia author (Martin 
+Freij) appears to have abandoned the official Nestopia project on SourceForge and has not 
+responded to any of my e-mails, so I am left with no choice but to provide this unofficial
+release as a public service to the emulation community. 
+
+Changes:
+
+1. Removed manual option to set priority of Nestopia's main emulation loop thread. Instead,
+Nestopia now boosts its own process base priority AND its own main emulation thread priority
+whenever it is the active foreground window (and/or running in full-screen mode). This brings
+Nestopia much closer to real-time performance and responsiveness.
+
+2. Removed some screwy input polling logic, and added some calls to input.Poll(), to ensure
+that the input devices are always polled immediately before the input state is utilized. 
+This was the key change that got rid of most of the lag.
+
+3. Removed some screwy input timing logic that was causing input polling to work only on
+certain clock intervals, rather than allowing it to work every time it was called.
+
+(As far as I can tell on my own hardware configuration, these three changes taken together
+have completely eliminated the lag problems that have been present in Nestopia for several
+releases.  Your mileage may vary.)
+
+4. Updated the Visual Studio solution/project to build successfully under Visual C++ 2008
+Express Edition.
+
+5. Added this releasenotes.txt file and bumped the version number to 1.41.
+
+----------------------------------------------------------------
+1.40 Release A-H - by R. Belmont
+----------------------------------------------------------------
+
+Linux Shell:
+
+ Additions:
+  - XML ROM support
+  - More flexible video configuration including OpenGL hardware scaling
+  - Input mapping in the GUI
+  - Cheat Manager with flexible support and import/export capability (win32 compatible format)
+  - Core logging is now enabled to the terminal you start NEStopia from for easier diagnosis of problems
+  - Automatic soft-patching added
+  - Coin inputs added for Vs. system
+  - Audio filters added for fun
+  - [Release C] Proper default nstcontrols file included
+  - [Release E] Added SDL audio driver, should be most compatible
+  - [Release G] Cheat Manager now shows descriptions on imported XML files.  Also fixed a CM crash.
+
+ Changes:
+  - Complains more if it's unable to write to the settings file
+  - Archive browser comes up automatically if you select a zip or 7zip archive with multiple NES files in it
+  - Option to select favored console
+  - [Release E] Refactored to get UI code out of main.cpp
+  - [Release G] Settings window auto-hides during emulation [enik]
+
+ Fixes:
+  - Fixed bug where keyboard input could stick
+  - [Release B] Cleaned up some crashy issues with the control configurator
+  - [Release D] Fixed ability to remap "meta" keys (keys that control NEStopia itself), fixed documentation on defaults.
+  - [Release E] Fixed quicksave/quickload
+  - [Release F] Fixed keyboard to ignore numlock/capslock
+  - [Release G] Taskbar description is set properly for the game window [enik]
+
+----------------------------------------------------------------
 1.40
 ----------------------------------------------------------------
 

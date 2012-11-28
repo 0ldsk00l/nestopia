@@ -1,5 +1,3 @@
-Nestopia Undead Edition v1.43
-
 Nestopia by Martin Freij
 Linux port by R. Belmont
 Resurrected by R. Danbrook
@@ -43,139 +41,15 @@ It helps greatly if you copy these files to ~/.nestopia:
 
 - The Famicom Disk System BIOS (disksys.rom - not included - needed for FDS support)
 
-Changes from 1.42
-=============================
-- Rewrote the GUI (except for Cheats and Archive dialog)
-- Fullscreen uses native resolution
+Usage Notes
+===========
 
-Changes from 1.41
-=============================
-- Added native support for D-pads (Hat Switches)
-- Fixed the 100% CPU usage bug
-- Fixed the "Error writing setting!" bug (patch from Arch Linux)
-- Added an About dialog box
-- Added icons and a desktop menu entry
-
-Changes from 1.40-undead
-=============================
-- Fixed a braindead SRAM path issue
-- Merged win32 fixes from Unofficial Build 1.41.1
-
-Changes from Linux revision H
-=============================
-- Ported to GTK+3
-- Added install/uninstall targets to Makefile
-- Changed default sound API to ALSA (SDL audio has problems on some computers)
-- Changed default renderer to OpenGL with a scale factor of 2
-- Changed binary name to "nestopia"
-- SRAM now saves to ~/.nestopia/save (for people who have roms on a read-only network share)
-- Automatically install a new nstcontrols file to ~/.nestopia if it doesn't exist
-- Install NstDatabase.xml to a proper location on the filesystem instead of forcing the user to manually copy it to ~/.nestopia
-- Fixed numerous compiler warnings.
-
-Changes from Linux revision G
-=============================
-- Complains more if it's unable to write to the settings file
-- Fixed bug where keyboard input could stick
-
-Changes from preview #5
-=======================
-
-* Linux shell
-- XML ROM support
-- Archive browser comes up automatically if you select a zip or 7zip archive with multiple NES files in it
-- Option to select favored console
-- More flexible video configuration including OpenGL hardware scaling
-- Input mapping in the GUI
-- Core logging is now enabled to the terminal you start NEStopia from for easier diagnosis of problems
-- Cheat Manager with flexible support and import/export capability (.xml cheat files will interchange with
-  the Windows version just fine)
-- Automatic soft-patching added
-- Coin inputs added for Vs. system
-- Audio filters added for fun
-- [Release B] Cleaned up some crashy issues with the control configurator
-- [Release C] Proper default nstcontrols file included
-- [Release D] Fixed ability to remap "meta" keys (keys that control NEStopia itself), fixed documentation on defaults.
-- [Release E] Fixed quicksave/quickload
-- [Release E] Refactored to get UI code out of main.cpp
-- [Release E] Added SDL audio driver, should be most compatible
-- [Release F] Fixed keyboard to ignore numlock/capslock
-- [Release G] Settings window auto-hides during emulation [enik]
-- [Release G] Taskbar description is set properly for the game window [enik]
-- [Release G] Cheat Manager now shows descriptions on imported XML files.  Also fixed a CM crash.
-
-* Core (since 1.37)
-
- Additions:
-
-  - ROM sets and external database support using new XML format
-    co-developed with Bootgod.    
-  - Mapper 36, 103, 104, 106, 120, 126, 175, 176, 223 and 224. 
-    Info from mad dumper, CaH4e3 and Temryu.
-  - UNIF boards GS-2013 and BS-5. info from CaH4e3.
-  - Emulation of bus conflicts for certain boards.  
-  - Database entries.
-  - Core API documentation in HTML through cppdoc.
-  - UPS patching format support.
-  - Database lookup on soft-patching.
-  - Database entries. Info from Bootgod.
-  - More recognized boards. Info from Bootgod.
-  - Preliminary Dendy console support. Fixes Magistr (Subor) and
-    some other 'clone exclusives'. Info from Flamer and HardWareMan.
-  - DMC DMA read conflicts. Info from blargg and bunnyboy.
-  - Mapper 177, 179, 219 and 221. Info from CaH4e3.
-  - Database entries.
-
- Changes:
-
-  - PPU power/reset timing and register states. Info from blargg.
-  - Misc IRQ/NMI/BRK/DMA special-case behavior. Info from blargg.
-  - NTSC/PAL switch during emulation will now force a hard-reset.
-  - Misc mapper emulation improvements. Info from Bootgod.
-  - NES-EVENT board timer more accurate.
-  - Board names. Info from Bootgod.
-  - Refactoring and mapper codebase overhaul.
-  - Speed optimizations (accuracy NOT compromised!).
-  - Mappers 21, 23, 25 and 185 no longer supported using plain iNES
-    files because of format restrictions.
-  - FDS saves through UPS instead of IPS. 
-  - Database entries. Info from Bootgod.
-  - Refactoring.
-  - Better and more flexible PPU address line implementation at the
-    expense of some speed.
-  - Database entries.
-  - Refactoring.
-  
- Fixes:
-
-  - MMC3 soft-reset IRQ bug.
-  - Database entries.
-  - FDS file saving bug.
-  - NTSC burst phase incrementing bug.
-  - Potential memory leak in database loader.
-  - UTF16 to wchar_t portability fix in XML parser.
-  - Const-correctness bug caught by GCC 4.0.
-  - Wrong palette sometimes when switching to/from VS images.
-  - Wrong image information sometimes, e.g. battery when there isn't any.
-  - Save state NTSC/PAL mode saving.
-  - Minor save state inaccuracy fix with tape recording.
-
-
-
-Options in this preview (more to come)
-======================================
-
-"Emulator" tab
---------------
-Open...  brings up a standard open file window.  You may choose .nes, .fds, .unf, or .unif format game ROMs, or
+"Open"  brings up a standard open file window.  You may choose .nes, .fds, .unf, or .unif format game ROMs, or
 .nsf format NES music.  You may also open .zip or .7z format archives.  If the archive only contains one 
 recognized file, that file will simply open.  If the archive contains multiple recognized files, the 
 archive browser will appear and let you choose which file to open. 
 
-If you choose a game, the Play Game! button will become available, and clicking it will start the emulation.
-
-If you choose a disk (.fds), you must have the Disk System BIOS disksys.rom located in ~/.nestopia/, and
-then the Play Game! button will become available.
+If you choose a disk (.fds), you must have the Disk System BIOS disksys.rom located in ~/.nestopia
 
 If you choose a .NSF file, the Play button with the VCR "Play" symbol will become active, and so will the 
 song selector widget next to it.  Click it to begin playing the music.	You will also see the file's title,
@@ -194,21 +68,20 @@ them around!
 
 "Video" tab
 -----------
-Filter: lets you choose the scale effect you'd prefer - None, NTSC, Scale?x, or hq?x.
-
-Scale: lets you choose the scale factor.  Note that scalers "None" and "NTSC" will ignore this setting unless 
-you pick OpenGL for render type.
-
 Renderer: lets you choose software or OpenGL hardware drawing.  OpenGL gives you additional flexibilty and
 possibly some performance.
+
+Scaler: lets you choose the scale effect you'd prefer - None, NTSC, Scale?x, or hq?x.
+
+Multiplier: lets you choose the scale factor.  Note that scalers "None" and "NTSC" will ignore this setting unless 
+you pick OpenGL for render type.
 
 NTSC type: gives 3 easy presets for the NTSC emulation - you must choose a scale type of NTSC for this
 to take effect.
 
-Region: lets you choose auto-detection, NTSC, or PAL for the region of a game.  If you force an NTSC game to 
-PAL it will play too slowly, and a PAL game forced to NTSC will play too quickly.
-
 The full screen checkbox indicates if the game will play in a window or full screen.
+
+The Native Resolution checkbox causes fullscreen to run in the native resolution of the display (not NES native res)
 
 The Unlimited sprites checkbox makes Nestopia not emulate the hardware sprite flicker of the NES that occurs
 in some games.
@@ -216,18 +89,9 @@ in some games.
 
 "Input" tab
 -----------
-The Use Controllers checkbox enables using joypads.
+Each button configures a corresponding NES controller button. Select Player 1 or 2 from the dropdown menu.
 
-The drop-down lets you pick a control to remap.  To remap it, click the "Change" button.  A small window
-will appear and you will have 5 seconds to select a keypress, joypad axis movement, or joypad button to
-assign to the control.
-
-Note: the PS3 Sixaxis and Dual Shock 3 controllers map buttons as both buttons and axises, so you may
-need to tap a button a few times before it shows up as "JxBx" (button) instead of "JxAx" (axis).
-
-The default nstcontrols file contains player 1 mappings for a Sixaxis or Dual Shock 3 using the left 
-analog stick to move and the X, O, SELECT, and START buttons as B, A, SELECT, and START respectively.
-
+Rewind Start/Stop are player-independent.
 
 "Audio" tab
 -----------
@@ -248,8 +112,11 @@ The "Stereo exciter" checkbox tries to add some synthetic stereo imaging, and it
 NSF playback as well.
 
 
-"Extras" tab
+"Misc" tab
 -----------
+Video Region: lets you choose auto-detection, NTSC, or PAL for the region of a game.  If you force an NTSC game to 
+PAL it will play too slowly, and a PAL game forced to NTSC will play too quickly.
+
 The "Preferred System" lets you pick what system Nestopia will emulate if a game doesn't match the database.
 You may choose NES (NTSC), NES (PAL), Famicom, or Dendy (a Russian NES clone with some unique attributes).
 
