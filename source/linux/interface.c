@@ -59,6 +59,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	
 	GtkWidget *statusbar;
 	
+	GtkAccelGroup *accelgroup = gtk_accel_group_new();
+	
 	GtkSettings *gtksettings;
 
 	window = gtk_window_new(GTK_WINDOW_TOPLEVEL);
@@ -75,27 +77,29 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	filemenu = gtk_menu_new();
 	emulatormenu = gtk_menu_new();
 	helpmenu = gtk_menu_new();
+	
+	gtk_window_add_accel_group(GTK_WINDOW(window), accelgroup);
 
-	file = gtk_menu_item_new_with_label("File");
+	file = gtk_menu_item_new_with_mnemonic("_File");
 	open = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
 	sep1 = gtk_separator_menu_item_new();
 	quit = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
 	
-	emulator = gtk_menu_item_new_with_label("Emulator");
-	cont = gtk_image_menu_item_new_with_label("Continue");
+	emulator = gtk_menu_item_new_with_mnemonic("_Emulator");
+	cont = gtk_image_menu_item_new_with_mnemonic("C_ontinue");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cont), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU));
 	pause = gtk_image_menu_item_new_from_stock(GTK_STOCK_MEDIA_PAUSE, NULL);
-	reset = gtk_image_menu_item_new_with_label("Reset");
+	reset = gtk_image_menu_item_new_with_mnemonic("_Reset");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(reset), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
 	sep2 = gtk_separator_menu_item_new();
 	fullscreen = gtk_image_menu_item_new_from_stock(GTK_STOCK_FULLSCREEN, NULL);
 	sep3 = gtk_separator_menu_item_new();
-	loadstate = gtk_image_menu_item_new_with_label("Load State...");
+	loadstate = gtk_image_menu_item_new_with_mnemonic("_Load State...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(loadstate), gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_MENU));
-	savestate = gtk_image_menu_item_new_with_label("Save State...");
+	savestate = gtk_image_menu_item_new_with_mnemonic("_Save State...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(savestate), gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
 	sep4 = gtk_separator_menu_item_new();
-	flipdisk = gtk_image_menu_item_new_with_label("Flip FDS Disk");
+	flipdisk = gtk_image_menu_item_new_with_mnemonic("Flip FDS _Disk");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(flipdisk), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
 	sep5 = gtk_separator_menu_item_new();
 	movieload = gtk_image_menu_item_new_with_label("Load Movie...");
@@ -105,13 +109,13 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	moviestop = gtk_image_menu_item_new_with_label("Stop Movie");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(moviestop), gtk_image_new_from_stock(GTK_STOCK_MEDIA_STOP, GTK_ICON_SIZE_MENU));
 	sep6 = gtk_separator_menu_item_new();
-	cheats = gtk_image_menu_item_new_with_label("Cheats...");
+	cheats = gtk_image_menu_item_new_with_mnemonic("C_heats...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cheats), gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU));
 	sep7 = gtk_separator_menu_item_new();
-	configuration = gtk_image_menu_item_new_with_label("Configuration...");
+	configuration = gtk_image_menu_item_new_with_mnemonic("_Configuration...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(configuration), gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU));
 
-	help = gtk_menu_item_new_with_label("Help");
+	help = gtk_menu_item_new_with_mnemonic("_Help");
 	about = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, NULL);
 
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
