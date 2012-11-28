@@ -46,7 +46,7 @@ namespace Nestopia
                       << Application::Instance::GetLanguage().GetResourcePath().File()
                       << "\" version "
                       << version
-                      << '.'
+                      << '-'
                       << Resource::Version( Application::Instance::GetLanguage().GetResourcePath().Ptr(), Resource::Version::FILE )
                       << "\r\n";
 		}
