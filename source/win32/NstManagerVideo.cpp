@@ -279,6 +279,10 @@ namespace Nestopia
 			return Fullscreen() ? direct2d.GetMaxMessageLength() : statusBar.Enabled() ? statusBar.GetMaxMessageLength() : 0;
 		}
 
+		/**
+		 * Is called when the Options Video dialog has been closed. Updates the window according to the video settings. For example
+		 * changing video adapter, resolution etc.
+		 */
 		void Video::OnCmdOptionsVideo(uint)
 		{
 			const Rect oldRect( dialog->GetNesRect() );
@@ -737,7 +741,7 @@ namespace Nestopia
 
 		void Video::RepairScreen()
 		{
-			if (direct2d.Reset())
+			if (direct2d.Repair())
 			{
 				if (emulator.IsOn())
 					UpdateScreen();
@@ -746,6 +750,12 @@ namespace Nestopia
 			}
 		}
 
+		/**
+		 * Switches to a fullscreen mode.
+		 * 
+		 * @param mode The video mode to set to fullscreen.
+		 * @return True if switched to fullscreen. False if the mode is already set in fullscreen.
+		 */
 		bool Video::SwitchFullscreen(Mode mode)
 		{
 			const bool prevFullscreen = Fullscreen();
@@ -767,6 +777,9 @@ namespace Nestopia
 			return switched;
 		}
 
+		/**
+		 * Switches between window and full screen mode.
+		 */
 		void Video::SwitchScreen()
 		{
 			menu[IDM_VIEW_STATUSBAR].Enable( Fullscreen() );
@@ -823,7 +836,7 @@ namespace Nestopia
 
 						if (Instance::NumChildWindows() == childWindowSwitchCount)
 						{
-							SwitchFullscreen( dialog->GetMode() );
+							SwitchFullscreen( dialog->GetMode() );	//switches to fullscreen if necessary
 							UpdateDialogBoxMode();
 						}
 						break;
