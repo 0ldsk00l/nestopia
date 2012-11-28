@@ -1056,7 +1056,7 @@ GtkWidget* create_about (void) {
 		sprintf(svgpath, "source/linux/icons/nestopia.svg");
 	}
 	
-	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 256, 256, NULL);
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 192, 192, NULL);
 	
 	GtkWidget *aboutdialog = gtk_about_dialog_new();
 	
