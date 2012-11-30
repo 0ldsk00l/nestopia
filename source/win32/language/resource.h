@@ -230,6 +230,7 @@
 #define IDM_HELP_HELP                           986
 #define IDM_HELP_ABOUT                          987
 #define IDM_HELP_LICENSE                        988
+#define IDC_PREFERENCES_PRIORITY                1001
 #define IDM_LAUNCHER_FILE_RUN                   1002
 #define IDM_LAUNCHER_FILE_EDITHEADER            1003
 #define IDM_LAUNCHER_FILE_REFRESH               1004
@@ -1148,3 +1149,6 @@
 #define IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_4     40460
 #define IDS_INPUT_PARTYTAP_UNIT_1               40461
 #define IDS_INPUT_PARTYTAP_UNIT_2               40462
+#define IDS_PRIORITY_NORMAL                     40463
+#define IDS_PRIORITY_ABOVE_NORMAL               40464
+#define IDS_PRIORITY_HIGH                       40465
