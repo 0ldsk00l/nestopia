@@ -45,6 +45,12 @@ namespace Nestopia
 			IDC_PREFERENCES_ASSOCIATE_NSF == IDC_PREFERENCES_ASSOCIATE_NES + 3
 		);
 
+		NST_COMPILE_ASSERT
+		(
+			IDS_PRIORITY_ABOVE_NORMAL == IDS_PRIORITY_NORMAL + 1 &&
+			IDS_PRIORITY_HIGH         == IDS_PRIORITY_NORMAL + 2
+		);
+
 		struct Preferences::MenuColorWindow
 		{
 			COLORREF color;
@@ -264,6 +270,23 @@ namespace Nestopia
 				settings[ ALLOW_MULTIPLE_INSTANCES ] =  application[ "allow-multiple-instances" ].Yes();
 
 				{
+					const GenericString priority( application[ "priority" ].Str() );
+
+					if (priority == L"high")
+					{
+						settings.priority = PRIORITY_HIGH;
+					}
+					else if (priority == L"above normal")
+					{
+						settings.priority = PRIORITY_ABOVE_NORMAL;
+					}
+					else
+					{
+						settings.priority = PRIORITY_NORMAL;
+					}
+				}
+
+				{
 					const GenericString favored( application[ "favored-system" ].Str() );
 
 					if (favored == L"nes-pal")
@@ -337,6 +360,13 @@ namespace Nestopia
 				application[ "confirm-exit"             ].YesNo() = settings[ CONFIRM_EXIT             ];
 				application[ "confirm-reset"            ].YesNo() = settings[ CONFIRM_RESET            ];
 				application[ "allow-multiple-instances" ].YesNo() = settings[ ALLOW_MULTIPLE_INSTANCES ];
+
+				application[ "priority" ].Str() =
+				(
+					settings.priority == PRIORITY_HIGH         ? "high"         :
+					settings.priority == PRIORITY_ABOVE_NORMAL ? "above normal" :
+                                                                 "normal"
+				);
 
 				application[ "favored-system" ].Str() =
 				(
@@ -415,6 +445,15 @@ namespace Nestopia
 			dialog.RadioButton( IDC_PREFERENCES_FAVORED_DENDY    ).Check( settings.favoredSystem == Nes::Machine::FAVORED_DENDY    );
 
 			dialog.CheckBox( IDC_PREFERENCES_FAVORED_ALWAYS_ASK ).Check( settings.alwaysAskSystem );
+
+			{
+				Control::ComboBox priorities( dialog.ComboBox( IDC_PREFERENCES_PRIORITY ) );
+
+				for (uint i=IDS_PRIORITY_NORMAL; i <= IDS_PRIORITY_HIGH; ++i)
+					priorities.Add( Resource::String(i) );
+
+				priorities[settings.priority].Select();
+			}
 
 			dialog.RadioButton( IDC_PREFERENCES_STYLE_NES ).Check( Application::Instance::GetIconStyle() == Application::Instance::ICONSTYLE_NES );
 			dialog.RadioButton( IDC_PREFERENCES_STYLE_FAMICOM ).Check( Application::Instance::GetIconStyle() == Application::Instance::ICONSTYLE_FAMICOM );
@@ -534,6 +573,8 @@ namespace Nestopia
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_WINDOWPOS        ).Check( false );
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_LAUNCHERSIZE     ).Check( false );
 
+			dialog.ComboBox( IDC_PREFERENCES_PRIORITY )[ PRIORITY_NORMAL ].Select();
+
 			dialog.RadioButton( IDC_PREFERENCES_FAVORED_NES_NTSC ).Check( true  );
 			dialog.RadioButton( IDC_PREFERENCES_FAVORED_NES_PAL  ).Check( false );
 			dialog.RadioButton( IDC_PREFERENCES_FAVORED_FAMICOM  ).Check( false );
@@ -564,6 +605,8 @@ namespace Nestopia
 					if (i != SAVE_SETTINGS)
 						settings[i] = dialog.CheckBox( IDC_PREFERENCES_STARTUP_FULLSCREEN + i ).Checked();
 				}
+
+				settings.priority = static_cast<Priority>(dialog.ComboBox( IDC_PREFERENCES_PRIORITY ).Selection().GetIndex());
 
 				settings.menuLookDesktop.color = menuColorWindows[0].color;
 				settings.menuLookFullscreen.color = menuColorWindows[1].color;
