@@ -196,8 +196,11 @@ void on_playbutton_clicked(GtkButton *button,  gpointer user_data)
 	NstPlayGame();
 }
 
-void on_okbutton_clicked(GtkButton *button,  gpointer user_data)
-{
+void okbutton_clicked() {
+	gtk_widget_destroy(configwindow);
+}
+
+void configwindow_destroyed() {
 	if (wasplaying) {
 		NstPlayGame();
 	}
@@ -206,7 +209,6 @@ void on_okbutton_clicked(GtkButton *button,  gpointer user_data)
 	}
 
 	redraw_request();
-	gtk_widget_destroy(configwindow);
 }
 
 void
@@ -382,7 +384,7 @@ void on_configbutton_clicked(GtkButton *button, gpointer user_data)
 }
 
 void inputcfg_clicked(GtkButton *button, int data) {
-
+printf("Inputcfg\n");
 	if (playernumber == 0 && data < 16) {	// Player 1
 		switch(data) {
 			case 0:
@@ -865,10 +867,10 @@ GtkWidget* create_config(void) {
 	
 	//Config
 	g_signal_connect(G_OBJECT(okbutton), "clicked",
-		G_CALLBACK(on_okbutton_clicked), NULL);
+		G_CALLBACK(okbutton_clicked), NULL);
 
 	g_signal_connect(G_OBJECT(configwindow), "destroy",
-		G_CALLBACK(on_okbutton_clicked), NULL);
+		G_CALLBACK(configwindow_destroyed), NULL);
 	
 	//Video
 	g_signal_connect(G_OBJECT(scaleamtcombo), "changed",
