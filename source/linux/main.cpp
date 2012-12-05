@@ -611,12 +611,14 @@ void NstPlayGame(void)
 
 	cNstSound->samples[0] = lbuf;
 	cNstSound->length[0] = sSettings->GetRate()/framerate;
+	//printf("GetRate()/framerate: %d\n", cNstSound->length[0]);
 	cNstSound->samples[1] = NULL;
 	cNstSound->length[1] = 0;
 
 	SDL_WM_SetCaption(caption, caption);
 
 	m1sdr_SetSamplesPerTick(cNstSound->length[0]);
+	//m1sdr_SetSamplesPerTick(800);
 
 	updateok = 0;
 	schedule_stop = 0;
@@ -1251,7 +1253,6 @@ int main(int argc, char *argv[])
 		else
 		{
 			gtk_main_iteration_do(TRUE);
-			//gtk_main_iteration();
 		}
 	}
 
@@ -1267,14 +1268,6 @@ int main(int argc, char *argv[])
 
 	return 0;
 }
-
-/*void redraw_window() {
-	gtk_widget_hide(mainwindow);
-	get_screen_res();
-	printf("Got here\n");
-	gtk_widget_show(mainwindow);
-	//UIHelp_Init(argc, argv, sSettings, sCheatMgr, cur_Rwidth, cur_Rheight);
-}*/
 
 void get_screen_res() {
 
