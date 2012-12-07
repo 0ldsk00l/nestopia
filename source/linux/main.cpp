@@ -558,14 +558,12 @@ void FlipFDSDisk() {
 static void QuickSave(int isvst)
 {
 	std::string strFile = StrQuickSaveFile(isvst);
-	if (strFile.empty())
-		return;
 
 	Machine machine( emulator );
 	std::ofstream os(strFile.c_str());
 	// use "NO_COMPRESSION" to make it easier to hack save states
 	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::USE_COMPRESSION);
-	printf("State Saved\n");
+	printf("State Saved: %s\n", strFile.c_str());
 }
 
 
@@ -573,13 +571,17 @@ static void QuickSave(int isvst)
 static void QuickLoad(int isvst)
 {
 	std::string strFile = StrQuickSaveFile(isvst);
-	if (strFile.empty())
+	
+	struct stat qloadstat;
+	if (stat(strFile.c_str(), &qloadstat) == -1) {
+		printf("No State to Load\n");
 		return;
+	}
 
 	Machine machine( emulator );
 	std::ifstream is(strFile.c_str());
 	Nes::Result res = machine.LoadState(is);
-	printf("State Loaded\n");
+	printf("State Loaded: %s\n", strFile.c_str());
 }
 
 
