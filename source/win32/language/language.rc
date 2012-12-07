@@ -1890,7 +1890,7 @@ STRINGTABLE
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 VS_VERSION_INFO VERSIONINFO
     FILEVERSION     0,0,0,1
-    PRODUCTVERSION  0,1,43,0
+    PRODUCTVERSION  0,1,44,0
     FILEOS          VOS__WINDOWS32
     FILETYPE        VFT_DLL
     FILESUBTYPE     VFT2_UNKNOWN
@@ -1907,7 +1907,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
             VALUE "OriginalFilename", "English.nlg"
             VALUE "ProductName", "Nestopia Language Plugin - English (US)"
-            VALUE "ProductVersion", "1.43"
+            VALUE "ProductVersion", "1.44"
         }
     }
     BLOCK "VarFileInfo"
