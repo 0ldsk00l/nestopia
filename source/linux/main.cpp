@@ -19,6 +19,10 @@
 #include <errno.h>
 #include <vector>
 
+#ifdef BSD
+#include <libgen.h>
+#endif
+
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
 #include "core/api/NstApiSound.hpp"
@@ -940,7 +944,7 @@ static void nst_dispatch(Input::Controllers *controllers, const SDL_Event &evt)
 }
 
 // logging callback called by the core
-static void NST_CALLBACK DoLog(void *userData, const char *string, ulong length)
+static void NST_CALLBACK DoLog(void *userData, const char *string, unsigned long int length)
 {
 	fprintf(stderr, "%s", string);
 }
@@ -959,7 +963,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 
 			if (auxio_load_archive(lastarchname, &compbuffer, &compsize, &compoffset, (const char *)mbstr))
 			{
-				file.SetContent((const void*)&compbuffer[compoffset], (ulong)compsize);
+				file.SetContent((const void*)&compbuffer[compoffset], (unsigned long int)compsize);
 
 				free(compbuffer);
 			}				
@@ -985,7 +989,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 
 //					std::cout << "WAV has " << chan << " chan, " << bits << " bits per sample, rate = " << rate << "\n";
 
-					file.SetSampleContent((const void*)&compbuffer[compoffset], (ulong)compsize, (chan == 2) ? true : false, bits, rate);
+					file.SetSampleContent((const void*)&compbuffer[compoffset], (unsigned long int)compsize, (chan == 2) ? true : false, bits, rate);
 				}
 
 				free(compbuffer);
