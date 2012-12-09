@@ -17,6 +17,7 @@ CFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
 CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
 CXXFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
 CXXFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
+UNAME := $(shell uname)
 
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
@@ -26,7 +27,14 @@ CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
 LDFLAGS += -Wl,--as-needed
 
 EXE  = nestopia
-LIBS = -lstdc++ -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+
+ifeq ($(UNAME), Linux)
+	LIBS = -lstdc++ -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+endif
+ifeq ($(UNAME), FreeBSD)
+	LIBS = -lstdc++ -lm -lz $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	CPPFLAGS += -DBSD
+endif
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
@@ -38,7 +46,6 @@ LIBS   += -lGL -lGLU
 
 # Allow files to go into a data directory
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
-CXXFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
 OBJS = objs/linux/main.o objs/linux/oss.o objs/linux/interface.o objs/linux/settings.o 
