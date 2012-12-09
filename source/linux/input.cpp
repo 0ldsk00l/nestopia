@@ -256,11 +256,11 @@ InputDefT *parse_input_file()
 
 	// pre-insert ALT + ENTER fullscreen toggle since we don't 
 	// support requiring multiple keys for one action
-	controls[curentry].evt.type = SDL_KEYDOWN;
+	/*controls[curentry].evt.type = SDL_KEYDOWN;
 	controls[curentry].evt.key.keysym.sym = SDLK_RETURN;
 	controls[curentry].evt.key.keysym.mod = KMOD_LALT;
 	controls[curentry].player = 0;
-	controls[curentry++].codeout = FSCREEN;
+	controls[curentry++].codeout = FSCREEN;*/
 
 	memset(&controls[curentry], 0, sizeof(controls[0]));
 
