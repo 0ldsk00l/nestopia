@@ -157,7 +157,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), drawingarea, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
+	//gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
 
 	g_signal_connect_swapped(G_OBJECT(window), "destroy",
 		G_CALLBACK(on_mainwindow_destroy), NULL);
