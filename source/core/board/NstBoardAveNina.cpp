@@ -49,8 +49,9 @@ namespace Nes
 
 				void Nina06::SubReset(const bool hard)
 				{
-					for (uint i=0x4100; i < 0x6000; i += 0x200)
-						Map( i+0x00, i+0xFF, &Nina06::Poke_4100 );
+					// FCEUltra
+					Map( 0x4020U, 0x5FFFU, &Nina06::Poke_4100 );
+					Map( 0x8000U, 0xFFFFU, &Nina06::Poke_4100 );
 
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
@@ -60,11 +61,15 @@ namespace Nes
 				#pragma optimize("", on)
 				#endif
 
-				NES_POKE_D(Nina06,4100)
+				NES_POKE_AD(Nina06,4100)
 				{
 					ppu.Update();
-					chr.SwapBank<SIZE_8K,0x0000>( data );
-					prg.SwapBank<SIZE_32K,0x0000>( data >> 3 );
+
+					// FCEUltra
+					if (address < 0x8000 && (address ^ 0x4100) == 0)
+						prg.SwapBank<SIZE_32K,0x0000>((data >> 3) & 1);
+
+					chr.SwapBank<SIZE_8K,0x0000>(data);
 				}
 			}
 		}
