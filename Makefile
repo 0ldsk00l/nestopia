@@ -22,7 +22,7 @@ UNAME := $(shell uname)
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
 
-CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
+CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
 
 LDFLAGS += -Wl,--as-needed
 
