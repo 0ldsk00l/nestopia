@@ -77,7 +77,7 @@ char windowid[24];
 
 int playernumber = 0;
 
-extern int xres, yres;
+extern int xres, yres, schedule_stop;
 
 bool wasplaying = 0;
 
@@ -146,7 +146,7 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 
 	if (NstIsPlaying())
 	{
-		NstStopPlaying();
+		schedule_stop = 1;
 	}
 	
 	dialog = gtk_file_chooser_dialog_new ("Select a ROM",
@@ -567,7 +567,7 @@ void pause_clicked() {
 	bool playing = NstIsPlaying();
 	if (playing) {
 		wasplaying = 1;
-		NstStopPlaying();
+		schedule_stop = 1;
 	}
 }
 
@@ -612,7 +612,7 @@ GtkWidget* create_config(void) {
 	// Pause if playing
 	bool playing = NstIsPlaying();
 	if (playing) {
-		NstStopPlaying();
+		schedule_stop = 1;
 		wasplaying = 1;
 	}
 	else {	// Set it back to 0 in case the game was paused and the config is opened again
@@ -976,7 +976,7 @@ GtkWidget* create_nsfplayer (void) {
 	// Pause if playing
 	bool playing = NstIsPlaying();
 	if (playing) {
-		NstStopPlaying();
+		schedule_stop = 1;
 		wasplaying = 1;
 	}
 	else {	// Set it back to 0 in case the game was paused and the config is opened again

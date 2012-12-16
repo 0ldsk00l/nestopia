@@ -79,7 +79,7 @@ static unsigned short keys[65536];
 
 static int updateok, playing = 0, cur_width, cur_Rwidth, cur_height, cur_Rheight, loaded = 0, framerate;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
-static int schedule_stop = 0;
+int schedule_stop = 0;
 static SDL_Joystick *joy[10];
 
 int xres;

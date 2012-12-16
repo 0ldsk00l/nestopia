@@ -20,8 +20,6 @@
 
 #include "oss.h"
 
-#define VALGRIND 	(0)	// disables sound output for easier Valgrind usage
-
 #define NUM_FRAGS_BROKEN    (8)
 #define NUM_FRAGS_NORMAL    (4)
 static INT32 num_frags;
@@ -163,9 +161,9 @@ void m1sdr_Update(void)
 {	
 	if ((m1sdr_Callback) && (!oss_pause))
 	{
-		if (lnxdrv_apimode == 0) 
+		if (lnxdrv_apimode == 0)
 		{
-	        	m1sdr_Callback(nDSoundSegLen, (INT16 *)buffer[writebuf]);
+	        m1sdr_Callback(nDSoundSegLen, (INT16 *)buffer[writebuf]);
 	
 			bufstat[writebuf] = nDSoundSegLen * 2 * sizeof(UINT16);
 
@@ -194,9 +192,6 @@ void m1sdr_TimeCheck(void)
 	snd_pcm_sframes_t delay = 0;
 #endif
 
-#if VALGRIND
-	m1sdr_Update();
-#else
 	switch (lnxdrv_apimode)
 	{
 	case 0:	// SDL
@@ -284,7 +279,6 @@ void m1sdr_TimeCheck(void)
 	}
 
 	usleep(50);
-#endif
 }
 
 // m1sdr_Init - inits the output device and our global state
