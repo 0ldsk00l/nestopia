@@ -56,6 +56,7 @@ extern Emulator emulator;
 extern GtkWidget *mainwindow;
 extern char rootname[512];
 extern bool wasplaying;
+extern int schedule_stop;
 
 static GtkWidget *cheatwin, *cheattree, *ggedit, *paredit, *genieok, *parok;
 static GtkWidget *chopen, *chsave, *chdelete;
@@ -321,8 +322,8 @@ GtkWidget* create_cheatwindow (void) {
 
 	bool playing = NstIsPlaying();
 	if (playing) {
-		NstStopPlaying();
 		wasplaying = 1;
+		schedule_stop = 1;
 	}
 	else {	// Set it back to 0 in case the game was paused and the config is opened again
 		wasplaying = 0;
