@@ -9,7 +9,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <sys/ioctl.h>
-#include <sys/soundcard.h>
 #include <SDL.h>
 
 #include "oss.h"
@@ -20,6 +19,7 @@ static INT32 num_frags;
 #define OSS_FRAGMENT (0x000D | (num_frags<<16));  // 16k fragments (2 * 2^14).
 
 #ifndef BSD // Don't include ALSA if the OS is BSD
+#include <sys/soundcard.h>
 #define ALSA_PCM_NEW_HW_PARAMS_API
 #define ALSA_PCM_NEW_SW_PARAMS_API
 #include <alsa/asoundlib.h>
