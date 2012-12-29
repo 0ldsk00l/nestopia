@@ -701,11 +701,13 @@ GtkWidget* create_config(void) {
     GtkWidget *sndapilabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
 	gtk_label_set_markup(GTK_LABEL(sndapilabel), "<b>Sound API</b>");
 
+	#ifndef BSD
     GtkWidget *sndapicombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "SDL");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "ALSA");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "OSS");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(sndapicombo), sSettings->GetSndAPI());
+	#endif
 	
 	GtkWidget *ratecombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "11025 Hz");
@@ -741,7 +743,9 @@ GtkWidget* create_config(void) {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(excitecheck), sSettings->GetUseExciter());
 
 	gtk_box_pack_start(GTK_BOX(audiobox), sndapilabel, FALSE, FALSE, 0);
+	#ifndef BSD
 	gtk_box_pack_start(GTK_BOX(audiobox), sndapicombo, FALSE, FALSE, 0);
+	#endif
 	gtk_box_pack_start(GTK_BOX(audiobox), ratecombo, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(audiobox), audsettingslabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(audiobox), volumebox, FALSE, FALSE, 0);
@@ -921,9 +925,10 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(ratecombo), "configure_event",
 		G_CALLBACK(on_ratecombo_configure_event), NULL);
-
+	#ifndef BSD
 	g_signal_connect(G_OBJECT(sndapicombo), "changed",
 		G_CALLBACK(on_sndapicombo_changed), NULL);
+	#endif
 
 	//Input
 	g_signal_connect(G_OBJECT(playerselectcombo), "changed",

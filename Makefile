@@ -22,16 +22,16 @@ UNAME := $(shell uname)
 # enable this for input debugging
 #CFLAGS += -DDEBUG_INPUT
 
-CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
-
 LDFLAGS += -Wl,--as-needed
 
 EXE  = nestopia
 
 ifeq ($(UNAME), Linux)
+	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
 	LIBS = -lstdc++ -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 endif
-ifeq ($(UNAME), FreeBSD)
+ifneq ($(UNAME), Linux)
+	CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
 	LIBS = -lstdc++ -lm -lz $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 	CPPFLAGS += -DBSD
 endif
