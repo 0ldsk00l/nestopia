@@ -37,7 +37,7 @@ Settings::Settings()
 	controls = 0;
 	stereo = 1;
 	volume = 100;
-	rate = 2;
+	rate = 3;
 	rendertype = 1;
 	scaleamt = 1;
 	configitem = 0;
@@ -46,7 +46,7 @@ Settings::Settings()
 	exciter = 0;
 	litesurr = 0;
 	surmult = 40;
-	sndapi = 1;
+	sndapi = 0;
 	fsnativeres = 1;
 
 	// try the recommended place for settings
