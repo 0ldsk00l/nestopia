@@ -12,18 +12,18 @@
 #include <sys/soundcard.h>
 #include <SDL.h>
 
-#ifndef BSD // Don't include ALSA if the OS is BSD
-#define ALSA_PCM_NEW_HW_PARAMS_API
-#define ALSA_PCM_NEW_SW_PARAMS_API
-#include <alsa/asoundlib.h>
-#endif
-
 #include "oss.h"
 
 #define NUM_FRAGS_BROKEN    (8)
 #define NUM_FRAGS_NORMAL    (4)
 static INT32 num_frags;
 #define OSS_FRAGMENT (0x000D | (num_frags<<16));  // 16k fragments (2 * 2^14).
+
+#ifndef BSD // Don't include ALSA if the OS is BSD
+#define ALSA_PCM_NEW_HW_PARAMS_API
+#define ALSA_PCM_NEW_SW_PARAMS_API
+#include <alsa/asoundlib.h>
+#endif
 
 // local variables
 void  (*m1sdr_Callback)(unsigned long dwNumSamples, signed short *data);
@@ -204,9 +204,8 @@ void m1sdr_TimeCheck(void)
 
 		SDL_UnlockAudio();
 		break;  
-
+#ifndef BSD
 	case 1:	// ALSA
-	#ifndef BSD
 		if ((!pHandle) || (!oss_playing))
 		{
 			m1sdr_Update();
@@ -236,7 +235,6 @@ void m1sdr_TimeCheck(void)
 
 			timeout--;
 		}
-	#endif
 		break;	
 
 	case 2:	// OSS
@@ -276,6 +274,7 @@ void m1sdr_TimeCheck(void)
 			}
 		}
 		break;
+#endif
 	}
 
 	usleep(50);
@@ -323,9 +322,9 @@ INT16 m1sdr_Init(int sample_rate)
 		// make sure we don't start yet
 		SDL_PauseAudio(1);
 		break;
-				
+#ifndef BSD				
 	case 1:	// ALSA
-	#ifndef BSD
+
 		// Try to open audio device
 		if ((err = snd_pcm_open(&pHandle, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 			fprintf(stderr, "ALSA: Could not open soundcard (%s)\n", snd_strerror(err));
@@ -391,7 +390,6 @@ INT16 m1sdr_Init(int sample_rate)
 			fprintf (stderr, "cannot prepare audio interface for use (%s)\n", snd_strerror(err));
 			return 0;
 		}
-	#endif
 		break;	
 
 	case 2:	// OSS
@@ -444,6 +442,7 @@ INT16 m1sdr_Init(int sample_rate)
 		// and make sure that did what we wanted
 		ioctl(audiofd, SNDCTL_DSP_GETBLKSIZE, &fsize);
 		break;
+#endif
 	}
 
 	hw_present = 1;
@@ -471,16 +470,15 @@ void m1sdr_Exit(void)
 			}
 		}
 		break;	
-
+#ifndef BSD
 	case 1:	// ALSA
-	#ifndef BSD
 		snd_pcm_close(pHandle);
-	#endif
-		break;	
+		break;
 
 	case 2:	// OSS
 		close(audiofd);
-		break;	
+		break;
+#endif
 	}
 }
 
@@ -492,51 +490,6 @@ void m1sdr_SetCallback(void *fn)
 	}
 
 	m1sdr_Callback = (void (*)(unsigned long, signed short *))fn;
-}
-
-INT16 m1sdr_IsThere(void)
-{
-	int err;
-
-	if (lnxdrv_apimode == 2)
-	{
-		audiofd = open("/dev/dsp", O_WRONLY, 0);
-
-		if (audiofd == -1)
-		{
-			printf("Error accessing soundcard, sound will be disabled\n");
-			hw_present = 0;
-			return(0);
-		}
-
-		close(audiofd);
-		hw_present = 1;
-	}
-#ifndef BSD
-	if (lnxdrv_apimode == 1)
-	{
-		if ((err = snd_pcm_open(&pHandle, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, 0)) != 0)
-		{
-			printf("Error accessing soundcard, sound will be disabled\n");
-			hw_present = 0;
-			return(0);
-		}
-
-		snd_pcm_close(pHandle);
-		hw_present = 1;
-	}
-#endif
-	else if (lnxdrv_apimode == 0)
-	{
-		hw_present = 1;	// always say it's present for SDL
-	}
-
-	return (1);
-}
-
-INT32 m1sdr_HwPresent(void)
-{
-	return hw_present;
 }
 
 void m1sdr_PlayStart(void)

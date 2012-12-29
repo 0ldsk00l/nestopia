@@ -35,7 +35,7 @@ Settings::Settings()
 	scaler = 0;
 	sprlimit = 1;
 	controls = 0;
-	stereo = 1;
+	stereo = 0;
 	volume = 100;
 	rate = 3;
 	rendertype = 1;
