@@ -678,7 +678,7 @@ GtkWidget* create_config(void) {
 	GtkWidget *check_fullscreen = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Fullscreen", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fullscreen), sSettings->GetFullscreen());
 	
-	GtkWidget *check_fsnativeres = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Native Resolution (Fullscreen)", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
+	GtkWidget *check_fsnativeres = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Stretch to Native (Fullscreen)", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fsnativeres), sSettings->GetFsNativeRes());
 
 	GtkWidget *unlimitsprcheck = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Unlimited Sprites", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
@@ -698,16 +698,19 @@ GtkWidget* create_config(void) {
     // The Audio stuff
     GtkWidget *audiobox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     
+    #ifndef BSD    
     GtkWidget *sndapilabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
 	gtk_label_set_markup(GTK_LABEL(sndapilabel), "<b>Sound API</b>");
-
-	#ifndef BSD
+	
     GtkWidget *sndapicombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "SDL");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "ALSA");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (sndapicombo), "OSS");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(sndapicombo), sSettings->GetSndAPI());
 	#endif
+	
+	GtkWidget *ratelabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
+	gtk_label_set_markup(GTK_LABEL(ratelabel), "<b>Sample Rate</b>");
 	
 	GtkWidget *ratecombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, "margin-right", 10, NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "11025 Hz");
@@ -741,11 +744,12 @@ GtkWidget* create_config(void) {
 
 	GtkWidget *excitecheck = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Stereo Exciter", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(excitecheck), sSettings->GetUseExciter());
-
-	gtk_box_pack_start(GTK_BOX(audiobox), sndapilabel, FALSE, FALSE, 0);
+	
 	#ifndef BSD
+	gtk_box_pack_start(GTK_BOX(audiobox), sndapilabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(audiobox), sndapicombo, FALSE, FALSE, 0);
 	#endif
+	gtk_box_pack_start(GTK_BOX(audiobox), ratelabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(audiobox), ratecombo, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(audiobox), audsettingslabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(audiobox), volumebox, FALSE, FALSE, 0);
