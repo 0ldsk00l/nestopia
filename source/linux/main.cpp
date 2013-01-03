@@ -18,6 +18,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <vector>
+#include <libgen.h>
 
 #ifdef BSD
 #include <libgen.h>
