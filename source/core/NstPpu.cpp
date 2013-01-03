@@ -664,6 +664,28 @@ namespace Nes
 				io.line.Toggle( scroll.address & 0x3FFF, cpu.GetCycles() );
 		}
 
+    NST_FORCE_INLINE void Ppu::UpdateVramAddress()
+		{
+			if ((scanline != SCANLINE_VBLANK ) && (regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED)) { 
+				if ( regs.ctrl[0] & Regs::CTRL0_INC32 ) { 
+					if((scroll.address & 0x7000) == 0x7000) { 
+						scroll.address &= 0x0FFF; 
+						switch(scroll.address & 0x03E0) {
+							case 0x03A0: scroll.address ^= 0x0800; break; 
+							case 0x03E0: scroll.address &= 0x7C1F; break; 
+							default: scroll.address += 0x20;  
+						}                  
+					} else { 
+						scroll.address += 0x1000; 
+					}
+				} else { 
+					scroll.address ++; 
+				}
+			} else { 
+				scroll.address = (scroll.address + ((regs.ctrl[0] & Regs::CTRL0_INC32) ? 32 : 1)) & 0x7FFF; 
+			} 
+		}
+
 		NST_FORCE_INLINE void Ppu::OpenName()
 		{
 			UpdateAddressLine( 0x2000 | (scroll.address & 0x0FFF) );
@@ -930,10 +952,9 @@ namespace Nes
 		{
 			Update( cycles.one * 4 );
 
-			NST_VERIFY( IsDead() );
-
 			uint address = scroll.address;
-			scroll.address = (scroll.address + ((regs.ctrl[0] & Regs::CTRL0_INC32) ? 32 : 1)) & 0x7FFF;
+
+			UpdateVramAddress();
 			UpdateScrollAddressLine();
 
 			io.latch = data;
@@ -968,10 +989,8 @@ namespace Nes
 		{
 			Update( cycles.one, address );
 
-			NST_VERIFY( IsDead() );
-
 			address = scroll.address & 0x3FFF;
-			scroll.address = (scroll.address + ((regs.ctrl[0] & Regs::CTRL0_INC32) ? 32 : 1)) & 0x7FFF;
+			UpdateVramAddress();
 			UpdateScrollAddressLine();
 
 			io.latch = (address & 0x3F00) != 0x3F00 ? io.buffer : palette.ram[address & 0x1F] & Coloring();
