@@ -533,7 +533,7 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 	// Load the icon from local source dir if make install hasn't been done
 	struct stat iconstat;
 	if (stat(iconpath, &iconstat) == -1) {
-		sprintf(iconpath, "source/linux/icons/nestopia.svg");
+		sprintf(iconpath, "source/unix/icons/nestopia.svg");
 	}
 
 	app_icon = gdk_pixbuf_new_from_file(iconpath, NULL);
@@ -767,7 +767,7 @@ GtkWidget* create_config(void) {
 	// Load the NES pad svg from local source dir if make install hasn't been done
 	struct stat svgstat;
 	if (stat(svgpath, &svgstat) == -1) {
-		sprintf(svgpath, "source/linux/icons/nespad.svg");
+		sprintf(svgpath, "source/unix/icons/nespad.svg");
 	}
 	
 	GtkWidget *inputgamepadbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin", 10, NULL);
@@ -1064,7 +1064,7 @@ GtkWidget* create_about (void) {
 	// Load the SVG from local source dir if make install hasn't been done
 	struct stat svgstat;
 	if (stat(svgpath, &svgstat) == -1) {
-		sprintf(svgpath, "source/linux/icons/nestopia.svg");
+		sprintf(svgpath, "source/unix/icons/nestopia.svg");
 	}
 	
 	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 192, 192, NULL);
@@ -1075,7 +1075,7 @@ GtkWidget* create_about (void) {
 	gtk_window_set_icon(GTK_WINDOW(aboutdialog), app_icon);
 	
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
-	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia Undead");
+	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia - Undead Edition");
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.44");
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "An accurate Nintendo Entertainment System Emulator");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/");

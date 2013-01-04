@@ -9,8 +9,8 @@ CXX  = @g++
 CFLAGS ?= -O3 -g3
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
-CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/linux/unzip
-CPPFLAGS += -Isource/core/vssystem -Isource/linux -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/linux/7zip
+CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/unix/unzip
+CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/unix/7zip
 SDL_CFLAGS = $(shell sdl-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
 CFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
@@ -48,17 +48,17 @@ LIBS   += -lGL -lGLU
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
-OBJS = objs/linux/main.o objs/linux/oss.o objs/linux/interface.o objs/linux/settings.o 
-OBJS += objs/linux/auxio.o objs/linux/input.o objs/linux/kentry.o objs/linux/controlconfig.o objs/linux/cheats.o
-OBJS += objs/linux/seffect.o objs/linux/uihelp.o
+OBJS = objs/unix/main.o objs/unix/oss.o objs/unix/interface.o objs/unix/settings.o 
+OBJS += objs/unix/auxio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
+OBJS += objs/unix/seffect.o objs/unix/uihelp.o
 
 # 7-zip decoder (from LZMA SDK 4.58 beta)
-OBJS += objs/linux/7zip/7zAlloc.o objs/linux/7zip/7zBuf.o objs/linux/7zip/7zCrc.o objs/linux/7zip/7zDecode.o objs/linux/7zip/7zExtract.o 
-OBJS += objs/linux/7zip/7zHeader.o objs/linux/7zip/7zIn.o objs/linux/7zip/7zItem.o objs/linux/7zip/LzmaDec.o
-OBJS += objs/linux/7zip/Alloc.o objs/linux/7zip/Bcj2.o objs/linux/7zip/Bra.o objs/linux/7zip/Bra86.o objs/linux/7zip/BraIA64.o
+OBJS += objs/unix/7zip/7zAlloc.o objs/unix/7zip/7zBuf.o objs/unix/7zip/7zCrc.o objs/unix/7zip/7zDecode.o objs/unix/7zip/7zExtract.o 
+OBJS += objs/unix/7zip/7zHeader.o objs/unix/7zip/7zIn.o objs/unix/7zip/7zItem.o objs/unix/7zip/LzmaDec.o
+OBJS += objs/unix/7zip/Alloc.o objs/unix/7zip/Bcj2.o objs/unix/7zip/Bra.o objs/unix/7zip/Bra86.o objs/unix/7zip/BraIA64.o
 
 # zip decoder
-OBJS += objs/linux/unzip/unzip.o
+OBJS += objs/unix/unzip/unzip.o
 
 # core objs
 OBJS += objs/core/NstApu.o              objs/core/NstFds.o            objs/core/NstPpu.o              objs/core/NstVector.o
@@ -165,7 +165,7 @@ OBJS += objs/core/vssystem/NstVsRbiBaseball.o  objs/core/vssystem/NstVsSuperXevi
 
 # object dirs
 OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc 
-OBJDIRS += objs/linux objs/linux/7zip objs/linux/unzip
+OBJDIRS += objs/unix objs/unix/7zip objs/unix/unzip
 
 # build rules
 objs/%.o: source/%.c
@@ -192,11 +192,11 @@ $(EXE): $(OBJS)
 install:
 	mkdir -p $(DATADIR)/icons
 	install -m 0755 $(EXE) $(BINDIR)
-	install -m 0644 source/linux/icons/nestopia.desktop $(DATADIR)
+	install -m 0644 source/unix/icons/nestopia.desktop $(DATADIR)
 	install -m 0644 NstDatabase.xml $(DATADIR)
-	install -m 0644 source/linux/icons/*.png $(DATADIR)/icons
-	install -m 0644 source/linux/icons/*.svg $(DATADIR)/icons
-	install -m 0644 source/linux/icons/nestopia.svg /usr/share/pixmaps
+	install -m 0644 source/unix/icons/*.png $(DATADIR)/icons
+	install -m 0644 source/unix/icons/*.svg $(DATADIR)/icons
+	install -m 0644 source/unix/icons/nestopia.svg /usr/share/pixmaps
 	xdg-desktop-menu install --novendor $(DATADIR)/nestopia.desktop
 
 uninstall:

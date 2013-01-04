@@ -1,4 +1,32 @@
 ----------------------------------------------------------------
+1.44-WIP
+----------------------------------------------------------------
+
+Unix Shell:
+
+ Additions:
+  - Support for FreeBSD, OpenBSD, and NetBSD
+
+ Changes:
+  - Renamed Linux port to Unix port
+  - Removed status bar
+  - General UI improvements
+  - Stop warning about unused results
+  - SDL is the default sound API on Linux, the only one on the BSDs
+
+ Fixes:
+  - Fixed SDL sound crashes
+  - Loading a state when none exists no longer resets
+  - Fixed bug that causes "Enter" to toggle fullscreen
+  
+Core:
+
+ Fixes:
+  - Merged a fix for Mapper 79 that affects "Puzzle (Unl) - shalma
+  - Fixed a PPU bug that causes problems in "The Young Indiana Jones
+    Chronicles" - Art Vandelae, plasturion, and James
+
+----------------------------------------------------------------
 1.43
 ----------------------------------------------------------------
 
