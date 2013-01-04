@@ -176,7 +176,7 @@ namespace Nes
 
 			NST_FORCE_INLINE void UpdateAddressLine(uint);
 			NST_FORCE_INLINE void UpdateScrollAddressLine();
-      NST_FORCE_INLINE void UpdateVramAddress();
+			NST_FORCE_INLINE void UpdateVramAddress();
 
 			NST_FORCE_INLINE void OpenName();
 			NST_FORCE_INLINE void FetchName();

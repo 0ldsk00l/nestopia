@@ -1,0 +1,107 @@
+Nestopia by Martin Freij
+Linux port by R. Belmont
+Resurrected by R. Danbrook
+LZMA SDK (7zip support) by Igor Pavlov
+======================================
+
+This program is licensed under the GNU GPLv2. For details, read COPYING.
+
+Notes
+=====
+
+Nestopia is a portable open source NES/Famicom emulator written in C++.
+It is designed to be as accurate as possible and supports a large number
+of peripherals. The hardware is emulated at cycle-by-cycle granularity, 
+ensuring full support for software that does mid-scanline and other
+timing trickery.
+
+Nestopia Undead is a fork of the original source code, plus R. Belmont's
+Linux port overlay, all included in one convenient source tree with
+enhancements.
+
+System requirements
+===================
+
+Intel or AMD processor, at least 700 MHz.
+128 MB RAM
+GCC 3.4.x or later (4.x recommended)
+SDL 1.2
+GTK+ 3.4 (3.0 and 3.2 work with minor bugs)
+[Optional] Gamepads
+[Optional] Hardware-accelerated OpenGL
+
+
+Compiling
+=========
+
+Linux:
+
+* Make sure you have the proper development libraries installed.
+  In Debian:
+	apt-get install libgtk-3-dev libsdl1.2-dev
+
+* cd to the nestopia source directory:
+	make
+
+* Install globally and add menu entries:
+	sudo make install
+
+Free/Open/NetBSD:
+
+* Make sure you have GNU make, GTK+3 and SDL 1.2 installed from ports,
+  pkgsrc or binary packages.
+
+* cd to the nestopia source directory:
+	gmake
+
+* Install globally and add menu entries:
+	sudo gmake install
+
+Post-Installation
+=================
+
+* Copy the Famicom Disk System rom (not included) to ~/.nestopia:
+	cp disksys.rom ~/.nestopia/disksys.rom
+
+Patching
+========
+
+* For soft-patching to work, the patch must be in the same directory as
+  the rom, and the filename must be exactly the same as the rom
+  filename, but with the .ips extension.
+
+Default Keys
+============
+
+Esc = pause emulation - select Continue from the menu to unpause.
+
+Up Arrow = Up
+Down Arrow = Down
+Left Arrow = Left
+Right Arrow = Right
+Right Shift = Select
+Right Ctrl = Start
+Z = A
+A = B
+
+Backspace = Rewind
+\ = Stop Rewinding
+
+F1 = Flip the the Famicom Disk System disk.
+F2 = Reset the emulated NES
+F3 = Save the state to a specified file (.nst)
+F4 = Load a saved state from a specified file (.nst)
+F5 = QuickSave Slot 1
+F6 = QuickSave Slot 2
+F7 = Load QuickSave Slot 1
+F8 = Load QuickSave Slot 2
+F9 = Save a Nestopia movie file (.nsv)
+F10 = Load and play a Nestopia movie file (.nsv)
+F11 = Stop the current movie playback or recording
+1 = Insert Coin Slot 1 for Vs. games
+2 = Insert Coin Slot 2 for Vs. games
+
+Notes
+=====
+
+* Save states, battery backups, and movies are all cross-platform.
