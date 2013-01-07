@@ -1304,18 +1304,18 @@ void get_screen_res() {
 		case 1: // NTSC
 			if (sSettings->GetRenderType() == 0)
 			{
-				if (scalefactor > 1)
+				if (scalefactor != 2)
 				{
-					std::cout << "Warning: NTSC scale factors > 1 not allowed with pure software - use OpenGL\n";
+					std::cout << "Warning: NTSC only runs at 2x scale in Software mode.\n";
 				}
 
-				scalefactor = 1;
+				scalefactor = 2;
 			}
 
 			cur_width = Video::Output::NTSC_WIDTH;
-			cur_Rwidth = cur_width * scalefactor;
+			cur_Rwidth = (cur_width / 2) * scalefactor;
 			cur_height = Video::Output::HEIGHT;
-			cur_Rheight = cur_height * 2 * scalefactor;
+			cur_Rheight = cur_height * scalefactor;
 			break;
 
 		case 2: // scale x
