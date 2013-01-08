@@ -366,18 +366,18 @@ IDR_MENU_LAUNCHER MENU
 // Dialog resources
 //
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
-IDD_ABOUT DIALOGEX 0, 0, 161, 137
+IDD_ABOUT DIALOGEX 0, 0, 161, 157
 STYLE DS_MODALFRAME | DS_SHELLFONT | WS_CAPTION | WS_POPUP | WS_SYSMENU
 CAPTION "About Nestopia"
 FONT 8, "MS Shell Dlg", 400, 0, 1
 {
-    GROUPBOX        "", IDC_STATIC, 7, 7, 147, 123
-    LTEXT           "Nestopia Undead vx.xx", IDC_ABOUT_NAMEVERSION, 41, 15, 85, 8, SS_LEFT
-    ICON            "", IDC_ABOUT_ICON, 70, 32, 21, 20, SS_ICON
-    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012 R. Danbrook", IDC_STATIC, 22, 64, 119, 19, SS_CENTER
+    GROUPBOX        "", IDC_STATIC, 7, 7, 147, 141
+    LTEXT           "Nestopia - Undead Edition vx.xx", IDC_ABOUT_NAMEVERSION, 28, 14, 109, 8, SS_LEFT
+    ICON            "", IDC_ABOUT_ICON, 70, 36, 21, 20, SS_ICON
+    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2013 R. Danbrook", IDC_STATIC, 15, 69, 126, 18, SS_CENTER
     LTEXT           "Homepage", IDC_STATIC, 13, 124, 8, 1, SS_LEFT
-    CTEXT           "0ldsk00l.ca/nestopia.html", IDC_ABOUT_URL, 39, 92, 82, 8, SS_CENTER | SS_NOTIFY
-    DEFPUSHBUTTON   "OK", IDOK, 62, 110, 37, 13
+    CTEXT           "0ldsk00l.ca/nestopia.html", IDC_ABOUT_URL, 39, 102, 82, 8, SS_CENTER | SS_NOTIFY
+    DEFPUSHBUTTON   "OK", IDOK, 62, 125, 37, 13
     LTEXT           "Contact", IDC_STATIC, 148, 123, 8, 1, SS_LEFT
     CTEXT           "martin-freij@home.se", IDC_ABOUT_MAIL, 149, 15, 8, 1, SS_CENTER | SS_NOTIFY
 }
