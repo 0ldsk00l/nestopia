@@ -222,6 +222,10 @@ void on_check_fsnativeres_toggled(GtkToggleButton *togglebutton, gpointer user_d
 	sSettings->SetFsNativeRes(gtk_toggle_button_get_active(togglebutton));
 }
 
+void on_check_tvaspect_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+	sSettings->SetTvAspect(gtk_toggle_button_get_active(togglebutton));
+}
+
 void
 on_unlimitsprcheck_toggled             (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
@@ -384,7 +388,7 @@ void on_configbutton_clicked(GtkButton *button, gpointer user_data)
 }
 
 void inputcfg_clicked(GtkButton *button, int data) {
-printf("Inputcfg\n");
+
 	if (playernumber == 0 && data < 16) {	// Player 1
 		switch(data) {
 			case 0:
@@ -675,6 +679,9 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(ntscbox), ntsclabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(ntscbox), ntsccombo, FALSE, FALSE, 0);
 	
+	GtkWidget *check_tvaspect = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "TV Aspect Ratio", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_tvaspect), sSettings->GetTvAspect());
+	
 	GtkWidget *check_fullscreen = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Fullscreen", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fullscreen), sSettings->GetFullscreen());
 	
@@ -690,6 +697,7 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(videobox), scalebox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), scaleamtbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), ntscbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(videobox), check_tvaspect, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_fullscreen, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_fsnativeres, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), unlimitsprcheck, FALSE, FALSE, 0);
@@ -887,6 +895,9 @@ GtkWidget* create_config(void) {
 	g_signal_connect(G_OBJECT(scalecombo), "changed",
 		G_CALLBACK(on_scalecombo_changed), NULL);
 
+	g_signal_connect(G_OBJECT(check_tvaspect), "toggled",
+		G_CALLBACK(on_check_tvaspect_toggled), NULL);
+	
 	g_signal_connect(G_OBJECT(check_fullscreen), "toggled",
 		G_CALLBACK(on_check_fullscreen_toggled), NULL);
 		
