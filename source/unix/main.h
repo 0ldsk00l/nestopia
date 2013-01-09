@@ -1,6 +1,8 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+#define TV_WIDTH 292
+
 void NstPlayGame();
 void NstPlayNsf();
 void NstStopNsf();

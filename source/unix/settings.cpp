@@ -48,6 +48,7 @@ Settings::Settings()
 	surmult = 40;
 	sndapi = 0;
 	fsnativeres = 1;
+	tvaspect = 0;
 
 	// try the recommended place for settings
 	home = getenv("HOME");
@@ -88,6 +89,7 @@ Settings::Settings()
 	READ_SETTING(litesurr);
 	READ_SETTING(surmult);
 	READ_SETTING(fsnativeres);
+	READ_SETTING(tvaspect);
 
 	fclose(f);
 }
@@ -132,6 +134,7 @@ Settings::~Settings()
 	WRITE_SETTING(litesurr);
 	WRITE_SETTING(surmult);
 	WRITE_SETTING(fsnativeres);
+	WRITE_SETTING(tvaspect);
 
 	fclose(f);
 }

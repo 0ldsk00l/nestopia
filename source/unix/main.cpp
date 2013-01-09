@@ -1295,7 +1295,7 @@ void get_screen_res() {
 			{
 				cur_width = Video::Output::WIDTH;
 				cur_height = Video::Output::HEIGHT;
-				cur_Rwidth = cur_width * scalefactor;
+				sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width * scalefactor;
 				cur_Rheight = cur_height * scalefactor;
 			}
 
@@ -1325,12 +1325,14 @@ void get_screen_res() {
 				scalefactor = 3;	// there is no scale4x
 			}
 
-			cur_width = cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			cur_width = Video::Output::WIDTH * scalefactor;
+			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
 			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
 			break;
 
 		case 3: // scale HQx
-			cur_width = cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			cur_width = Video::Output::WIDTH * scalefactor;
+			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
 			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
 			break;
 	}
