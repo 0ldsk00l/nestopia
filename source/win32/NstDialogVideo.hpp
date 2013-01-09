@@ -83,7 +83,7 @@ namespace Nestopia
 				NTSC_CLIP_BOTTOM = NES_HEIGHT - 8,
 				PAL_CLIP_TOP = 1,
 				PAL_CLIP_BOTTOM = NES_HEIGHT - 0,
-				TV_WIDTH = 288
+				TV_WIDTH = 292
 			};
 
 			typedef VideoFilters Filter;
