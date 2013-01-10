@@ -37,10 +37,31 @@ namespace Nes
 				#pragma optimize("s", on)
 				#endif
 
-				void Tca01::SubReset(bool)
+				/*void Tca01::SubReset(bool)
 				{
 					for (uint i=0x4100; i < 0x6000; i += 0x200)
 						Map( i + 0x00, i + 0xFF, &Tca01::Peek_4100 );
+				}*/
+				// shalma's fix for Dancing Blocks (Sachen)
+				void Tca01::SubReset(bool hard)
+				{
+					for (uint i=0x4100; i < 0x6000; i += 0x200)
+						Map( i + 0x00, i + 0xFF, &Tca01::Peek_4100 );
+
+					if (hard)
+					{
+						//FCEUmm (cah4e3) - random boot fix
+						for (int lcv = 0; lcv < 0x800; lcv++)
+						{
+							cpu.Poke(lcv, (lcv & 4) ? 0x7f : 0x00);
+						}
+
+						// Nestopia default
+						cpu.Poke(0x08, 0xF7);
+						cpu.Poke(0x09, 0xEF);
+						cpu.Poke(0x0a, 0xDF);
+						cpu.Poke(0x0b, 0xBF);
+					}
 				}
 
 				#ifdef NST_MSVC_OPTIMIZE
