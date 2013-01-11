@@ -7,6 +7,7 @@ Unix Shell:
  Additions:
   - Support for FreeBSD, OpenBSD, and NetBSD
   - TV Aspect Ratio option added
+  - 2xSaI filter option exposed
 
  Changes:
   - Renamed Linux port to Unix port
@@ -31,6 +32,7 @@ Core:
   - Merged a fix for Mapper 79 that affects "Puzzle (Unl)" - shalma
   - Fixed a PPU bug that causes problems in "The Young Indiana Jones
     Chronicles" - Art Vandelae, plasturion, and James
+  - Mapper 143 fix that affects "Dancing Blocks (Unl)" - shalma
 
 ----------------------------------------------------------------
 1.43

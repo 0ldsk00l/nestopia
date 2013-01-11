@@ -1335,6 +1335,13 @@ void get_screen_res() {
 			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
 			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
 			break;
+			
+		case 4: // 2xSaI
+			cur_width = Video::Output::WIDTH * 2;
+			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			cur_height = Video::Output::HEIGHT * 2;
+			cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			break;
 	}
 
 	//This is somewhat dirty, but it makes it easier to pass the data to other functions
@@ -1459,6 +1466,10 @@ void SetupVideo()
 					filter = Video::RenderState::FILTER_NONE;
 					break;
 			}
+			break;
+		
+		case 4: // 2xSaI
+			filter = Video::RenderState::FILTER_2XSAI;
 			break;
 	}
 
