@@ -44,7 +44,7 @@ extern GtkWidget *mainwindow;
 extern char rootname[512];
 
 static std::ifstream *moviePlayFile, *fdsBiosFile, *nstDBFile;
-static std::ofstream *movieRecFile;
+static std::fstream *movieRecFile;
 
 static bool run_picker, cancelled;
 //static GtkWidget *filepicker, *tree;
@@ -199,7 +199,7 @@ void auxio_do_movie_save(void)
 	{
 		char *filename = gtk_file_chooser_get_filename (GTK_FILE_CHOOSER (dialog));
 
-		movieRecFile = new std::ofstream(filename, std::ifstream::out|std::ifstream::binary); 
+		movieRecFile = new std::fstream(filename, std::ifstream::out|std::ifstream::binary); 
 
 		if (movieRecFile->is_open())
 		{

@@ -18,6 +18,7 @@ Unix Shell:
 
  Fixes:
   - Fixed SDL sound crashes
+  - Fixed Movie Record crash
   - Loading a state when none exists no longer resets
   - Fixed bug that causes "Enter" to toggle fullscreen
   
