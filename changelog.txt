@@ -21,6 +21,7 @@ Unix Shell:
   - Fixed Movie Record crash
   - Loading a state when none exists no longer resets
   - Fixed bug that causes "Enter" to toggle fullscreen
+  - GUI responsiveness glitches when failing to output sound fixed
   
 Windows Shell:
 

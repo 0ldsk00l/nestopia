@@ -1173,6 +1173,11 @@ int main(int argc, char *argv[])
 	nst_quit = 0;
 	while (!nst_quit)
 	{
+		while (gtk_events_pending())
+		{
+			gtk_main_iteration();
+		}
+		
 		if (playing)
 		{
 				gtk_main_iteration_do(FALSE);
