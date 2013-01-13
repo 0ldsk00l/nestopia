@@ -69,6 +69,8 @@ namespace Nes
 			Log& operator << (const Hex&);
 			Log& operator << (long);
 			Log& operator << (ulong);
+			Log& operator << (long long);
+			Log& operator << (unsigned long long);
 
 			static void Flush(cstring,dword);
 			static bool Available();
