@@ -13,6 +13,8 @@
 #include <core/api/NstApiInput.hpp>
 #include <core/api/NstApiCartridge.hpp>
 
+#define NST_VERSION "1.43"
+
 using namespace Nes;
 
 static uint32_t video_buffer[Api::Video::Output::WIDTH * Api::Video::Output::HEIGHT];
@@ -57,7 +59,7 @@ void retro_get_system_info(struct retro_system_info *info)
 {
    memset(info, 0, sizeof(*info));
    info->library_name     = "Nestopia";
-   info->library_version  = "v1";
+   info->library_version  = "v" NST_VERSION;
    info->need_fullpath    = false;
    info->valid_extensions = "nes|NES"; // Anything is fine, we don't care.
 }
