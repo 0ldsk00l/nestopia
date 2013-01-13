@@ -252,6 +252,12 @@ void *retro_get_memory_data(unsigned id)
    if (id != RETRO_MEMORY_SAVE_RAM)
       return 0;
 
+   Api::Cartridge cart(emulator);
+   if (!cart.GetProfile()->board.HasBattery())
+      return 0;
+
+   // TODO: Get actual RAM.
+
    return 0;
 }
 
@@ -259,6 +265,12 @@ size_t retro_get_memory_size(unsigned id)
 {
    if (id != RETRO_MEMORY_SAVE_RAM)
       return 0;
+
+   Api::Cartridge cart(emulator);
+   if (!cart.GetProfile()->board.HasBattery())
+      return 0;
+
+   // TODO: Get actual size.
 
    return 0;
 }
