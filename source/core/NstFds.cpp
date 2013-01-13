@@ -223,7 +223,7 @@ namespace Nes
 			cpu.Map( 0x4090         ).Set( this, &Fds::Peek_4090, &Fds::Poke_Nop  );
 			cpu.Map( 0x4092         ).Set( this, &Fds::Peek_4092, &Fds::Poke_Nop  );
 
-			cpu.Map( 0x6000, 0xDFFF ).Set( &ram, &Fds::Ram::Peek_Ram, &Fds::Ram::Poke_Ram );
+			cpu.Map( 0x6000, 0xDFFF ).Set( &ram, &Ram::Peek_Ram, &Ram::Poke_Ram );
 			cpu.Map( 0xE000, 0xFFFF ).Set( &bios, &Bios::Peek_Rom, &Bios::Poke_Nop );
 		}
 
