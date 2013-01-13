@@ -195,10 +195,10 @@ OBJS += libretro.o
 OBJS := $(strip $(OBJS))
 LIBS := -lz
 
-DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES) -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
+DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES) -Wno-deprecated -Wno-unused-result -Wno-write-strings
 
 CFLAGS += $(fpic) $(DEFINES) -std=gnu99
-CXXFLAGS += $(fpic) $(DEFINES)
+CXXFLAGS += $(fpic) $(DEFINES) -fno-rtti
 
 INCDIRS := -I.. -I../source
 
