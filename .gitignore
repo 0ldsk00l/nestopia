@@ -1,0 +1,5 @@
+*.so
+*.o
+*.dylib
+*.dll
+/nestopia
