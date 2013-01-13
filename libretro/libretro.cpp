@@ -11,6 +11,7 @@
 #include <core/api/NstApiVideo.hpp>
 #include <core/api/NstApiSound.hpp>
 #include <core/api/NstApiInput.hpp>
+#include <core/api/NstApiCartridge.hpp>
 
 using namespace Nes;
 
@@ -225,26 +226,46 @@ bool retro_load_game_special(unsigned, const struct retro_game_info *, size_t)
 
 size_t retro_serialize_size(void)
 {
+   std::stringstream ss;
+   if (machine->SaveState(ss, Api::Machine::NO_COMPRESSION))
+      return 0;
+   return ss.str().size();
+}
+
+bool retro_serialize(void *data, size_t size)
+{
+   std::stringstream ss;
+   if (machine->SaveState(ss, Api::Machine::NO_COMPRESSION))
+      return false;
+
+   std::string state = ss.str();
+   if (state.size() > size)
+      return false;
+
+   std::copy(state.begin(), state.end(), reinterpret_cast<char*>(data));
+   return true;
+}
+
+bool retro_unserialize(const void *data, size_t size)
+{
+   std::stringstream ss(std::string(reinterpret_cast<const char*>(data),
+            reinterpret_cast<const char*>(data) + size));
+   return !machine->LoadState(ss);
+}
+
+void *retro_get_memory_data(unsigned id)
+{
+   if (id != RETRO_MEMORY_SAVE_RAM)
+      return 0;
+
    return 0;
 }
 
-bool retro_serialize(void *, size_t)
+size_t retro_get_memory_size(unsigned id)
 {
-   return false;
-}
+   if (id != RETRO_MEMORY_SAVE_RAM)
+      return 0;
 
-bool retro_unserialize(const void *, size_t)
-{
-   return false;
-}
-
-void *retro_get_memory_data(unsigned)
-{
-   return 0;
-}
-
-size_t retro_get_memory_size(unsigned)
-{
    return 0;
 }
 
