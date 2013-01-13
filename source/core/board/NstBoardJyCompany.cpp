@@ -135,9 +135,9 @@ namespace Nes
 
 					for (uint i=0x5800; i < 0x6000; i += 0x4)
 					{
-						cpu.Map( i + 0x0 ).Set( &regs, &Standard::Regs::Peek_5800, &Standard::Regs::Poke_5800 );
-						cpu.Map( i + 0x1 ).Set( &regs, &Standard::Regs::Peek_5801, &Standard::Regs::Poke_5801 );
-						cpu.Map( i + 0x3 ).Set( &regs, &Standard::Regs::Peek_5803, &Standard::Regs::Poke_5803 );
+						cpu.Map( i + 0x0 ).Set( &regs, &Regs::Peek_5800, &Regs::Poke_5800 );
+						cpu.Map( i + 0x1 ).Set( &regs, &Regs::Peek_5801, &Regs::Poke_5801 );
+						cpu.Map( i + 0x3 ).Set( &regs, &Regs::Peek_5803, &Regs::Poke_5803 );
 					}
 
 					Map( 0x6000U, 0x7FFFU, &Standard::Peek_6000 );

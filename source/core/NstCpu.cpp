@@ -211,10 +211,10 @@ namespace Nes
 
 			if (on)
 			{
-				map( 0x0000, 0x07FF ).Set( &ram, &Cpu::Ram::Peek_Ram_0, &Cpu::Ram::Poke_Ram_0 );
-				map( 0x0800, 0x0FFF ).Set( &ram, &Cpu::Ram::Peek_Ram_1, &Cpu::Ram::Poke_Ram_1 );
-				map( 0x1000, 0x17FF ).Set( &ram, &Cpu::Ram::Peek_Ram_2, &Cpu::Ram::Poke_Ram_2 );
-				map( 0x1800, 0x1FFF ).Set( &ram, &Cpu::Ram::Peek_Ram_3, &Cpu::Ram::Poke_Ram_3 );
+				map( 0x0000, 0x07FF ).Set( &ram, &Ram::Peek_Ram_0, &Ram::Poke_Ram_0 );
+				map( 0x0800, 0x0FFF ).Set( &ram, &Ram::Peek_Ram_1, &Ram::Poke_Ram_1 );
+				map( 0x1000, 0x17FF ).Set( &ram, &Ram::Peek_Ram_2, &Ram::Poke_Ram_2 );
+				map( 0x1800, 0x1FFF ).Set( &ram, &Ram::Peek_Ram_3, &Ram::Poke_Ram_3 );
 				map( 0x2000, 0xFFFF ).Set( this, &Cpu::Peek_Nop,        &Cpu::Poke_Nop        );
 				map( 0xFFFC         ).Set( this, &Cpu::Peek_Jam_1,      &Cpu::Poke_Nop        );
 				map( 0xFFFD         ).Set( this, &Cpu::Peek_Jam_2,      &Cpu::Poke_Nop        );
