@@ -24,18 +24,12 @@ static Api::Video::Output *video;
 static Api::Sound::Output *audio;
 static Api::Input::Controllers *input;
 
-//static bool NST_CALLBACK lock_video(void*, Video::Output&) { return true; }
-//static void NST_CALLBACK unlock_video(void*, Video::Output&) {}
-
 void retro_init(void)
 {
    machine = new Api::Machine(emulator);
    video = new Api::Video::Output(video_buffer, Api::Video::Output::WIDTH * sizeof(uint32_t));
    audio = new Api::Sound::Output(audio_buffer, 44100 / 60);
    input = new Api::Input::Controllers;
-
-   //Video::Output::lockCallback.Set(lock_video, 0);
-   //Video::Output::unlockCallback.Set(unlock_video, 0);
 }
 
 void retro_deinit(void)
