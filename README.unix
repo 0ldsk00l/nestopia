@@ -49,7 +49,7 @@ Linux:
 Free/Open/NetBSD:
 
 * Make sure you have GNU make, GTK+3 and SDL 1.2 installed from ports,
-  pkgsrc or binary packages.
+  pkgsrc or binary packages. Also make sure to have xdg-utils installed.
 
 * cd to the nestopia source directory:
 	gmake
