@@ -68,7 +68,7 @@ namespace Nes
 					RECORDING
 				};
 
-				qword cycles;
+				qaword cycles;
 				Cpu& cpu;
 				dword multiplier;
 				dword clock;
@@ -129,7 +129,7 @@ namespace Nes
 
 					if (multiplier)
 					{
-						const qword frame = qword(cpu.GetFrameCycles()) * multiplier;
+						const qaword frame = qaword(cpu.GetFrameCycles()) * multiplier;
 						NST_VERIFY( cycles >= frame );
 
 						if (cycles > frame)
@@ -486,7 +486,7 @@ namespace Nes
 
 			NES_HOOK(FamilyKeyboard::DataRecorder,Tape)
 			{
-				for (const qword next = qword(cpu.GetCycles()) * multiplier; cycles < next; cycles += clock)
+				for (const qaword next = qaword(cpu.GetCycles()) * multiplier; cycles < next; cycles += clock)
 				{
 					if (status == PLAYING)
 					{

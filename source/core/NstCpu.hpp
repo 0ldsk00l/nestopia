@@ -481,7 +481,7 @@ namespace Nes
 			word jammed;
 			word model;
 			Linker linker;
-			qword ticks;
+			qaword ticks;
 			Ram ram;
 			Apu apu;
 			IoMap map;

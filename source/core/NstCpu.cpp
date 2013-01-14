@@ -297,9 +297,9 @@ namespace Nes
 		{
 			return
 			(
-				model == CPU_RP2A03 ? clock * qword( CPU_RP2A03_CC * CLK_NTSC_DIV ) / CLK_NTSC :
-				model == CPU_RP2A07 ? clock * qword( CPU_RP2A07_CC * CLK_PAL_DIV  ) / CLK_PAL  :
-                                      clock * qword( CPU_DENDY_CC  * CLK_PAL_DIV  ) / CLK_PAL
+				model == CPU_RP2A03 ? clock * qaword( CPU_RP2A03_CC * CLK_NTSC_DIV ) / CLK_NTSC :
+				model == CPU_RP2A07 ? clock * qaword( CPU_RP2A07_CC * CLK_PAL_DIV  ) / CLK_PAL  :
+                                      clock * qaword( CPU_DENDY_CC  * CLK_PAL_DIV  ) / CLK_PAL
 			);
 		}
 

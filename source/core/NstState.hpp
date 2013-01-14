@@ -52,7 +52,7 @@ namespace Nes
 				Saver& Write8(uint);
 				Saver& Write16(uint);
 				Saver& Write32(dword);
-				Saver& Write64(qword);
+				Saver& Write64(qaword);
 				Saver& Write(const byte*,dword);
 				Saver& Compress(const byte*,dword);
 				Saver& End();
@@ -107,7 +107,7 @@ namespace Nes
 				uint  Read8();
 				uint  Read16();
 				dword Read32();
-				qword Read64();
+				qaword Read64();
 				void  Read(byte*,dword);
 				void  Uncompress(byte*,dword);
 				void  End();

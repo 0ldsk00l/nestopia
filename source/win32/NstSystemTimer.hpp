@@ -37,7 +37,7 @@ namespace Nestopia
 		{
 		public:
 
-			typedef qword Value;
+			typedef qaword Value;
 
 			enum Type
 			{
