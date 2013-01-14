@@ -28,6 +28,10 @@
 #include "NstCore.hpp"
 #include "NstPins.hpp"
 
+#ifdef __CELLOS_LV2__
+#include <wchar.h>
+#endif
+
 namespace Nes
 {
 	namespace Core
