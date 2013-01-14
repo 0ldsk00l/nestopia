@@ -24,7 +24,7 @@ UNAME := $(shell uname)
 
 LDFLAGS += -Wl,--as-needed
 
-EXE  = nestopia
+BIN  = nestopia
 
 ifeq ($(UNAME), Linux)
 	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
@@ -176,7 +176,7 @@ objs/%.o: source/%.cpp
 	@echo Compiling $<...
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
-all: maketree $(EXE) $(GENNSTCONTROLS)
+all: maketree $(BIN)
 
 maketree: $(sort $(OBJDIRS))
 
@@ -184,26 +184,27 @@ $(sort $(OBJDIRS)):
 	@echo Creating output directory $@
 	@mkdir $@
 
-# link the commandline exe
-$(EXE): $(OBJS)
+# link the commandline binary
+$(BIN): $(OBJS)
 	@echo Linking $@...
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(EXE) $^ $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BIN) $^ $(LIBS)
 
 install:
 	mkdir -p $(DATADIR)/icons
-	install -m 0755 $(EXE) $(BINDIR)
+	mkdir -p $(PREFIX)/share/pixmaps
+	install -m 0755 $(BIN) $(BINDIR)
 	install -m 0644 source/unix/icons/nestopia.desktop $(DATADIR)
 	install -m 0644 NstDatabase.xml $(DATADIR)
 	install -m 0644 source/unix/icons/*.png $(DATADIR)/icons
 	install -m 0644 source/unix/icons/*.svg $(DATADIR)/icons
-	install -m 0644 source/unix/icons/nestopia.svg /usr/share/pixmaps
+	install -m 0644 source/unix/icons/nestopia.svg $(PREFIX)/share/pixmaps
 	xdg-desktop-menu install --novendor $(DATADIR)/nestopia.desktop
 
 uninstall:
 	xdg-desktop-menu uninstall $(DATADIR)/nestopia.desktop
-	rm /usr/share/pixmaps/nestopia.svg
-	rm $(BINDIR)/$(EXE)
+	rm $(PREFIX)/share/pixmaps/nestopia.svg
+	rm $(BINDIR)/$(BIN)
 	rm -rf $(DATADIR)
 
 clean:
-	-@rm -f $(OBJS) $(EXE) $(GENNSTCONTROLS)
+	-@rm -f $(OBJS) $(BIN)
