@@ -444,7 +444,7 @@ namespace Nes
 				sampleRate = sampleRate * cpu.GetFps() / settings.speed;
 
 			uint multiplier = 0;
-			const qword clockBase = cpu.GetClockBase();
+			const qaword clockBase = cpu.GetClockBase();
 
 			while (++multiplier < 0x1000 && clockBase * (multiplier+1) / sampleRate <= 0x7FFFF && clockBase * multiplier % sampleRate);
 
@@ -909,7 +909,7 @@ namespace Nes
 				sampleRate = sampleRate * cpu.GetFps() / speed;
 
 			uint multiplier = 0;
-			const qword clockBase = cpu.GetClockBase();
+			const qaword clockBase = cpu.GetClockBase();
 
 			while (++multiplier < 512 && clockBase * multiplier % sampleRate);
 

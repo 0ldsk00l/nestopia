@@ -55,7 +55,7 @@ namespace Nes
 				bool UpdateSettings();
 				Sample GetSample();
 
-				qword pos;
+				qaword pos;
 
 				struct
 				{

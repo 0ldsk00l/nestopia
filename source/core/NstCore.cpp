@@ -52,9 +52,9 @@
 
 namespace Nes
 {
-	void qword::Multiply(qword multiplier)
+	void qaword::Multiply(qaword multiplier)
 	{
-		qword multiplicand(*this);
+		qaword multiplicand(*this);
 		lo = 0;
 		hi = 0;
 
@@ -71,12 +71,12 @@ namespace Nes
 		}
 	}
 
-	void qword::Divide(qword& dividend,const qword divisor,const bool mod)
+	void qaword::Divide(qaword& dividend,const qaword divisor,const bool mod)
 	{
 		NST_ASSERT( bool(divisor) );
 
-		qword remainder(0);
-		qword quotient(0);
+		qaword remainder(0);
+		qaword quotient(0);
 
 		if (divisor < dividend)
 		{
@@ -94,7 +94,7 @@ namespace Nes
 
 			for (;;)
 			{
-				qword tmp(remainder);
+				qaword tmp(remainder);
 				tmp -= divisor;
 
 				quotient.hi = (quotient.hi << 1 & LO_MASK) | (quotient.lo >> 31);
@@ -132,7 +132,7 @@ namespace Nes
 			dividend = remainder;
 	}
 
-	void qword::Shl(const uint v)
+	void qaword::Shl(const uint v)
 	{
 		NST_ASSERT( v < 64 );
 
@@ -152,7 +152,7 @@ namespace Nes
 		}
 	}
 
-	void qword::Shr(const uint v)
+	void qaword::Shr(const uint v)
 	{
 		NST_ASSERT( v < 64 );
 

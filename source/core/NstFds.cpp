@@ -2040,7 +2040,7 @@ namespace Nes
 			if (active)
 			{
 				const dword pos = wave.pos;
-				wave.pos = (wave.pos + dword(qword(GetModulation()) * wave.frame / wave.clock) + Wave::SIZE * wave.rate) % (Wave::SIZE * wave.rate);
+				wave.pos = (wave.pos + dword(qaword(GetModulation()) * wave.frame / wave.clock) + Wave::SIZE * wave.rate) % (Wave::SIZE * wave.rate);
 
 				if (wave.pos < pos)
 					wave.volume = envelopes.units[VOLUME].Output();

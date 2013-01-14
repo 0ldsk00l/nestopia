@@ -65,7 +65,7 @@ namespace Nes
 				void Compute(const byte*,dword);
 				void Finalize() const;
 
-				qword count;
+				qaword count;
 				dword state[5];
 				mutable ibool finalized;
 				mutable dword final[5];

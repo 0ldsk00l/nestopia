@@ -352,7 +352,7 @@ namespace Nes
 					uint volume = GetVolume(EXT_N163) * 68U / DEFAULT_VOLUME;
 					output = IsMuted() ? 0 : volume;
 
-					rate = GetCpuClockBase() * qword(1UL << SPEED_SHIFT) / (GetSampleRate() * 45UL * GetCpuClockDivider());
+					rate = GetCpuClockBase() * qaword(1UL << SPEED_SHIFT) / (GetSampleRate() * 45UL * GetCpuClockDivider());
 
 					dcBlocker.Reset();
 

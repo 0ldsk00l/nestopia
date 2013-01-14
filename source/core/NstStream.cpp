@@ -76,14 +76,14 @@ namespace Nes
 				return data[0] | uint(data[1]) << 8 | dword(data[2]) << 16 | dword(data[3]) << 24;
 			}
 
-			qword In::Read64()
+			qaword In::Read64()
 			{
 				byte data[8];
 				Read( data, 8 );
 
 				return
 				(
-					qword(data[4] | uint(data[5]) << 8 | dword(data[6]) << 16 | dword(data[7]) << 24) << 32 |
+					qaword(data[4] | uint(data[5]) << 8 | dword(data[6]) << 16 | dword(data[7]) << 24) << 32 |
 					dword(data[0] | uint(data[1]) << 8 | dword(data[2]) << 16 | dword(data[3]) << 24)
 				);
 			}
@@ -329,7 +329,7 @@ namespace Nes
 				Write( d, 4 );
 			}
 
-			void Out::Write64(const qword data)
+			void Out::Write64(const qaword data)
 			{
 				const byte d[8] =
 				{

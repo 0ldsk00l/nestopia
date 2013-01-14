@@ -129,7 +129,7 @@ namespace Nestopia
 	typedef uint ibool;
 	typedef const char* cstring;
 	typedef const wchar_t* wcstring;
-	typedef Nes::qword qword;
+	typedef Nes::qaword qaword;
 
 	#define NST_CLAMP(t_,x_,y_) ((t_) < (x_) ? (x_) : (t_) > (y_) ? (y_) : (t_))
 

@@ -110,7 +110,7 @@ namespace Nes
 				return *this;
 			}
 
-			Saver& Saver::Write64(qword data)
+			Saver& Saver::Write64(qaword data)
 			{
 				chunks.Back() += 8;
 				stream.Write64( data );
@@ -239,7 +239,7 @@ namespace Nes
 				return stream.Read32();
 			}
 
-			qword Loader::Read64()
+			qaword Loader::Read64()
 			{
 				CheckRead( 8 );
 				return stream.Read64();
