@@ -204,7 +204,6 @@ OBJS += $(NST_DIR)/source/core/vssystem/NstVsRbiBaseball.o  $(NST_DIR)/source/co
 OBJS += libretro.o
 
 OBJS := $(strip $(OBJS))
-LIBS := -lz
 
 ifeq ($(HAVE_GCC_WARNINGS),1)
 GCC_WARNINGS := -Wno-unused-result
