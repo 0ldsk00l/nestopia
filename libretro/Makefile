@@ -88,14 +88,15 @@ all: $(TARGET)
 ifeq ($(DEBUG), 1)
    CFLAGS += -O0 -g
    CXXFLAGS += -O0 -g
-elifneq ($(platform), ps3)
+else ifeq ($(platform), ps3)
+   CFLAGS += -O2
+   CXXFLAGS += -O2
+else
    CFLAGS += -O3
    CXXFLAGS += -O3
 endif
 
 ifeq ($(platform), ps3)
-   CFLAGS += -O2
-   CXXFLAGS += -O2
 endif
 
 OBJS = $(NST_DIR)/source/core/NstZlib.o
