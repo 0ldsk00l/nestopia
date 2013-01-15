@@ -12,6 +12,7 @@
 #include <core/api/NstApiSound.hpp>
 #include <core/api/NstApiInput.hpp>
 #include <core/api/NstApiCartridge.hpp>
+#include <core/api/NstApiUser.hpp>
 
 #define NST_VERSION "1.43"
 
@@ -26,12 +27,39 @@ static Api::Video::Output *video;
 static Api::Sound::Output *audio;
 static Api::Input::Controllers *input;
 
+static void *sram;
+static ulong sram_size;
+static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
+{
+   switch (file.GetAction())
+   {
+      case Api::User::File::LOAD_BATTERY:
+         file.GetRawStorage(sram, sram_size);
+         break;
+
+      case Api::User::File::SAVE_BATTERY:
+      {
+         const void *addr;
+         unsigned long addr_size;
+         file.GetContent(addr, addr_size);
+         if (addr != sram || sram_size != addr_size)
+            fprintf(stderr, "[Nestopia]: SRAM changed place in RAM!\n");
+         break;
+      }
+
+      default:
+         break;
+   }
+}
+
 void retro_init(void)
 {
    machine = new Api::Machine(emulator);
    video = new Api::Video::Output(video_buffer, Api::Video::Output::WIDTH * sizeof(uint32_t));
    audio = new Api::Sound::Output(audio_buffer, 44100 / 60);
    input = new Api::Input::Controllers;
+
+   Api::User::fileIoCallback.Set(file_io_callback, 0);
 }
 
 void retro_deinit(void)
@@ -208,6 +236,8 @@ bool retro_load_game(const struct retro_game_info *info)
 void retro_unload_game(void)
 {
    machine->Unload();
+   sram = 0;
+   sram_size = 0;
 }
 
 unsigned retro_get_region(void)
@@ -254,13 +284,7 @@ void *retro_get_memory_data(unsigned id)
    if (id != RETRO_MEMORY_SAVE_RAM)
       return 0;
 
-   Api::Cartridge cart(emulator);
-   if (!cart.GetProfile()->board.HasBattery())
-      return 0;
-
-   // TODO: Get actual RAM.
-
-   return 0;
+   return sram;
 }
 
 size_t retro_get_memory_size(unsigned id)
@@ -268,13 +292,7 @@ size_t retro_get_memory_size(unsigned id)
    if (id != RETRO_MEMORY_SAVE_RAM)
       return 0;
 
-   Api::Cartridge cart(emulator);
-   if (!cart.GetProfile()->board.HasBattery())
-      return 0;
-
-   // TODO: Get actual size.
-
-   return 0;
+   return sram_size;
 }
 
 void retro_cheat_reset(void)

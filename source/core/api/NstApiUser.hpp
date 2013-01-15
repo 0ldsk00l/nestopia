@@ -326,6 +326,18 @@ namespace Nes
 				* @return result code
 				*/
 				virtual Result SetSampleContent(const void* mem,ulong length,bool stereo,uint bits,ulong rate) throw();
+
+				/**
+				 * Gets raw backed data of file.
+				 *
+				 * Used with LOAD_BATTERY to get a raw, persistent pointer to backed data,
+				 * which can be freely written or read from.
+				 * Returns non-NULL pointer in data if backed data is not contigous.
+             *
+             * @param data pointer to raw storage
+             * @param size size of raw storage
+             */
+				virtual void GetRawStorage(void*& data, ulong& size) const throw();
 			};
 
 			enum
