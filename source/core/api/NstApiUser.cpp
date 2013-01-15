@@ -82,5 +82,11 @@ namespace Nes
 		{
 			return RESULT_ERR_NOT_READY;
 		}
+
+		void User::File::GetRawStorage(void*& data, ulong& size) const throw()
+		{
+			data = 0;
+			size = 0;
+		}
 	}
 }
