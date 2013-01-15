@@ -129,6 +129,20 @@ namespace Nes
 					return RESULT_OK;
 				}
 
+				void GetRawStorage(void*& data, ulong& size) const throw()
+				{
+					if (loadBlockCount == 1)
+					{
+						data = loadBlock->data;
+						size = loadBlock->size;
+					}
+					else
+					{
+						data = 0;
+						size = 0;
+					}
+				}
+
 				Result SetContent(std::istream& stdStream) throw()
 				{
 					if (altered)
