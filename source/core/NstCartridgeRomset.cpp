@@ -797,44 +797,7 @@ namespace Nes
 
 			void LoadRoms()
 			{
-				for (uint i=0; i < 2; ++i)
-				{
-					Profile::Board::Roms& roms = (i ? profile.board.chr : profile.board.prg);
-
-					if (roms.empty())
-						continue;
-
-					Ram& rom = (i ? chr : prg);
-
-					dword size = 0;
-
-					for (Profile::Board::Roms::iterator it(roms.begin()), end(roms.end()); it != end; ++it)
-					{
-						size += it->size;
-
-						if (it->size < MIN_CHIP_SIZE || size > MAX_CHIP_SIZE)
-							throw RESULT_ERR_INVALID_FILE;
-					}
-
-					rom.Set( size );
-
-					for (Profile::Board::Pins::const_iterator pin(roms.begin()->pins.begin()), end(roms.begin()->pins.end()); pin != end; ++pin)
-						rom.Pin(pin->number) = pin->function.c_str();
-
-					if (readOnly)
-						continue;
-
-					if (!Api::User::fileIoCallback)
-						throw RESULT_ERR_NOT_READY;
-
-					size = 0;
-
-					for (Profile::Board::Roms::iterator it(roms.begin()), end(roms.end()); it != end; ++it)
-					{
-						if (it->file.empty())
-							throw RESULT_ERR_INVALID_FILE;
-
-						class Loader : public Api::User::File
+				class Loader : public Api::User::File
 						{
 							wcstring const filename;
 							byte* const rom;
@@ -878,7 +841,7 @@ namespace Nes
 							{
 								try
 								{
-									Stream::In stream( &stdStream );
+                           Nes::Core::Stream::In stream( &stdStream );
 
 									if (const ulong length = stream.Length())
 									{
@@ -912,6 +875,45 @@ namespace Nes
 								return loaded;
 							}
 						};
+				for (uint i=0; i < 2; ++i)
+				{
+					Profile::Board::Roms& roms = (i ? profile.board.chr : profile.board.prg);
+
+					if (roms.empty())
+						continue;
+
+					Ram& rom = (i ? chr : prg);
+
+					dword size = 0;
+
+					for (Profile::Board::Roms::iterator it(roms.begin()), end(roms.end()); it != end; ++it)
+					{
+						size += it->size;
+
+						if (it->size < MIN_CHIP_SIZE || size > MAX_CHIP_SIZE)
+							throw RESULT_ERR_INVALID_FILE;
+					}
+
+					rom.Set( size );
+
+					for (Profile::Board::Pins::const_iterator pin(roms.begin()->pins.begin()), end(roms.begin()->pins.end()); pin != end; ++pin)
+						rom.Pin(pin->number) = pin->function.c_str();
+
+					if (readOnly)
+						continue;
+
+					if (!Api::User::fileIoCallback)
+						throw RESULT_ERR_NOT_READY;
+
+					size = 0;
+
+               		
+
+
+					for (Profile::Board::Roms::iterator it(roms.begin()), end(roms.end()); it != end; ++it)
+					{
+						if (it->file.empty())
+							throw RESULT_ERR_INVALID_FILE;
 
 						Loader loader( it->file.c_str(), rom.Mem(size), it->size );
 						Api::User::fileIoCallback( loader );
