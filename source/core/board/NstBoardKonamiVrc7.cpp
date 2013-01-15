@@ -76,7 +76,7 @@ namespace Nes
 					const double pi2 = 6.2831853071795863;
 
 					for (uint i=0; i < PITCH_SIZE; ++i)
-						pitch[i] = AMP_SIZE * std::pow( 2, 13.75 * std::sin( pi2 * i / PITCH_SIZE ) / 1200 );
+						pitch[i] = AMP_SIZE * std::powf( 2, 13.75 * std::sin( pi2 * i / PITCH_SIZE ) / 1200 );
 
 					for (uint i=0; i < AMP_SIZE; ++i)
 						amp[i] = 4.8 / 2 / 0.1875 * (1 + std::sin( pi2 * i / AMP_SIZE ));

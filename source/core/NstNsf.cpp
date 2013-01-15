@@ -54,9 +54,9 @@ namespace Nes
 				void Reset();
 				void ClearExRam();
 
-				using Boards::Mmc5::Sound::UpdateSettings;
-				using Boards::Mmc5::Sound::GetSample;
-				using Boards::Mmc5::Sound::Clock;
+				using Sound::UpdateSettings;
+				using Sound::GetSample;
+				using Sound::Clock;
 			};
 
 			struct Fds : Core::Fds::Sound
@@ -69,9 +69,9 @@ namespace Nes
 				void Reset();
 				void SwapBank(const Prg&,uint,uint);
 
-				using Core::Fds::Sound::UpdateSettings;
-				using Core::Fds::Sound::GetSample;
-				using Core::Fds::Sound::Clock;
+				using Sound::UpdateSettings;
+				using Sound::GetSample;
+				using Sound::Clock;
 			};
 
 			struct N163 : Boards::Namcot::N163::Sound
@@ -79,9 +79,9 @@ namespace Nes
 				explicit N163(Apu& a)
 				: Sound(a,false) {}
 
-				using Boards::Namcot::N163::Sound::Reset;
-				using Boards::Namcot::N163::Sound::UpdateSettings;
-				using Boards::Namcot::N163::Sound::GetSample;
+				using Sound::Reset;
+				using Sound::UpdateSettings;
+				using Sound::GetSample;
 			};
 
 			struct Vrc6 : Boards::Konami::Vrc6::Sound
@@ -89,9 +89,9 @@ namespace Nes
 				explicit Vrc6(Apu& a)
 				: Sound(a,false) {}
 
-				using Boards::Konami::Vrc6::Sound::Reset;
-				using Boards::Konami::Vrc6::Sound::UpdateSettings;
-				using Boards::Konami::Vrc6::Sound::GetSample;
+				using Sound::Reset;
+				using Sound::UpdateSettings;
+				using Sound::GetSample;
 			};
 
 			struct Vrc7 : Boards::Konami::Vrc7::Sound
@@ -99,9 +99,9 @@ namespace Nes
 				explicit Vrc7(Apu& a)
 				: Sound(a,false) {}
 
-				using Boards::Konami::Vrc7::Sound::Reset;
-				using Boards::Konami::Vrc7::Sound::UpdateSettings;
-				using Boards::Konami::Vrc7::Sound::GetSample;
+				using Sound::Reset;
+				using Sound::UpdateSettings;
+				using Sound::GetSample;
 			};
 
 			struct S5b : Boards::Sunsoft::S5b::Sound
@@ -109,9 +109,9 @@ namespace Nes
 				explicit S5b(Apu& a)
 				: Sound(a,false) {}
 
-				using Boards::Sunsoft::S5b::Sound::Reset;
-				using Boards::Sunsoft::S5b::Sound::UpdateSettings;
-				using Boards::Sunsoft::S5b::Sound::GetSample;
+				using Sound::Reset;
+				using Sound::UpdateSettings;
+				using Sound::GetSample;
 			};
 
 			template<typename T>
