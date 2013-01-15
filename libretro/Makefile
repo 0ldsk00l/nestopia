@@ -1,4 +1,5 @@
 DEBUG = 0
+HAS_GCC = 1
 
 NST_DIR = ..
 HAVE_GCC_WARNINGS := 1
@@ -46,6 +47,7 @@ else ifeq ($(platform), ps3)
 else ifeq ($(platform), sncps3)
 	HAVE_GCC_WARNINGS := 0
    TARGET := libretro_ps3.a
+	HAS_GCC := 0
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
@@ -86,9 +88,14 @@ all: $(TARGET)
 ifeq ($(DEBUG), 1)
    CFLAGS += -O0 -g
    CXXFLAGS += -O0 -g
-else
+elifneq ($(platform), ps3)
    CFLAGS += -O3
    CXXFLAGS += -O3
+endif
+
+ifeq ($(platform), ps3)
+   CFLAGS += -O2
+   CXXFLAGS += -O2
 endif
 
 OBJS = $(NST_DIR)/source/core/NstZlib.o
@@ -99,7 +106,7 @@ OBJS += $(NST_DIR)/source/core/NstApu.o              $(NST_DIR)/source/core/NstF
 OBJS += $(NST_DIR)/source/core/NstAssert.o           $(NST_DIR)/source/core/NstFile.o           $(NST_DIR)/source/core/NstProperties.o       $(NST_DIR)/source/core/NstVideoFilter2xSaI.o
 OBJS += $(NST_DIR)/source/core/NstCartridge.o        $(NST_DIR)/source/core/NstImage.o          $(NST_DIR)/source/core/NstRam.o              $(NST_DIR)/source/core/NstVideoFilterHqX.o
 OBJS += $(NST_DIR)/source/core/NstCartridgeInes.o    $(NST_DIR)/source/core/NstImageDatabase.o  $(NST_DIR)/source/core/NstSha1.o             $(NST_DIR)/source/core/NstVideoFilterNone.o
-OBJS += $(NST_DIR)/source/core/NstCartridgeRomset.o  $(NST_DIR)/source/core/NstLog.o            $(NST_DIR)/source/core/NstSoundPcm.o         $(NST_DIR)/source/core/NstVideoFilterNtsc.o
+OBJS += $(NST_DIR)/source/core/NstCartridgeRomset.o  $(NST_DIR)/source/core/NstLog.o            $(NST_DIR)/source/core/NstSoundPcm.o
 OBJS += $(NST_DIR)/source/core/NstCartridgeUnif.o    $(NST_DIR)/source/core/NstMachine.o        $(NST_DIR)/source/core/NstSoundPlayer.o      $(NST_DIR)/source/core/NstVideoFilterScaleX.o
 OBJS += $(NST_DIR)/source/core/NstCheats.o           $(NST_DIR)/source/core/NstMemory.o         $(NST_DIR)/source/core/NstSoundRenderer.o    $(NST_DIR)/source/core/NstVideoRenderer.o
 OBJS += $(NST_DIR)/source/core/NstChecksum.o         $(NST_DIR)/source/core/NstNsf.o            $(NST_DIR)/source/core/NstState.o            $(NST_DIR)/source/core/NstVideoScreen.o
@@ -107,7 +114,6 @@ OBJS += $(NST_DIR)/source/core/NstChips.o            $(NST_DIR)/source/core/NstP
 OBJS += $(NST_DIR)/source/core/NstCore.o             $(NST_DIR)/source/core/NstPatcherIps.o     $(NST_DIR)/source/core/NstTracker.o          
 OBJS += $(NST_DIR)/source/core/NstCpu.o              $(NST_DIR)/source/core/NstPatcherUps.o     $(NST_DIR)/source/core/NstTrackerMovie.o
 OBJS += $(NST_DIR)/source/core/NstCrc32.o            $(NST_DIR)/source/core/NstPins.o           $(NST_DIR)/source/core/NstTrackerRewinder.o
-OBJS += $(NST_DIR)/source/core/NstVideoFilterNtscCfg.o
 
 # core/api
 OBJS += $(NST_DIR)/source/core/api/NstApiBarcodeReader.o  $(NST_DIR)/source/core/api/NstApiEmulator.o  $(NST_DIR)/source/core/api/NstApiMovie.o     $(NST_DIR)/source/core/api/NstApiTapeRecorder.o
@@ -204,7 +210,11 @@ ifeq ($(HAVE_GCC_WARNINGS),1)
 GCC_WARNINGS := -Wno-unused-result
 endif
 
-DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES) -Wno-deprecated $(GCC_WARNINGS) -Wno-write-strings
+ifeq ($(HAS_GCC), 1)
+GCC_FLAGS := -Wno-deprecated -Wno-write-strings
+endif
+
+DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES) $(GCC_FLAGS) $(GCC_WARNINGS) -DNST_NO_ZLIB
 
 CFLAGS += $(fpic) $(DEFINES) -std=gnu99
 CXXFLAGS += $(fpic) $(DEFINES) -fno-rtti

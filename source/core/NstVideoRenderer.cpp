@@ -22,6 +22,10 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#ifdef __LIBRETRO__
+#define NO_NTSC 1
+#endif
+
 #include <cstring>
 #include <cmath>
 #include <new>
@@ -31,7 +35,9 @@
 #include "api/NstApiVideo.hpp"
 #include "NstVideoRenderer.hpp"
 #include "NstVideoFilterNone.hpp"
+#ifndef NO_NTSC
 #include "NstVideoFilterNtsc.hpp"
+#endif
 
 #ifndef NST_NO_SCALEX
 #include "NstVideoFilterScaleX.hpp"
@@ -606,6 +612,7 @@ namespace Nes
 
 					#endif
 
+#ifndef NO_NTSC
 						case RenderState::FILTER_NTSC:
 
 							if (FilterNtsc::Check( renderState ))
@@ -623,6 +630,7 @@ namespace Nes
 								);
 							}
 							break;
+#endif
 					}
 				}
 				catch (const std::bad_alloc&)
