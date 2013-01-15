@@ -42,7 +42,7 @@ DATADIR = $(PREFIX)/share/nestopia
 
 # OpenGL Support
 CPPFLAGS += -DINCLUDE_OPENGL
-LIBS   += -lGL -lGLU
+LIBS   += -lGL -lGLU -lX11
 
 # Allow files to go into a data directory
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"

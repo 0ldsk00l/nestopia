@@ -35,9 +35,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		struct File::Context
 		{
@@ -132,6 +129,20 @@ namespace Nes
 					return RESULT_OK;
 				}
 
+				void GetRawStorage(void*& data, ulong& size) const throw()
+				{
+					if (loadBlockCount == 1)
+					{
+						data = loadBlock->data;
+						size = loadBlock->size;
+					}
+					else
+					{
+						data = 0;
+						size = 0;
+					}
+				}
+
 				Result SetContent(std::istream& stdStream) throw()
 				{
 					if (altered)
@@ -139,7 +150,7 @@ namespace Nes
 
 					try
 					{
-						Stream::In stream( &stdStream );
+                  Nes::Core::Stream::In stream( &stdStream );
 
 						if (ulong length = stream.Length())
 						{
@@ -293,7 +304,7 @@ namespace Nes
 				{
 					try
 					{
-						Stream::In stream( &stdStream );
+                  Nes::Core::Stream::In stream( &stdStream );
 
 						if (const ulong length = stream.Length())
 						{
@@ -438,7 +449,7 @@ namespace Nes
 					{
 						try
 						{
-							Stream::Out stream( &stdStream );
+                     Nes::Core::Stream::Out stream( &stdStream );
 
 							for (const SaveBlock* NST_RESTRICT it=saveBlock, *const end=saveBlock+saveBlockCount; it != end; ++it)
 							{
@@ -517,9 +528,5 @@ namespace Nes
 				Api::User::fileIoCallback( saver );
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }
