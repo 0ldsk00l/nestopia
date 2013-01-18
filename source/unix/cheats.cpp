@@ -130,17 +130,6 @@ void CheatMgr::ShowManager()
 
 	g_signal_connect(G_OBJECT(cheatwin), "destroy", G_CALLBACK(on_cheatwin_destroy), NULL);
 
-	/* The cheats dialog seems to still work the same without this codeblock.
-	 * I have no idea why. Not a GTK+ expert. Maybe I'll figure it out later.
-	 * Either way, these functions are deprecated and no longer exist in GTK+3,
-	 * so this will need to change in the future if it's ever re-enabled.
-	// set various widgets' user data to our "this" pointer
-	gtk_object_set_user_data(GTK_OBJECT(ggokbut), (gpointer)this);
-	gtk_object_set_user_data(GTK_OBJECT(parokbut), (gpointer)this);
-	gtk_object_set_user_data(GTK_OBJECT(chopen), (gpointer)this);
-	gtk_object_set_user_data(GTK_OBJECT(chsave), (gpointer)this);
-	gtk_object_set_user_data(GTK_OBJECT(chdelete), (gpointer)this); */
-
 	// add the existing cheats
 	// since AddCode inserts into the master cheatlist we cheat ourselves and
 	// make a copy of the cheatlist, clear the master, then insert from the copy
@@ -307,19 +296,6 @@ void on_chdelete_clicked(GtkButton *button, gpointer user_data)
 
 GtkWidget* create_cheatwindow (void) {
 
-	GtkWidget *cheatwindow;
-	GtkWidget *cheatfixed;
-	GtkWidget *label21;
-	GtkWidget *label20;
-	GtkWidget *scrolledwindow2;
-	GtkWidget *cheattree;
-	GtkWidget *chtggvalid;
-	GtkWidget *cheatok;
-	GtkWidget *cheatopen;
-	GtkWidget *cheatsave;
-	GtkWidget *parvalid;
-	GtkWidget *chdelete;
-
 	bool playing = NstIsPlaying();
 	if (playing) {
 		wasplaying = 1;
@@ -329,72 +305,75 @@ GtkWidget* create_cheatwindow (void) {
 		wasplaying = 0;
 	}
 
-	cheatwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
-	gtk_window_set_title (GTK_WINDOW (cheatwindow), "Cheat Manager");
-	gtk_window_set_resizable (GTK_WINDOW (cheatwindow), FALSE);
-
-	cheatfixed = gtk_fixed_new();
-	gtk_container_add (GTK_CONTAINER (cheatwindow), cheatfixed);
-	gtk_container_set_border_width (GTK_CONTAINER (cheatfixed), 8);
-
-	ggedit = gtk_entry_new ();
-	gtk_fixed_put (GTK_FIXED (cheatfixed), ggedit, 136, 280);
-	gtk_widget_set_size_request (ggedit, 208, 32);
-	gtk_entry_set_invisible_char (GTK_ENTRY (ggedit), 8226);
-
-	paredit = gtk_entry_new ();
-	gtk_fixed_put (GTK_FIXED (cheatfixed), paredit, 136, 320);
-	gtk_widget_set_size_request (paredit, 208, 32);
-	gtk_entry_set_invisible_char (GTK_ENTRY (paredit), 8226);
-
-	label21 = gtk_label_new ("Pro-Action Rocky:");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), label21, 0, 328);
-	gtk_widget_set_size_request (label21, 136, 16);
-
-	label20 = gtk_label_new ("Game Genie:");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), label20, 32, 288);
-	gtk_widget_set_size_request (label20, 112, 16);
-
-	scrolledwindow2 = gtk_scrolled_window_new (NULL, NULL);
-	gtk_fixed_put (GTK_FIXED (cheatfixed), scrolledwindow2, 8, 0);
-	gtk_widget_set_size_request (scrolledwindow2, 592, 232);
-
-	cheattree = gtk_tree_view_new ();
-	gtk_container_add (GTK_CONTAINER (scrolledwindow2), cheattree);
-
-	chtggvalid = gtk_button_new_with_mnemonic ("Check");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), chtggvalid, 352, 280);
-	gtk_widget_set_size_request (chtggvalid, 64, 32);
-
-	genieok = gtk_button_new_with_mnemonic ("Add");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), genieok, 416, 280);
-	gtk_widget_set_size_request (genieok, 64, 32);
-
-	parok = gtk_button_new_with_mnemonic ("Add");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), parok, 416, 320);
-	gtk_widget_set_size_request (parok, 64, 32);
-
-	cheatok = gtk_button_new_from_stock ("gtk-ok");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), cheatok, 496, 336);
-	gtk_widget_set_size_request (cheatok, 112, 32);
-
-	cheatopen = gtk_button_new_with_mnemonic ("Import...");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), cheatopen, 496, 240);
-	gtk_widget_set_size_request (cheatopen, 112, 32);
-
-	cheatsave = gtk_button_new_with_mnemonic ("Export...");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), cheatsave, 496, 280);
-	gtk_widget_set_size_request (cheatsave, 112, 32);
-
-	parvalid = gtk_button_new_with_mnemonic ("Check");
-	gtk_fixed_put (GTK_FIXED (cheatfixed), parvalid, 352, 320);
-	gtk_widget_set_size_request (parvalid, 64, 32);
-
-	chdelete = gtk_button_new_with_mnemonic ("Remove code");
-	gtk_widget_show (chdelete);
-	gtk_fixed_put (GTK_FIXED (cheatfixed), chdelete, 8, 240);
-	gtk_widget_set_size_request (chdelete, 120, 32);
+	GtkWidget *cheatwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_title(GTK_WINDOW (cheatwindow), "Cheat Manager");
+	//gtk_window_set_resizable(GTK_WINDOW (cheatwindow), TRUE);
 	
+	GtkWidget *cheatbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_container_add(GTK_CONTAINER(cheatwindow), cheatbox);
+	
+	GtkWidget *scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
+	gtk_box_pack_start(GTK_BOX(cheatbox), scrolledwindow, TRUE, TRUE, 0);
+	gtk_widget_set_size_request(scrolledwindow, 400, 240);
+	
+	cheattree = gtk_tree_view_new();
+	gtk_container_add(GTK_CONTAINER (scrolledwindow), cheattree);
+	
+	GtkWidget *importexportbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_END, NULL);
+	gtk_box_pack_start(GTK_BOX(cheatbox), importexportbox, FALSE, FALSE, 0);
+	
+	chdelete = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_REMOVE, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(chdelete), TRUE);
+	gtk_box_pack_start(GTK_BOX(importexportbox), chdelete, FALSE, FALSE, 0);
+
+	GtkWidget *cheatopen = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_OPEN, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(cheatopen), TRUE);
+	gtk_box_pack_start(GTK_BOX(importexportbox), cheatopen, FALSE, FALSE, 0);	
+
+	GtkWidget *cheatsave = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_SAVE, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(cheatsave), TRUE);
+	gtk_box_pack_start(GTK_BOX(importexportbox), cheatsave, FALSE, FALSE, 0);
+	
+	GtkWidget *ggbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_END, NULL);
+	gtk_box_pack_start(GTK_BOX(cheatbox), ggbox, FALSE, FALSE, 0);
+
+	GtkWidget *gglabel = gtk_widget_new(GTK_TYPE_LABEL, "label", "Game Genie:", "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-left", 8, "margin-right", 8, NULL);
+	gtk_box_pack_start(GTK_BOX(ggbox), gglabel, FALSE, FALSE, 0);
+
+	ggedit = gtk_widget_new(GTK_TYPE_ENTRY, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_box_pack_start(GTK_BOX(ggbox), ggedit, TRUE, TRUE, 0);
+	gtk_entry_set_invisible_char(GTK_ENTRY(ggedit), 8226);
+	
+	GtkWidget *chtggvalid = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_CONVERT, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(chtggvalid), TRUE);
+	gtk_box_pack_start(GTK_BOX(ggbox), chtggvalid, FALSE, FALSE, 0);
+
+	genieok = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_ADD, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(genieok), TRUE);
+	gtk_box_pack_start(GTK_BOX(ggbox), genieok, FALSE, FALSE, 0);
+
+	GtkWidget *parbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_END, NULL);
+	gtk_box_pack_start(GTK_BOX(cheatbox), parbox, FALSE, FALSE, 0);
+
+	GtkWidget *parlabel = gtk_widget_new(GTK_TYPE_LABEL, "label", "Pro Action Rocky:", "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-left", 8, "margin-right", 8, NULL);
+	gtk_box_pack_start(GTK_BOX(parbox), parlabel, FALSE, FALSE, 0);
+
+	paredit = gtk_widget_new(GTK_TYPE_ENTRY, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_box_pack_start(GTK_BOX(parbox), paredit, FALSE, FALSE, 0);
+	gtk_entry_set_invisible_char(GTK_ENTRY(paredit), 8226);
+
+	GtkWidget *parvalid = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_CONVERT, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(parvalid), TRUE);
+	gtk_box_pack_start(GTK_BOX(parbox), parvalid, FALSE, FALSE, 0);
+
+	parok = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_ADD, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(parok), TRUE);
+	gtk_box_pack_start(GTK_BOX(parbox), parok, FALSE, FALSE, 0);
+
+	GtkWidget *cheatok = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_OK, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(cheatok), TRUE);
+	gtk_box_pack_start(GTK_BOX(cheatbox), cheatok, FALSE, FALSE, 0);
+
 	g_signal_connect(G_OBJECT(cheatwindow), "destroy",
 		G_CALLBACK(on_cheatok_clicked), NULL);
 
@@ -444,7 +423,7 @@ GtkWidget* create_cheatwindow (void) {
 	column[1] = gtk_tree_view_column_new_with_attributes("Game Genie", renderer, "text",  1, NULL);
 	column[2] = gtk_tree_view_column_new_with_attributes("PAR", renderer, "text",  2, NULL);
 	column[3] = gtk_tree_view_column_new_with_attributes("Raw", renderer, "text",  3, NULL);
-	column[4] = gtk_tree_view_column_new_with_attributes("Description", renderer, "text",  4, NULL);
+	column[4] = gtk_tree_view_column_new_with_attributes("", renderer, "text",  4, NULL);
 
 	// add the display column and renderer to the tree view
 	gtk_tree_view_append_column(GTK_TREE_VIEW(cheattree), column[0]);
@@ -478,7 +457,7 @@ void on_cheatopen_clicked(GtkButton *button, gpointer user_data)
 					      NULL);
 
 	filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filter, "NEStopia XML cheats");
+	gtk_file_filter_set_name(filter, "Nestopia XML cheats");
 	gtk_file_filter_add_pattern(filter, "*.xml");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 
