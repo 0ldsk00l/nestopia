@@ -47,7 +47,6 @@ static std::ifstream *moviePlayFile, *fdsBiosFile, *nstDBFile;
 static std::fstream *movieRecFile;
 
 static bool run_picker, cancelled;
-//static GtkWidget *filepicker, *tree;
 static GtkTreeStore *treestore;
 static GtkTreeIter treeiters[MAX_ITEMS];
 static GtkCellRenderer *renderer;
@@ -78,6 +77,11 @@ void on_archcancel_clicked(GtkButton *button, gpointer user_data)
 {
 	run_picker = false;
 	cancelled = true;
+}
+
+void on_archselect_destroyed(GtkButton *button, gpointer user_data)
+{
+	run_picker = false;
 }
 
 static gint check_list_double(GtkWidget *widget, GdkEventButton *event, gpointer func_data)
@@ -621,34 +625,29 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 		{
 			int sel;
 			char fname[512];
-			
-			GtkWidget *archselect;
-			GtkWidget *fixed5;
-			GtkWidget *scrolledwindow1;
-			GtkWidget *archtree;
-			GtkWidget *label18;
-			GtkWidget *label19;
-			GtkWidget *archcancel;
-			GtkWidget *archok;
 
-			archselect = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+			GtkWidget *archselect = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 			gtk_window_set_title(GTK_WINDOW (archselect), "Pick game in archive");
-			gtk_window_set_modal (GTK_WINDOW (archselect), TRUE);
+			gtk_window_set_modal(GTK_WINDOW (archselect), TRUE);
 			
-			fixed5 = gtk_fixed_new ();
-			gtk_container_add (GTK_CONTAINER(archselect), fixed5);
-			gtk_widget_show (fixed5);
+			GtkWidget *archbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+			gtk_container_add(GTK_CONTAINER(archselect), archbox);
+			gtk_widget_show(archbox);
 
-			scrolledwindow1 = gtk_scrolled_window_new(NULL, NULL);
-			gtk_fixed_put (GTK_FIXED (fixed5), scrolledwindow1, 0, 0);
-			gtk_widget_set_size_request (scrolledwindow1, 336, 352);
-			gtk_widget_show (scrolledwindow1);
+			GtkWidget *scrolledwindow = gtk_scrolled_window_new(NULL, NULL);
+			gtk_box_pack_start(GTK_BOX(archbox), scrolledwindow, TRUE, TRUE, 0);
+			gtk_widget_set_size_request(scrolledwindow, 340, 340);
+			gtk_widget_show(scrolledwindow);
 
-			archtree = gtk_tree_view_new ();
-			gtk_container_add (GTK_CONTAINER (scrolledwindow1), archtree);
+			GtkWidget *buttonbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_END, NULL);
+			gtk_box_pack_start(GTK_BOX(archbox), buttonbox, FALSE, TRUE, 0);
+			gtk_widget_show(buttonbox);
+
+			GtkWidget *archtree = gtk_tree_view_new();
+			gtk_container_add(GTK_CONTAINER (scrolledwindow), archtree);
 			gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW (archtree), FALSE);
 			g_signal_connect(G_OBJECT(archtree), "button_press_event", G_CALLBACK(check_list_double), NULL);
-			gtk_widget_show (archtree);
+			gtk_widget_show(archtree);
 
 			// set up our tree store
 			treestore = gtk_tree_store_new(1, G_TYPE_STRING);
@@ -672,27 +671,17 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 		                                                   NULL);
 
 			// add the display column and renderer to the tree view
-			gtk_tree_view_append_column (GTK_TREE_VIEW (archtree), column);
+			gtk_tree_view_append_column(GTK_TREE_VIEW (archtree), column);
 			
-			label18 = gtk_label_new ("Choose an NES cartridge,");
-			gtk_fixed_put (GTK_FIXED (fixed5), label18, 344, 8);
-			gtk_widget_set_size_request (label18, 176, 24);
-			gtk_widget_show (label18);
+			GtkWidget *archcancel = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_CANCEL, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+			gtk_button_set_use_stock(GTK_BUTTON(archcancel), TRUE);
+			gtk_box_pack_start(GTK_BOX(buttonbox), archcancel, FALSE, FALSE, 0);
+			gtk_widget_show(archcancel);
 
-			label19 = gtk_label_new ("disc, or music file.");
-			gtk_fixed_put (GTK_FIXED (fixed5), label19, 344, 32);
-			gtk_widget_set_size_request (label19, 176, 16);
-			gtk_widget_show (label19);
-
-			archcancel = gtk_button_new_from_stock ("gtk-cancel");
-			gtk_fixed_put (GTK_FIXED (fixed5), archcancel, 344, 304);
-			gtk_widget_set_size_request (archcancel, 168, 40);
-			gtk_widget_show (archcancel);
-
-			archok = gtk_button_new_from_stock ("gtk-ok");
-			gtk_fixed_put (GTK_FIXED (fixed5), archok, 344, 248);
-			gtk_widget_set_size_request (archok, 168, 40);
-			gtk_widget_show (archok);
+			GtkWidget *archok = gtk_widget_new(GTK_TYPE_BUTTON, "label", GTK_STOCK_OK, "halign", GTK_ALIGN_END, "margin-top", 8, "margin-bottom", 8, "margin-right", 8, NULL);
+			gtk_button_set_use_stock(GTK_BUTTON(archok), TRUE);
+			gtk_box_pack_start(GTK_BOX(buttonbox), archok, FALSE, FALSE, 0);
+			gtk_widget_show(archok);
 
 			// get the selection object too
 			selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(archtree));
@@ -702,10 +691,15 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 
 			g_signal_connect(G_OBJECT(archok), "clicked",
 				G_CALLBACK(on_archok_clicked), NULL);
+				
+			g_signal_connect(G_OBJECT(archselect), "destroy",
+				G_CALLBACK(on_archselect_destroyed), NULL);
 
 			gtk_widget_show(archselect);
+			
 			run_picker = true;
 			cancelled = false;
+
 			while (run_picker)
 			{
 				gtk_main_iteration_do(TRUE);
