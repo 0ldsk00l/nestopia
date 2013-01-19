@@ -158,6 +158,18 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), drawingarea, TRUE, TRUE, 0);
 	//gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
+	
+	GtkTargetEntry target_entry[1];
+
+	target_entry[0].target = (gchar *)"text/uri-list";
+	target_entry[0].flags = 0;
+	target_entry[0].info = 0;
+	
+	gtk_drag_dest_set(drawingarea, (GtkDestDefaults)(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP), 
+		target_entry, sizeof(target_entry) / sizeof(GtkTargetEntry), (GdkDragAction)(GDK_ACTION_MOVE | GDK_ACTION_COPY));
+
+	g_signal_connect(G_OBJECT(drawingarea), "drag-data-received",
+		G_CALLBACK(drag_data_received), NULL);
 
 	g_signal_connect_swapped(G_OBJECT(window), "destroy",
 		G_CALLBACK(on_mainwindow_destroy), NULL);
