@@ -15,6 +15,7 @@ Unix Shell:
   - General UI improvements
   - Stop warning about unused results
   - SDL is the default sound API on Linux, the only one on the BSDs
+  - Drag and Drop re-enabled
 
  Fixes:
   - Fixed SDL sound crashes

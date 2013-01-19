@@ -53,9 +53,6 @@ extern "C" {
 #include "callbacks.h"
 }
 
-#define DRAG_TAR_NAME_0		"text/uri-list"
-#define DRAG_TAR_INFO_0		0
-
 using namespace Nes::Api;
 using namespace LinuxNst;
 
@@ -464,8 +461,7 @@ void on_nsfplayer_destroy(GObject *object, gpointer user_data)
 	//gtk_widget_destroy(nsfplayer);
 }
 
-static void load_file_by_uri(char *filename)
-{
+void load_file_by_uri(char *filename) {
 	char *fsub;
 	char transname[512], convstr[3];
 	int i, j;
@@ -516,14 +512,42 @@ static void load_file_by_uri(char *filename)
 	
 	// now load it	
 	NstLoadGame(transname);
+	NstPlayGame();
+}
+
+void drag_data_received(GtkWidget *widget, GdkDragContext *dc, gint x, gint y, GtkSelectionData *selection_data, guint info, guint t, gpointer data) {
+
+	if ((widget == NULL) || (dc == NULL)) {
+		return;
+	}
+
+	if (selection_data == NULL) {
+		return;
+	}
+	
+	if (info == 0) {
+		gchar *filename = (gchar*)gtk_selection_data_get_data(selection_data);
+		int i, datalen;
+		char *root;
+
+		// for multiple files in a drag, we get a list of file:// URIs separated by LF/CRs
+		// we only accept one in Nestopia
+		datalen = strlen(filename);
+		root = filename;
+
+		for (i = 0; i < datalen; i++) {
+			if ((filename[i] == 0x0d) || (filename[i] == 0x0a)) {
+				filename[i] = '\0';
+
+				load_file_by_uri(root);
+				return;
+			}
+		}
+	}
 }
 
 void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst::CheatMgr *cheatmgr, int xres, int yres)
 {
-	//GtkTargetEntry target_entry[1];
-
-	//gtk_init(&argc, &argv);
-
 	sSettings = settings;
 	sCheatMgr = cheatmgr;
 
