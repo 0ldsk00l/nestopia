@@ -14,7 +14,7 @@
 #include <core/api/NstApiCartridge.hpp>
 #include <core/api/NstApiUser.hpp>
 
-#define NST_VERSION "1.43"
+#define NST_VERSION "1.44"
 
 using namespace Nes;
 
@@ -28,7 +28,7 @@ static Api::Sound::Output *audio;
 static Api::Input::Controllers *input;
 
 static void *sram;
-static ulong sram_size;
+static unsigned long sram_size;
 static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 {
    switch (file.GetAction())

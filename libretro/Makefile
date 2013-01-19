@@ -2,7 +2,6 @@ DEBUG = 0
 HAS_GCC = 1
 
 NST_DIR = ..
-HAVE_GCC_WARNINGS := 1
 
 ifeq ($(platform),)
 platform = unix
@@ -205,10 +204,6 @@ OBJS += $(NST_DIR)/source/core/vssystem/NstVsRbiBaseball.o  $(NST_DIR)/source/co
 OBJS += libretro.o
 
 OBJS := $(strip $(OBJS))
-
-ifeq ($(HAVE_GCC_WARNINGS),1)
-GCC_WARNINGS := -Wno-unused-result
-endif
 
 ifeq ($(HAS_GCC), 1)
 GCC_FLAGS := -Wno-deprecated -Wno-write-strings
