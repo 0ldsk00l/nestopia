@@ -309,16 +309,7 @@
 					RelativePath="..\..\..\source\core\NstVector.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\source\core\NstVideoFilter2xSaI.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\source\core\NstVideoFilterHqX.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\source\core\NstVideoFilterNone.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\source\core\NstVideoFilterScaleX.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\source\core\NstVideoRenderer.cpp">
