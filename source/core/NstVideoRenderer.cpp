@@ -24,6 +24,9 @@
 
 #ifdef __LIBRETRO__
 #define NO_NTSC 1
+#define NST_NO_SCALEX 1
+#define NST_NO_HQ2X 1
+#define NST_NO_2XSAI 1
 #endif
 
 #include <cstring>

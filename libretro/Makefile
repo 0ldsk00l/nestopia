@@ -103,11 +103,11 @@ OBJS = $(NST_DIR)/source/core/NstZlib.o
 ## Yes, I didn't type all this out ...
 # core objs
 OBJS += $(NST_DIR)/source/core/NstApu.o              $(NST_DIR)/source/core/NstFds.o            $(NST_DIR)/source/core/NstPpu.o              $(NST_DIR)/source/core/NstVector.o
-OBJS += $(NST_DIR)/source/core/NstAssert.o           $(NST_DIR)/source/core/NstFile.o           $(NST_DIR)/source/core/NstProperties.o       $(NST_DIR)/source/core/NstVideoFilter2xSaI.o
-OBJS += $(NST_DIR)/source/core/NstCartridge.o        $(NST_DIR)/source/core/NstImage.o          $(NST_DIR)/source/core/NstRam.o              $(NST_DIR)/source/core/NstVideoFilterHqX.o
+OBJS += $(NST_DIR)/source/core/NstAssert.o           $(NST_DIR)/source/core/NstFile.o           $(NST_DIR)/source/core/NstProperties.o
+OBJS += $(NST_DIR)/source/core/NstCartridge.o        $(NST_DIR)/source/core/NstImage.o          $(NST_DIR)/source/core/NstRam.o
 OBJS += $(NST_DIR)/source/core/NstCartridgeInes.o    $(NST_DIR)/source/core/NstImageDatabase.o  $(NST_DIR)/source/core/NstSha1.o             $(NST_DIR)/source/core/NstVideoFilterNone.o
 OBJS += $(NST_DIR)/source/core/NstCartridgeRomset.o  $(NST_DIR)/source/core/NstLog.o            $(NST_DIR)/source/core/NstSoundPcm.o
-OBJS += $(NST_DIR)/source/core/NstCartridgeUnif.o    $(NST_DIR)/source/core/NstMachine.o        $(NST_DIR)/source/core/NstSoundPlayer.o      $(NST_DIR)/source/core/NstVideoFilterScaleX.o
+OBJS += $(NST_DIR)/source/core/NstCartridgeUnif.o    $(NST_DIR)/source/core/NstMachine.o        $(NST_DIR)/source/core/NstSoundPlayer.o
 OBJS += $(NST_DIR)/source/core/NstCheats.o           $(NST_DIR)/source/core/NstMemory.o         $(NST_DIR)/source/core/NstSoundRenderer.o    $(NST_DIR)/source/core/NstVideoRenderer.o
 OBJS += $(NST_DIR)/source/core/NstChecksum.o         $(NST_DIR)/source/core/NstNsf.o            $(NST_DIR)/source/core/NstState.o            $(NST_DIR)/source/core/NstVideoScreen.o
 OBJS += $(NST_DIR)/source/core/NstChips.o            $(NST_DIR)/source/core/NstPatcher.o        $(NST_DIR)/source/core/NstStream.o           $(NST_DIR)/source/core/NstXml.o
