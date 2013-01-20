@@ -740,5 +740,131 @@
     <ClCompile Include="..\..\libretro.cpp">
       <Filter>Source Files\libretro</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstZlib.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstApu.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstAssert.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCartridge.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCartridgeInes.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCartridgeRomset.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCartridgeUnif.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCheats.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstChecksum.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstChips.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCore.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCpu.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstCrc32.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstFds.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstFile.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstImage.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstImageDatabase.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstLog.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstMachine.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstMemory.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstNsf.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstPatcher.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstPatcherIps.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstPatcherUps.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstPins.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstPpu.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstProperties.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstRam.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstSha1.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstSoundPcm.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstSoundPlayer.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstSoundRenderer.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstState.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstStream.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstTracker.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstTrackerMovie.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstTrackerRewinder.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstVector.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstVideoFilterNone.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstVideoRenderer.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstVideoScreen.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstXml.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
