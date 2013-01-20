@@ -12,3 +12,4 @@ Supported Platforms
 * FreeBSD
 * OpenBSD
 * NetBSD
+* libretro
