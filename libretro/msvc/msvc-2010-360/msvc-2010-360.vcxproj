@@ -360,22 +360,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile_FastCap|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_LTCG|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
     <ClCompile>
@@ -386,7 +386,6 @@
       <ExceptionHandling>false</ExceptionHandling>
       <MinimalRebuild>true</MinimalRebuild>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
@@ -406,7 +405,6 @@
       <MinimalRebuild>true</MinimalRebuild>
       <PREfast>AnalyzeOnly</PREfast>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);NST_MSVC_OPTIMIZE;__LIBRETRO__;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
@@ -426,7 +424,6 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_MSVC_OPTIMIZE;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
@@ -451,7 +448,6 @@
       <CallAttributedProfiling>Fastcap</CallAttributedProfiling>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_MSVC_OPTIMIZE;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -473,7 +469,6 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>NDEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);NST_NO_ZLIB;__LIBRETRO__;_SECURE_SCL=0</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -495,7 +490,6 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PreprocessorDefinitions>NDEBUG;_XBOX;LTCG;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
