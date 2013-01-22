@@ -19,7 +19,7 @@
 using namespace Nes;
 
 static uint32_t video_buffer[Api::Video::Output::WIDTH * Api::Video::Output::HEIGHT];
-static int16_t audio_buffer[2 * (44100 / 60)];
+static int16_t audio_buffer[2 * (44100 / 50)];
 static Api::Emulator emulator;
 static Api::Machine *machine;
 
@@ -29,6 +29,8 @@ static Api::Input::Controllers *input;
 
 static void *sram;
 static unsigned long sram_size;
+static bool is_pal;
+
 static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 {
    switch (file.GetAction())
@@ -56,7 +58,6 @@ void retro_init(void)
 {
    machine = new Api::Machine(emulator);
    video = new Api::Video::Output(video_buffer, Api::Video::Output::WIDTH * sizeof(uint32_t));
-   audio = new Api::Sound::Output(audio_buffer, 44100 / 60);
    input = new Api::Input::Controllers;
 
    Api::User::fileIoCallback.Set(file_io_callback, 0);
@@ -94,7 +95,7 @@ void retro_get_system_info(struct retro_system_info *info)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   const retro_system_timing timing = { 60.0, 44100.0 };
+   const retro_system_timing timing = { is_pal ? 50.0 : 60.0, 44100.0 };
    info->timing = timing;
 
    const retro_game_geometry geom = {
@@ -184,7 +185,7 @@ void retro_run(void)
    emulator.Execute(video, audio, input);
 
    video_cb(video_buffer, 256, 240, 1024);
-   audio_batch_cb(audio_buffer, 44100 / 60);
+   audio_batch_cb(audio_buffer, is_pal ? 44100 / 50 : 44100 / 60);
 }
 
 bool retro_load_game(const struct retro_game_info *info)
@@ -199,10 +200,24 @@ bool retro_load_game(const struct retro_game_info *info)
    std::stringstream ss(std::string(reinterpret_cast<const char*>(info->data),
             reinterpret_cast<const char*>(info->data) + info->size));
 
-   if (machine->LoadCartridge(ss, Api::Machine::FAVORED_NES_NTSC))
+   // Hack. Nestopia API forces us to favor either.
+   Api::Machine::FavoredSystem system = Api::Machine::FAVORED_NES_NTSC;
+   is_pal = false;
+   if (info->path && strstr(info->path, "(E)"))
+   {
+      fprintf(stderr, "[Nestopia]: Favoring PAL.\n");
+      system = Api::Machine::FAVORED_NES_PAL;
+      is_pal = true;
+   }
+
+   if (machine->LoadCartridge(ss, system))
       return false;
 
-   machine->SetMode(machine->GetDesiredMode());
+   machine->SetMode(is_pal ? Api::Machine::PAL : Api::Machine::NTSC);
+   fprintf(stderr, "[Nestopia]: Machine is %s.\n", is_pal ? "PAL" : "NTSC");
+
+   audio = new Api::Sound::Output(audio_buffer, is_pal ? 44100 / 50 : 44100 / 60);
+
    Api::Video ivideo(emulator);
    ivideo.SetSharpness(Api::Video::DEFAULT_SHARPNESS_RGB);
    ivideo.SetColorResolution(Api::Video::DEFAULT_COLOR_RESOLUTION_RGB);
@@ -242,7 +257,7 @@ void retro_unload_game(void)
 
 unsigned retro_get_region(void)
 {
-   return RETRO_REGION_NTSC;
+   return is_pal ? RETRO_REGION_PAL : RETRO_REGION_NTSC;
 }
 
 bool retro_load_game_special(unsigned, const struct retro_game_info *, size_t)
