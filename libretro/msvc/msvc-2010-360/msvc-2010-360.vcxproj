@@ -259,6 +259,48 @@
     <ClCompile Include="..\..\..\source\core\input\NstInpTopRider.cpp" />
     <ClCompile Include="..\..\..\source\core\input\NstInpTurboFile.cpp" />
     <ClCompile Include="..\..\..\source\core\input\NstInpZapper.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstApu.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstAssert.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCartridge.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCartridgeInes.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCartridgeRomset.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCartridgeUnif.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCheats.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstChecksum.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstChips.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCore.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCpu.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstCrc32.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstFds.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstFile.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstImage.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstImageDatabase.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstLog.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstMachine.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstMemory.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstNsf.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstPatcher.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstPatcherIps.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstPatcherUps.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstPins.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstPpu.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstProperties.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstRam.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstSha1.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstSoundPcm.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstSoundPlayer.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstSoundRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstState.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstStream.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstTracker.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstTrackerMovie.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstTrackerRewinder.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstVector.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstVideoFilterNone.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstVideoRenderer.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstVideoScreen.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstXml.cpp" />
+    <ClCompile Include="..\..\..\source\core\NstZlib.cpp" />
     <ClCompile Include="..\..\..\source\core\vssystem\NstVsRbiBaseball.cpp" />
     <ClCompile Include="..\..\..\source\core\vssystem\NstVsSuperXevious.cpp" />
     <ClCompile Include="..\..\..\source\core\vssystem\NstVsSystem.cpp" />
@@ -318,22 +360,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile_FastCap|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_LTCG|Xbox 360'">
-    <OutputFile>$(OutDir)$(ProjectName).lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
     <ClCompile>
@@ -344,9 +386,8 @@
       <ExceptionHandling>false</ExceptionHandling>
       <MinimalRebuild>true</MinimalRebuild>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -364,9 +405,8 @@
       <MinimalRebuild>true</MinimalRebuild>
       <PREfast>AnalyzeOnly</PREfast>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);NST_MSVC_OPTIMIZE;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);NST_MSVC_OPTIMIZE;__LIBRETRO__;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
     </ClCompile>
     <Link>
@@ -384,9 +424,8 @@
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;_LIB;%(PreprocessorDefinitions);NST_MSVC_OPTIMIZE;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_MSVC_OPTIMIZE;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <CallAttributedProfiling>Callcap</CallAttributedProfiling>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
@@ -409,9 +448,8 @@
       <CallAttributedProfiling>Fastcap</CallAttributedProfiling>
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;%(PreprocessorDefinitions);NST_MSVC_OPTIMIZE;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;PROFILE;FASTCAP;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_MSVC_OPTIMIZE;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -431,9 +469,8 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;_LIB;%(PreprocessorDefinitions);NST_NO_ZLIB;__LIBRETRO__;_SECURE_SCL=0</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
@@ -453,9 +490,8 @@
       <FavorSizeOrSpeed>Size</FavorSizeOrSpeed>
       <ExceptionHandling>false</ExceptionHandling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
-      <PrecompiledHeaderOutputFile>$(OutDir)$(ProjectName).pch</PrecompiledHeaderOutputFile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PreprocessorDefinitions>NDEBUG;_XBOX;LTCG;_LIB;%(PreprocessorDefinitions);NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_XBOX;LTCG;_LIB;%(PreprocessorDefinitions);__LIBRETRO__;NST_NO_ZLIB;_SECURE_SCL=0</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)\..\..\source;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>

@@ -36,7 +36,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName).lib"/>
+				OutputFile="$(OutDir)/libretro_xdk.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -71,7 +71,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName).lib"/>
+				OutputFile="$(OutDir)/libretro_xdk.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -107,7 +107,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName).lib"/>
+				OutputFile="$(OutDir)/libretro_xdk.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -142,7 +142,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName).lib"/>
+				OutputFile="$(OutDir)/libretro_xdk.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -178,7 +178,7 @@
 				Name="VCCustomBuildTool"/>
 			<Tool
 				Name="VCLibrarianTool"
-				OutputFile="$(OutDir)/$(ProjectName).lib"/>
+				OutputFile="$(OutDir)/libretro_xdk.lib"/>
 			<Tool
 				Name="VCPostBuildEventTool"/>
 			<Tool
@@ -309,16 +309,7 @@
 					RelativePath="..\..\..\source\core\NstVector.cpp">
 				</File>
 				<File
-					RelativePath="..\..\..\source\core\NstVideoFilter2xSaI.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\source\core\NstVideoFilterHqX.cpp">
-				</File>
-				<File
 					RelativePath="..\..\..\source\core\NstVideoFilterNone.cpp">
-				</File>
-				<File
-					RelativePath="..\..\..\source\core\NstVideoFilterScaleX.cpp">
 				</File>
 				<File
 					RelativePath="..\..\..\source\core\NstVideoRenderer.cpp">
