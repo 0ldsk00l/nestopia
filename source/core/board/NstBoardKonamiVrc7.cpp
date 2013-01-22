@@ -24,6 +24,7 @@
 
 #include <cstring>
 #include <cmath>
+#include <math.h>
 #include "NstBoard.hpp"
 #include "../NstTimer.hpp"
 #include "../NstFpuPrecision.hpp"
