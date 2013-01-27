@@ -232,7 +232,7 @@ namespace Nestopia
 
 			settings[TYPE_NTSC].attributes[ATR_RESCALE_PIC] =
 			(
-				filters["ntsc"]["tv-aspect"].No()
+				!filters["ntsc"]["tv-aspect"].Yes()
 			);
 
 			settings[TYPE_NTSC].attributes[ATR_NO_AUTO_TUNING] =
@@ -375,7 +375,7 @@ namespace Nestopia
 					).Check();
 
 					dialog.CheckBox(IDC_VIDEO_FILTER_NTSC_AUTO_TUNING).Check( !settings.attributes[ATR_NO_AUTO_TUNING] );
-					dialog.CheckBox(IDC_VIDEO_FILTER_NTSC_TV_ASPECT).Check( !settings.attributes[ATR_RESCALE_PIC] );
+					//dialog.CheckBox(IDC_VIDEO_FILTER_NTSC_TV_ASPECT).Check( !settings.attributes[ATR_RESCALE_PIC] );
 
 					for (uint i=IDC_VIDEO_FILTER_NTSC_SHARPNESS_SLIDER; i <= IDC_VIDEO_FILTER_NTSC_FRINGING_SLIDER; ++i)
 						dialog.Slider( i ).SetRange( 0, 200 );
@@ -671,7 +671,7 @@ namespace Nestopia
 						dialog.RadioButton( IDC_VIDEO_FILTER_NTSC_FIELDS_OFF ).Uncheck();
 
 						dialog.CheckBox( IDC_VIDEO_FILTER_NTSC_AUTO_TUNING ).Check();
-						dialog.CheckBox( IDC_VIDEO_FILTER_NTSC_TV_ASPECT ).Check();
+						//dialog.CheckBox( IDC_VIDEO_FILTER_NTSC_TV_ASPECT ).Check();
 
 						settings.attributes[ATR_NO_AUTO_TUNING] = false;
 
@@ -733,7 +733,7 @@ namespace Nestopia
 							settings.attributes[ATR_FIELDMERGING] = ATR_FIELDMERGING_OFF;
 						}
 
-						settings.attributes[ATR_RESCALE_PIC] = bool(dialog.CheckBox(IDC_VIDEO_FILTER_NTSC_TV_ASPECT).Unchecked());
+						//settings.attributes[ATR_RESCALE_PIC] = bool(dialog.CheckBox(IDC_VIDEO_FILTER_NTSC_TV_ASPECT).Unchecked());
 						break;
 				}
 
