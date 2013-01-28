@@ -48,8 +48,6 @@
 #include "main.h"
 #include "GL/glu.h"
 
-#define NST_VERSION "1.43"
-
 extern "C" {
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
@@ -551,11 +549,55 @@ std::string StrQuickSaveFile(int isvst)
 }
 
 void FlipFDSDisk() {
-	Fds fds( emulator );
+	Fds fds(emulator);
 
 	if (fds.CanChangeDiskSide()) {
 		fds.ChangeSide();
+		print_fds_info();
 	}
+}
+
+void SwitchFDSDisk() {
+	Fds fds(emulator);
+	
+	int currentdisk = fds.GetCurrentDisk();
+	
+	// If it's a multi-disk game, eject and insert the other disk
+	if (fds.GetNumDisks() > 1) {
+		fds.EjectDisk();
+		
+		if (currentdisk == 0) {
+			fds.InsertDisk(1, 0);
+		}
+		else {
+			fds.InsertDisk(0, 0);
+		}
+		
+		print_fds_info();
+	}
+}
+
+void print_fds_info() {
+	Fds fds(emulator);
+
+	char* disk;
+	char* side;
+	
+	if (fds.GetCurrentDisk() == 0) {
+		disk = "1";
+	}
+	else {
+		disk = "2";
+	}
+	
+	if (fds.GetCurrentDiskSide() == 0) {
+		side = "A";
+	}
+	else {
+		side = "B";
+	}
+	
+	printf("Fds: Disk %s Side %s\n", disk, side);
 }
 
 // save state to memory slot
@@ -1881,6 +1923,7 @@ void NstLoadGame(const char* filename)
 			Fds fds( emulator );
 
 			fds.InsertDisk(0, 0);
+			print_fds_info();
 		}
 	}
 

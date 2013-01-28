@@ -1,6 +1,7 @@
 void pause_clicked();
 void fullscreen_clicked();
 void flipdisk_clicked();
+void switchdisk_clicked();
 void reset_clicked();
 void about_clicked();
 void state_load();

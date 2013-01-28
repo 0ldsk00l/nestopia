@@ -17,5 +17,7 @@ void NstLaunchConfig();
 void get_screen_res();
 void ToggleFullscreen();
 void FlipFDSDisk();
+void SwitchFDSDisk();
+void print_fds_info();
 
 #endif

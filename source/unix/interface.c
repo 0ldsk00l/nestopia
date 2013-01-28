@@ -44,6 +44,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	GtkWidget *savestate;
 	GtkWidget *sep4;
 	GtkWidget *flipdisk;
+	GtkWidget *switchdisk;
 	GtkWidget *sep5;
 	GtkWidget *movieload;
 	GtkWidget *movierecord;
@@ -101,6 +102,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	sep4 = gtk_separator_menu_item_new();
 	flipdisk = gtk_image_menu_item_new_with_mnemonic("Flip FDS _Disk");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(flipdisk), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
+	switchdisk = gtk_image_menu_item_new_with_mnemonic("_Switch FDS Disk");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(switchdisk), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
 	sep5 = gtk_separator_menu_item_new();
 	movieload = gtk_image_menu_item_new_with_label("Load Movie...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(movieload), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
@@ -138,6 +141,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), fullscreen);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep5);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), flipdisk);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), switchdisk);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep6);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep7);
@@ -200,6 +204,9 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 		
 	g_signal_connect(G_OBJECT(flipdisk), "activate",
 		G_CALLBACK(flipdisk_clicked), NULL);
+	
+	g_signal_connect(G_OBJECT(switchdisk), "activate",
+		G_CALLBACK(switchdisk_clicked), NULL);
 		
 	g_signal_connect(G_OBJECT(movieload), "activate",
 		G_CALLBACK(movie_load), NULL);
