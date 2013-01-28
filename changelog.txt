@@ -1,4 +1,18 @@
 ----------------------------------------------------------------
+1.45-WIP
+----------------------------------------------------------------
+
+Unix Shell:
+
+ Additions:
+  - Added the ability to switch FDS disks for multi-disk games
+
+Windows Shell:
+
+ Changes:
+  - Redundant TV Aspect checkbox removed from NTSC filter dialog
+
+----------------------------------------------------------------
 1.44
 ----------------------------------------------------------------
 
