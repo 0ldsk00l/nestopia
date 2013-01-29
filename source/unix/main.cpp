@@ -12,6 +12,7 @@
 #include <sstream>
 #include <iomanip>
 #include <SDL.h>
+#include <SDL_endian.h>
 #include <string.h>
 #include <cassert>
 #include <sys/stat.h>
@@ -1563,9 +1564,15 @@ void SetupVideo()
 		opengl_init_structures();
 
 		renderState.bits.count = 32;
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+		renderState.bits.mask.r = 0x000000ff;
+		renderState.bits.mask.g = 0xff000000;
+		renderState.bits.mask.b = 0x00ff0000;
+	#else
 		renderState.bits.mask.r = 0x00ff0000;
 		renderState.bits.mask.g = 0x0000ff00;
 		renderState.bits.mask.b = 0x000000ff;
+	#endif
 	}
 	else
 	{
