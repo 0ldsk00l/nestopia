@@ -360,22 +360,22 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
-    <OutputFile>$(OutDir)nestopia_libretro_xdk360.lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='CodeAnalysis|Xbox 360'">
-    <OutputFile>$(OutDir)nestopia_libretro_xdk360.lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile|Xbox 360'">
-    <OutputFile>$(OutDir)nestopia_libretro_xdk360.lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Profile_FastCap|Xbox 360'">
-    <OutputFile>$(OutDir)nestopia_libretro_xdk360.lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Xbox 360'">
-    <OutputFile>$(OutDir)nestopia_libretro_xdk360.lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_LTCG|Xbox 360'">
-    <OutputFile>$(OutDir)nestopia_libretro_xdk360.lib</OutputFile>
+    <OutputFile>$(OutDir)libretro_xdk360.lib</OutputFile>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Xbox 360'">
     <ClCompile>
