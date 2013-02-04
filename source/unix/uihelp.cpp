@@ -683,6 +683,7 @@ GtkWidget* create_config(void) {
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "Scale?x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "hq?x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "2xSaI");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "xBR");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(scalecombo), sSettings->GetScale());
 	gtk_box_pack_start(GTK_BOX(scalebox), scalelabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(scalebox), scalecombo, FALSE, FALSE, 0);
