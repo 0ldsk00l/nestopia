@@ -19,7 +19,8 @@
 using namespace Nes;
 
 static uint32_t video_buffer[Api::Video::Output::WIDTH * Api::Video::Output::HEIGHT];
-static int16_t audio_buffer[2 * (44100 / 50)];
+static int16_t audio_buffer[(44100 / 50)];
+static int16_t audio_stereo_buffer[2 * (44100 / 50)];
 static Api::Emulator emulator;
 static Api::Machine *machine;
 
@@ -185,7 +186,11 @@ void retro_run(void)
    emulator.Execute(video, audio, input);
 
    video_cb(video_buffer, 256, 240, 1024);
-   audio_batch_cb(audio_buffer, is_pal ? 44100 / 50 : 44100 / 60);
+
+   unsigned frames = is_pal ? 44100 / 50 : 44100 / 60;
+   for (unsigned i = 0; i < frames; i++)
+      audio_stereo_buffer[(i << 1) + 0] = audio_stereo_buffer[(i << 1) + 1] = audio_buffer[i];
+   audio_batch_cb(audio_stereo_buffer, frames);
 }
 
 bool retro_load_game(const struct retro_game_info *info)
@@ -238,7 +243,7 @@ bool retro_load_game(const struct retro_game_info *info)
    Api::Sound isound(emulator);
    isound.SetSampleBits(16);
    isound.SetSampleRate(44100);
-   isound.SetSpeaker(Api::Sound::SPEAKER_STEREO);
+   isound.SetSpeaker(Api::Sound::SPEAKER_MONO);
 
    Api::Input(emulator).ConnectController(0, Api::Input::PAD1);
    Api::Input(emulator).ConnectController(1, Api::Input::PAD2);

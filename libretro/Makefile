@@ -30,53 +30,53 @@ endif
 LIBRETRO_DIR := libretro
 
 ifeq ($(platform), unix)
-   TARGET := libretro.so
+   TARGET := nestopia_libretro.so
    fpic := -fPIC
    SHARED := -shared -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform), osx)
-   TARGET := libretro.dylib
+   TARGET := nestopia_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
 else ifeq ($(platform), ps3)
 	HAVE_GCC_WARNINGS := 0
-   TARGET := libretro_ps3.a
+   TARGET := nestopia_libretro_ps3.a
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    PLATFORM_DEFINES := -D__CELLOS_LV2__
 else ifeq ($(platform), sncps3)
 	HAVE_GCC_WARNINGS := 0
-   TARGET := libretro_ps3.a
+   TARGET := nestopia_libretro_ps3.a
 	HAS_GCC := 0
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
    PLATFORM_DEFINES := -D__CELLOS_LV2__
 else ifeq ($(platform), psl1ght)
-   TARGET := libretro_psl1ght.a
+   TARGET := nestopia_libretro_psl1ght.a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
    CXX = $(PS3DEV)/ppu/bin/ppu-g++$(EXE_EXT)
    AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
    PLATFORM_DEFINES := -D__CELLOS_LV2__
 else ifeq ($(platform), xenon)
-   TARGET := libretro_xenon360.a
+   TARGET := nestopia_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
    CXX = xenon-g++$(EXE_EXT)
    AR = xenon-ar$(EXE_EXT)
    PLATFORM_DEFINES := -D__LIBXENON__
 else ifeq ($(platform), ngc)
-   TARGET := libretro_ngc.a
+   TARGET := nestopia_libretro_ngc.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    PLATFORM_DEFINES += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float
 else ifeq ($(platform), wii)
-   TARGET := libretro_wii.a
+   TARGET := nestopia_libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    PLATFORM_DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
 else
-   TARGET := retro.dll
+   TARGET := nestopia_retro.dll
    CC = gcc
    CXX = g++
    SHARED := -shared -static-libgcc -static-libstdc++ -Wl,-no-undefined -Wl,-version-script=link.T
