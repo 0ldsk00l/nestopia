@@ -6,11 +6,20 @@ Unix Shell:
 
  Additions:
   - Added the ability to switch FDS disks for multi-disk games
+  - xBR filter options
 
 Windows Shell:
 
+ Additions:
+  - xBR filter options
+
  Changes:
   - Redundant TV Aspect checkbox removed from NTSC filter dialog
+
+Core:
+
+ Additions:
+  - xBR filter added - Hyllian, notBald
 
 ----------------------------------------------------------------
 1.44

@@ -79,6 +79,14 @@ namespace Nestopia
 			{ IDC_VIDEO_FILTER_HQX_SCALING_2X,        &VideoFilters::OnCmdHqX        },
 			{ IDC_VIDEO_FILTER_HQX_SCALING_3X,        &VideoFilters::OnCmdHqX        },
 			{ IDC_VIDEO_FILTER_HQX_SCALING_4X,        &VideoFilters::OnCmdHqX        },
+			{ IDC_VIDEO_FILTER_XBR_SCALING_AUTO,      &VideoFilters::OnCmdxBR        },
+			{ IDC_VIDEO_FILTER_XBR_SCALING_2X,        &VideoFilters::OnCmdxBR        },
+			{ IDC_VIDEO_FILTER_XBR_SCALING_3X,        &VideoFilters::OnCmdxBR        },
+			{ IDC_VIDEO_FILTER_XBR_SCALING_4X,        &VideoFilters::OnCmdxBR        },
+			{ IDC_VIDEO_FILTER_XBR_ROUNDING_ALL,      &VideoFilters::OnCmdxBRRound   },
+			{ IDC_VIDEO_FILTER_XBR_ROUNDING_SOME,     &VideoFilters::OnCmdxBRRound   },
+			{ IDC_VIDEO_FILTER_XBR_ROUNDING_NONE,     &VideoFilters::OnCmdxBRRound   },
+			{ IDC_VIDEO_FILTER_BLEND,				  &VideoFilters::OnCmdAlpha		 },
 			{ IDC_VIDEO_FILTER_DEFAULT,               &VideoFilters::OnCmdDefault    },
 			{ IDOK,                                   &VideoFilters::OnCmdOk         }
 		};
@@ -97,6 +105,8 @@ namespace Nestopia
 		bleed      ( nes.GetColorBleed() ),
 		artifacts  ( nes.GetColorArtifacts() ),
 		fringing   ( nes.GetColorFringing() ),
+		corner_rounding ( nes.GetCornerRounding() ),
+		blend ( nes.GetBlend() ),
 		restore    ( true )
 		{}
 
@@ -171,17 +181,22 @@ namespace Nestopia
 					if (maxScreenScale >= 2)
 						type = TYPE_2XSAI;
 				}
+				else if (string == L"xbr")
+				{
+					if (maxScreenScale >= 2)
+						type = TYPE_XBR;
+				}
 			}
 
 			if (canDoBilinear)
 			{
 				for (uint i=0; i < NUM_TYPES; ++i)
 				{
-					NST_COMPILE_ASSERT(NUM_TYPES == 5);
+					NST_COMPILE_ASSERT(NUM_TYPES == 6);
 
 					static cstring const types[] =
 					{
-						"standard", "ntsc", "scalex", "hqx", "2xsai"
+						"standard", "ntsc", "scalex", "hqx", "2xsai", "xbr"
 					};
 
 					if (filters[types[i]]["bilinear"].Yes())
@@ -240,6 +255,8 @@ namespace Nestopia
 				filters["ntsc"]["auto-tuning"].No()
 			);
 
+			nes.SetBlend(!filters["xbr"]["blend-pixels"].No());
+
 			if (maxScreenScale >= 2)
 			{
 				GenericString scale( filters["scalex"]["scale"].Str() );
@@ -258,9 +275,29 @@ namespace Nestopia
 					scale == L"3" ? (maxScreenScale >= 3 ? ATR_HQ3X : ATR_HQ2X) :
 					scale == L"2" ? ATR_HQ2X : ATR_HQAX
 				);
+
+				scale = filters["xbr"]["scale"].Str();
+
+				settings[TYPE_XBR].attributes[ATR_TYPE] =
+				(
+					scale == L"4" ? (maxScreenScale >= 4 ? ATR_4XBR : maxScreenScale >= 3 ? ATR_3XBR : ATR_2XBR) :
+					scale == L"3" ? (maxScreenScale >= 3 ? ATR_3XBR : ATR_2XBR) :
+					scale == L"2" ? ATR_2XBR : ATR_AXBR
+				);
+
+				scale = filters["xbr"]["corner"].Str();
+
+				nes.SetCornerRounding
+				(
+					scale == L"None" ? ATR_NONE :
+					scale == L"All"  ? ATR_ALL :
+									   ATR_SOME
+				);
 			}
 
 			UpdateAutoModes( settings, nes, paletteMode );
+
+			nes.ClearFilterUpdateFlag();
 
 			return type;
 		}
@@ -275,11 +312,11 @@ namespace Nestopia
 		{
 			Configuration::Section filters( cfg["video"]["filters"] );
 
-			NST_COMPILE_ASSERT( NUM_TYPES == 5 );
+			NST_COMPILE_ASSERT( NUM_TYPES == 6 );
 
 			static cstring const types[] =
 			{
-				"standard", "ntsc", "scalex", "hqx", "2xsai"
+				"standard", "ntsc", "scalex", "hqx", "2xsai", "xbr"
 			};
 
 			filters["type"].Str() = types[type];
@@ -326,6 +363,21 @@ namespace Nestopia
 				settings[TYPE_HQX].attributes[ATR_TYPE] == ATR_HQ3X ? "3" :
 				settings[TYPE_HQX].attributes[ATR_TYPE] == ATR_HQ2X ? "2" :
                                                                       "auto"
+			);
+
+			filters["xbr"]["blend-pixels"].YesNo() = nes.GetBlend(); //<-- Note, conflicts with 2xbr
+			filters["xbr"]["scale"].Str() =
+			(
+				settings[TYPE_XBR].attributes[ATR_TYPE] == ATR_4XBR ? "4" :
+				settings[TYPE_XBR].attributes[ATR_TYPE] == ATR_3XBR ? "3" :
+				settings[TYPE_XBR].attributes[ATR_TYPE] == ATR_2XBR ? "2" :
+                                                                      "auto"
+			);
+			filters["xbr"]["corner"].Str() =
+			(
+				nes.GetCornerRounding() == ATR_ALL  ? "All"  :
+				nes.GetCornerRounding() == ATR_NONE ? "None" :
+												 	  "Some"
 			);
 		}
 
@@ -442,6 +494,38 @@ namespace Nestopia
 
 				case IDD_VIDEO_FILTER_2XSAI:
 					break;
+
+				case IDD_VIDEO_FILTER_XBR:
+					dialog.RadioButton(IDC_VIDEO_FILTER_BLEND).Check(nes.GetBlend());
+					switch (settings.attributes[ATR_TYPE])
+					{
+						case ATR_4XBR: idc = IDC_VIDEO_FILTER_XBR_SCALING_4X;   break;
+						case ATR_3XBR: idc = IDC_VIDEO_FILTER_XBR_SCALING_3X;   break;
+						case ATR_2XBR: idc = IDC_VIDEO_FILTER_XBR_SCALING_2X;   break;
+						default:       idc = IDC_VIDEO_FILTER_XBR_SCALING_AUTO; break;
+					}
+					dialog.RadioButton(idc).Check();
+
+					switch(nes.GetCornerRounding())
+					{
+						case ATR_NONE: idc = IDC_VIDEO_FILTER_XBR_ROUNDING_NONE; break;
+						case ATR_ALL:  idc = IDC_VIDEO_FILTER_XBR_ROUNDING_ALL;  break;
+						default:	   idc = IDC_VIDEO_FILTER_XBR_ROUNDING_SOME; break;
+					}
+					dialog.RadioButton(idc).Check();
+					
+					if (maxScreenScale < 4)
+					{
+						if (maxScreenScale < 3)
+						{
+							dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_AUTO).Disable();
+							dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_2X).Disable();
+							dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_3X).Disable();
+						}
+
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_4X).Disable();
+					}
+					break;
 			}
 
 			return true;
@@ -458,6 +542,8 @@ namespace Nestopia
 				nes.SetColorBleed      ( backup.bleed      );
 				nes.SetColorArtifacts  ( backup.artifacts  );
 				nes.SetColorFringing   ( backup.fringing   );
+				nes.SetCornerRounding  ( backup.corner_rounding );
+				nes.SetBlend           ( backup.blend      );
 			}
 
 			return true;
@@ -655,6 +741,65 @@ namespace Nestopia
 			return true;
 		}
 
+		ibool VideoFilters::OnCmdAlpha(Param& param)
+		{
+			if (param.Button().Clicked())
+			{
+				nes.SetBlend(dialog.RadioButton( IDC_VIDEO_FILTER_BLEND ).Checked());
+				Application::Instance::GetMainWindow().Redraw();
+			}
+
+			return true;
+		}
+
+		ibool VideoFilters::OnCmdxBR(Param& param)
+		{
+			if (param.Button().Clicked())
+			{
+				const uint id = param.Button().GetId();
+
+				settings.attributes[ATR_TYPE] =
+				(
+					id == IDC_VIDEO_FILTER_XBR_SCALING_2X ? ATR_2XBR :
+					id == IDC_VIDEO_FILTER_XBR_SCALING_3X ? ATR_3XBR :
+					id == IDC_VIDEO_FILTER_XBR_SCALING_4X ? ATR_4XBR :
+															ATR_AXBR
+				);
+
+				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_SCALING_AUTO ).Check( id == IDC_VIDEO_FILTER_XBR_SCALING_AUTO );
+				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_SCALING_2X   ).Check( id == IDC_VIDEO_FILTER_XBR_SCALING_2X   );
+				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_SCALING_3X   ).Check( id == IDC_VIDEO_FILTER_XBR_SCALING_3X   );
+				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_SCALING_4X   ).Check( id == IDC_VIDEO_FILTER_XBR_SCALING_4X   );
+
+				Application::Instance::GetMainWindow().Redraw();
+			}
+
+			return true;
+		}
+
+		ibool VideoFilters::OnCmdxBRRound(Param& param)
+		{
+			if (param.Button().Clicked())
+			{
+				const uint id = param.Button().GetId();
+
+				nes.SetCornerRounding
+				(
+					id == IDC_VIDEO_FILTER_XBR_ROUNDING_NONE ? ATR_NONE :
+					id == IDC_VIDEO_FILTER_XBR_ROUNDING_ALL  ? ATR_ALL  :
+															   ATR_SOME
+				);
+
+				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_ROUNDING_NONE ).Check( id == IDC_VIDEO_FILTER_XBR_ROUNDING_NONE );
+				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_ROUNDING_ALL   ).Check( id == IDC_VIDEO_FILTER_XBR_ROUNDING_ALL   );
+				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_ROUNDING_SOME   ).Check( id == IDC_VIDEO_FILTER_XBR_ROUNDING_SOME   );
+
+				Application::Instance::GetMainWindow().Redraw();
+			}
+
+			return true;
+		}
+
 		ibool VideoFilters::OnCmdDefault(Param& param)
 		{
 			if (param.Button().Clicked())
@@ -703,6 +848,19 @@ namespace Nestopia
 						break;
 
 					case IDD_VIDEO_FILTER_2XSAI:
+						break;
+
+					case IDD_VIDEO_FILTER_XBR:
+						dialog.RadioButton(IDC_VIDEO_FILTER_BLEND).Check();
+						settings.attributes[ATR_TYPE] = ATR_AXBR;
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_AUTO).Check();
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_2X).Uncheck();
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_3X).Uncheck();
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_SCALING_4X).Uncheck();
+						nes.SetCornerRounding(ATR_SOME);
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_ROUNDING_SOME).Check();
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_ROUNDING_ALL).Uncheck();
+						dialog.RadioButton(IDC_VIDEO_FILTER_XBR_ROUNDING_NONE).Uncheck();
 						break;
 				}
 

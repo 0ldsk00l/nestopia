@@ -44,6 +44,7 @@ namespace Nestopia
 				TYPE_SCALEX,
 				TYPE_HQX,
 				TYPE_2XSAI,
+				TYPE_XBR,
 				NUM_TYPES
 			};
 
@@ -58,7 +59,15 @@ namespace Nestopia
 				ATR_HQAX = 0,
 				ATR_HQ2X,
 				ATR_HQ3X,
-				ATR_HQ4X
+				ATR_HQ4X,
+				ATR_AXBR = 0,
+				ATR_2XBR,
+				ATR_3XBR,
+				ATR_4XBR,
+				ATR_NONE = 0,
+				ATR_SOME,
+				ATR_ALL,
+				ATR_DEFAULT = 0
 			};
 
 			enum
@@ -110,6 +119,8 @@ namespace Nestopia
 				const schar bleed;
 				const schar artifacts;
 				const schar fringing;
+				const schar corner_rounding;
+				const schar blend;
 				bool restore;
 			};
 
@@ -123,6 +134,9 @@ namespace Nestopia
 			ibool OnCmdNtscCable  (Param&);
 			ibool OnCmdScaleX     (Param&);
 			ibool OnCmdHqX        (Param&);
+			ibool OnCmdxBR        (Param&);
+			ibool OnCmdxBRRound   (Param&);
+			ibool OnCmdAlpha	  (Param&);
 
 			void UpdateScanlinesSlider() const;
 			void UpdateNtscSliders() const;
