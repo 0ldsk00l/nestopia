@@ -628,6 +628,58 @@ namespace Nestopia
 						state.filter = State::FILTER_2XSAI;
 					}
 					break;
+
+					case Filter::TYPE_XBR:
+					if (settings.adapter->maxScreenSize.x >= NES_WIDTH*2 && settings.adapter->maxScreenSize.y >= NES_HEIGHT*2)
+					{
+						int attribute = settings.filters[Filter::TYPE_XBR].attributes[Filter::ATR_TYPE];
+
+						if (attribute == Filter::ATR_AXBR)
+						{
+							const Point nes( rect.Size() );
+
+							if (screen.x >= nes.x*4 && screen.y >= nes.y*4)
+							{
+								attribute = Filter::ATR_4XBR;
+							}
+							else if (screen.x >= nes.x*3 && screen.y >= nes.y*3)
+							{
+								attribute = Filter::ATR_3XBR;
+							}
+							else if (screen.x >= nes.x*2 && screen.y >= nes.y*2)
+							{
+								attribute = Filter::ATR_2XBR;
+							}
+						}
+
+						switch (attribute)
+						{
+							case Filter::ATR_4XBR:
+
+								if (settings.adapter->maxScreenSize.x >= NES_WIDTH*4 && settings.adapter->maxScreenSize.y >= NES_HEIGHT*4)
+								{
+									scale = 4;
+									state.filter = State::FILTER_4XBR;
+									break;
+								}
+
+							case Filter::ATR_HQ3X:
+
+								if (settings.adapter->maxScreenSize.x >= NES_WIDTH*3 && settings.adapter->maxScreenSize.y >= NES_HEIGHT*3)
+								{
+									scale = 3;
+									state.filter = State::FILTER_3XBR;
+									break;
+								}
+
+							case Filter::ATR_HQ2X:
+
+								scale = 2;
+								state.filter = State::FILTER_2XBR;
+								break;
+						}
+					}
+					break;
 			}
 
 			state.width = state.width * scale;
@@ -905,7 +957,8 @@ namespace Nestopia
 					IDD_VIDEO_FILTER_NTSC,
 					IDD_VIDEO_FILTER_SCALEX,
 					IDD_VIDEO_FILTER_HQX,
-					IDD_VIDEO_FILTER_2XSAI
+					IDD_VIDEO_FILTER_2XSAI,
+					IDD_VIDEO_FILTER_XBR
 				};
 
 				VideoFilters
@@ -1204,6 +1257,7 @@ namespace Nestopia
 				comboBox.Add( Resource::String(IDS_VIDEO_FILTER_SCALEX) ).Data() = Filter::TYPE_SCALEX;
 				comboBox.Add( Resource::String(IDS_VIDEO_FILTER_HQX) ).Data() = Filter::TYPE_HQX;
 				comboBox.Add( Resource::String(IDS_VIDEO_FILTER_2XSAI) ).Data() = Filter::TYPE_2XSAI;
+				comboBox.Add( Resource::String(IDS_VIDEO_FILTER_XBR) ).Data() = Filter::TYPE_XBR;
 			}
 
 			for (uint i=0, size=comboBox.Size(); i < size; ++i)

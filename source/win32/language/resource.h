@@ -44,6 +44,7 @@
 #define IDD_LANGUAGE                            198
 #define IDD_CHOOSE                              199
 #define IDD_VIDEO_FILTER_2XSAI                  200
+#define IDD_VIDEO_FILTER_XBR                    202
 #define IDM_FILE_OPEN                           803
 #define IDM_FILE_CLOSE                          804
 #define IDM_FILE_LOAD_NST                       805
@@ -1151,3 +1152,13 @@
 #define IDS_PRIORITY_NORMAL                     40463
 #define IDS_PRIORITY_ABOVE_NORMAL               40464
 #define IDS_PRIORITY_HIGH                       40465
+#define IDC_VIDEO_FILTER_BLEND                  40467
+#define IDC_VIDEO_FILTER_XBR_SCALING_AUTO       40469
+#define IDC_VIDEO_FILTER_XBR_SCALING_2X         40471
+#define IDC_VIDEO_FILTER_XBR_SCALING_3X         40474
+#define IDC_VIDEO_FILTER_XBR_SCALING_4X         40475
+#define IDC_VIDEO_FILTER_XBR_ROUNDING_ALL       40477
+#define IDC_VIDEO_FILTER_XBR_ROUNDING_SOME      40479
+#define IDC_VIDEO_FILTER_XBR_ROUNDING_NONE      40481
+#define IDC_VIDEO_FILTER_XBR_CREDIT             40482
+#define IDS_VIDEO_FILTER_XBR                    40483

@@ -93,8 +93,8 @@ IDI_UNF_J          ICON           "unf_j.ico"
 //
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 VS_VERSION_INFO VERSIONINFO
-    FILEVERSION     0,1,44,0
-    PRODUCTVERSION  0,1,44,0
+    FILEVERSION     0,1,45,0
+    PRODUCTVERSION  0,1,45,0
     FILEOS          VOS__WINDOWS32
     FILETYPE        VFT_APP
     FILESUBTYPE     VFT2_UNKNOWN
@@ -107,7 +107,7 @@ VS_VERSION_INFO VERSIONINFO
         {
             VALUE "Comments", "http://0ldsk00l.ca/nestopia.html"
             VALUE "FileDescription", "Nestopia"
-            VALUE "FileVersion", "1.44"
+            VALUE "FileVersion", "1.45"
             VALUE "InternalName", "Nestopia"
             VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij, 2012-2013 R. Danbrook"
             VALUE "OriginalFilename", "Nestopia.exe"
