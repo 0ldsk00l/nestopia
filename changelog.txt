@@ -21,6 +21,9 @@ Core:
  Additions:
   - xBR filter added - Hyllian, notBald
 
+ Fixes:
+  - Triangle volume bug in Dendy mode - emu-russia
+
 ----------------------------------------------------------------
 1.44
 ----------------------------------------------------------------
