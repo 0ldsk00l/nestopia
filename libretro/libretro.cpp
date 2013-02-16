@@ -208,11 +208,16 @@ bool retro_load_game(const struct retro_game_info *info)
    // Hack. Nestopia API forces us to favor either.
    Api::Machine::FavoredSystem system = Api::Machine::FAVORED_NES_NTSC;
    is_pal = false;
-   if (info->path && strstr(info->path, "(E)"))
+   if (info->path && (strstr(info->path, "(E)") || strstr(info->path, "(Europe)")))
    {
       fprintf(stderr, "[Nestopia]: Favoring PAL.\n");
       system = Api::Machine::FAVORED_NES_PAL;
       is_pal = true;
+   }
+   else if (info->path && (strstr(info->path, "(J)") || strstr(info->path, "(Japan)")))
+   {
+      fprintf(stderr, "[Nestopia]: Favoring Famicom.\n");
+      system = Api::Machine::FAVORED_FAMICOM;
    }
 
    if (machine->LoadCartridge(ss, system))
