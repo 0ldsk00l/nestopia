@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <sstream>
+#include <fstream>
 
 #include <core/api/NstApiMachine.hpp>
 #include <core/api/NstApiEmulator.hpp>
@@ -13,6 +14,7 @@
 #include <core/api/NstApiInput.hpp>
 #include <core/api/NstApiCartridge.hpp>
 #include <core/api/NstApiUser.hpp>
+#include <core/api/NstApiFds.hpp>
 
 #define NST_VERSION "1.44"
 
@@ -23,6 +25,9 @@ static int16_t audio_buffer[(44100 / 50)];
 static int16_t audio_stereo_buffer[2 * (44100 / 50)];
 static Api::Emulator emulator;
 static Api::Machine *machine;
+static Api::Fds *fds;
+static char g_basename[256];
+static char g_rom_dir[256];
 
 static Api::Video::Output *video;
 static Api::Sound::Output *audio;
@@ -34,22 +39,57 @@ static bool is_pal;
 
 static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 {
+   const void *addr;
+   unsigned long addr_size;
+   char slash;
+
+#ifdef _WIN32
+   slash = '\\';
+#else
+   slash = '/';
+#endif
+
    switch (file.GetAction())
    {
       case Api::User::File::LOAD_BATTERY:
+      case Api::User::File::LOAD_EEPROM:
+      case Api::User::File::LOAD_TAPE:
+      case Api::User::File::LOAD_TURBOFILE:
          file.GetRawStorage(sram, sram_size);
          break;
 
       case Api::User::File::SAVE_BATTERY:
-      {
-         const void *addr;
-         unsigned long addr_size;
+      case Api::User::File::SAVE_EEPROM:
+      case Api::User::File::SAVE_TAPE:
+      case Api::User::File::SAVE_TURBOFILE:
          file.GetContent(addr, addr_size);
          if (addr != sram || sram_size != addr_size)
             fprintf(stderr, "[Nestopia]: SRAM changed place in RAM!\n");
          break;
-      }
+      case Api::User::File::LOAD_FDS:
+         {
+            char base[256];
+            snprintf(base, sizeof(base), "%s%c%s.sav", g_rom_dir, slash, g_basename);
+            fprintf(stderr, "Want to load FDS sav from: %s\n", base);
+            std::ifstream in_tmp(base,std::ifstream::in|std::ifstream::binary);
 
+            if (!in_tmp.is_open())
+               return;
+
+            file.SetPatchContent(in_tmp);
+         }
+         break;
+      case Api::User::File::SAVE_FDS:
+         {
+            char base[256];
+            snprintf(base, sizeof(base), "%s%c%s.sav", g_rom_dir, slash, g_basename);
+            fprintf(stderr, "Want to save FDS sav to: %s\n", base);
+            std::ofstream out_tmp(base,std::ifstream::out|std::ifstream::binary);
+
+            if (out_tmp.is_open())
+               file.GetPatchContent(Api::User::File::PATCH_UPS, out_tmp);
+         }
+         break;
       default:
          break;
    }
@@ -66,10 +106,18 @@ void retro_init(void)
 
 void retro_deinit(void)
 {
+   if (machine->Is(Nes::Api::Machine::DISK))
+   {
+      if (fds)
+         delete fds;
+      fds = 0;
+   }
+   
    delete machine;
    delete video;
    delete audio;
    delete input;
+
    machine = 0;
    video   = 0;
    audio   = 0;
@@ -149,6 +197,12 @@ void retro_set_video_refresh(retro_video_refresh_t cb)
 void retro_reset(void)
 {
    machine->Reset(false);
+
+   if (machine->Is(Nes::Api::Machine::DISK))
+   {
+      fds->EjectDisk();
+      fds->InsertDisk(0, 0);
+   }
 }
 
 typedef struct
@@ -178,6 +232,13 @@ static void update_input()
       for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
          input->pad[p].buttons |= input_state_cb(p,
                RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
+
+   if (machine->Is(Nes::Api::Machine::DISK))
+   {
+      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y) &&
+            fds->CanChangeDiskSide())
+         fds->ChangeSide();
+   }
 }
 
 void retro_run(void)
@@ -193,8 +254,45 @@ void retro_run(void)
    audio_batch_cb(audio_stereo_buffer, frames);
 }
 
+static void extract_basename(char *buf, const char *path, size_t size)
+{
+   const char *base = strrchr(path, '/');
+   if (!base)
+      base = strrchr(path, '\\');
+   if (!base)
+      base = path;
+
+   if (*base == '\\' || *base == '/')
+      base++;
+
+   strncpy(buf, base, size - 1);
+   buf[size - 1] = '\0';
+
+   char *ext = strrchr(buf, '.');
+   if (ext)
+      *ext = '\0';
+}
+
+static void extract_directory(char *buf, const char *path, size_t size)
+{
+   strncpy(buf, path, size - 1);
+   buf[size - 1] = '\0';
+
+   char *base = strrchr(buf, '/');
+   if (!base)
+      base = strrchr(buf, '\\');
+
+   if (base)
+      *base = '\0';
+   else
+      buf[0] = '\0';
+}
+
 bool retro_load_game(const struct retro_game_info *info)
 {
+   extract_basename(g_basename, info->path, sizeof(g_basename));
+   extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
+
    enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
    if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
    {
@@ -220,8 +318,46 @@ bool retro_load_game(const struct retro_game_info *info)
       system = Api::Machine::FAVORED_FAMICOM;
    }
 
-   if (machine->LoadCartridge(ss, system))
+   if (info->path && (strstr(info->path, ".fds") || strstr(info->path, ".FDS")))
+   {
+      fds = new Api::Fds(emulator);
+
+      if (fds)
+      {
+         const char *dir;
+         char fds_bios_path[256];
+         /* search for BIOS in system directory */
+         bool found = false;
+
+         if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
+            return false;
+
+         snprintf(fds_bios_path, sizeof(fds_bios_path), "%sdisksys.rom", dir);
+         fprintf(stderr, "FDS BIOS path: %s\n", fds_bios_path);
+
+         std::ifstream *fds_bios_file = new std::ifstream(fds_bios_path, std::ifstream::in|std::ifstream::binary);
+
+         if (fds_bios_file->is_open())
+         {
+            fds->SetBIOS(fds_bios_file);
+         }
+         else
+         {
+            delete fds_bios_file;
+            return false;
+         }
+
+         system = Api::Machine::FAVORED_FAMICOM;
+      }
+      else
+         return false;
+   }
+
+   if (machine->Load(ss, system))
       return false;
+
+   if (machine->Is(Nes::Api::Machine::DISK))
+      fds->InsertDisk(0, 0);
 
    machine->SetMode(is_pal ? Api::Machine::PAL : Api::Machine::NTSC);
    fprintf(stderr, "[Nestopia]: Machine is %s.\n", is_pal ? "PAL" : "NTSC");
