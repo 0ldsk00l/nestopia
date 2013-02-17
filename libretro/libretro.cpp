@@ -18,6 +18,10 @@
 
 #define NST_VERSION "1.44"
 
+#ifdef _WIN32
+#define snprintf _snprintf
+#endif
+
 using namespace Nes;
 
 static uint32_t video_buffer[Api::Video::Output::WIDTH * Api::Video::Output::HEIGHT];
