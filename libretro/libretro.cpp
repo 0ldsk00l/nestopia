@@ -242,6 +242,13 @@ static void update_input()
       if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y) &&
             fds->CanChangeDiskSide())
          fds->ChangeSide();
+      
+      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X) && (fds->GetNumDisks() > 1))
+      {
+         int currdisk = fds->GetCurrentDisk();
+         fds->EjectDisk();
+         fds->InsertDisk(!currdisk, 0);
+      }
    }
 }
 
