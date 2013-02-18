@@ -330,13 +330,20 @@ bool retro_load_game(const struct retro_game_info *info)
       {
          const char *dir;
          char fds_bios_path[256];
+         char slash;
          /* search for BIOS in system directory */
          bool found = false;
 
          if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
             return false;
 
-         snprintf(fds_bios_path, sizeof(fds_bios_path), "%sdisksys.rom", dir);
+#if defined(_WIN32)
+         slash = '\\';
+#else
+         slash = '/';
+#endif
+
+         snprintf(fds_bios_path, sizeof(fds_bios_path), "%s%cdisksys.rom", dir, slash);
          fprintf(stderr, "FDS BIOS path: %s\n", fds_bios_path);
 
          std::ifstream *fds_bios_file = new std::ifstream(fds_bios_path, std::ifstream::in|std::ifstream::binary);
