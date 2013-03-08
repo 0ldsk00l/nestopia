@@ -342,7 +342,7 @@ namespace Nes
 					}
 				}
 
-				if (profileEx.nmt == ProfileEx::NMT_HORIZONTAL)
+				if (profileEx.nmt == ProfileEx::NMT_VERTICAL)
 				{
 					profile.board.solderPads = Profile::Board::SOLDERPAD_V;
 				}
