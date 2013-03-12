@@ -74,7 +74,7 @@ char windowid[24];
 
 int playernumber = 0;
 
-extern int xres, yres, schedule_stop;
+extern int cur_Rheight, cur_Rwidth, schedule_stop;
 
 bool wasplaying = 0;
 
@@ -636,7 +636,7 @@ void movie_stop() {
 }
 
 void redraw_request() {
-	redraw_drawingarea(xres, yres);
+	redraw_drawingarea(cur_Rwidth, cur_Rheight);
 }
 
 GtkWidget* create_config(void) {

@@ -34,7 +34,6 @@ extern "C" {
 #include "7zAlloc.h"
 
 #include "interface.h"
-//#include "callbacks.h"
 }
 
 #define MAX_ITEMS	(512)
