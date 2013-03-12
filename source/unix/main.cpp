@@ -76,13 +76,12 @@ static long exholding[48000*2];
 
 static unsigned short keys[65536];
 
-static int updateok, playing = 0, cur_width, cur_Rwidth, cur_height, cur_Rheight, loaded = 0, framerate;
+static int updateok, playing = 0, cur_width, cur_height, loaded = 0, framerate;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
 static SDL_Joystick *joy[10];
 
-int xres;
-int yres;
+int cur_Rheight, cur_Rwidth;
 
 extern int lnxdrv_apimode;
 extern GtkWidget *mainwindow;
@@ -566,14 +565,7 @@ void SwitchFDSDisk() {
 	// If it's a multi-disk game, eject and insert the other disk
 	if (fds.GetNumDisks() > 1) {
 		fds.EjectDisk();
-		
-		if (currentdisk == 0) {
-			fds.InsertDisk(1, 0);
-		}
-		else {
-			fds.InsertDisk(0, 0);
-		}
-		
+		fds.InsertDisk(!currentdisk, 0);
 		print_fds_info();
 	}
 }
@@ -583,21 +575,10 @@ void print_fds_info() {
 
 	char* disk;
 	char* side;
-	
-	if (fds.GetCurrentDisk() == 0) {
-		disk = "1";
-	}
-	else {
-		disk = "2";
-	}
-	
-	if (fds.GetCurrentDiskSide() == 0) {
-		side = "A";
-	}
-	else {
-		side = "B";
-	}
-	
+
+	fds.GetCurrentDisk() == 0 ? disk = "1" : disk = "2";
+	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
+
 	printf("Fds: Disk %s Side %s\n", disk, side);
 }
 
@@ -837,7 +818,6 @@ static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
 	}
 }
 
-
 // match input event; if pind is not NULL, continue after it
 // on is set if the key/button is hit, clear if key is up/axis centered
 static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, bool &on)
@@ -874,16 +854,8 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 					&& pind->evt.jbutton.which == evt.jbutton.which
 					&& pind->evt.jbutton.button == evt.jbutton.button;
 				on = (evt.jbutton.state == SDL_PRESSED);
-				//printf("%d", on);
 				break;
 
-			/* 
-			 * Below is the dirtiest hack I've ever seen/done. But it works.
-			 * The whole input system needs to be rewritten... it doesn't
-			 * look like hat switches were intended to be used originally.
-			 * I tried to do this cleanly, but after 4 days I said "fuck it".
-			 * Try to do it cleanly. I DARE YOU.
-			*/			
 			case SDL_JOYHATMOTION:
 					match = pind->evt.type == SDL_JOYHATMOTION
 						&& pind->evt.jhat.which == evt.jhat.which
@@ -921,7 +893,6 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 						return pind;
 					}
 				break;
-				// End of dirty hack
 
 			case SDL_JOYAXISMOTION:
 			{
@@ -1397,10 +1368,6 @@ void get_screen_res() {
 			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
 			break;
 	}
-
-	//This is somewhat dirty, but it makes it easier to pass the data to other functions
-	xres = cur_Rwidth;
-	yres = cur_Rheight;
 }
 
 void SetupVideo()
