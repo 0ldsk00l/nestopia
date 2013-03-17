@@ -37,6 +37,13 @@ else ifeq ($(platform), osx)
    TARGET := nestopia_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
+else ifeq ($(platform), ios)
+   TARGET := nestopia_libretro.dylib
+   fpic := -fPIC
+   SHARED := -dynamiclib
+
+   CC = clang -arch armv7 -isysroot $(IOSSDK)
+   CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
 else ifeq ($(platform), ps3)
 	HAVE_GCC_WARNINGS := 0
    TARGET := nestopia_libretro_ps3.a
