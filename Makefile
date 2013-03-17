@@ -10,7 +10,7 @@ CFLAGS ?= -O3 -g3
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
 CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/unix/unzip
-CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/unix/7zip
+CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc
 SDL_CFLAGS = $(shell sdl-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
 CFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
@@ -51,11 +51,6 @@ CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 OBJS = objs/unix/main.o objs/unix/oss.o objs/unix/interface.o objs/unix/settings.o 
 OBJS += objs/unix/auxio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
 OBJS += objs/unix/seffect.o objs/unix/uihelp.o
-
-# 7-zip decoder (from LZMA SDK 4.58 beta)
-OBJS += objs/unix/7zip/7zAlloc.o objs/unix/7zip/7zBuf.o objs/unix/7zip/7zCrc.o objs/unix/7zip/7zDecode.o objs/unix/7zip/7zExtract.o 
-OBJS += objs/unix/7zip/7zHeader.o objs/unix/7zip/7zIn.o objs/unix/7zip/7zItem.o objs/unix/7zip/LzmaDec.o
-OBJS += objs/unix/7zip/Alloc.o objs/unix/7zip/Bcj2.o objs/unix/7zip/Bra.o objs/unix/7zip/Bra86.o objs/unix/7zip/BraIA64.o
 
 # zip decoder
 OBJS += objs/unix/unzip/unzip.o
