@@ -27,12 +27,6 @@
 
 extern "C" {
 #include <gtk/gtk.h>
-
-#include "7zCrc.h"
-#include "7zIn.h"
-#include "7zExtract.h"
-#include "7zAlloc.h"
-
 #include "interface.h"
 }
 
@@ -360,42 +354,8 @@ size_t MyReadFile(MY_FILE_HANDLE file, void *data, size_t size)
   return fread(data, 1, size, file); 
 }
 
-typedef struct _CFileInStream
-{
-  ISzInStream InStream;
-  MY_FILE_HANDLE File;
-} CFileInStream;
-
-
 #define kBufferSize (1 << 12)
 Byte g_Buffer[kBufferSize];
-
-SRes SzFileReadImp(void *object, void **buffer, size_t *size)
-{
-  CFileInStream *s = (CFileInStream *)object;
-  if (*size > kBufferSize)
-    *size = kBufferSize;
-  *size = MyReadFile(s->File, g_Buffer, *size);
-  *buffer = g_Buffer;
-  return SZ_OK;
-}
-
-SRes SzFileSeekImp(void *object, CFileSize pos, ESzSeek origin)
-{
-  CFileInStream *s = (CFileInStream *)object;
-
-  int moveMethod;
-  int res;
-  switch (origin) 
-  {
-    case SZ_SEEK_SET: moveMethod = SEEK_SET; break;
-    case SZ_SEEK_CUR: moveMethod = SEEK_CUR; break;
-    case SZ_SEEK_END: moveMethod = SEEK_END; break;
-    default: return SZ_ERROR_PARAM;
-  }
-  res = fseek(s->File, (long)pos, moveMethod );
-  return (res == 0) ? SZ_OK : SZ_ERROR_FAIL;
-}
 
 int auxio_load_archive(const char *filename, unsigned char **dataout, int *datasize, int *dataoffset, const char *filetoload, char *outname)
 {
@@ -510,94 +470,10 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 		unzClose(zipArchive);
 	}
 	else if ((idbuf[0] == '7') && (idbuf[1] == 'z') && (idbuf[2] == 0xbc) && (idbuf[3] == 0xaf)) 
-	{	// it's 7zip
-		CFileInStream archiveStream;
-		SRes res;
-		CSzArEx db;              /* 7z archive database structure */
-		ISzAlloc allocImp;       /* memory functions for main pool */
-		ISzAlloc allocTempImp;   /* memory functions for temporary pool */
-
-		archiveStream.File = fopen(filename, "rb");
-		if (!archiveStream.File)
-		{
-			return 0;
-		}
-
-		archiveStream.InStream.Read = SzFileReadImp;
-		archiveStream.InStream.Seek = SzFileSeekImp;
-
-		allocImp.Alloc = SzAlloc;
-		allocImp.Free = SzFree;
-
-		allocTempImp.Alloc = SzAllocTemp;
-		allocTempImp.Free = SzFreeTemp;
-
-		// init 7zip internals
-		CrcGenerateTable();
-		SzArEx_Init(&db);
-
-		res = SzArEx_Open(&db, &archiveStream.InStream, &allocImp, &allocTempImp);
-		if (res == SZ_OK)
-		{
-			int i;
-
-			for (i = 0; i < db.db.NumFiles; i++)
-			{
-				CSzFileItem *item = db.db.Files + i;
-
-				if (!item->IsDirectory)
-				{
-					if (filetoload != NULL)
-					{
-						if (!strcasecmp(filetoload, item->Name))
-						{
-							UInt32 blockIndex = 0xFFFFFFFF; /* it can have any value before first call (if outBuffer = 0) */
-							Byte *outBuffer = 0; /* it must be 0 before first call for each new archive. */
-							size_t outBufferSize = 0;  /* it can have any value before first call (if outBuffer = 0) */
-							size_t offset;
-							size_t outSizeProcessed;
-
-							res = SzAr_Extract(&db, &archiveStream.InStream, i, 
-							        &blockIndex, &outBuffer, &outBufferSize, 
-							        &offset, &outSizeProcessed, 
-							        &allocImp, &allocTempImp);
-						
-							if (res == SZ_OK)
-							{
-								SzArEx_Free(&db, &allocImp);
-								fclose(archiveStream.File);
-
-								*datasize = (int)outBufferSize;
-								*dataout = (unsigned char *)outBuffer;
-								*dataoffset = (int)offset;
-
-								return 1;
-							}
-							else
-							{
-								std::cout << "Error extracting 7zip!\n";
-							}
-						}
-					}
-
-					if (checkExtension(item->Name))
-					{
-						char *tmpstr;
-
-						tmpstr = (char *)malloc(strlen(item->Name)+1);
-						strcpy(tmpstr, item->Name);
-
-						// add to the file list
-						filelist.push_back(tmpstr);
-						filesFound++;
-					}
-				}
-			}
-
-			SzArEx_Free(&db, &allocImp);
-			fclose(archiveStream.File);
-		}
+	{
+		printf("Tried to open a 7zip file\n");
 	}
+	
 	else if ((idbuf[0] == 'R') && (idbuf[1] == 'a') && (idbuf[2] == 'r') && (idbuf[3] == '!')) 
 	{	// it's rar 
 		
