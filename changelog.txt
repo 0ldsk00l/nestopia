@@ -7,6 +7,13 @@ Unix Shell:
  Additions:
   - Added the ability to switch FDS disks for multi-disk games
   - xBR filter options
+  - Support for more archive formats through libarchive
+  
+ Changes:
+  - Removed internal zip and 7zip decoders in favour of libarchive
+  
+ Fixes:
+  - 7zip CRC check segfault
 
 Windows Shell:
 

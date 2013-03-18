@@ -9,7 +9,7 @@ CXX  = @g++
 CFLAGS ?= -O3 -g3
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
-CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/unix/unzip
+CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input
 CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc
 SDL_CFLAGS = $(shell sdl-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
@@ -28,11 +28,11 @@ BIN  = nestopia
 
 ifeq ($(UNAME), Linux)
 	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
-	LIBS = -lstdc++ -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	LIBS = -lstdc++ -lm -lz -larchive -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 endif
 ifneq ($(UNAME), Linux)
 	CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
-	LIBS = -lstdc++ -lm -lz $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	LIBS = -lstdc++ -lm -lz -larchive $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 	CPPFLAGS += -DBSD
 endif
 
@@ -51,9 +51,6 @@ CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 OBJS = objs/unix/main.o objs/unix/oss.o objs/unix/interface.o objs/unix/settings.o 
 OBJS += objs/unix/auxio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
 OBJS += objs/unix/seffect.o objs/unix/uihelp.o
-
-# zip decoder
-OBJS += objs/unix/unzip/unzip.o
 
 # core objs
 OBJS += objs/core/NstApu.o              objs/core/NstFds.o            objs/core/NstPpu.o              objs/core/NstVector.o
