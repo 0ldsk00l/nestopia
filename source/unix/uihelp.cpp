@@ -162,6 +162,13 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 	gtk_file_filter_add_pattern(filter, "*.nsf");
 	gtk_file_filter_add_pattern(filter, "*.zip");
 	gtk_file_filter_add_pattern(filter, "*.7z");
+	gtk_file_filter_add_pattern(filter, "*.txz");
+	gtk_file_filter_add_pattern(filter, "*.tar.xz");
+	gtk_file_filter_add_pattern(filter, "*.tgz");
+	gtk_file_filter_add_pattern(filter, "*.tar.gz");
+	gtk_file_filter_add_pattern(filter, "*.tbz");
+	gtk_file_filter_add_pattern(filter, "*.tar.bz2");
+
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
