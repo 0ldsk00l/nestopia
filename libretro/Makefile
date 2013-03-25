@@ -44,6 +44,15 @@ else ifeq ($(platform), ios)
 
    CC = clang -arch armv7 -isysroot $(IOSSDK)
    CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
+else ifeq ($(platform), qnx)
+   TARGET := nestopia_libretro.so
+   fpic := -fPIC
+   SHARED := -lm -shared -Wl,-version-script=link.T -Wl,-no-undefined
+
+	CC = qcc -Vgcc_ntoarmv7le
+	CXX = QCC -Vgcc_ntoarmv7le
+	AR = QCC -Vgcc_ntoarmv7le
+	PLATFORM_DEFINES := -D__BLACKBERRY_QNX__ -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 else ifeq ($(platform), ps3)
 	HAVE_GCC_WARNINGS := 0
    TARGET := nestopia_libretro_ps3.a
