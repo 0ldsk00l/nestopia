@@ -326,7 +326,7 @@ INT16 m1sdr_Init(int sample_rate)
 	case 1:	// ALSA
 
 		// Try to open audio device
-		if ((err = snd_pcm_open(&pHandle, "plughw:0,0", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
+		if ((err = snd_pcm_open(&pHandle, "default", SND_PCM_STREAM_PLAYBACK, 0)) < 0) {
 			fprintf(stderr, "ALSA: Could not open soundcard (%s)\n", snd_strerror(err));
 			hw_present = 0;
 			return 0;
