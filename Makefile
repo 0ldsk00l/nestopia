@@ -9,8 +9,8 @@ CXX  = @g++
 CFLAGS ?= -O3 -g3
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
-CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input -Isource/unix/unzip
-CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc -Isource/unix/7zip
+CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input
+CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc
 SDL_CFLAGS = $(shell sdl-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
 CFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
@@ -28,11 +28,11 @@ BIN  = nestopia
 
 ifeq ($(UNAME), Linux)
 	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
-	LIBS = -lstdc++ -lm -lz -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	LIBS = -lstdc++ -lm -lz -larchive -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 endif
 ifneq ($(UNAME), Linux)
 	CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
-	LIBS = -lstdc++ -lm -lz $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	LIBS = -lstdc++ -lm -lz -larchive $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
 	CPPFLAGS += -DBSD
 endif
 
@@ -52,21 +52,13 @@ OBJS = objs/unix/main.o objs/unix/oss.o objs/unix/interface.o objs/unix/settings
 OBJS += objs/unix/auxio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
 OBJS += objs/unix/seffect.o objs/unix/uihelp.o
 
-# 7-zip decoder (from LZMA SDK 4.58 beta)
-OBJS += objs/unix/7zip/7zAlloc.o objs/unix/7zip/7zBuf.o objs/unix/7zip/7zCrc.o objs/unix/7zip/7zDecode.o objs/unix/7zip/7zExtract.o 
-OBJS += objs/unix/7zip/7zHeader.o objs/unix/7zip/7zIn.o objs/unix/7zip/7zItem.o objs/unix/7zip/LzmaDec.o
-OBJS += objs/unix/7zip/Alloc.o objs/unix/7zip/Bcj2.o objs/unix/7zip/Bra.o objs/unix/7zip/Bra86.o objs/unix/7zip/BraIA64.o
-
-# zip decoder
-OBJS += objs/unix/unzip/unzip.o
-
 # core objs
 OBJS += objs/core/NstApu.o              objs/core/NstFds.o            objs/core/NstPpu.o              objs/core/NstVector.o
 OBJS += objs/core/NstAssert.o           objs/core/NstFile.o           objs/core/NstProperties.o       objs/core/NstVideoFilter2xSaI.o
 OBJS += objs/core/NstCartridge.o        objs/core/NstImage.o          objs/core/NstRam.o              objs/core/NstVideoFilterHqX.o
 OBJS += objs/core/NstCartridgeInes.o    objs/core/NstImageDatabase.o  objs/core/NstSha1.o             objs/core/NstVideoFilterNone.o
 OBJS += objs/core/NstCartridgeRomset.o  objs/core/NstLog.o            objs/core/NstSoundPcm.o         objs/core/NstVideoFilterNtsc.o
-OBJS += objs/core/NstCartridgeUnif.o    objs/core/NstMachine.o        objs/core/NstSoundPlayer.o      objs/core/NstVideoFilterScaleX.o
+OBJS += objs/core/NstCartridgeUnif.o    objs/core/NstMachine.o        objs/core/NstSoundPlayer.o      objs/core/NstVideoFilterScaleX.o	objs/core/NstVideoFilterxBR.o
 OBJS += objs/core/NstCheats.o           objs/core/NstMemory.o         objs/core/NstSoundRenderer.o    objs/core/NstVideoRenderer.o
 OBJS += objs/core/NstChecksum.o         objs/core/NstNsf.o            objs/core/NstState.o            objs/core/NstVideoScreen.o
 OBJS += objs/core/NstChips.o            objs/core/NstPatcher.o        objs/core/NstStream.o           objs/core/NstXml.o

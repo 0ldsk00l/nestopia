@@ -65,7 +65,8 @@ namespace Nestopia
 				SAVE_WINDOWPOS,
 				SAVE_LAUNCHERSIZE,
 				SAVE_SETTINGS,
-				NUM_SETTINGS
+				NUM_SETTINGS,
+				DISABLE_STATUSMSG
 			};
 
 			enum Priority
@@ -93,6 +94,7 @@ namespace Nestopia
 				Priority priority;
 				Nes::Machine::FavoredSystem favoredSystem;
 				bool alwaysAskSystem;
+				bool disableStatusMsg;
 			}   settings;
 
 			Object::Heap<Window::Preferences> dialog;
@@ -118,6 +120,11 @@ namespace Nestopia
 			Nes::Machine::AskProfile GetAlwaysAskProfile() const
 			{
 				return settings.alwaysAskSystem ? Nes::Machine::ASK_PROFILE : Nes::Machine::DONT_ASK_PROFILE;
+			}
+
+			bool GetDisableStatusMsg() const
+			{
+				return settings.disableStatusMsg;
 			}
 		};
 	}
