@@ -47,10 +47,10 @@ else ifeq ($(platform), ios)
 else ifeq ($(platform), qnx)
    TARGET := nestopia_libretro.so
    fpic := -fPIC
-   SHARED := -lm -shared -Wl,-version-script=link.T -Wl,-no-undefined
+   SHARED := -lcpp -lm -shared -Wl,-version-script=link.T -Wl,-no-undefined
 
 	CC = qcc -Vgcc_ntoarmv7le
-	CXX = QCC -Vgcc_ntoarmv7le
+	CXX = QCC -Vgcc_ntoarmv7le_cpp
 	AR = QCC -Vgcc_ntoarmv7le
 	PLATFORM_DEFINES := -D__BLACKBERRY_QNX__ -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 else ifeq ($(platform), ps3)
