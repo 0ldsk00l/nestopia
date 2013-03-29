@@ -121,6 +121,11 @@ namespace Nestopia
 			{
 				return settings.alwaysAskSystem ? Nes::Machine::ASK_PROFILE : Nes::Machine::DONT_ASK_PROFILE;
 			}
+
+			bool GetDisableStatusMsg() const
+			{
+				return settings.disableStatusMsg;
+			}
 		};
 	}
 }

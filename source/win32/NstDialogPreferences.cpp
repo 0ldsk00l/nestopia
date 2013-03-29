@@ -575,7 +575,7 @@ namespace Nestopia
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_NETPLAY_GAMELIST ).Check( true  );
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_WINDOWPOS        ).Check( false );
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_LAUNCHERSIZE     ).Check( false );
-			dialog.CheckBox( IDC_PREFERENCES_DISABLE_STATUSMSG     ).Check( true  );
+			dialog.CheckBox( IDC_PREFERENCES_DISABLE_STATUSMSG     ).Check( false );
 
 			dialog.ComboBox( IDC_PREFERENCES_PRIORITY )[ PRIORITY_NORMAL ].Select();
 
