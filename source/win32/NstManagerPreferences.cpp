@@ -47,7 +47,8 @@ namespace Nestopia
 			Preferences::SAVE_WINDOWPOS           - Window::Preferences::SAVE_WINDOWPOS           == 0 &&
 			Preferences::SAVE_LAUNCHERSIZE        - Window::Preferences::SAVE_LAUNCHERSIZE        == 0 &&
 			Preferences::SAVE_SETTINGS            - Window::Preferences::SAVE_SETTINGS            == 0 &&
-			Preferences::NUM_SETTINGS             - Window::Preferences::NUM_SETTINGS             == 0
+			Preferences::NUM_SETTINGS             - Window::Preferences::NUM_SETTINGS             == 0 &&
+			Preferences::DISABLE_STATUSMSG        - Window::Preferences::DISABLE_STATUSMSG        == 0
 		);
 
 		NST_COMPILE_ASSERT
@@ -95,6 +96,7 @@ namespace Nestopia
 			settings.priority = static_cast<Priority>(dialog->GetSettings().priority);
 			settings.favoredSystem = dialog->GetSettings().favoredSystem;
 			settings.alwaysAskSystem = dialog->GetSettings().alwaysAskSystem;
+			settings.disableStatusMsg = dialog->GetSettings().disableStatusMsg;
 
 			UpdateMenuColor();
 		}

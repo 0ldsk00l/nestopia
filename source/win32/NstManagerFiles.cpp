@@ -371,7 +371,9 @@ namespace Nestopia
 				case Emulator::EVENT_LOAD:
 				case Emulator::EVENT_UNLOAD:
 
-					DisplayLoadMessage( event == Emulator::EVENT_LOAD );
+					if (!preferences.GetDisableStatusMsg())
+						DisplayLoadMessage( event == Emulator::EVENT_LOAD );
+
 					UpdateMenu();
 					break;
 

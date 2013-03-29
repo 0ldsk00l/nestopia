@@ -74,7 +74,7 @@ char windowid[24];
 
 int playernumber = 0;
 
-extern int xres, yres, schedule_stop;
+extern int cur_Rheight, cur_Rwidth, schedule_stop;
 
 bool wasplaying = 0;
 
@@ -162,6 +162,13 @@ void on_open_clicked(GtkButton *button, gpointer user_data)
 	gtk_file_filter_add_pattern(filter, "*.nsf");
 	gtk_file_filter_add_pattern(filter, "*.zip");
 	gtk_file_filter_add_pattern(filter, "*.7z");
+	gtk_file_filter_add_pattern(filter, "*.txz");
+	gtk_file_filter_add_pattern(filter, "*.tar.xz");
+	gtk_file_filter_add_pattern(filter, "*.tgz");
+	gtk_file_filter_add_pattern(filter, "*.tar.gz");
+	gtk_file_filter_add_pattern(filter, "*.tbz");
+	gtk_file_filter_add_pattern(filter, "*.tar.bz2");
+
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 
 	if (gtk_dialog_run (GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT)
@@ -636,7 +643,7 @@ void movie_stop() {
 }
 
 void redraw_request() {
-	redraw_drawingarea(xres, yres);
+	redraw_drawingarea(cur_Rwidth, cur_Rheight);
 }
 
 GtkWidget* create_config(void) {
@@ -683,6 +690,7 @@ GtkWidget* create_config(void) {
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "Scale?x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "hq?x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "2xSaI");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "xBR");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(scalecombo), sSettings->GetScale());
 	gtk_box_pack_start(GTK_BOX(scalebox), scalelabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(scalebox), scalecombo, FALSE, FALSE, 0);

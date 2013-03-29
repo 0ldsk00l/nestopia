@@ -132,6 +132,7 @@
     <ClInclude Include="..\source\core\api\NstApiTapeRecorder.hpp" />
     <ClInclude Include="..\source\core\api\NstApiUser.hpp" />
     <ClInclude Include="..\source\core\api\NstApiVideo.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilterxBR.hpp" />
     <ClInclude Include="..\source\core\vssystem\NstVsRbiBaseball.hpp" />
     <ClInclude Include="..\source\core\vssystem\NstVsSuperXevious.hpp" />
     <ClInclude Include="..\source\core\vssystem\NstVsSystem.hpp" />
@@ -454,6 +455,7 @@
     <ClCompile Include="..\source\core\api\NstApiTapeRecorder.cpp" />
     <ClCompile Include="..\source\core\api\NstApiUser.cpp" />
     <ClCompile Include="..\source\core\api\NstApiVideo.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterxBR.cpp" />
     <ClCompile Include="..\source\core\vssystem\NstVsRbiBaseball.cpp" />
     <ClCompile Include="..\source\core\vssystem\NstVsSuperXevious.cpp" />
     <ClCompile Include="..\source\core\vssystem\NstVsSystem.cpp" />

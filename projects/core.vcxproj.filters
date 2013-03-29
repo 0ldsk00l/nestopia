@@ -900,6 +900,9 @@
     <ClInclude Include="..\source\core\NstVideoScreen.hpp" />
     <ClInclude Include="..\source\core\NstXml.hpp" />
     <ClInclude Include="..\source\core\NstZlib.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilterxBR.hpp">
+      <Filter>VideoFilters</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\core\api\NstApiBarcodeReader.cpp">
@@ -1669,6 +1672,9 @@
     <ClCompile Include="..\source\core\NstVideoScreen.cpp" />
     <ClCompile Include="..\source\core\NstXml.cpp" />
     <ClCompile Include="..\source\core\NstZlib.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterxBR.cpp">
+      <Filter>VideoFilters</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\source\core\NstVideoFilterHq2x.inl">

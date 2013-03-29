@@ -107,6 +107,16 @@ namespace Nes
 		{
 			return emulator.renderer.GetHue();
 		}
+		
+		bool Video::GetBlend() const throw()
+		{
+			return emulator.renderer.GetBlend() != 0;
+		}
+
+		int Video::GetCornerRounding() const throw()
+		{
+			return emulator.renderer.GetCornerRounding();
+		}
 
 		Result Video::SetBrightness(int value) throw()
 		{
@@ -151,6 +161,21 @@ namespace Nes
 		Result Video::SetHue(int value) throw()
 		{
 			return emulator.renderer.SetHue( value );
+		}
+		
+		Result Video::SetBlend(bool value) throw()
+		{
+			return emulator.renderer.SetBlend(value);
+		}
+
+		Result Video::SetCornerRounding(int value) throw()
+		{
+			return emulator.renderer.SetCornerRounding(value);
+		}
+
+		void Video::ClearFilterUpdateFlag() throw()
+		{
+			emulator.renderer.ClearFilterUpdateFlag();
 		}
 
 		void Video::EnableFieldMerging(bool state) throw()

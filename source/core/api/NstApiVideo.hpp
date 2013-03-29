@@ -284,6 +284,16 @@ namespace Nes
 			* @return hue value in the range -45 to 45
 			*/
 			int GetHue() const throw();
+			
+			/**
+			* Returns whenever the xbr filters blends pixels or not
+			*/
+			bool GetBlend() const throw();
+
+			/**
+			* Returns how the xbr filters rounds corners
+			*/
+			int GetCornerRounding() const throw();
 
 			/**
 			* Sets the brightness.
@@ -356,6 +366,21 @@ namespace Nes
 			* @return result code
 			*/
 			Result SetHue(int value) throw();
+			
+			/**
+			 * Sets whenever the xbr filters is to blend pixels or not.
+			 */
+			Result SetBlend(bool value) throw();
+
+			/**
+			 * Sets whenever the xbr filters is to round corners or not.
+			 */
+			Result SetCornerRounding(int value) throw();
+
+			/**
+			 * Quickfix for blank screen issue.
+		     */
+			void ClearFilterUpdateFlag() throw();
 
 			/**
 			* Enables field merging for the NTSC filter.
@@ -682,6 +707,12 @@ namespace Nes
 					* 2xSaI filter.
 					*/
 					FILTER_2XSAI
+				#endif
+				#ifndef NST_NO_XBR
+					,
+					FILTER_2XBR,
+					FILTER_3XBR,
+					FILTER_4XBR
 				#endif
 				};
 
