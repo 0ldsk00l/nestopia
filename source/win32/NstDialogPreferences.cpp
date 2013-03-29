@@ -308,6 +308,7 @@ namespace Nestopia
 				}
 
 				settings.alwaysAskSystem = application[ "favored-system-always-ask" ].Yes();
+				settings.disableStatusMsg = application[ "disable-statusmsg" ].Yes();
 			}
 
 			{
@@ -377,6 +378,7 @@ namespace Nestopia
 				);
 
 				application[ "favored-system-always-ask" ].YesNo() = settings.alwaysAskSystem;
+				application[ "disable-statusmsg"         ].YesNo() = settings.disableStatusMsg;
 			}
 
 			{
@@ -445,6 +447,7 @@ namespace Nestopia
 			dialog.RadioButton( IDC_PREFERENCES_FAVORED_DENDY    ).Check( settings.favoredSystem == Nes::Machine::FAVORED_DENDY    );
 
 			dialog.CheckBox( IDC_PREFERENCES_FAVORED_ALWAYS_ASK ).Check( settings.alwaysAskSystem );
+			dialog.CheckBox( IDC_PREFERENCES_DISABLE_STATUSMSG  ).Check( settings.disableStatusMsg );
 
 			{
 				Control::ComboBox priorities( dialog.ComboBox( IDC_PREFERENCES_PRIORITY ) );
@@ -572,6 +575,7 @@ namespace Nestopia
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_NETPLAY_GAMELIST ).Check( true  );
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_WINDOWPOS        ).Check( false );
 			dialog.CheckBox( IDC_PREFERENCES_SAVE_LAUNCHERSIZE     ).Check( false );
+			dialog.CheckBox( IDC_PREFERENCES_DISABLE_STATUSMSG     ).Check( true  );
 
 			dialog.ComboBox( IDC_PREFERENCES_PRIORITY )[ PRIORITY_NORMAL ].Select();
 
@@ -623,6 +627,7 @@ namespace Nestopia
 				);
 
 				settings.alwaysAskSystem = dialog.RadioButton( IDC_PREFERENCES_FAVORED_ALWAYS_ASK ).Checked();
+				settings.disableStatusMsg = dialog.RadioButton( IDC_PREFERENCES_DISABLE_STATUSMSG ).Checked();
 
 				Application::Instance::SetIconStyle( dialog.RadioButton(IDC_PREFERENCES_STYLE_NES).Checked() ? Application::Instance::ICONSTYLE_NES : Application::Instance::ICONSTYLE_FAMICOM );
 
