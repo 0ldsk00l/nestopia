@@ -28,7 +28,7 @@
 #include "NstCore.hpp"
 #include "NstPins.hpp"
 
-#ifdef __CELLOS_LV2__
+#ifndef ANDROID
 #include <wchar.h>
 #endif
 
