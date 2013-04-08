@@ -314,7 +314,7 @@ enum retro_key
 
    RETROK_LAST,
 
-   RETROK_DUMMY          = INT_MAX, // Ensure sizeof(enum) == sizeof(int)
+   RETROK_DUMMY          = INT_MAX // Ensure sizeof(enum) == sizeof(int)
 };
 
 enum retro_mod
@@ -330,9 +330,11 @@ enum retro_mod
    RETROKMOD_CAPSLOCK   = 0x20,
    RETROKMOD_SCROLLOCK  = 0x40,
 
-   RETROKMOD_DUMMY = INT_MAX, // Ensure sizeof(enum) == sizeof(int)
+   RETROKMOD_DUMMY = INT_MAX // Ensure sizeof(enum) == sizeof(int)
 };
 
+// If set, this call is not part of the public libretro API yet. It can change or be removed at any time.
+#define RETRO_ENVIRONMENT_EXPERIMENTAL 0x10000
 
 // Environment commands.
 #define RETRO_ENVIRONMENT_SET_ROTATION  1  // const unsigned * --
@@ -348,18 +350,7 @@ enum retro_mod
                                            // Boolean value whether or not frontend supports frame duping,
                                            // passing NULL to video frame callback.
                                            //
-#define RETRO_ENVIRONMENT_GET_VARIABLE  4  // struct retro_variable * --
-                                           // Interface to aquire user-defined information from environment
-                                           // that cannot feasibly be supported in a multi-system way.
-                                           // Mostly used for obscure,
-                                           // specific features that the user can tap into when neseccary.
-                                           //
-#define RETRO_ENVIRONMENT_SET_VARIABLES 5  // const struct retro_variable * --
-                                           // Allows an implementation to signal the environment
-                                           // which variables it might want to check for later using GET_VARIABLE.
-                                           // 'data' points to an array of retro_variable structs terminated by a { NULL, NULL } element.
-                                           // retro_variable::value should contain a human readable description of the key.
-                                           //
+// Environ 4, 5 are no longer supported (GET_VARIABLE / SET_VARIABLES), and reserved to avoid possible ABI clash.
 #define RETRO_ENVIRONMENT_SET_MESSAGE   6  // const struct retro_message * --
                                            // Sets a message to be displayed in implementation-specific manner for a certain amount of 'frames'.
                                            // Should not be used for trivial messages, which should simply be logged to stderr.
@@ -415,7 +406,86 @@ enum retro_mod
 #define RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK 12
                                            // const struct retro_keyboard_callback * --
                                            // Sets a callback function used to notify core about keyboard events.
+                                           //
+#define RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE 13
+                                           // const struct retro_disk_control_callback * --
+                                           // Sets an interface which frontend can use to eject and insert disk images.
+                                           // This is used for games which consist of multiple images and must be manually
+                                           // swapped out by the user (e.g. PSX).
+#define RETRO_ENVIRONMENT_SET_HW_RENDER    (14 | RETRO_ENVIRONMENT_EXPERIMENTAL)
+                                           // struct retro_hw_render_callback * --
+                                           // NOTE: This call is currently very experimental, and should not be considered part of the public API.
+                                           // The interface could be changed or removed at any time.
+                                           // Sets an interface to let a libretro core render with hardware acceleration.
+                                           // Should be called in retro_load_game().
+                                           // If successful, libretro cores will be able to render to a frontend-provided framebuffer.
+                                           // The size of this framebuffer will be at least as large as max_width/max_height provided in get_av_info().
+                                           // If HW rendering is used, pass only RETRO_HW_FRAME_BUFFER_VALID or NULL to retro_video_refresh_t.
+#define RETRO_ENVIRONMENT_GET_VARIABLE 15
+                                           // struct retro_variable * --
+                                           // Interface to aquire user-defined information from environment
+                                           // that cannot feasibly be supported in a multi-system way.
+                                           // 'key' should be set to a key which has already been set by SET_VARIABLES.
+                                           // 'data' will be set to a value or NULL.
+                                           //
+#define RETRO_ENVIRONMENT_SET_VARIABLES 16
+                                           // const struct retro_variable * --
+                                           // Allows an implementation to signal the environment
+                                           // which variables it might want to check for later using GET_VARIABLE.
+                                           // This allows the frontend to present these variables to a user dynamically.
+                                           // This should be called as early as possible (ideally in retro_set_environment).
+                                           //
+                                           // 'data' points to an array of retro_variable structs terminated by a { NULL, NULL } element.
+                                           // retro_variable::key should be namespaced to not collide with other implementations' keys. E.g. A core called 'foo' should use keys named as 'foo_option'.
+                                           // retro_variable::value should contain a human readable description of the key as well as a '|' delimited list of expected values.
+                                           // The number of possible options should be very limited, i.e. it should be feasible to cycle through options without a keyboard.
+                                           // First entry should be treated as a default.
+                                           //
+                                           // Example entry:
+                                           // { "foo_option", "Speed hack coprocessor X; false|true" }
+                                           //
+                                           // Text before first ';' is description. This ';' must be followed by a space, and followed by a list of possible values split up with '|'.
+                                           // Only strings are operated on. The possible values will generally be displayed and stored as-is by the frontend.
+                                           //
+#define RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE 17
+                                           // bool * --
+                                           // Result is set to true if some variables are updated by
+                                           // frontend since last call to RETRO_ENVIRONMENT_GET_VARIABLE.
+                                           // Variables should be queried with GET_VARIABLE.
 
+// Pass this to retro_video_refresh_t if rendering to hardware.
+// Passing NULL to retro_video_refresh_t is still a frame dupe as normal.
+#define RETRO_HW_FRAME_BUFFER_VALID ((void*)-1)
+
+// Invalidates the current HW context.
+// If called, all GPU resources must be reinitialized.
+// Usually called when frontend reinits video driver.
+// Also called first time video driver is initialized, allowing libretro core to init resources.
+typedef void (*retro_hw_context_reset_t)(void);
+// Gets current framebuffer which is to be rendered to. Could change every frame potentially.
+typedef uintptr_t (*retro_hw_get_current_framebuffer_t)(void);
+
+// Get a symbol from HW context.
+typedef void (*retro_proc_address_t)(void);
+typedef retro_proc_address_t (*retro_hw_get_proc_address_t)(const char *sym);
+
+enum retro_hw_context_type
+{
+   RETRO_HW_CONTEXT_NONE = 0,
+   RETRO_HW_CONTEXT_OPENGL, // OpenGL 2.x. Latest version available before 3.x+.
+   RETRO_HW_CONTEXT_OPENGLES2, // GLES 2.0
+
+   RETRO_HW_CONTEXT_DUMMY = INT_MAX
+};
+
+struct retro_hw_render_callback
+{
+   enum retro_hw_context_type context_type; // Which API to use. Set by libretro core.
+   retro_hw_context_reset_t context_reset; // Set by libretro core.
+   retro_hw_get_current_framebuffer_t get_current_framebuffer; // Set by frontend.
+   retro_hw_get_proc_address_t get_proc_address; // Set by frontend.
+   bool depth; // Set if render buffers should have depth component attached.
+};
 
 // Callback type passed in RETRO_ENVIRONMENT_SET_KEYBOARD_CALLBACK. Called by the frontend in response to keyboard events.
 // down is set if the key is being pressed, or false if it is being released.
@@ -427,6 +497,56 @@ typedef void (*retro_keyboard_event_t)(bool down, unsigned keycode, uint32_t cha
 struct retro_keyboard_callback
 {
     retro_keyboard_event_t callback;
+};
+
+// Callbacks for RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE.
+// Should be set for implementations which can swap out multiple disk images in runtime.
+// If the implementation can do this automatically, it should strive to do so.
+// However, there are cases where the user must manually do so.
+//
+// Overview: To swap a disk image, eject the disk image with set_eject_state(true).
+// Set the disk index with set_image_index(index). Insert the disk again with set_eject_state(false).
+
+// If ejected is true, "ejects" the virtual disk tray.
+// When ejected, the disk image index can be set.
+typedef bool (*retro_set_eject_state_t)(bool ejected);
+// Gets current eject state. The initial state is 'not ejected'.
+typedef bool (*retro_get_eject_state_t)(void);
+// Gets current disk index. First disk is index 0.
+// If return value is >= get_num_images(), no disk is currently inserted.
+typedef unsigned (*retro_get_image_index_t)(void);
+// Sets image index. Can only be called when disk is ejected.
+// The implementation supports setting "no disk" by using an index >= get_num_images().
+typedef bool (*retro_set_image_index_t)(unsigned index);
+// Gets total number of images which are available to use.
+typedef unsigned (*retro_get_num_images_t)(void);
+//
+// Replaces the disk image associated with index.
+// Arguments to pass in info have same requirements as retro_load_game().
+// Virtual disk tray must be ejected when calling this.
+// Replacing a disk image with info = NULL will remove the disk image from the internal list.
+// As a result, calls to get_image_index() can change.
+//
+// E.g. replace_image_index(1, NULL), and previous get_image_index() returned 4 before.
+// Index 1 will be removed, and the new index is 3.
+struct retro_game_info;
+typedef bool (*retro_replace_image_index_t)(unsigned index, const struct retro_game_info *info);
+// Adds a new valid index (get_num_images()) to the internal disk list.
+// This will increment subsequent return values from get_num_images() by 1.
+// This image index cannot be used until a disk image has been set with replace_image_index.
+typedef bool (*retro_add_image_index_t)(void);
+
+struct retro_disk_control_callback
+{
+   retro_set_eject_state_t set_eject_state;
+   retro_get_eject_state_t get_eject_state;
+
+   retro_get_image_index_t get_image_index;
+   retro_set_image_index_t set_image_index;
+   retro_get_num_images_t  get_num_images;
+
+   retro_replace_image_index_t replace_image_index;
+   retro_add_image_index_t add_image_index;
 };
 
 enum retro_pixel_format
