@@ -171,6 +171,13 @@ static retro_input_state_t input_state_cb;
 void retro_set_environment(retro_environment_t cb)
 {
    environ_cb = cb;
+
+   static const struct retro_variable vars[] = {
+      { "blargg_ntsc_filter", "Blargg NTSC filter; disabled|monochrome|composite|svideo|rgb" },
+      { NULL, NULL },
+   };
+
+   cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)vars);
 }
 
 void retro_set_audio_sample(retro_audio_sample_t cb)
@@ -252,6 +259,48 @@ static void update_input()
    }
 }
 
+static void check_variables(void)
+{
+   static unsigned blargg_ntsc = 0;
+   static bool last_ntsc_val_same;
+   struct retro_variable var = {0};
+
+   var.key = "blargg_ntsc_filter";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+   {
+      unsigned orig_value = blargg_ntsc;
+
+      if (strcmp(var.value, "disabled") == 0)
+         blargg_ntsc = 0;
+      else if (strcmp(var.value, "monochrome") == 0)
+         blargg_ntsc = 1;
+      else if (strcmp(var.value, "composite") == 0)
+         blargg_ntsc = 2;
+      else if (strcmp(var.value, "svideo") == 0)
+         blargg_ntsc = 3;
+      else if (strcmp(var.value, "rgb") == 0)
+         blargg_ntsc = 4;
+
+      if (orig_value != blargg_ntsc)
+      {
+         switch(blargg_ntsc)
+         {
+            case 0:
+               break;
+            case 1:
+               break;
+            case 2:
+               break;
+            case 3:
+               break;
+            case 4:
+               break;
+         }
+      }
+   }
+}
+
 void retro_run(void)
 {
    update_input();
@@ -263,6 +312,10 @@ void retro_run(void)
    for (unsigned i = 0; i < frames; i++)
       audio_stereo_buffer[(i << 1) + 0] = audio_stereo_buffer[(i << 1) + 1] = audio_buffer[i];
    audio_batch_cb(audio_stereo_buffer, frames);
+
+   bool updated = false;
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
+      check_variables();
 }
 
 static void extract_basename(char *buf, const char *path, size_t size)
@@ -298,6 +351,7 @@ static void extract_directory(char *buf, const char *path, size_t size)
    else
       buf[0] = '\0';
 }
+
 
 bool retro_load_game(const struct retro_game_info *info)
 {
@@ -408,6 +462,8 @@ bool retro_load_game(const struct retro_game_info *info)
    Api::Input(emulator).ConnectController(1, Api::Input::PAD2);
 
    machine->Power(true);
+
+   check_variables();
 
    return true;
 }
