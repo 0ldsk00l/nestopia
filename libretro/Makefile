@@ -130,6 +130,8 @@ OBJS += $(NST_DIR)/source/core/NstChips.o            $(NST_DIR)/source/core/NstP
 OBJS += $(NST_DIR)/source/core/NstCore.o             $(NST_DIR)/source/core/NstPatcherIps.o     $(NST_DIR)/source/core/NstTracker.o          
 OBJS += $(NST_DIR)/source/core/NstCpu.o              $(NST_DIR)/source/core/NstPatcherUps.o     $(NST_DIR)/source/core/NstTrackerMovie.o
 OBJS += $(NST_DIR)/source/core/NstCrc32.o            $(NST_DIR)/source/core/NstPins.o           $(NST_DIR)/source/core/NstTrackerRewinder.o
+OBJS += $(NST_DIR)/source/core/NstVideoFilterNtscCfg.o					$(NST_DIR)/source/core/NstVideoFilterNtsc.o
+
 
 # core/api
 OBJS += $(NST_DIR)/source/core/api/NstApiBarcodeReader.o  $(NST_DIR)/source/core/api/NstApiEmulator.o  $(NST_DIR)/source/core/api/NstApiMovie.o     $(NST_DIR)/source/core/api/NstApiTapeRecorder.o
