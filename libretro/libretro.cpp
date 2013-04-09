@@ -284,18 +284,54 @@ static void check_variables(void)
 
       if (orig_value != blargg_ntsc)
       {
+         retro_reset();
+         Api::Video video(emulator);
+         Api::Video::RenderState renderState;
+         Api::Machine machine( emulator );
+         Api::Video::RenderState::Filter filter;
+
+         filter = Api::Video::RenderState::FILTER_NTSC;
+
          switch(blargg_ntsc)
          {
             case 0:
+               filter = Api::Video::RenderState::FILTER_NONE;
                break;
             case 1:
                break;
             case 2:
+               video.SetSharpness(Api::Video::DEFAULT_SHARPNESS_COMP);
+               video.SetColorResolution(Api::Video::DEFAULT_COLOR_RESOLUTION_COMP);
+               video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_COMP);
+               video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_COMP);
+               video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_COMP);
                break;
             case 3:
+               video.SetSharpness(Api::Video::DEFAULT_SHARPNESS_SVIDEO);
+               video.SetColorResolution(Api::Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
+               video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_SVIDEO);
+               video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
+               video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_SVIDEO);
                break;
             case 4:
+               video.SetSharpness(Api::Video::DEFAULT_SHARPNESS_RGB);
+               video.SetColorResolution(Api::Video::DEFAULT_COLOR_RESOLUTION_RGB);
+               video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_RGB);
+               video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_RGB);
+               video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_RGB);
                break;
+         }
+
+         renderState.filter = filter;
+         renderState.width = 256;
+         renderState.height = 240;
+         renderState.bits.count = 32;
+         renderState.bits.mask.r = 0x00ff0000;
+         renderState.bits.mask.g = 0x0000ff00;
+         renderState.bits.mask.b = 0x000000ff;
+         if (NES_FAILED(video.SetRenderState( renderState )))
+         {
+            fprintf(stderr, "Nestopia core rejected render state\n");;
          }
       }
    }
