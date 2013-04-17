@@ -49,6 +49,8 @@ Settings::Settings()
 	sndapi = 0;
 	fsnativeres = 1;
 	tvaspect = 0;
+	blendpix = 1;
+	cornerround = 0;
 
 	// try the recommended place for settings
 	home = getenv("HOME");
@@ -90,6 +92,8 @@ Settings::Settings()
 	READ_SETTING(surmult);
 	READ_SETTING(fsnativeres);
 	READ_SETTING(tvaspect);
+	READ_SETTING(blendpix);
+	READ_SETTING(cornerround);
 
 	fclose(f);
 }
@@ -135,6 +139,8 @@ Settings::~Settings()
 	WRITE_SETTING(surmult);
 	WRITE_SETTING(fsnativeres);
 	WRITE_SETTING(tvaspect);
+	WRITE_SETTING(blendpix);
+	WRITE_SETTING(cornerround);
 
 	fclose(f);
 }

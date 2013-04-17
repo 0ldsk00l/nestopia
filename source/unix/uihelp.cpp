@@ -215,10 +215,11 @@ void configwindow_destroyed() {
 	redraw_request();
 }
 
-void
-on_check_fullscreen_toggled             (GtkToggleButton *togglebutton,
-                                        gpointer         user_data)
-{
+void on_check_blendpix_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+	sSettings->SetBlendPix(gtk_toggle_button_get_active(togglebutton));
+}
+
+void on_check_fullscreen_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
 	sSettings->SetFullscreen(gtk_toggle_button_get_active(togglebutton));
 }
 
@@ -300,35 +301,26 @@ on_ratecombo_configure_event           (GtkWidget       *widget,
 {
 }
 
-void
-on_rendercombo_changed                   (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
-	 sSettings->SetRenderType(gtk_combo_box_get_active(combobox));
+void on_rendercombo_changed (GtkComboBox *combobox, gpointer user_data) {
+	sSettings->SetRenderType(gtk_combo_box_get_active(combobox));
 }
 
 void playercombo_changed(GtkComboBox *combobox, gpointer user_data) {
 	playernumber = gtk_combo_box_get_active(combobox);
 }
 
-void
-on_systemcombo_changed                   (GtkComboBox     *combobox,
-                                        gpointer         user_data)
-{
+void on_systemcombo_changed(GtkComboBox *combobox, gpointer user_data) {
 	 sSettings->SetPrefSystem(gtk_combo_box_get_active(combobox));
 }
 
-void on_scaleamtcombo_changed(GtkComboBox     *combobox, gpointer         user_data)
-{
-	 sSettings->SetScaleAmt(gtk_combo_box_get_active(combobox));
+void on_scaleamtcombo_changed(GtkComboBox *combobox, gpointer user_data) {
+	sSettings->SetScaleAmt(gtk_combo_box_get_active(combobox));
 }
 
 
-void on_configcombo_changed(GtkComboBox     *combobox, gpointer         user_data)
-{
-	 sSettings->SetConfigItem(gtk_combo_box_get_active(combobox));
-	 int curItem = sSettings->GetConfigItem();
-	 //printf("%d\n", curItem);
+void on_configcombo_changed(GtkComboBox *combobox, gpointer user_data) {
+	sSettings->SetConfigItem(gtk_combo_box_get_active(combobox));
+	int curItem = sSettings->GetConfigItem();
 }
 
 void on_spatchcombo_changed(GtkComboBox     *combobox, gpointer         user_data)
@@ -374,16 +366,16 @@ void on_aboutbutton_clicked(GtkButton *button,  gpointer user_data)
 	create_about();
 }
 
-gboolean
-on_volumescroll_configure_event        (GtkWidget       *widget,
-                                        GdkEventConfigure *event,
-                                        gpointer         user_data)
-{
+gboolean on_volumescroll_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer user_data) {
+
 }
 
-void on_ntsccombo_changed (GtkComboBox *combobox, gpointer user_data)
-{
+void on_ntsccombo_changed (GtkComboBox *combobox, gpointer user_data) {
 	sSettings->SetNtscMode(gtk_combo_box_get_active(combobox));
+}
+
+void on_xbrcombo_changed (GtkComboBox *combobox, gpointer user_data) {
+	sSettings->SetCornerRounding(gtk_combo_box_get_active(combobox));
 }
 
 void on_configbutton_clicked(GtkButton *button, gpointer user_data)
@@ -679,8 +671,8 @@ GtkWidget* create_config(void) {
     gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(rendercombo), "Hardware - OpenGL (bilinear)");
     gtk_combo_box_set_active(GTK_COMBO_BOX(rendercombo), sSettings->GetRenderType());
     
-    GtkWidget *vidsettingslabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
-	gtk_label_set_markup(GTK_LABEL(vidsettingslabel), "<b>Settings</b>");
+    GtkWidget *filtersettingslabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
+	gtk_label_set_markup(GTK_LABEL(filtersettingslabel), "<b>Filter/Scaler Options</b>");
     
 	GtkWidget *scalebox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	GtkWidget *scalelabel = gtk_widget_new(GTK_TYPE_LABEL, "label", "Scaler:", "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
@@ -691,20 +683,16 @@ GtkWidget* create_config(void) {
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "hq?x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "2xSaI");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "xBR");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(scalecombo), sSettings->GetScale());
-	gtk_box_pack_start(GTK_BOX(scalebox), scalelabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(scalebox), scalecombo, FALSE, FALSE, 0);
-	
-	GtkWidget *scaleamtbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *scaleamtlabel = gtk_widget_new(GTK_TYPE_LABEL, "label", "Multiplier:", "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
 	GtkWidget *scaleamtcombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
+	gtk_combo_box_set_active(GTK_COMBO_BOX(scalecombo), sSettings->GetScale());
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scaleamtcombo), "1x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scaleamtcombo), "2x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scaleamtcombo), "3x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scaleamtcombo), "4x");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(scaleamtcombo), sSettings->GetScaleAmt());
-	gtk_box_pack_start(GTK_BOX(scaleamtbox), scaleamtlabel, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(scaleamtbox), scaleamtcombo, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(scalebox), scalelabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(scalebox), scalecombo, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(scalebox), scaleamtcombo, FALSE, FALSE, 0);
 	
 	GtkWidget *ntscbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	GtkWidget *ntsclabel = gtk_widget_new(GTK_TYPE_LABEL, "label", "NTSC Type:", "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
@@ -715,6 +703,22 @@ GtkWidget* create_config(void) {
 	gtk_combo_box_set_active(GTK_COMBO_BOX(ntsccombo), sSettings->GetNtscMode());
 	gtk_box_pack_start(GTK_BOX(ntscbox), ntsclabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(ntscbox), ntsccombo, FALSE, FALSE, 0);
+	
+	GtkWidget *xbrbox = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *xbrlabel = gtk_widget_new(GTK_TYPE_LABEL, "label", "xBR Corner Rounding:", "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
+	GtkWidget *xbrcombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(xbrcombo), "None");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(xbrcombo), "Some");
+	gtk_combo_box_text_append_text (GTK_COMBO_BOX_TEXT(xbrcombo), "All");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(xbrcombo), sSettings->GetCornerRounding());
+	gtk_box_pack_start(GTK_BOX(xbrbox), xbrlabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(xbrbox), xbrcombo, FALSE, FALSE, 0);
+	
+	GtkWidget *check_blendpix = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "xBR Pixel Blending", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_blendpix), sSettings->GetBlendPix());
+	
+	GtkWidget *misclabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
+	gtk_label_set_markup(GTK_LABEL(misclabel), "<b>Misc Options</b>");
 	
 	GtkWidget *check_tvaspect = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "TV Aspect Ratio", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_tvaspect), sSettings->GetTvAspect());
@@ -730,10 +734,12 @@ GtkWidget* create_config(void) {
 
 	gtk_box_pack_start(GTK_BOX(videobox), renderlabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), rendercombo, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(videobox), vidsettingslabel, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(videobox), filtersettingslabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), scalebox, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(videobox), scaleamtbox, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), ntscbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(videobox), xbrbox, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(videobox), check_blendpix, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(videobox), misclabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_tvaspect, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_fullscreen, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_fsnativeres, FALSE, FALSE, 0);
@@ -932,6 +938,9 @@ GtkWidget* create_config(void) {
 	g_signal_connect(G_OBJECT(scalecombo), "changed",
 		G_CALLBACK(on_scalecombo_changed), NULL);
 
+	g_signal_connect(G_OBJECT(check_blendpix), "toggled",
+		G_CALLBACK(on_check_blendpix_toggled), NULL);
+
 	g_signal_connect(G_OBJECT(check_tvaspect), "toggled",
 		G_CALLBACK(on_check_tvaspect_toggled), NULL);
 	
@@ -952,6 +961,9 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(rendercombo), "changed",
 		G_CALLBACK(on_rendercombo_changed), NULL);
+		
+	g_signal_connect(G_OBJECT(xbrcombo), "changed",
+		G_CALLBACK(on_xbrcombo_changed), NULL);
 
 	//Audio
 	g_signal_connect(G_OBJECT(volumescroll), "value_changed",

@@ -799,7 +799,7 @@ namespace Nes
 			{
 				NST_VERIFY( state.update );
 
-				if (state.filter == RenderState::FILTER_NTSC || state.update & uint(State::UPDATE_FILTER_STATE))
+				if (state.filter == RenderState::FILTER_NTSC || state.update == 1)
 				{
 					RenderState renderState;
 					GetState( renderState );

@@ -1612,7 +1612,14 @@ void SetupVideo()
 			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
 			break;
 	}
-			     
+	
+	if (sSettings->GetScale() == 5) {
+		video.SetCornerRounding(sSettings->GetCornerRounding()); // 0 = none, 1 = some, 2 = all
+		video.SetBlend(sSettings->GetBlendPix()); // boolean
+	}
+	
+	video.ClearFilterUpdateFlag();
+
 	// set the render state
 	if (NES_FAILED(video.SetRenderState( renderState )))
 	{
