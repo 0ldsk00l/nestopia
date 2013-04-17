@@ -19,6 +19,8 @@ namespace LinuxNst
 			int GetNtscMode(void) { return ntscmode; }
 			int GetRenderType(void) { return rendertype; }
 			int GetScaleAmt(void) { return scaleamt; }
+			int GetBlendPix(void) { return blendpix; }
+			int GetCornerRounding(void) { return cornerround; }
 			void SetTvAspect(int tv) { tvaspect = tv; }
 			void SetFullscreen(int fs) { fullscreen = fs; }
 			void SetFsNativeRes(int fsnr) { fsnativeres = fsnr; }
@@ -28,6 +30,8 @@ namespace LinuxNst
 			void SetNtscMode(int mode) { ntscmode = mode; }
 			void SetRenderType(int mode) { rendertype = mode; }
 			void SetScaleAmt(int mode) { scaleamt = mode; }
+			void SetBlendPix(int bpix) { blendpix = bpix; }
+			void SetCornerRounding(int crnd) { cornerround = crnd; }
 
 			// input accessors
 			int GetUseJoypads(void) { return controls; }
@@ -62,6 +66,7 @@ namespace LinuxNst
 			// video settings
 			int fullscreen, scaler, sprlimit, videomode, ntscmode;
 			int fsnativeres, tvaspect, rendertype, scaleamt;
+			int blendpix, cornerround;
 			// input settings
 			int controls, configitem;
 			// sound settings
