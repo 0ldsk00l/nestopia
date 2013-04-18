@@ -58,6 +58,7 @@ else ifeq ($(platform), ps3)
 	HAVE_GCC_WARNINGS := 0
    TARGET := $(TARGET_NAME)_libretro_ps3.a
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
+   CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    PLATFORM_DEFINES := -D__CELLOS_LV2__
 else ifeq ($(platform), sncps3)
@@ -110,9 +111,6 @@ else ifeq ($(platform), ps3)
 else
    CFLAGS += -O3
    CXXFLAGS += -O3
-endif
-
-ifeq ($(platform), ps3)
 endif
 
 OBJS = $(NST_DIR)/source/core/NstZlib.o
