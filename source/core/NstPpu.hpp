@@ -311,6 +311,7 @@ namespace Nes
 				Video::Screen::Pixel* pixels;
 				uint burstPhase;
 				word palette[Palette::SIZE];
+				uint bgColor;
 			};
 
 			struct Oam
@@ -413,7 +414,9 @@ namespace Nes
 			Chr chr;
 			Nmt nmt;
 			int scanline;
+		public:
 			Output output;
+		private:
 			PpuModel model;
 			Hook hActiveHook;
 			Hook hBlankHook;
