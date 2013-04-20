@@ -509,6 +509,8 @@ namespace Nes
 
 				cpu.ExecuteFrame( sound );
 				ppu.EndFrame();
+				
+				renderer.bgColor = ppu.output.bgColor;
 
 				if (video)
 					renderer.Blit( *video, ppu.GetScreen(), ppu.GetBurstPhase() );

@@ -42,7 +42,8 @@ namespace Nes
 			void Renderer::FilterNtsc::BlitType(const Input& input,const Output& output,uint phase) const
 			{
 				NST_ASSERT( phase < 3 );
-
+				
+				const uint bgcolor = this->bgColor;
 				const Input::Pixel* NST_RESTRICT src = input.pixels;
 				Pixel* NST_RESTRICT dst = static_cast<Pixel*>(output.pixels);
 				const long pad = output.pitch - (NTSC_WIDTH-7) * sizeof(Pixel);
@@ -51,7 +52,7 @@ namespace Nes
 
 				for (uint y=HEIGHT; y; --y)
 				{
-					NES_NTSC_BEGIN_ROW( &lut, phase, lut.black, lut.black, *src++ );
+					NES_NTSC_BEGIN_ROW( &lut, phase, bgcolor, bgcolor, *src++ );
 
 					for (const Input::Pixel* const end=src+(NTSC_WIDTH/7*3-3); src != end; src += 3, dst += 7)
 					{
@@ -69,15 +70,15 @@ namespace Nes
 						NES_NTSC_RGB_OUT( 6, dst[6], BITS );
 					}
 
-					NES_NTSC_COLOR_IN( 0, lut.black );
+					NES_NTSC_COLOR_IN( 0, bgcolor );
 					NES_NTSC_RGB_OUT( 0, dst[0], BITS );
 					NES_NTSC_RGB_OUT( 1, dst[1], BITS );
 
-					NES_NTSC_COLOR_IN( 1, lut.black );
+					NES_NTSC_COLOR_IN( 1, bgcolor );
 					NES_NTSC_RGB_OUT( 2, dst[2], BITS );
 					NES_NTSC_RGB_OUT( 3, dst[3], BITS );
 
-					NES_NTSC_COLOR_IN( 2, lut.black );
+					NES_NTSC_COLOR_IN( 2, bgcolor );
 					NES_NTSC_RGB_OUT( 4, dst[4], BITS );
 					NES_NTSC_RGB_OUT( 5, dst[5], BITS );
 					NES_NTSC_RGB_OUT( 6, dst[6], BITS );

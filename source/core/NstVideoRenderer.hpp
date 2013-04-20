@@ -202,6 +202,8 @@ namespace Nes
 					virtual void Transform(const byte (&)[PALETTE][3],Input::Palette&) const;
 
 					const Format format;
+					
+					uint bgColor;
 				};
 
 				struct State
@@ -245,6 +247,8 @@ namespace Nes
 
 			public:
 
+				uint bgColor;
+				
 				Result SetBrightness(int brightness)
 				{
 					return SetLevel( state.brightness, brightness );

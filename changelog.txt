@@ -22,6 +22,7 @@ Windows Shell:
 
  Changes:
   - Redundant TV Aspect checkbox removed from NTSC filter dialog
+  - Modified default sound settings to avoid desync
 
 Core:
 
@@ -30,6 +31,7 @@ Core:
 
  Fixes:
   - Triangle volume bug in Dendy mode - emu-russia
+  - NTSC filter background colour fix - blargg
 
 ----------------------------------------------------------------
 1.44
