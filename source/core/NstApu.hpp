@@ -457,7 +457,7 @@ namespace Nes
 				enum
 				{
 					MIN_FRQ                   = 2 + 1,
-					STEP_CHECK                = 0x1F, // This was 0x00, but it produced clicks and pops. >= 0x1F is apparently correct anyway.
+					STEP_CHECK                = 0x00, // >= 0x1F is technically correct but will produce clicks/pops
 					REG0_LINEAR_COUNTER_LOAD  = 0x7F,
 					REG0_LINEAR_COUNTER_START = 0x80,
 					REG2_WAVE_LENGTH_LOW      = 0x00FF,

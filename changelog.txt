@@ -32,7 +32,6 @@ Core:
  Fixes:
   - Triangle volume bug in Dendy mode - emu-russia
   - NTSC filter background colour fix - blargg
-  - APU clicking/popping fixed
 
 ----------------------------------------------------------------
 1.44
