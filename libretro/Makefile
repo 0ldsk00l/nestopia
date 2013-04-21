@@ -28,24 +28,25 @@ else ifneq ($(findstring MINGW,$(shell uname -a)),)
 endif
 
 LIBRETRO_DIR := libretro
+TARGET_NAME := nestopia
 
 ifeq ($(platform), unix)
-   TARGET := nestopia_libretro.so
+   TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
    SHARED := -shared -Wl,-version-script=link.T -Wl,-no-undefined
 else ifeq ($(platform), osx)
-   TARGET := nestopia_libretro.dylib
+   TARGET := $(TARGET_NAME)_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
 else ifeq ($(platform), ios)
-   TARGET := nestopia_libretro.dylib
+   TARGET := $(TARGET_NAME)_libretro.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
 
    CC = clang -arch armv7 -isysroot $(IOSSDK)
    CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
 else ifeq ($(platform), qnx)
-   TARGET := nestopia_libretro.so
+   TARGET := $(TARGET_NAME)_libretro.so
    fpic := -fPIC
    SHARED := -lcpp -lm -shared -Wl,-version-script=link.T -Wl,-no-undefined
 
@@ -55,44 +56,45 @@ else ifeq ($(platform), qnx)
 	PLATFORM_DEFINES := -D__BLACKBERRY_QNX__ -marm -mcpu=cortex-a9 -mfpu=neon -mfloat-abi=softfp
 else ifeq ($(platform), ps3)
 	HAVE_GCC_WARNINGS := 0
-   TARGET := nestopia_libretro_ps3.a
+   TARGET := $(TARGET_NAME)_libretro_ps3.a
    CXX = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-g++.exe
+   CC = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-gcc.exe
    AR = $(CELL_SDK)/host-win32/ppu/bin/ppu-lv2-ar.exe
    PLATFORM_DEFINES := -D__CELLOS_LV2__
 else ifeq ($(platform), sncps3)
 	HAVE_GCC_WARNINGS := 0
-   TARGET := nestopia_libretro_ps3.a
+   TARGET := $(TARGET_NAME)_libretro_ps3.a
 	HAS_GCC := 0
    CC = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    CXX = $(CELL_SDK)/host-win32/sn/bin/ps3ppusnc.exe
    AR = $(CELL_SDK)/host-win32/sn/bin/ps3snarl.exe
    PLATFORM_DEFINES := -D__CELLOS_LV2__
 else ifeq ($(platform), psl1ght)
-   TARGET := nestopia_libretro_psl1ght.a
+   TARGET := $(TARGET_NAME)_libretro_psl1ght.a
    CC = $(PS3DEV)/ppu/bin/ppu-gcc$(EXE_EXT)
    CXX = $(PS3DEV)/ppu/bin/ppu-g++$(EXE_EXT)
    AR = $(PS3DEV)/ppu/bin/ppu-ar$(EXE_EXT)
    PLATFORM_DEFINES := -D__CELLOS_LV2__
 else ifeq ($(platform), xenon)
-   TARGET := nestopia_libretro_xenon360.a
+   TARGET := $(TARGET_NAME)_libretro_xenon360.a
    CC = xenon-gcc$(EXE_EXT)
    CXX = xenon-g++$(EXE_EXT)
    AR = xenon-ar$(EXE_EXT)
    PLATFORM_DEFINES := -D__LIBXENON__
 else ifeq ($(platform), ngc)
-   TARGET := nestopia_libretro_ngc.a
+   TARGET := $(TARGET_NAME)_libretro_ngc.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    PLATFORM_DEFINES += -DGEKKO -DHW_DOL -mrvl -mcpu=750 -meabi -mhard-float
 else ifeq ($(platform), wii)
-   TARGET := nestopia_libretro_wii.a
+   TARGET := $(TARGET_NAME)_libretro_wii.a
    CC = $(DEVKITPPC)/bin/powerpc-eabi-gcc$(EXE_EXT)
    CXX = $(DEVKITPPC)/bin/powerpc-eabi-g++$(EXE_EXT)
    AR = $(DEVKITPPC)/bin/powerpc-eabi-ar$(EXE_EXT)
    PLATFORM_DEFINES += -DGEKKO -DHW_RVL -mrvl -mcpu=750 -meabi -mhard-float
 else
-   TARGET := nestopia_retro.dll
+   TARGET := $(TARGET_NAME)_retro.dll
    CC = gcc
    CXX = g++
    SHARED := -shared -static-libgcc -static-libstdc++ -Wl,-no-undefined -Wl,-version-script=link.T
@@ -111,9 +113,6 @@ else
    CXXFLAGS += -O3
 endif
 
-ifeq ($(platform), ps3)
-endif
-
 OBJS = $(NST_DIR)/source/core/NstZlib.o
 
 ## Yes, I didn't type all this out ...
@@ -130,6 +129,8 @@ OBJS += $(NST_DIR)/source/core/NstChips.o            $(NST_DIR)/source/core/NstP
 OBJS += $(NST_DIR)/source/core/NstCore.o             $(NST_DIR)/source/core/NstPatcherIps.o     $(NST_DIR)/source/core/NstTracker.o          
 OBJS += $(NST_DIR)/source/core/NstCpu.o              $(NST_DIR)/source/core/NstPatcherUps.o     $(NST_DIR)/source/core/NstTrackerMovie.o
 OBJS += $(NST_DIR)/source/core/NstCrc32.o            $(NST_DIR)/source/core/NstPins.o           $(NST_DIR)/source/core/NstTrackerRewinder.o
+OBJS += $(NST_DIR)/source/core/NstVideoFilterNtscCfg.o					$(NST_DIR)/source/core/NstVideoFilterNtsc.o
+
 
 # core/api
 OBJS += $(NST_DIR)/source/core/api/NstApiBarcodeReader.o  $(NST_DIR)/source/core/api/NstApiEmulator.o  $(NST_DIR)/source/core/api/NstApiMovie.o     $(NST_DIR)/source/core/api/NstApiTapeRecorder.o
