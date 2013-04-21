@@ -42,7 +42,7 @@ Settings::Settings()
 	scaleamt = 1;
 	configitem = 0;
 	prefsys = 0;
-	spatch = 0;
+	spatch = 1;
 	exciter = 0;
 	litesurr = 0;
 	surmult = 40;
