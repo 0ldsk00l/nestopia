@@ -284,6 +284,7 @@ static void check_variables(void)
    
    var.key = "blargg_ntsc_filter";
 
+   /*
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
       if (strcmp(var.value, "disabled") == 0)
@@ -296,7 +297,7 @@ static void check_variables(void)
          blargg_ntsc = 3;
       else if (strcmp(var.value, "rgb") == 0)
          blargg_ntsc = 4;
-   }
+   }*/
 
    switch(blargg_ntsc)
    {
