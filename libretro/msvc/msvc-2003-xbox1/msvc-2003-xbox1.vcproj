@@ -312,6 +312,12 @@
 					RelativePath="..\..\..\source\core\NstVideoFilterNone.cpp">
 				</File>
 				<File
+					RelativePath="..\..\..\source\core\NstVideoFilterNtsc.cpp">
+				</File>
+				<File
+					RelativePath="..\..\..\source\core\NstVideoFilterNtscCfg.c">
+				</File>
+				<File
 					RelativePath="..\..\..\source\core\NstVideoRenderer.cpp">
 				</File>
 				<File
