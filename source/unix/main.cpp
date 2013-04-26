@@ -39,9 +39,9 @@
 #include "core/NstCrc32.hpp"
 #include "core/NstChecksum.hpp"
 #include "core/NstXml.hpp"
-#include "oss.h"
+#include "audio.h"
 #include "settings.h"
-#include "auxio.h"
+#include "fileio.h"
 #include "input.h"
 #include "controlconfig.h"
 #include "cheats.h"
@@ -56,7 +56,7 @@ extern "C" {
 #include "callbacks.h"
 }
 
-#include "uihelp.h"
+#include "gtkui.h"
 
 using namespace Nes::Api;
 using namespace LinuxNst;
@@ -475,7 +475,7 @@ void NstStopPlaying()
 		int i;
 
 		// kill any movie
-		auxio_do_movie_stop();
+		fileio_do_movie_stop();
 
 		// close video sanely
 		if (!nsf_mode)
@@ -975,7 +975,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 		case User::File::LOAD_ROM:
 			wcstombs(mbstr, file.GetName(), 511);
 
-			if (auxio_load_archive(lastarchname, &compbuffer, &compsize, &compoffset, (const char *)mbstr))
+			if (fileio_load_archive(lastarchname, &compbuffer, &compsize, &compoffset, (const char *)mbstr))
 			{
 				file.SetContent((const void*)&compbuffer[compoffset], (unsigned long int)compsize);
 
@@ -991,7 +991,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 		case User::File::LOAD_SAMPLE_AEROBICS_STUDIO:
 			wcstombs(mbstr, file.GetName(), 511);
 
-			if (auxio_load_archive(lastarchname, &compbuffer, &compsize, &compoffset, (const char *)mbstr))
+			if (fileio_load_archive(lastarchname, &compbuffer, &compsize, &compoffset, (const char *)mbstr))
 			{
 				int chan, bits, rate;
 
@@ -1141,7 +1141,7 @@ int main(int argc, char *argv[])
 	playing = 0;
 	intbuffer = NULL;
 
-	auxio_init();
+	fileio_init();
 
 	sSettings = new Settings;
 	sCheatMgr = new CheatMgr;
@@ -1161,10 +1161,10 @@ int main(int argc, char *argv[])
 	User::logCallback.Set( DoLog, userData );
 
 	// try to load the FDS BIOS
-	auxio_set_fds_bios();
+	fileio_set_fds_bios();
 
 	// and the NST database
-	auxio_load_db();
+	fileio_load_db();
 
 	// attempt to load and autostart a file specified on the commandline
 	if (argc > 1)
@@ -1235,7 +1235,7 @@ int main(int argc, char *argv[])
 			if (state_save)
 			{
 				kill_video_if_fs();
-				auxio_do_state_save();
+				fileio_do_state_save();
 				state_save = 0;
 				cleanup_after_io();
 			}
@@ -1243,7 +1243,7 @@ int main(int argc, char *argv[])
 			if (state_load)
 			{
 				kill_video_if_fs();
-				auxio_do_state_load();
+				fileio_do_state_load();
 				state_load = 0;
 				cleanup_after_io();
 			}
@@ -1251,7 +1251,7 @@ int main(int argc, char *argv[])
 			if (movie_load)
 			{
 				kill_video_if_fs();
-				auxio_do_movie_load();
+				fileio_do_movie_load();
 				movie_load = 0;
 				cleanup_after_io();
 			}
@@ -1259,7 +1259,7 @@ int main(int argc, char *argv[])
 			if (movie_save)
 			{
 				kill_video_if_fs();
-				auxio_do_movie_save();
+				fileio_do_movie_save();
 				movie_load = 0;
 				cleanup_after_io();
 			}
@@ -1267,7 +1267,7 @@ int main(int argc, char *argv[])
 			if (movie_stop)
 			{
 				movie_stop = 0;
-				auxio_do_movie_stop();
+				fileio_do_movie_stop();
 			}
 
 			if (schedule_stop)
@@ -1283,7 +1283,7 @@ int main(int argc, char *argv[])
 
 	nst_unload();
 
-	auxio_shutdown();
+	fileio_shutdown();
 
 	delete sSettings;
 	delete sCheatMgr;
@@ -1778,7 +1778,7 @@ void NstLoadGame(const char* filename)
 
 	// check if it's an archive
 	wascomp = 0;
-	if (auxio_load_archive(filename, &compbuffer, &compsize, &compoffset, NULL, gamename))
+	if (fileio_load_archive(filename, &compbuffer, &compsize, &compoffset, NULL, gamename))
 	{
 		std::istrstream file((char *)compbuffer+compoffset, compsize);
 		wascomp = 1;

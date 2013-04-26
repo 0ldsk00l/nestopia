@@ -2,7 +2,7 @@
 	NEStopia / Linux
 	Port by R. Belmont
 	
-	auxio.cpp - handles movie and state I/O
+	fileio.cpp - handles movie and state I/O
 */
 
 #include <stdlib.h>
@@ -21,7 +21,7 @@
 #include "core/api/NstApiMovie.hpp"
 #include "core/api/NstApiFds.hpp"
 #include "core/api/NstApiCartridge.hpp"
-#include "oss.h"
+#include "audio.h"
 #include "settings.h"
 #include "unzip.h"
 
@@ -94,7 +94,7 @@ static gint check_list_double(GtkWidget *widget, GdkEventButton *event, gpointer
 	return FALSE;
 }
 
-void auxio_init(void)
+void fileio_init(void)
 {
 	moviePlayFile = NULL;
 	movieRecFile = NULL;
@@ -102,7 +102,7 @@ void auxio_init(void)
 	nstDBFile = NULL;
 }
 
-void auxio_do_state_save(void)
+void fileio_do_state_save(void)
 {
 	Nes::Api::Machine machine( emulator );
 	GtkWidget *dialog;
@@ -138,7 +138,7 @@ void auxio_do_state_save(void)
 	gtk_widget_destroy(dialog);
 }
 
-void auxio_do_state_load(void)
+void fileio_do_state_load(void)
 {
 	Nes::Api::Machine machine( emulator );
 	GtkWidget *dialog;
@@ -173,7 +173,7 @@ void auxio_do_state_load(void)
 	gtk_widget_destroy(dialog);
 }
 
-void auxio_do_movie_save(void)
+void fileio_do_movie_save(void)
 {
 	Nes::Api::Machine machine( emulator );
 	Nes::Api::Movie movie( emulator );
@@ -221,7 +221,7 @@ void auxio_do_movie_save(void)
 	gtk_widget_destroy(dialog);
 }
 
-void auxio_do_movie_load(void)
+void fileio_do_movie_load(void)
 {
 	Nes::Api::Machine machine( emulator );
 	Nes::Api::Movie movie( emulator );
@@ -268,7 +268,7 @@ void auxio_do_movie_load(void)
 	gtk_widget_destroy(dialog);
 }
 
-void auxio_do_movie_stop(void)
+void fileio_do_movie_stop(void)
 {
 	Nes::Api::Movie movie( emulator );
 
@@ -291,7 +291,7 @@ void auxio_do_movie_stop(void)
 	}
 }
 
-void auxio_set_fds_bios(void)
+void fileio_set_fds_bios(void)
 {
 	Nes::Api::Fds fds( emulator );
 	char dirname[1024], *home;
@@ -318,7 +318,7 @@ void auxio_set_fds_bios(void)
 	}
 }
 
-void auxio_shutdown(void)
+void fileio_shutdown(void)
 {
 	if (nstDBFile)
 	{
@@ -352,7 +352,7 @@ static int checkExtension(const char *filename)
 	return 0;
 }
 
-int auxio_load_archive(const char *filename, unsigned char **dataout, int *datasize, int *dataoffset, const char *filetoload, char *outname)
+int fileio_load_archive(const char *filename, unsigned char **dataout, int *datasize, int *dataoffset, const char *filetoload, char *outname)
 {
 	FILE *f;
 	unsigned char idbuf[4];
@@ -451,7 +451,7 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 
 			strcpy(outname, fname);
 
-			return auxio_load_archive(filename, dataout, datasize, dataoffset, fname, NULL); 
+			return fileio_load_archive(filename, dataout, datasize, dataoffset, fname, NULL); 
 		}
 		else	// multiple files we can handle found, give the user a choice
 		{
@@ -563,7 +563,7 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 					strcpy(outname, fname);
 				}
 
-				return auxio_load_archive(filename, dataout, datasize, dataoffset, fname, NULL); 
+				return fileio_load_archive(filename, dataout, datasize, dataoffset, fname, NULL); 
 			}
 		}
 	}
@@ -571,7 +571,7 @@ int auxio_load_archive(const char *filename, unsigned char **dataout, int *datas
 	return 0;
 }
 
-void auxio_load_db(void)
+void fileio_load_db(void)
 {
 	Nes::Api::Cartridge::Database database( emulator );
 	char dirname[1024], datadirname[1024], *pwd;

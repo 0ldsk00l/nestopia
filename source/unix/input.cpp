@@ -21,9 +21,9 @@
 #include "core/api/NstApiMovie.hpp"
 #include "core/api/NstApiFds.hpp"
 #include "core/api/NstApiRewinder.hpp"
-#include "oss.h"
+#include "audio.h"
 #include "settings.h"
-#include "auxio.h"
+#include "fileio.h"
 #include "input.h"
 #include "kentry.h"
 

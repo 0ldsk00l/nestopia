@@ -36,7 +36,7 @@ extern "C" {
 }
 
 #include "main.h"
-#include "uihelp.h"
+#include "gtkui.h"
 
 using namespace Nes::Api;
 using namespace LinuxNst;

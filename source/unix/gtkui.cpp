@@ -34,9 +34,9 @@
 #include "core/NstCrc32.hpp"
 #include "core/NstChecksum.hpp"
 #include "core/NstXml.hpp"
-#include "oss.h"
+#include "audio.h"
 #include "settings.h"
-#include "auxio.h"
+#include "fileio.h"
 #include "input.h"
 #include "controlconfig.h"
 #include "cheats.h"
@@ -607,11 +607,11 @@ void fullscreen_clicked() {
 }
 
 void state_load() {
-	auxio_do_state_load();
+	fileio_do_state_load();
 }
 
 void state_save() {
-	auxio_do_state_save();
+	fileio_do_state_save();
 }
 
 void flipdisk_clicked() {
@@ -623,15 +623,15 @@ void switchdisk_clicked() {
 }
 
 void movie_load() {
-	auxio_do_movie_load();
+	fileio_do_movie_load();
 }
 
 void movie_record() {
-	auxio_do_movie_save();
+	fileio_do_movie_save();
 }
 
 void movie_stop() {
-	auxio_do_movie_stop();
+	fileio_do_movie_stop();
 }
 
 void redraw_request() {

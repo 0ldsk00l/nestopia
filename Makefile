@@ -48,9 +48,9 @@ LIBS   += -lGL -lGLU -lX11
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Linux objs
-OBJS = objs/unix/main.o objs/unix/oss.o objs/unix/interface.o objs/unix/settings.o 
-OBJS += objs/unix/auxio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
-OBJS += objs/unix/seffect.o objs/unix/uihelp.o
+OBJS = objs/unix/main.o objs/unix/audio.o objs/unix/interface.o objs/unix/settings.o 
+OBJS += objs/unix/fileio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
+OBJS += objs/unix/seffect.o objs/unix/gtkui.o
 
 # core objs
 OBJS += objs/core/NstApu.o              objs/core/NstFds.o            objs/core/NstPpu.o              objs/core/NstVector.o
@@ -156,8 +156,7 @@ OBJS += objs/core/input/NstInpHoriTrack.o          objs/core/input/NstInpPokkunM
 OBJS += objs/core/vssystem/NstVsRbiBaseball.o  objs/core/vssystem/NstVsSuperXevious.o  objs/core/vssystem/NstVsSystem.o  objs/core/vssystem/NstVsTkoBoxing.o
 
 # object dirs
-OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc 
-OBJDIRS += objs/unix objs/unix/7zip objs/unix/unzip
+OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc objs/unix
 
 # build rules
 objs/%.o: source/%.c
