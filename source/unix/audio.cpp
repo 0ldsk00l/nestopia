@@ -11,7 +11,7 @@
 #include <sys/ioctl.h>
 #include <SDL.h>
 
-#include "oss.h"
+#include "audio.h"
 
 #define NUM_FRAGS_BROKEN    (8)
 #define NUM_FRAGS_NORMAL    (4)
