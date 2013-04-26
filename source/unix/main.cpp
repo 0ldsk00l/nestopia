@@ -46,17 +46,15 @@
 #include "controlconfig.h"
 #include "cheats.h"
 #include "seffect.h"
+#include "gtkui.h"
 #include "main.h"
 #include "GL/glu.h"
-
-extern "C" {
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
+extern "C" {
 #include "callbacks.h"
 }
-
-#include "gtkui.h"
 
 using namespace Nes::Api;
 using namespace LinuxNst;

@@ -21,6 +21,8 @@
 #include <cerrno>
 #include <cstring>
 
+#include <gtk/gtk.h>
+
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiCheats.hpp"
 #include "../core/NstStream.hpp"
@@ -29,9 +31,6 @@
 #include "settings.h"
 
 extern "C" {
-#include <gtk/gtk.h>
-
-#include "interface.h"
 #include "callbacks.h"
 }
 

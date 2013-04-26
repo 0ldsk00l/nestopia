@@ -11,6 +11,8 @@
 #include <fstream>
 #include <vector>
 
+#include <gtk/gtk.h>
+
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
 #include "core/api/NstApiSound.hpp"
@@ -28,9 +30,6 @@
 extern "C" {
 #include <archive.h>
 #include <archive_entry.h>
-
-#include <gtk/gtk.h>
-#include "interface.h"
 }
 
 #define MAX_ITEMS	(512)
