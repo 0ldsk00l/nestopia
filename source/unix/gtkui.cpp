@@ -67,6 +67,7 @@ static GdkPixbuf *app_icon;
 GtkWidget *mainwindow;
 GtkWidget *configwindow;
 GtkWidget *drawingarea;
+GtkWidget *statusbar;
 
 GdkColor bg = {0, 0, 0, 0};
 
@@ -559,12 +560,12 @@ void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst:
 
 	// set up the icon
 	char iconpath[1024];
-	sprintf(iconpath, "%s/icons/nestopia.svg", DATADIR);
+	snprintf(iconpath, sizeof(iconpath), "%s/icons/nestopia.svg", DATADIR);
 	
 	// Load the icon from local source dir if make install hasn't been done
 	struct stat iconstat;
 	if (stat(iconpath, &iconstat) == -1) {
-		sprintf(iconpath, "source/unix/icons/nestopia.svg");
+		snprintf(iconpath, sizeof(iconpath), "source/unix/icons/nestopia.svg");
 	}
 
 	app_icon = gdk_pixbuf_new_from_file(iconpath, NULL);
@@ -637,8 +638,6 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	GtkWidget *helpmenu;
 	GtkWidget *help;
 	GtkWidget *about;
-	
-	GtkWidget *statusbar;
 	
 	GtkAccelGroup *accelgroup = gtk_accel_group_new();
 	
@@ -813,8 +812,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	gtk_widget_show_all(window);
 
-	char SDL_windowhack[32];
-	sprintf(SDL_windowhack, "SDL_WINDOWID=%ld", GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
+	char SDL_windowhack[24];
+	snprintf(SDL_windowhack, sizeof(SDL_windowhack), "SDL_WINDOWID=%ld", GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
 	set_window_id(SDL_windowhack);
 	
 	gtk_widget_modify_bg(drawingarea, GTK_STATE_NORMAL, &bg);
@@ -1002,12 +1001,12 @@ GtkWidget* create_config(void) {
 	GtkWidget *inputbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 	char svgpath[1024];
-	sprintf(svgpath, "%s/icons/nespad.svg", DATADIR);
+	snprintf(svgpath, sizeof(svgpath), "%s/icons/nespad.svg", DATADIR);
 	
 	// Load the NES pad svg from local source dir if make install hasn't been done
 	struct stat svgstat;
 	if (stat(svgpath, &svgstat) == -1) {
-		sprintf(svgpath, "source/unix/icons/nespad.svg");
+		snprintf(svgpath, sizeof(svgpath), "source/unix/icons/nespad.svg");
 	}
 	
 	GtkWidget *inputgamepadbox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin", 10, NULL);
@@ -1308,12 +1307,12 @@ GtkWidget* create_nsfplayer (void) {
 GtkWidget* create_about (void) {
 
 	char svgpath[1024];
-	sprintf(svgpath, "%s/icons/nestopia.svg", DATADIR);
+	snprintf(svgpath, sizeof(svgpath), "%s/icons/nestopia.svg", DATADIR);
 	
 	// Load the SVG from local source dir if make install hasn't been done
 	struct stat svgstat;
 	if (stat(svgpath, &svgstat) == -1) {
-		sprintf(svgpath, "source/unix/icons/nestopia.svg");
+		snprintf(svgpath, sizeof(svgpath), "source/unix/icons/nestopia.svg");
 	}
 	
 	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 192, 192, NULL);
@@ -1471,11 +1470,6 @@ unsigned short GDKToSDLKeyval(int gdk_key)
 		return 0;
 	}
 	
-	// ignore pause and screenshot hotkeys since they is handled by GTK+ as accelerators
-	/*if (sdl_key == Hotkeys[HK_PAUSE] || sdl_key == Hotkeys[HK_SCREENSHOT] || 
-		sdl_key == Hotkeys[HK_SAVE_STATE] || sdl_key == Hotkeys[HK_LOAD_STATE])
-		return 0;*/
-	
 	return sdl_key;
 }
 
@@ -1531,5 +1525,5 @@ gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data)
 
 void set_window_id(char* sdlwindowid) {
 	//printf("%s\n", sdlwindowid);
-	sprintf(windowid, "%s", sdlwindowid);
+	snprintf(windowid, sizeof(windowid), "%s", sdlwindowid);
 }

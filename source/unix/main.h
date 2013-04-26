@@ -19,5 +19,6 @@ void ToggleFullscreen();
 void FlipFDSDisk();
 void SwitchFDSDisk();
 void print_fds_info();
+void print_message(char* message);
 
 #endif

@@ -230,13 +230,13 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 		desc = entry;
 	}
 
-	sprintf(secs, "Time left: %d", seconds);
+	snprintf(secs, sizeof(secs), "Time left: %d", seconds);
 
 	evtvec.clear();
 
 	sdl_locksurf();
 	sdl_clear();
-	sprintf(descstr, "Press key or joy button/axis for: %s", desc);
+	snprintf(descstr, sizeof(descstr), "Press key or joy button/axis for: %s", desc);
 	sdl_font_text(0, 0, descstr);
 	sdl_font_text(0, 48, secs);
 	sdl_unlockandflip();
@@ -278,18 +278,18 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 
 					if (key != NULL)
 					{
-						sprintf(input, "_%s", key);
+						snprintf(input, sizeof(input), "_%s", key);
 					}
 					else if (isprint(ksym))
 					{
-						sprintf(input, "%c", ksym);
+						snprintf(input, sizeof(input), "%c", ksym);
 					}
 					else
 					{
 						fprintf(stderr, "\a");	// beep
 						break;
 					}
-					sprintf(match, "%s", SDL_GetKeyName(SDLKey(ksym)));
+					snprintf(match, sizeof(match), "%s", SDL_GetKeyName(SDLKey(ksym)));
 				}
 				quit = 1;
 				break;
@@ -316,24 +316,24 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 						lastAxis.axis = evt.jaxis.axis;
 						lastAxis.t = t + 2;
 
-						sprintf(match, "joy %d axis %d %c",
+						snprintf(match, sizeof(match), "joy %d axis %d %c",
 							evt.jaxis.which + 1, evt.jaxis.axis, dir);
-						sprintf(input, "_J%dA%d%c", evt.jaxis.which, evt.jaxis.axis, dir);
+						snprintf(input, sizeof(match), "_J%dA%d%c", evt.jaxis.which, evt.jaxis.axis, dir);
 					}
 					quit = 1;
 					break;
 
 				case SDL_JOYHATMOTION:
-					sprintf(match, "joy %d hat %d",
+					snprintf(match, sizeof(match), "joy %d hat %d",
 						evt.jhat.which + 1, evt.jhat.value);
-					sprintf(input, "_J%dH%d%d", evt.jbutton.which, evt.jhat.hat, evt.jhat.value);
+					snprintf(input, sizeof(match), "_J%dH%d%d", evt.jbutton.which, evt.jhat.hat, evt.jhat.value);
 					quit = 1;
 					break;
 
 				case SDL_JOYBUTTONDOWN:
-					sprintf(match, "joy %d button %d",
+					snprintf(match, sizeof(match), "joy %d button %d",
 						evt.jbutton.which + 1, evt.jbutton.button);
-					sprintf(input, "_J%dB%d", evt.jbutton.which, evt.jbutton.button);
+					snprintf(input, sizeof(match), "_J%dB%d", evt.jbutton.which, evt.jbutton.button);
 					quit = 1;					
 					break;
 
@@ -376,7 +376,7 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 			{
 				nextms = basems + 1000;
 
-				sprintf(secs, "Time left: %d", seconds);
+				snprintf(secs, sizeof(secs), "Time left: %d", seconds);
 
 				sdl_locksurf();
 				sdl_clear();
@@ -404,9 +404,9 @@ static void read_event(InputDefT *ctl_list, const char *entry, const char *desc 
 		int icontrol = 0;
 
 		// write the nstcontrols line
-		sprintf(outline, "%s\t", desc);
+		snprintf(outline, sizeof(outline), "%s\t", desc);
 		
-		sprintf(tmp, "%s\t", evtvec[0].code.c_str());
+		snprintf(tmp, sizeof(tmp), "%s\t", evtvec[0].code.c_str());
 		strcat(outline, tmp);
 
 		// sanitize new control entry going in

@@ -54,7 +54,7 @@ Settings::Settings()
 
 	// try the recommended place for settings
 	home = getenv("HOME");
-	sprintf(dirname, "%s/.nestopia/nstsettings", home);
+	snprintf(dirname, sizeof(dirname), "%s/.nestopia/nstsettings", home);
 
 	f = fopen(dirname, "rb");
 	if (f == NULL)
@@ -107,10 +107,10 @@ Settings::~Settings()
 
 	// make sure the output directory exists
 	home = getenv("HOME");
-	sprintf(dirname, "%s/.nestopia/", home);
+	snprintf(dirname, sizeof(dirname), "%s/.nestopia/", home);
 	mkdir(dirname, 0700);
 
-	sprintf(dirname, "%s/.nestopia/nstsettings", home);
+	snprintf(dirname, sizeof(dirname), "%s/.nestopia/nstsettings", home);
 	f = fopen(dirname, "wb");
 	if (f == NULL)
 	{

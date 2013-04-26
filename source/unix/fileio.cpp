@@ -26,6 +26,7 @@
 #include "audio.h"
 #include "settings.h"
 #include "unzip.h"
+#include "main.h"
 
 extern "C" {
 #include <archive.h>
@@ -37,6 +38,7 @@ extern "C" {
 extern Nes::Api::Emulator emulator;
 extern GtkWidget *mainwindow;
 extern char rootname[512];
+extern char msgbuf[512];
 
 static std::ifstream *moviePlayFile, *fdsBiosFile, *nstDBFile;
 static std::fstream *movieRecFile;
@@ -301,7 +303,7 @@ void fileio_set_fds_bios(void)
 	}
 
 	home = getenv("HOME");
-	sprintf(dirname, "%s/.nestopia/disksys.rom", home);
+	snprintf(dirname, sizeof(dirname), "%s/.nestopia/disksys.rom", home);
 
 	fdsBiosFile = new std::ifstream(dirname, std::ifstream::in|std::ifstream::binary);
 
@@ -311,7 +313,8 @@ void fileio_set_fds_bios(void)
 	}
 	else
 	{
-		std::cout << "Couldn't find ~/.nestopia/disksys.rom\nDisk System games will not work\n";
+		snprintf(msgbuf, sizeof(msgbuf), "~/.nestopia/disksys.rom not found, Disk System games will not work.");
+		print_message(msgbuf);
 		delete fdsBiosFile;
 		fdsBiosFile = NULL;
 	}
@@ -581,8 +584,8 @@ void fileio_load_db(void)
 	}
 
 	pwd = getenv("PWD");
-	sprintf(dirname, "%s/NstDatabase.xml", pwd);
-	sprintf(datadirname, "%s/NstDatabase.xml", DATADIR);
+	snprintf(dirname, sizeof(dirname), "%s/NstDatabase.xml", pwd);
+	snprintf(datadirname, sizeof(datadirname), "%s/NstDatabase.xml", DATADIR);
 
 	nstDBFile = new std::ifstream(datadirname, std::ifstream::in|std::ifstream::binary);
 
