@@ -243,7 +243,7 @@ InputDefT *parse_input_file()
 	char dirname[1024], *home;
 
 	home = getenv("HOME");
-	sprintf(dirname, "%s/.nestopia/nstcontrols", home);
+	snprintf(dirname, sizeof(dirname), "%s/.nestopia/nstcontrols", home);
 
  	infile = fopen(dirname, "r");
 	if (!infile)
@@ -295,7 +295,7 @@ void create_input_file()
 	const char *mc;
 	
 	home = getenv("HOME");
-	sprintf(dirname, "%s/.nestopia/nstcontrols", home);
+	snprintf(dirname, sizeof(dirname), "%s/.nestopia/nstcontrols", home);
 
  	outfile = fopen(dirname, "w");
 	if (!outfile)
@@ -358,7 +358,7 @@ void write_output_file(InputDefT *ctl_defs)
 	const char *mc;
 
 	home = getenv("HOME");
-	sprintf(dirname, "%s/.nestopia/nstcontrols", home);
+	snprintf(dirname, sizeof(dirname), "%s/.nestopia/nstcontrols", home);
 
  	outfile = fopen(dirname, "w");
 	if (!outfile)
@@ -383,7 +383,7 @@ void write_output_file(InputDefT *ctl_defs)
 
 			if (mc) 
 			{
-				sprintf(type, "%s\t", mc);
+				snprintf(type, sizeof(type), "%s\t", mc);
 			}
 			else
 			{
@@ -394,7 +394,7 @@ void write_output_file(InputDefT *ctl_defs)
 		{
 			mc = kentry_find_code(controlcodes, ctl_defs[i].codeout);
 
-			sprintf(type, "P%d%s\t", ctl_defs[i].player, mc);
+			snprintf(type, sizeof(type), "P%d%s\t", ctl_defs[i].player, mc);
 		}
 	
 		//  is this a keyboard control?
@@ -403,25 +403,25 @@ void write_output_file(InputDefT *ctl_defs)
 			mc = kentry_find_code(keycodes, ctl_defs[i].evt.key.keysym.sym);
 			if (mc != NULL) 
 			{
-				sprintf(ctrl, "_%s", mc);
+				snprintf(ctrl, sizeof(ctrl), "_%s", mc);
 			}
 			else
 			{
-				sprintf(ctrl, "%c", ctl_defs[i].evt.key.keysym.sym);
+				snprintf(ctrl, sizeof(ctrl), "%c", ctl_defs[i].evt.key.keysym.sym);
 			}
 		}
   		else if (ctl_defs[i].evt.type == SDL_JOYAXISMOTION) 
 		{
-			sprintf(ctrl, "_J%dA%d%s\t", ctl_defs[i].evt.jbutton.which, ctl_defs[i].evt.jaxis.axis, (ctl_defs[i].evt.jaxis.value == 1) ? "PLUS" : "MINUS");
+			snprintf(ctrl, sizeof(ctrl), "_J%dA%d%s\t", ctl_defs[i].evt.jbutton.which, ctl_defs[i].evt.jaxis.axis, (ctl_defs[i].evt.jaxis.value == 1) ? "PLUS" : "MINUS");
 		}
 		else if (ctl_defs[i].evt.type == SDL_JOYHATMOTION)
 		{
-			sprintf(ctrl, "_J%dH%d%d\t", ctl_defs[i].evt.jhat.which, ctl_defs[i].evt.jhat.hat, ctl_defs[i].evt.jhat.value);
+			snprintf(ctrl, sizeof(ctrl), "_J%dH%d%d\t", ctl_defs[i].evt.jhat.which, ctl_defs[i].evt.jhat.hat, ctl_defs[i].evt.jhat.value);
 			
 		}
 		else if (ctl_defs[i].evt.type == SDL_JOYBUTTONDOWN)
 		{
-			sprintf(ctrl, "_J%dB%d\t", ctl_defs[i].evt.jbutton.which, ctl_defs[i].evt.jbutton.button);
+			snprintf(ctrl, sizeof(ctrl), "_J%dB%d\t", ctl_defs[i].evt.jbutton.which, ctl_defs[i].evt.jbutton.button);
 		}
 		else
 		{

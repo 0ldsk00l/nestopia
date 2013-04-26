@@ -82,12 +82,13 @@ static SDL_Joystick *joy[10];
 int cur_Rheight, cur_Rwidth;
 
 extern int lnxdrv_apimode;
-extern GtkWidget *mainwindow;
+extern GtkWidget *mainwindow, *statusbar;
 extern char windowid[24];
 
 static char savename[512], capname[512], gamebasename[512];
 static char caption[128];
 char rootname[512], lastarchname[512];
+char msgbuf[512];
 
 static InputDefT *ctl_defs;
 
@@ -577,7 +578,13 @@ void print_fds_info() {
 	fds.GetCurrentDisk() == 0 ? disk = "1" : disk = "2";
 	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
 
-	printf("Fds: Disk %s Side %s\n", disk, side);
+	snprintf(msgbuf, sizeof(msgbuf), "Fds: Disk %s Side %s", disk, side);
+	print_message(msgbuf);
+}
+
+void print_message(char* message) {
+	printf("%s\n", message);
+	gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, message);
 }
 
 // save state to memory slot
@@ -589,7 +596,8 @@ static void QuickSave(int isvst)
 	std::ofstream os(strFile.c_str());
 	// use "NO_COMPRESSION" to make it easier to hack save states
 	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::USE_COMPRESSION);
-	printf("State Saved: %s\n", strFile.c_str());
+	snprintf(msgbuf, sizeof(msgbuf), "State Saved: %s", strFile.c_str());
+	print_message(msgbuf);
 }
 
 
@@ -600,14 +608,16 @@ static void QuickLoad(int isvst)
 	
 	struct stat qloadstat;
 	if (stat(strFile.c_str(), &qloadstat) == -1) {
-		printf("No State to Load\n");
+		snprintf(msgbuf, sizeof(msgbuf), "No State to Load");
+		print_message(msgbuf);
 		return;
 	}
 
 	Machine machine( emulator );
 	std::ifstream is(strFile.c_str());
 	Nes::Result res = machine.LoadState(is);
-	printf("State Loaded: %s\n", strFile.c_str());
+	snprintf(msgbuf, sizeof(msgbuf), "State Loaded: %s", strFile.c_str());
+	print_message(msgbuf);
 }
 
 
@@ -624,6 +634,8 @@ void NstPlayGame(void)
 		putenv(windowid);
 		NstStopPlaying();
 	}
+	
+	gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, "");
 
 	// initialization
 	SetupVideo();
@@ -1055,14 +1067,14 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 		{
 			char fdsname[512];
 
-			sprintf(fdsname, "%s.ups", rootname);
+			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
 			
 			std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
 
 			// no ups, look for ips
 			if (!batteryFile.is_open())
 			{
-				sprintf(fdsname, "%s.ips", rootname);
+				snprintf(fdsname, sizeof(fdsname), "%s.ips", rootname);
 
 				std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
 
@@ -1083,7 +1095,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 		{
 			char fdsname[512];
 
-			sprintf(fdsname, "%s.ups", rootname);
+			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
 
 			std::ofstream fdsFile( fdsname, std::ifstream::out|std::ifstream::binary );
 
@@ -1122,8 +1134,8 @@ int main(int argc, char *argv[])
 		
 		// make sure the output directory exists
 		home = getenv("HOME");
-		sprintf(dirname, "%s/.nestopia/", home);
-		sprintf(savedirname, "%ssave/", dirname);
+		snprintf(dirname, sizeof(dirname), "%s/.nestopia/", home);
+		snprintf(savedirname, sizeof(dirname), "%ssave/", dirname);
 		mkdir(dirname, 0700);
 		mkdir(savedirname, 0700);
 		create_input_file();
@@ -1676,7 +1688,7 @@ void configure_savename( const char* filename )
 	char savedir[1024], *homedir;
 
 	homedir = getenv("HOME");
-	sprintf(savedir, "%s/.nestopia/save/", homedir);
+	snprintf(savedir, sizeof(savedir), "%s/.nestopia/save/", homedir);
 
 	strcpy(savename, filename);
 
@@ -1708,7 +1720,7 @@ void configure_savename( const char* filename )
 	strcpy(savename, savedir);
 	
 	// also generate the window caption
-	sprintf(caption, "Nestopia");
+	snprintf(caption, sizeof(caption), "Nestopia");
 
 	strcpy(rootname, savename);
 	strcat(savename, ".sav");
@@ -1877,7 +1889,7 @@ void NstLoadGame(const char* filename)
 				break;
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
-				std::cout << "Can't find disksys.rom for FDS game\n";
+				snprintf(msgbuf, sizeof(msgbuf), "Can't find disksys.rom for FDS game");
 				break;
 
 			default:

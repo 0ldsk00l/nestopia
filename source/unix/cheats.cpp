@@ -213,7 +213,7 @@ void CheatMgr::AddCode(Cheats::Code &code, bool useenable, bool enable, char *de
 	}
 
 	// add it to the list box
-	sprintf(newentry.raw, "%04x - %02x - %02x", code.address, code.value, code.compare);
+	snprintf(newentry.raw, sizeof(newentry.raw), "%04x - %02x - %02x", code.address, code.value, code.compare);
 
 //	printf("AddCode [GG %s]: iteridx = %d, clidx = %d, useenable %c, enable %c\n", newentry.gg, iteridx, clidx, useenable ? 'T' : 'F', enable ? 'T' : 'F');
 
@@ -609,7 +609,7 @@ void on_cheatsave_clicked(GtkButton *button, gpointer user_data)
 
 				if (cheatlist[i].crc)
 				{
-					sprintf(buffer, "%08X", cheatlist[i].crc);
+					snprintf(buffer, sizeof(buffer), "%08X", cheatlist[i].crc);
 					mbstowcs(wbuffer, buffer, 63);
 					node.AddAttribute( L"game", wbuffer );
 				}
@@ -626,16 +626,16 @@ void on_cheatsave_clicked(GtkButton *button, gpointer user_data)
 					node.AddChild( L"rocky", wbuffer );
 				}
 
-				sprintf(buffer, "0x%04X", code.address);
+				snprintf(buffer, sizeof(buffer), "0x%04X", code.address);
 				mbstowcs(wbuffer, buffer, 63);
 				node.AddChild( L"address", wbuffer );
-				sprintf(buffer, "0x%02X", code.value);
+				snprintf(buffer, sizeof(buffer), "0x%02X", code.value);
 				mbstowcs(wbuffer, buffer, 63);
 				node.AddChild( L"value", wbuffer );
 
 				if (code.useCompare)
 				{
-					sprintf(buffer, "0x%02X", code.compare);
+					snprintf(buffer, sizeof(buffer), "0x%02X", code.compare);
 					mbstowcs(wbuffer, buffer, 63);
 					node.AddChild( L"compare", wbuffer );
 				}
