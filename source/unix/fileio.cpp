@@ -394,7 +394,7 @@ int fileio_load_archive(const char *filename, unsigned char **dataout, int *data
 		int64_t entry_size;
 
 		if (r != ARCHIVE_OK) {
-			printf("Archive failed to open.\n");
+			print_message("Archive failed to open.");
 		}
 		
 		while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
@@ -435,7 +435,7 @@ int fileio_load_archive(const char *filename, unsigned char **dataout, int *data
 	
 	else if ((idbuf[0] == 'R') && (idbuf[1] == 'a') && (idbuf[2] == 'r') && (idbuf[3] == '!')) 
 	{	// it's rar 
-		printf("Rar files are not supported.\n");
+		print_message("Rar files are not supported.");
 	}
 
 	// if we found any files and weren't forced to load them, handle accordingly
@@ -596,7 +596,7 @@ void fileio_load_db(void)
 	}
 	else
 	{
-		printf("NstDatabase.xml not found in %s\n", DATADIR);
+		print_message("NstDatabase.xml not found!");
 		nstDBFile = new std::ifstream(dirname, std::ifstream::in|std::ifstream::binary);
 
 		if (nstDBFile->is_open())
@@ -606,7 +606,7 @@ void fileio_load_db(void)
 		}
 		else
 		{
-			printf("NstDatabase.xml not found in %s\nPAL detection and auto-ROM-fixing will be disabled\n", pwd);
+			print_message("NstDatabase.xml not found!");
 			delete nstDBFile;
 			nstDBFile = NULL;
 		}

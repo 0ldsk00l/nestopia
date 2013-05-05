@@ -142,7 +142,7 @@ void m1sdr_SetSamplesPerTick(UINT32 spf)
 			buffer[i] = (volatile INT16 *)malloc(nDSoundSegLen * 2 * sizeof(UINT16));
 			if (!buffer[i])
 			{
-				printf("Couldn't alloc buffer for SDL audio!\n");
+				fprintf(stderr, "Couldn't alloc buffer for SDL audio!\n");
 				exit(-1);
 			}
 
@@ -315,7 +315,7 @@ INT16 m1sdr_Init(int sample_rate)
 
 		if (SDL_OpenAudio(&aspec, NULL) < 0)
 		{
-			printf("ERROR: can't open SDL audio\n");
+			fprintf(stderr, "Error: Can't open SDL audio!");
 			return 0;
 		}
 
@@ -333,53 +333,53 @@ INT16 m1sdr_Init(int sample_rate)
 		}
 
 		if ((err = snd_pcm_hw_params_malloc(&hwparams)) < 0) {
-			fprintf (stderr, "cannot allocate hardware parameter structure (%s)\n",
+			fprintf (stderr, "ALSA: Cannot allocate hardware parameter structure (%s)\n",
 				 snd_strerror(err));
 			return 0;
 		}
 
 		// Init hwparams with full configuration space
 		if ((err = snd_pcm_hw_params_any(pHandle, hwparams)) < 0) {
-			fprintf(stderr, "ALSA: couldn't set hw params (%s)\n", snd_strerror(err));
+			fprintf(stderr, "ALSA: Could not set hw params (%s)\n", snd_strerror(err));
 			hw_present = 0;
 			return 0;
 		}
 
 		// Set access type
 		if ((err = snd_pcm_hw_params_set_access(pHandle, hwparams, SND_PCM_ACCESS_RW_INTERLEAVED)) < 0) {
-			fprintf(stderr, "ALSA: can't set access (%s)\n", snd_strerror(err));
+			fprintf(stderr, "ALSA: Cannot set access (%s)\n", snd_strerror(err));
 			return 0;
 		}
 
 		// Set sample format
 		if ((err = snd_pcm_hw_params_set_format(pHandle, hwparams, SND_PCM_FORMAT_S16)) < 0) {
-			fprintf(stderr, "ALSA: can't set format (%s)\n", snd_strerror(err));
+			fprintf(stderr, "ALSA: Cannot set format (%s)\n", snd_strerror(err));
 			return 0;
 		}
 
 		// Set sample rate (nearest possible)
 		nfreq = sample_rate;
 		if ((err = snd_pcm_hw_params_set_rate_near(pHandle, hwparams, &nfreq, 0)) < 0) {
-			fprintf(stderr, "ALSA: can't set sample rate (%s)\n", snd_strerror(err));
+			fprintf(stderr, "ALSA: Cannot set sample rate (%s)\n", snd_strerror(err));
 			return 0;
 		}
 
 		// Set number of channels
 		if ((err = snd_pcm_hw_params_set_channels(pHandle, hwparams, 2)) < 0) {
-			fprintf(stderr, "ALSA: can't set stereo (%s)\n", snd_strerror(err));
+			fprintf(stderr, "ALSA: Cannot set stereo (%s)\n", snd_strerror(err));
 			return 0;
 		}
 
 		// Set period time (nearest possible)
 		periodtime = 20000;
 		if ((err = snd_pcm_hw_params_set_period_time_near(pHandle, hwparams, &periodtime, 0)) < 0) {
-			fprintf(stderr, "ALSA: can't set period time (%s)\n", snd_strerror(err));
+			fprintf(stderr, "ALSA: Cannot set period time (%s)\n", snd_strerror(err));
 			return 0;
 		}
 
 		// Apply HW parameter settings to PCM device and prepare device
 		if ((err = snd_pcm_hw_params(pHandle, hwparams)) < 0) {
-			fprintf(stderr, "ALSA: unable to install hw_params (%s)\n", snd_strerror(err));
+			fprintf(stderr, "ALSA: Unable to install hw_params (%s)\n", snd_strerror(err));
 			snd_pcm_hw_params_free(hwparams);
 			return 0;
 		}
@@ -387,7 +387,7 @@ INT16 m1sdr_Init(int sample_rate)
 		snd_pcm_hw_params_free(hwparams);
 
 		if ((err = snd_pcm_prepare(pHandle)) < 0) {
-			fprintf (stderr, "cannot prepare audio interface for use (%s)\n", snd_strerror(err));
+			fprintf (stderr, "Cannot prepare audio interface for use (%s)\n", snd_strerror(err));
 			return 0;
 		}
 		break;	
@@ -397,7 +397,7 @@ INT16 m1sdr_Init(int sample_rate)
 		if (audiofd == -1)
 		{
 			perror("/dev/dsp");
-			printf("ERROR: unable to open soundcard.  Aborting.\n");
+			fprintf(stderr, "Error: Unable to open /dev/dsp!\n");
 			return(0);
 		}
 
@@ -486,7 +486,7 @@ void m1sdr_SetCallback(void *fn)
 {
 	if (fn == (void *)NULL)
 	{
-		printf("ERROR: NULL CALLBACK!\n");
+		fprintf(stderr, "Error: Null Callback\n");
 	}
 
 	m1sdr_Callback = (void (*)(unsigned long, signed short *))fn;
