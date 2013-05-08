@@ -2734,8 +2734,15 @@ namespace Nes
 
 					case 180:
 
-						name = "NIHON UNROM M5";
-						id = Type::NIHON_UNROM_M5;
+						if (!chr && !wram && (nmt == Type::NMT_HORIZONTAL || nmt == Type::NMT_VERTICAL) && prg == SIZE_128K)
+						{
+							name = "NIHON UNROM M5";
+							id = Type::NIHON_UNROM_M5;
+							break;
+						}
+
+						name = "UxROM-AND (non-standard)";
+						id = Type::UNL_UXROM_M5;
 						break;
 
 					case 182:
@@ -3461,6 +3468,7 @@ namespace Nes
 					case Type::NAMCOT_163_S_0             :
 					case Type::NAMCOT_163_S_1             : return new Namcot::N163(c);
 					case Type::NANJING_STD                : return new Nanjing::Standard(c);
+					case Type::UNL_UXROM_M5               :
 					case Type::NIHON_UNROM_M5             : return new Nihon::UnRomM5(c);
 					case Type::NITRA_TDA                  : return new Nitra::Tda(c);
 					case Type::NTDEC_N715062              : return new Ntdec::N715062(c);

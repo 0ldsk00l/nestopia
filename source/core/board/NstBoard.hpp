@@ -540,6 +540,7 @@ namespace Nes
 						UNL_GXROM                  = MakeId<   66,  512,  128,  8,  0, CRM_0,  NMT_X,  0 >::ID,
 						UNL_NROM                   = MakeId<    0,   32,    8,  8,  0, CRM_8,  NMT_X,  0 >::ID,
 						UNL_UXROM                  = MakeId<    2, 4096,    8,  8,  0, CRM_0,  NMT_X,  0 >::ID,
+						UNL_UXROM_M5               = MakeId<  180, 4096,    8,  8,  0, CRM_0,  NMT_X,  0 >::ID,
 						UNL_TRXROM                 = MakeId<    4,  512,  256,  8,  0, CRM_0,  NMT_4,  0 >::ID,
 						UNL_XZY                    = MakeId<  176, 1024,  256,  8,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Waixing
