@@ -239,11 +239,17 @@ static void update_input()
    input_poll_cb();
    input->pad[0].buttons = 0;
    input->pad[1].buttons = 0;
+   input->vsSystem.insertCoin = 0;
 
    for (unsigned p = 0; p < 2; p++)
       for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
-         input->pad[p].buttons |= input_state_cb(p,
-               RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
+         input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
+         
+   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L))
+      input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_1;
+      
+   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R))
+      input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_2;
 
    if (machine->Is(Nes::Api::Machine::DISK))
    {
