@@ -46,9 +46,10 @@ else ifeq ($(platform), ios)
    CC = clang -arch armv7 -isysroot $(IOSSDK)
    CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
 else ifeq ($(platform), qnx)
-   TARGET := $(TARGET_NAME)_libretro.so
+   TARGET := $(TARGET_NAME)_libretro_qnx.so
    fpic := -fPIC
    SHARED := -lcpp -lm -shared -Wl,-version-script=link.T -Wl,-no-undefined
+	HAS_GCC := 0
 
 	CC = qcc -Vgcc_ntoarmv7le
 	CXX = QCC -Vgcc_ntoarmv7le_cpp
@@ -224,11 +225,13 @@ OBJS := $(strip $(OBJS))
 
 ifeq ($(HAS_GCC), 1)
 GCC_FLAGS := -Wno-deprecated -Wno-write-strings
+C_VER = -std=gnu99
+else
 endif
 
 DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES) $(GCC_FLAGS) $(GCC_WARNINGS) -DNST_NO_ZLIB
 
-CFLAGS += $(fpic) $(DEFINES) -std=gnu99
+CFLAGS += $(fpic) $(DEFINES) $(C_VER)
 CXXFLAGS += $(fpic) $(DEFINES) -fno-rtti
 
 INCDIRS := -I.. -I$(NST_DIR)/source
