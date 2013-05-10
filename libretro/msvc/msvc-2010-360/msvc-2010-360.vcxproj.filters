@@ -866,5 +866,11 @@
     <ClCompile Include="..\..\..\source\core\NstXml.cpp">
       <Filter>Source Files\core\api</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstVideoFilterNtscCfg.c">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\core\NstVideoFilterNtsc.cpp">
+      <Filter>Source Files\core\api</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>
