@@ -39,7 +39,7 @@ else ifeq ($(platform), osx)
    fpic := -fPIC
    SHARED := -dynamiclib
 else ifeq ($(platform), ios)
-   TARGET := $(TARGET_NAME)_libretro.dylib
+   TARGET := $(TARGET_NAME)_libretro_ios.dylib
    fpic := -fPIC
    SHARED := -dynamiclib
 
