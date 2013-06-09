@@ -8,6 +8,7 @@ Unix Shell:
   - Added the ability to switch FDS disks for multi-disk games
   - xBR filter options
   - Support for more archive formats through libarchive
+  - Differentiated Soft/Hard Reset
   
  Changes:
   - Removed internal zip and 7zip decoders in favour of libarchive
@@ -23,6 +24,11 @@ Windows Shell:
  Changes:
   - Redundant TV Aspect checkbox removed from NTSC filter dialog
   - Modified default sound settings to avoid desync
+
+libretro:
+
+ Additions:
+  - L/R now insert coins on Vs. System games
 
 Core:
 

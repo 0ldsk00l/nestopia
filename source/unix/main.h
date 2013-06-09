@@ -8,11 +8,16 @@ void NstPlayNsf();
 void NstStopNsf();
 void NstScheduleQuit();
 void NstStopPlaying();
-void NstReset();
+void NstSoftReset();
+void NstHardReset();
 bool NstIsPlaying();
 bool NstIsLoaded();
 void NstLoadGame(const char* filename);
 void NstLaunchConfig();
+
+void SetupVideo();
+void SetupSound();
+void SetupInput();
 
 void get_screen_res();
 void ToggleFullscreen();

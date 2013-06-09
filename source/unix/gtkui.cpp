@@ -617,7 +617,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	GtkWidget *emulator;
 	GtkWidget *cont;
 	GtkWidget *pause;
-	GtkWidget *reset;
+	GtkWidget *resetsoft;
+	GtkWidget *resethard;
 	GtkWidget *sep2;
 	GtkWidget *fullscreen;
 	GtkWidget *sep3;
@@ -669,8 +670,10 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	cont = gtk_image_menu_item_new_with_mnemonic("C_ontinue");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cont), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU));
 	pause = gtk_image_menu_item_new_from_stock(GTK_STOCK_MEDIA_PAUSE, NULL);
-	reset = gtk_image_menu_item_new_with_mnemonic("_Reset");
-	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(reset), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
+	resetsoft = gtk_image_menu_item_new_with_mnemonic("_Reset (Soft)");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(resetsoft), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
+	resethard = gtk_image_menu_item_new_with_mnemonic("Reset (_Hard)");
+	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(resethard), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
 	sep2 = gtk_separator_menu_item_new();
 	fullscreen = gtk_image_menu_item_new_from_stock(GTK_STOCK_FULLSCREEN, NULL);
 	sep3 = gtk_separator_menu_item_new();
@@ -691,7 +694,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	moviestop = gtk_image_menu_item_new_with_label("Stop Movie");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(moviestop), gtk_image_new_from_stock(GTK_STOCK_MEDIA_STOP, GTK_ICON_SIZE_MENU));
 	sep6 = gtk_separator_menu_item_new();
-	cheats = gtk_image_menu_item_new_with_mnemonic("C_heats...");
+	cheats = gtk_image_menu_item_new_with_mnemonic("Ch_eats...");
 	gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cheats), gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU));
 	sep7 = gtk_separator_menu_item_new();
 	configuration = gtk_image_menu_item_new_with_mnemonic("_Configuration...");
@@ -715,7 +718,8 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emulator), emulatormenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cont);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), pause);
-	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), reset);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resetsoft);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resethard);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep4);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), fullscreen);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep5);
@@ -768,10 +772,13 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	g_signal_connect(G_OBJECT(pause), "activate",
 		G_CALLBACK(pause_clicked), NULL);
-		
-	g_signal_connect(G_OBJECT(reset), "activate",
-		G_CALLBACK(NstReset), NULL);
-		
+
+	g_signal_connect(G_OBJECT(resetsoft), "activate",
+		G_CALLBACK(NstSoftReset), NULL);
+
+	g_signal_connect(G_OBJECT(resethard), "activate",
+		G_CALLBACK(NstHardReset), NULL);
+
 	g_signal_connect(G_OBJECT(fullscreen), "activate",
 		G_CALLBACK(ToggleFullscreen), NULL);
 
@@ -804,7 +811,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
-		
+
 	gtksettings = gtk_settings_get_default();
 	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
 
