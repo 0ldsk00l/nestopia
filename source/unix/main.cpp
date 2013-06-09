@@ -62,11 +62,6 @@ using namespace LinuxNst;
 // base class, all interfaces derives from this
 Emulator emulator;
 
-// forward declaration
-void SetupVideo();
-void SetupSound();
-void SetupInput();
-
 SDL_Surface *screen;
 
 static short lbuf[48000];
@@ -684,9 +679,19 @@ void NstStopNsf(void)
 	memset(lbuf, 0, sizeof(lbuf));
 }
 
-void NstReset() {
-	Machine machine( emulator );
-	Fds fds( emulator );
+void NstSoftReset() {
+	Machine machine(emulator);
+	Fds fds(emulator);
+	machine.Reset(false);
+
+	// put the disk system back to disk 0 side 0
+	fds.EjectDisk();
+	fds.InsertDisk(0, 0);
+}
+
+void NstHardReset() {
+	Machine machine(emulator);
+	Fds fds(emulator);
 	machine.Reset(true);
 
 	// put the disk system back to disk 0 side 0
@@ -771,7 +776,7 @@ static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
 		break;
 
 	case RESET:
-		NstReset();
+		NstSoftReset();
 		break;
 
 	case FLIP:
