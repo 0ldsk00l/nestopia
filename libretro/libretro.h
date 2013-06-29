@@ -1,3 +1,25 @@
+/* Copyright (C) 2010-2013 The RetroArch team
+ *
+ * ---------------------------------------------------------------------------------------
+ * The following license statement only applies to this libretro API header (libretro.h).
+ * ---------------------------------------------------------------------------------------
+ *
+ * Permission is hereby granted, free of charge,
+ * to any person obtaining a copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation the rights to
+ * use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+ */
+
 #ifndef LIBRETRO_H__
 #define LIBRETRO_H__
 
@@ -452,6 +474,13 @@ enum retro_mod
                                            // Result is set to true if some variables are updated by
                                            // frontend since last call to RETRO_ENVIRONMENT_GET_VARIABLE.
                                            // Variables should be queried with GET_VARIABLE.
+                                           //
+#define RETRO_ENVIRONMENT_SET_SUPPORT_NO_GAME 18
+                                           // const bool * --
+                                           // If true, the libretro implementation supports calls to retro_load_game() with NULL as argument.
+                                           // Used by cores which can run without particular game data.
+                                           // This should be called within retro_set_environment() only.
+                                          
 
 // Pass this to retro_video_refresh_t if rendering to hardware.
 // Passing NULL to retro_video_refresh_t is still a frame dupe as normal.
@@ -496,7 +525,7 @@ typedef void (*retro_keyboard_event_t)(bool down, unsigned keycode, uint32_t cha
 
 struct retro_keyboard_callback
 {
-    retro_keyboard_event_t callback;
+   retro_keyboard_event_t callback;
 };
 
 // Callbacks for RETRO_ENVIRONMENT_SET_DISK_CONTROL_INTERFACE.
