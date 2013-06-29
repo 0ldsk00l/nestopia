@@ -24,7 +24,7 @@
 
 using namespace Nes;
 
-static uint32_t video_buffer[Api::Video::Output::WIDTH * Api::Video::Output::HEIGHT];
+static uint32_t video_buffer[Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT];
 static int16_t audio_buffer[(44100 / 50)];
 static int16_t audio_stereo_buffer[2 * (44100 / 50)];
 static Api::Emulator emulator;
@@ -32,6 +32,9 @@ static Api::Machine *machine;
 static Api::Fds *fds;
 static char g_basename[256];
 static char g_rom_dir[256];
+
+int16_t video_width = Api::Video::Output::WIDTH;
+size_t pitch;
 
 static Api::Video::Output *video;
 static Api::Sound::Output *audio;
@@ -102,7 +105,12 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 void retro_init(void)
 {
    machine = new Api::Machine(emulator);
-   video = new Api::Video::Output(video_buffer, Api::Video::Output::WIDTH * sizeof(uint32_t));
+   // This is the only part that is not working in an ideal way.
+   // NTSC_WIDTH if you want NTSC filters, WIDTH otherwise.
+   // Can I destroy video and recreate it later, after check_variables?
+   // Maybe just force the values for the NTSC properties to fake "disabled"?
+   video = new Api::Video::Output(video_buffer, Api::Video::Output::NTSC_WIDTH * sizeof(uint32_t));
+   //video = new Api::Video::Output(video_buffer, Api::Video::Output::WIDTH * sizeof(uint32_t));
    input = new Api::Input::Controllers;
 
    Api::User::fileIoCallback.Set(file_io_callback, 0);
@@ -151,11 +159,12 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    const retro_system_timing timing = { is_pal ? 50.0 : 60.0, 44100.0 };
    info->timing = timing;
 
+// It's better if the size is based on NTSC_WIDTH if the filter is on
    const retro_game_geometry geom = {
-      256,
-      240,
-      256,
-      240,
+      Api::Video::Output::NTSC_WIDTH / 2,
+      Api::Video::Output::HEIGHT,
+      Api::Video::Output::NTSC_WIDTH,
+      Api::Video::Output::HEIGHT,
       4.0 / 3.0,
    };
    info->geometry = geom;
@@ -290,7 +299,7 @@ static void check_variables(void)
    
    var.key = "blargg_ntsc_filter";
 
-   /*
+   
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
       if (strcmp(var.value, "disabled") == 0)
@@ -303,15 +312,17 @@ static void check_variables(void)
          blargg_ntsc = 3;
       else if (strcmp(var.value, "rgb") == 0)
          blargg_ntsc = 4;
-   }*/
+   }
 
    switch(blargg_ntsc)
    {
       case 0:
          filter = Api::Video::RenderState::FILTER_NONE;
+         video_width = Api::Video::Output::WIDTH;
          break;
       case 1:
          filter = Api::Video::RenderState::FILTER_NTSC;
+         video_width = Api::Video::Output::NTSC_WIDTH;
          break;
       case 2:
          filter = Api::Video::RenderState::FILTER_NTSC;
@@ -320,6 +331,7 @@ static void check_variables(void)
          video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_COMP);
          video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_COMP);
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_COMP);
+         video_width = Api::Video::Output::NTSC_WIDTH;
          break;
       case 3:
          filter = Api::Video::RenderState::FILTER_NTSC;
@@ -328,6 +340,7 @@ static void check_variables(void)
          video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_SVIDEO);
          video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_SVIDEO);
+         video_width = Api::Video::Output::NTSC_WIDTH;
          break;
       case 4:
          filter = Api::Video::RenderState::FILTER_NTSC;
@@ -336,12 +349,15 @@ static void check_variables(void)
          video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_RGB);
          video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_RGB);
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_RGB);
+         video_width = Api::Video::Output::NTSC_WIDTH;
          break;
    }
-
+   
+   pitch = video_width * 4;
+   
    renderState.filter = filter;
-   renderState.width = 256;
-   renderState.height = 240;
+   renderState.width = video_width;
+   renderState.height = Api::Video::Output::HEIGHT;
    renderState.bits.count = 32;
    renderState.bits.mask.r = 0x00ff0000;
    renderState.bits.mask.g = 0x0000ff00;
@@ -357,7 +373,7 @@ void retro_run(void)
    update_input();
    emulator.Execute(video, audio, input);
 
-   video_cb(video_buffer, 256, 240, 1024);
+   video_cb(video_buffer, video_width, Api::Video::Output::HEIGHT, pitch);
 
    unsigned frames = is_pal ? 44100 / 50 : 44100 / 60;
    for (unsigned i = 0; i < frames; i++)
