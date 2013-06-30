@@ -105,12 +105,7 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 void retro_init(void)
 {
    machine = new Api::Machine(emulator);
-   // This is the only part that is not working in an ideal way.
-   // NTSC_WIDTH if you want NTSC filters, WIDTH otherwise.
-   // Can I destroy video and recreate it later, after check_variables?
-   // Maybe just force the values for the NTSC properties to fake "disabled"?
-   video = new Api::Video::Output(video_buffer, Api::Video::Output::NTSC_WIDTH * sizeof(uint32_t));
-   //video = new Api::Video::Output(video_buffer, Api::Video::Output::WIDTH * sizeof(uint32_t));
+
    input = new Api::Input::Controllers;
 
    Api::User::fileIoCallback.Set(file_io_callback, 0);
@@ -161,7 +156,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
 // It's better if the size is based on NTSC_WIDTH if the filter is on
    const retro_game_geometry geom = {
-      Api::Video::Output::NTSC_WIDTH / 2,
+      Api::Video::Output::WIDTH,
       Api::Video::Output::HEIGHT,
       Api::Video::Output::NTSC_WIDTH,
       Api::Video::Output::HEIGHT,
@@ -372,8 +367,11 @@ void retro_run(void)
 {
    update_input();
    emulator.Execute(video, audio, input);
+   
+   delete video;
+   video = 0;
 
-   video_cb(video_buffer, video_width, Api::Video::Output::HEIGHT, pitch);
+   video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
 
    unsigned frames = is_pal ? 44100 / 50 : 44100 / 60;
    for (unsigned i = 0; i < frames; i++)
@@ -383,6 +381,8 @@ void retro_run(void)
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
+      
+   video_cb(video_buffer, video_width, Api::Video::Output::HEIGHT, pitch);
 }
 
 static void extract_basename(char *buf, const char *path, size_t size)
@@ -602,4 +602,3 @@ void retro_cheat_reset(void)
 
 void retro_cheat_set(unsigned, bool, const char *)
 {}
-
