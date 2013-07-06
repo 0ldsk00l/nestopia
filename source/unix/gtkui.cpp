@@ -66,6 +66,7 @@ static GdkPixbuf *app_icon;
 
 GtkWidget *mainwindow;
 GtkWidget *configwindow;
+GtkWidget *messagewindow;
 GtkWidget *drawingarea;
 GtkWidget *statusbar;
 
@@ -1340,6 +1341,12 @@ GtkWidget* create_about (void) {
 	gtk_widget_destroy(aboutdialog);
 	
 	return aboutdialog;
+}
+
+void create_messagewindow(char* message) {    
+	messagewindow = gtk_message_dialog_new(GTK_WINDOW(mainwindow), GTK_DIALOG_DESTROY_WITH_PARENT, GTK_MESSAGE_INFO, GTK_BUTTONS_OK, message);
+	gtk_dialog_run (GTK_DIALOG (messagewindow));
+	gtk_widget_destroy (messagewindow);
 }
 
 // Ripped this straight out of FCEUX and Gens/GS
