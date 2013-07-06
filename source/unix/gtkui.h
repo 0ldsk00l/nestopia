@@ -17,4 +17,6 @@ GtkWidget* create_about();
 GtkWidget* create_archselect();
 GtkWidget* create_cheatwindow();
 
+void create_messagewindow(char* message);
+
 gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data);

@@ -1894,7 +1894,8 @@ void NstLoadGame(const char* filename)
 				break;
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
-				snprintf(msgbuf, sizeof(msgbuf), "Can't find disksys.rom for FDS game");
+				snprintf(msgbuf, sizeof(msgbuf), "FDS games require the FDS BIOS.\nIt should be located at ~/.nestopia/disksys.rom");
+				create_messagewindow(msgbuf);
 				break;
 
 			default:
