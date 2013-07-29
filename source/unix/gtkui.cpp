@@ -813,10 +813,14 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
 
+	g_signal_connect(G_OBJECT(window), "key_press_event",
+		G_CALLBACK(convertKeypress), NULL);
+
+	g_signal_connect(G_OBJECT(window), "key_release_event",
+		G_CALLBACK(convertKeypress), NULL);
+
 	gtksettings = gtk_settings_get_default();
 	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
-
-	gtk_key_snooper_install(convertKeypress, NULL);
 
 	gtk_widget_show_all(window);
 
