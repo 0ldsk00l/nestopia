@@ -177,7 +177,7 @@ void retro_set_environment(retro_environment_t cb)
    environ_cb = cb;
 
    static const struct retro_variable vars[] = {
-      { "blargg_ntsc_filter", "Blargg NTSC filter; disabled|monochrome|composite|svideo|rgb" },
+      { "blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
       { "nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { NULL, NULL },
    };
@@ -299,8 +299,6 @@ static void check_variables(void)
    {
       if (strcmp(var.value, "disabled") == 0)
          blargg_ntsc = 0;
-      else if (strcmp(var.value, "monochrome") == 0)
-         blargg_ntsc = 1;
       else if (strcmp(var.value, "composite") == 0)
          blargg_ntsc = 2;
       else if (strcmp(var.value, "svideo") == 0)
