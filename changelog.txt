@@ -1,5 +1,5 @@
 ----------------------------------------------------------------
-1.45-WIP
+1.45
 ----------------------------------------------------------------
 
 Unix Shell:
@@ -12,6 +12,7 @@ Unix Shell:
   
  Changes:
   - Removed internal zip and 7zip decoders in favour of libarchive
+  - Replaced gtk_key_snooper with key_press_event and key_release_event
   
  Fixes:
   - 7zip CRC check segfault
