@@ -51,6 +51,7 @@ Settings::Settings()
 	tvaspect = 0;
 	blendpix = 1;
 	cornerround = 0;
+	oscanmask = 0;
 
 	// try the recommended place for settings
 	home = getenv("HOME");
@@ -94,6 +95,7 @@ Settings::Settings()
 	READ_SETTING(tvaspect);
 	READ_SETTING(blendpix);
 	READ_SETTING(cornerround);
+	READ_SETTING(oscanmask);
 
 	fclose(f);
 }
@@ -141,6 +143,7 @@ Settings::~Settings()
 	WRITE_SETTING(tvaspect);
 	WRITE_SETTING(blendpix);
 	WRITE_SETTING(cornerround);
+	WRITE_SETTING(oscanmask);
 
 	fclose(f);
 }
