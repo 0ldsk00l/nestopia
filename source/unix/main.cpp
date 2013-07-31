@@ -160,7 +160,19 @@ static void opengl_init_structures()
 	glDisable( GL_TEXTURE_3D_EXT );
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-	glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, 0.0, -1.0);
+
+	if (sSettings->GetOverscanMask() == 1) {
+		glOrtho(
+			0.0,													// Left
+			(GLdouble)screen->w,									// Right
+			(GLdouble)screen->h - (OVERSCAN_BOTTOM * scalefactor),	// Bottom
+			0.0 + (OVERSCAN_TOP * scalefactor),						// Top
+			0.0, -1.0
+		);
+	}
+	else {
+		glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, 0.0, -1.0);
+	}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -1330,7 +1342,12 @@ void get_screen_res() {
 				cur_width = Video::Output::WIDTH;
 				cur_height = Video::Output::HEIGHT;
 				sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width * scalefactor;
-				cur_Rheight = cur_height * scalefactor;
+				if (sSettings->GetOverscanMask() == 1) {
+					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+				}
+				else {
+					cur_Rheight = cur_height * scalefactor;
+				}
 			}
 
 			break;
@@ -1349,7 +1366,12 @@ void get_screen_res() {
 			cur_width = Video::Output::NTSC_WIDTH;
 			cur_Rwidth = (cur_width / 2) * scalefactor;
 			cur_height = Video::Output::HEIGHT;
-			cur_Rheight = cur_height * scalefactor;
+			if (sSettings->GetOverscanMask() == 1) {
+					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+			}
+			else {
+				cur_Rheight = cur_height * scalefactor;
+			}
 			break;
 
 		case 2: // scale x
@@ -1360,27 +1382,50 @@ void get_screen_res() {
 			}
 
 			cur_width = Video::Output::WIDTH * scalefactor;
+			cur_height = Video::Output::HEIGHT * scalefactor;
 			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			if (sSettings->GetOverscanMask() == 1) {
+				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+			}
+			else {
+				cur_Rheight = cur_height;
+			}
 			break;
 
 		case 3: // scale HQx
 			cur_width = Video::Output::WIDTH * scalefactor;
+			cur_height = Video::Output::HEIGHT * scalefactor;
 			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			if (sSettings->GetOverscanMask() == 1) {
+				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+			}
+			else {
+				cur_Rheight = cur_height;
+			}
 			break;
 
 		case 4: // 2xSaI
 			cur_width = Video::Output::WIDTH * 2;
-			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = Video::Output::WIDTH * scalefactor;
 			cur_height = Video::Output::HEIGHT * 2;
-			cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			if (sSettings->GetOverscanMask() == 1) {
+				cur_Rheight = Video::Output::HEIGHT * scalefactor - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+			}
+			else {
+				cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			}
 			break;
 
 		case 5: // scale xBR
 			cur_width = Video::Output::WIDTH * scalefactor;
+			cur_height = Video::Output::HEIGHT * scalefactor;
 			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			cur_height = cur_Rheight = Video::Output::HEIGHT * scalefactor;
+			if (sSettings->GetOverscanMask() == 1) {
+				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+			}
+			else {
+				cur_Rheight = cur_height;
+			}
 			break;
 	}
 }

@@ -2,6 +2,10 @@
 #define _MAIN_H_
 
 #define TV_WIDTH 292
+#define OVERSCAN_LEFT 0
+#define OVERSCAN_RIGHT 0
+#define OVERSCAN_BOTTOM 8
+#define OVERSCAN_TOP 8
 
 void NstPlayGame();
 void NstPlayNsf();

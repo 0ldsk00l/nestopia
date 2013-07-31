@@ -11,6 +11,7 @@ namespace LinuxNst
 
 			// video accessors
 			int GetTvAspect(void) { return tvaspect; }
+			int GetOverscanMask(void) { return oscanmask; }
 			int GetFullscreen(void) { return fullscreen; }
 			int GetFsNativeRes(void) { return fsnativeres; }
 			int GetScale(void) { return scaler; }
@@ -22,6 +23,7 @@ namespace LinuxNst
 			int GetBlendPix(void) { return blendpix; }
 			int GetCornerRounding(void) { return cornerround; }
 			void SetTvAspect(int tv) { tvaspect = tv; }
+			void SetOverscanMask(int oscan) { oscanmask = oscan; }
 			void SetFullscreen(int fs) { fullscreen = fs; }
 			void SetFsNativeRes(int fsnr) { fsnativeres = fsnr; }
 			void SetScale(int scl) { scaler = scl; }
@@ -65,7 +67,7 @@ namespace LinuxNst
 		private:
 			// video settings
 			int fullscreen, scaler, sprlimit, videomode, ntscmode;
-			int fsnativeres, tvaspect, rendertype, scaleamt;
+			int fsnativeres, tvaspect, oscanmask, rendertype, scaleamt;
 			int blendpix, cornerround;
 			// input settings
 			int controls, configitem;
@@ -73,7 +75,7 @@ namespace LinuxNst
 			int stereo, sndapi, volume, rate, exciter, litesurr, surmult;
 			// other settings
 			int prefsys, spatch;
-};
+	};
 };
 
 #endif

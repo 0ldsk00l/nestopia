@@ -237,6 +237,10 @@ void on_check_tvaspect_toggled(GtkToggleButton *togglebutton, gpointer user_data
 	sSettings->SetTvAspect(gtk_toggle_button_get_active(togglebutton));
 }
 
+void on_check_oscanmask_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
+	sSettings->SetOverscanMask(gtk_toggle_button_get_active(togglebutton));
+}
+
 void
 on_unlimitsprcheck_toggled             (GtkToggleButton *togglebutton,
                                         gpointer         user_data)
@@ -923,6 +927,9 @@ GtkWidget* create_config(void) {
 	GtkWidget *check_tvaspect = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "TV Aspect Ratio", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_tvaspect), sSettings->GetTvAspect());
 	
+	GtkWidget *check_oscanmask = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Mask Overscan", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_oscanmask), sSettings->GetOverscanMask());
+	
 	GtkWidget *check_fullscreen = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Fullscreen", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fullscreen), sSettings->GetFullscreen());
 	
@@ -941,6 +948,7 @@ GtkWidget* create_config(void) {
 	gtk_box_pack_start(GTK_BOX(videobox), check_blendpix, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), misclabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_tvaspect, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(videobox), check_oscanmask, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_fullscreen, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), check_fsnativeres, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(videobox), unlimitsprcheck, FALSE, FALSE, 0);
@@ -1143,6 +1151,9 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(check_tvaspect), "toggled",
 		G_CALLBACK(on_check_tvaspect_toggled), NULL);
+		
+	g_signal_connect(G_OBJECT(check_oscanmask), "toggled",
+		G_CALLBACK(on_check_oscanmask_toggled), NULL);
 	
 	g_signal_connect(G_OBJECT(check_fullscreen), "toggled",
 		G_CALLBACK(on_check_fullscreen_toggled), NULL);
@@ -1336,7 +1347,7 @@ GtkWidget* create_about (void) {
 	
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
 	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia - Undead Edition");
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.45");
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.46-WIP");
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "An accurate Nintendo Entertainment System Emulator");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/");
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2013, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
