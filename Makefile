@@ -47,8 +47,8 @@ LIBS   += -lGL -lGLU -lX11
 # Allow files to go into a data directory
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
-# Linux objs
-OBJS = objs/unix/main.o objs/unix/gtkui.o objs/unix/audio.o objs/unix/seffect.o objs/unix/settings.o
+# Unix objs
+OBJS = objs/unix/main.o objs/unix/gtkui.o objs/unix/video.o objs/unix/audio.o objs/unix/seffect.o objs/unix/settings.o
 OBJS += objs/unix/fileio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
 
 # core objs
