@@ -36,20 +36,11 @@ extern Settings *sSettings;
 extern SDL_Surface *screen;
 extern int cur_width, cur_height, cur_Rheight, cur_Rwidth;
 
-bool	using_opengl  = false;
-bool	linear_filter  = false;
-GLuint	screenTexID  = 0;
+bool	using_opengl = false;
+bool	linear_filter = false;
+GLuint	screenTexID = 0;
 int		gl_w, gl_h;
 void	*intbuffer;
-
-// convert a number into the next highest power of 2
-int powerOfTwo(const int value) {
-	
-	int result = 1;
-	while ( result < value )
-		result <<= 1;
-	return result;	
-}
 
 // init OpenGL and set up for blitting
 void opengl_init_structures() {
@@ -58,8 +49,8 @@ void opengl_init_structures() {
 
 	glEnable( GL_TEXTURE_2D );
 
-	gl_w = powerOfTwo(cur_width);
-	gl_h = powerOfTwo(cur_height);
+	gl_w = cur_width;
+	gl_h = cur_height;
 
 	glGenTextures( 1, &screenTexID ) ;
 	glBindTexture( GL_TEXTURE_2D, screenTexID ) ;
@@ -74,13 +65,13 @@ void opengl_init_structures() {
 	glDisable( GL_TEXTURE_3D_EXT );
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
-
+	
 	if (sSettings->GetOverscanMask() == 1) {
 		glOrtho(
 			0.0,													// Left
 			(GLdouble)screen->w,									// Right
 			(GLdouble)screen->h - (OVERSCAN_BOTTOM * scalefactor),	// Bottom
-			(OVERSCAN_TOP * scalefactor),							// Top
+			(GLdouble)(OVERSCAN_TOP * scalefactor),					// Top
 			-1.0, 1.0
 		);
 	}
@@ -107,30 +98,27 @@ void opengl_cleanup() {
 
 // blit the image using OpenGL
 void opengl_blit() {
-	
-	double gl_blit_width = (double)cur_width / (double)gl_w;
-	double gl_blit_height = (double)cur_height / (double)gl_h;
 
-	glTexImage2D( GL_TEXTURE_2D,
-    	          0,
-    	          GL_RGBA,
-    	          gl_w, gl_h,
-    	          0,
-    	          GL_BGRA,
-    	          GL_UNSIGNED_BYTE,
-		  intbuffer  ) ;
+	glTexImage2D(GL_TEXTURE_2D,
+				0,
+				GL_RGBA,
+				gl_w, gl_h,
+				0,
+				GL_BGRA,
+				GL_UNSIGNED_BYTE,
+		intbuffer);
 
 	glBegin( GL_QUADS ) ;
-		glTexCoord2f(gl_blit_width, gl_blit_height);
+		glTexCoord2f(1.0f, 1.0f);
 		glVertex2i(cur_Rwidth, cur_Rheight);
 		
-		glTexCoord2f(gl_blit_width, 0.0f );
-		glVertex2i(cur_Rwidth,  0);
+		glTexCoord2f(1.0f, 0.0f);
+		glVertex2i(cur_Rwidth, 0);
 		
-		glTexCoord2f(0.0f, 0.0f );
+		glTexCoord2f(0.0f, 0.0f);
 		glVertex2i(0, 0);
 		
-		glTexCoord2f(0.0f, gl_blit_height);
+		glTexCoord2f(0.0f, 1.0f);
 		glVertex2i(0, cur_Rheight);
 	glEnd();
 
