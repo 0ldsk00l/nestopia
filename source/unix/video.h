@@ -6,7 +6,6 @@
 #define OVERSCAN_BOTTOM 8
 #define OVERSCAN_TOP 8
 
-int powerOfTwo(const int value);
 void opengl_init_structures();
 void opengl_cleanup();
 void opengl_blit();
