@@ -16,7 +16,7 @@
 #include <core/api/NstApiUser.hpp>
 #include <core/api/NstApiFds.hpp>
 
-#define NST_VERSION "1.45"
+#define NST_VERSION "1.46-WIP"
 
 #ifdef _WIN32
 #define snprintf _snprintf
@@ -420,6 +420,36 @@ static void extract_directory(char *buf, const char *path, size_t size)
 
 bool retro_load_game(const struct retro_game_info *info)
 {
+   const char *dir;
+   char slash;
+   char db_path[256];
+   
+#if defined(_WIN32)
+   slash = '\\';
+#else
+   slash = '/';
+#endif
+
+   if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
+      return false;
+
+   snprintf(db_path, sizeof(db_path), "%s%cNstDatabase.xml", dir, slash);
+   fprintf(stderr, "NstDatabase.xml path: %s\n", db_path);
+   
+   Api::Cartridge::Database database(emulator);
+   std::ifstream *db_file = new std::ifstream(db_path, std::ifstream::in|std::ifstream::binary);
+   
+   if (db_file->is_open())
+   {
+      database.Load(*db_file);
+      database.Enable(true);
+   }
+   else
+   {
+      fprintf(stderr, "NstDatabase.xml required to accurately detect some mappers.\n");
+      delete db_file;
+   }
+
    extract_basename(g_basename, info->path, sizeof(g_basename));
    extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
 
@@ -454,20 +484,9 @@ bool retro_load_game(const struct retro_game_info *info)
 
       if (fds)
       {
-         const char *dir;
          char fds_bios_path[256];
-         char slash;
          /* search for BIOS in system directory */
          bool found = false;
-
-         if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
-            return false;
-
-#if defined(_WIN32)
-         slash = '\\';
-#else
-         slash = '/';
-#endif
 
          snprintf(fds_bios_path, sizeof(fds_bios_path), "%s%cdisksys.rom", dir, slash);
          fprintf(stderr, "FDS BIOS path: %s\n", fds_bios_path);
