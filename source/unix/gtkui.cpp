@@ -571,10 +571,10 @@ void drag_data_received(GtkWidget *widget, GdkDragContext *dc, gint x, gint y, G
 	}
 }
 
-void UIHelp_Init(int argc, char *argv[], LinuxNst::Settings *settings, LinuxNst::CheatMgr *cheatmgr, int xres, int yres)
+void UIHelp_Init(int argc, char *argv[], int xres, int yres)
 {
-	sSettings = settings;
-	sCheatMgr = cheatmgr;
+	//sSettings = settings;
+	//sCheatMgr = cheatmgr;
 
 	// crank up our GUI
 	mainwindow = create_mainwindow(xres, yres);

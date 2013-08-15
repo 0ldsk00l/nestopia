@@ -25,14 +25,12 @@
 #include <SDL_endian.h>
 #include "GL/glu.h"
 
-#include "settings.h"
+#include "config.h"
 #include "audio.h"
 #include "video.h"
 #include "main.h"
 
-using namespace LinuxNst;
-
-extern Settings *sSettings;
+extern settings *conf;
 extern SDL_Surface *screen;
 extern int cur_width, cur_height, cur_Rheight, cur_Rwidth;
 
@@ -45,7 +43,7 @@ void	*intbuffer;
 // init OpenGL and set up for blitting
 void opengl_init_structures() {
 	
-	int scalefactor =  sSettings->GetScaleAmt() + 1;
+	int scalefactor = conf->video_scale_factor;
 
 	glEnable( GL_TEXTURE_2D );
 
@@ -66,7 +64,7 @@ void opengl_init_structures() {
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	
-	if (sSettings->GetOverscanMask() == 1) {
+	if (conf->video_mask_overscan) {
 		glOrtho(
 			0.0,													// Left
 			(GLdouble)screen->w,									// Right

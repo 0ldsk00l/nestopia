@@ -30,6 +30,7 @@
 #include <sys/ioctl.h>
 #include <SDL.h>
 
+#include "config.h"
 #include "audio.h"
 
 #define NUM_FRAGS_BROKEN    (8)
@@ -55,7 +56,8 @@ int nDSoundSegLen = 0;
 static int oss_nw = 0, oss_playing = 0;
 
 int audiofd;
-int lnxdrv_apimode = 0;		// 0 = SDL, 1 = ALSA, 2 = OSS
+
+extern settings *conf;
 
 #ifndef BSD
 static snd_pcm_t *pHandle = NULL;
@@ -148,7 +150,7 @@ void m1sdr_SetSamplesPerTick(UINT32 spf)
 
 	nDSoundSegLen = spf;
 
-	if (lnxdrv_apimode == 0) 
+	if (conf->audio_api == 0) 
 	{
 		for (i = 0; i < kMaxBuffers; i++)
 		{
@@ -180,7 +182,7 @@ void m1sdr_Update(void)
 {	
 	if ((m1sdr_Callback) && (!oss_pause))
 	{
-		if (lnxdrv_apimode == 0)
+		if (conf->audio_api == 0)
 		{
 	        m1sdr_Callback(nDSoundSegLen, (INT16 *)buffer[writebuf]);
 	
@@ -211,7 +213,7 @@ void m1sdr_TimeCheck(void)
 	snd_pcm_sframes_t delay = 0;
 #endif
 
-	switch (lnxdrv_apimode)
+	switch (conf->audio_api)
 	{
 	case 0:	// SDL
 		SDL_LockAudio();
@@ -313,7 +315,7 @@ INT16 m1sdr_Init(int sample_rate)
 
 	m1sdr_Callback = NULL;
 
-	switch (lnxdrv_apimode)
+	switch (conf->audio_api)
 	{
 	case 0: // SDL
 		SDL_AudioSpec aspec;
@@ -475,7 +477,7 @@ void m1sdr_Exit(void)
 
 	if (!hw_present) return;
 
-	switch (lnxdrv_apimode)
+	switch (conf->audio_api)
 	{
 	case 0:	// SDL
 		SDL_QuitSubSystem(SDL_INIT_AUDIO);
@@ -513,7 +515,7 @@ void m1sdr_SetCallback(void *fn)
 
 void m1sdr_PlayStart(void)
 {
-	if (lnxdrv_apimode == 0) 
+	if (conf->audio_api == 0) 
 	{
 		SDL_PauseAudio(0);
 	}
@@ -522,7 +524,7 @@ void m1sdr_PlayStart(void)
 
 void m1sdr_PlayStop(void)
 {
-	if (lnxdrv_apimode == 0) 
+	if (conf->audio_api == 0) 
 	{
 		SDL_PauseAudio(1);
 	}
@@ -532,7 +534,7 @@ void m1sdr_PlayStop(void)
 void m1sdr_FlushAudio(void)
 {
 	memset(samples, 0, nDSoundSegLen * 4);
-	if (lnxdrv_apimode == 2) 
+	if (conf->audio_api == 2) 
 	{
 		write(audiofd, samples, nDSoundSegLen * 4);
 		write(audiofd, samples, nDSoundSegLen * 4);

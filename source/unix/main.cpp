@@ -59,6 +59,7 @@
 #include "fileio.h"
 #include "input.h"
 #include "controlconfig.h"
+#include "config.h"
 #include "cheats.h"
 #include "seffect.h"
 #include "gtkui.h"
@@ -92,7 +93,6 @@ static SDL_Joystick *joy[10];
 
 int cur_Rheight, cur_Rwidth;
 
-extern int lnxdrv_apimode;
 extern GtkWidget *mainwindow, *statusbar;
 extern char windowid[24];
 
@@ -108,6 +108,7 @@ static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
+extern settings *conf;
 Settings *sSettings;
 static CheatMgr *sCheatMgr;
 
@@ -119,8 +120,7 @@ extern void	*intbuffer;
 // get the favored system selected by the user
 static Machine::FavoredSystem get_favored_system(void)
 {
-	switch (sSettings->GetPrefSystem())
-	{
+	switch (conf->misc_default_system) {
 		case 0:
 			return Machine::FAVORED_NES_NTSC;
 			break;
@@ -186,11 +186,11 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 		}
 	}
 
-	if (sSettings->GetUseExciter())
+	if (conf->audio_stereo_exciter)
 	{
 		int j = 0;
 
-		if (!sSettings->GetStereo())
+		if (!conf->audio_stereo)
 		{
 			// exciter can't handle "hot" samples, so
 			// tone them down a bit
@@ -229,7 +229,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 	}
 	else
 	{
-		if (!sSettings->GetStereo())
+		if (!conf->audio_stereo)
 		{
 			for (s = 0; s < dwSamples; s++)
 			{
@@ -247,7 +247,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 		}
 	}
 
-	if (sSettings->GetUseSurround())
+	if (conf->audio_surround)
 	{
 		seffect_surround_lite_process(outbuf, dwSamples*4);
 	}
@@ -279,7 +279,7 @@ static void nst_unload(void)
 // if we're in full screen, kills video temporarily
 static void kill_video_if_fs(void)
 {
-	if (sSettings->GetFullscreen())
+	if (conf->video_fullscreen)
 	{
 		if (SDL_NumJoysticks() > 0)
 		{
@@ -469,7 +469,7 @@ static void QuickLoad(int isvst)
 // start playing
 void NstPlayGame(void)
 {
-	if (sSettings->GetFullscreen())
+	if (conf->video_fullscreen)
 	{
 		unsetenv("SDL_WINDOWID");
 		NstStopPlaying();
@@ -495,7 +495,7 @@ void NstPlayGame(void)
 	cNstPads  = new Input::Controllers;
 
 	cNstSound->samples[0] = lbuf;
-	cNstSound->length[0] = sSettings->GetRate()/framerate;
+	cNstSound->length[0] = conf->audio_sample_rate/framerate;
 	//printf("GetRate()/framerate: %d\n", cNstSound->length[0]);
 	cNstSound->samples[1] = NULL;
 	cNstSound->length[1] = 0;
@@ -590,14 +590,15 @@ void ToggleFullscreen()
 	}
 
 	SDL_Quit();
-	sSettings->SetFullscreen(sSettings->GetFullscreen()^1);
+	
+	conf->video_fullscreen ^= 1;
+	
 	SetupVideo();
 
-	lnxdrv_apimode = sSettings->GetSndAPI();
-	if (lnxdrv_apimode == 0) 	// the SDL driver needs a harder restart
+	if (conf->audio_api == 0) 	// the SDL driver needs a harder restart
 	{
 		m1sdr_Exit();
-		m1sdr_Init(sSettings->GetRate());
+		m1sdr_Init(conf->audio_sample_rate);
 		m1sdr_SetCallback((void *)nst_do_frame);
 		m1sdr_PlayStart();
 	}
@@ -967,7 +968,7 @@ static void cleanup_after_io(void)
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
-	if (sSettings->GetFullscreen())
+	if (conf->video_fullscreen)
 	{
 		SetupVideo();
 	}
@@ -979,6 +980,9 @@ int main(int argc, char *argv[])
 	int i;
 	void* userData = (void*) 0xDEADC0DE;
 	char dirname[1024], savedirname[1024], *home;
+	
+	// read the config file
+	read_config_file();
 
 	// read the key/controller mapping
 	ctl_defs = parse_input_file();
@@ -1008,14 +1012,11 @@ int main(int argc, char *argv[])
 
 	fileio_init();
 
-	sSettings = new Settings;
-	sCheatMgr = new CheatMgr;
-	
 	gtk_init(&argc, &argv);
 	
 	get_screen_res();
 
-	UIHelp_Init(argc, argv, sSettings, sCheatMgr, cur_Rwidth, cur_Rheight);
+	UIHelp_Init(argc, argv, cur_Rwidth, cur_Rheight);
 	
 	// setup video lock/unlock callbacks
 	Video::Output::lockCallback.Set( VideoLock, userData );
@@ -1150,9 +1151,6 @@ int main(int argc, char *argv[])
 
 	fileio_shutdown();
 
-	delete sSettings;
-	delete sCheatMgr;
-
 	write_output_file(ctl_defs);
 	free(ctl_defs);
 
@@ -1161,12 +1159,12 @@ int main(int argc, char *argv[])
 
 void get_screen_res() {
 
-	int scalefactor = sSettings->GetScaleAmt() + 1;
+	int scalefactor = conf->video_scale_factor;
 	
-	switch (sSettings->GetScale())
+	switch(conf->video_filter)
 	{
 		case 0:	// None (no scaling unless OpenGL)
-			if (sSettings->GetRenderType() == 0)
+			if (conf->video_renderer == 0)
 			{
 				if (scalefactor > 1)
 				{
@@ -1179,8 +1177,8 @@ void get_screen_res() {
 			{
 				cur_width = Video::Output::WIDTH;
 				cur_height = Video::Output::HEIGHT;
-				sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width * scalefactor;
-				if (sSettings->GetOverscanMask() == 1) {
+				conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width * scalefactor;
+				if (conf->video_mask_overscan) {
 					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 				}
 				else {
@@ -1191,7 +1189,7 @@ void get_screen_res() {
 			break;
 
 		case 1: // NTSC
-			if (sSettings->GetRenderType() == 0)
+			if (conf->video_renderer == 0)
 			{
 				if (scalefactor != 2)
 				{
@@ -1204,7 +1202,7 @@ void get_screen_res() {
 			cur_width = Video::Output::NTSC_WIDTH;
 			cur_Rwidth = (cur_width / 2) * scalefactor;
 			cur_height = Video::Output::HEIGHT;
-			if (sSettings->GetOverscanMask() == 1) {
+			if (conf->video_mask_overscan) {
 					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
@@ -1221,8 +1219,8 @@ void get_screen_res() {
 
 			cur_width = Video::Output::WIDTH * scalefactor;
 			cur_height = Video::Output::HEIGHT * scalefactor;
-			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			if (sSettings->GetOverscanMask() == 1) {
+			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
+			if (conf->video_mask_overscan) {
 				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
@@ -1233,8 +1231,8 @@ void get_screen_res() {
 		case 3: // scale HQx
 			cur_width = Video::Output::WIDTH * scalefactor;
 			cur_height = Video::Output::HEIGHT * scalefactor;
-			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			if (sSettings->GetOverscanMask() == 1) {
+			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
+			if (conf->video_mask_overscan) {
 				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
@@ -1245,8 +1243,8 @@ void get_screen_res() {
 		case 4: // 2xSaI
 			cur_width = Video::Output::WIDTH * 2;
 			cur_height = Video::Output::HEIGHT * 2;
-			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = Video::Output::WIDTH * scalefactor;
-			if (sSettings->GetOverscanMask() == 1) {
+			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			if (conf->video_mask_overscan) {
 				cur_Rheight = Video::Output::HEIGHT * scalefactor - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
@@ -1257,8 +1255,8 @@ void get_screen_res() {
 		case 5: // scale xBR
 			cur_width = Video::Output::WIDTH * scalefactor;
 			cur_height = Video::Output::HEIGHT * scalefactor;
-			sSettings->GetTvAspect() == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			if (sSettings->GetOverscanMask() == 1) {
+			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
+			if (conf->video_mask_overscan) {
 				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
@@ -1275,7 +1273,8 @@ void SetupVideo()
 	Machine machine( emulator );
 	Cartridge::Database database( emulator );
 	Video::RenderState::Filter filter;
-	int scalefactor = sSettings->GetScaleAmt() + 1;
+	
+	int scalefactor = conf->video_scale_factor;
 	int i;
 
 	// init SDL
@@ -1287,12 +1286,12 @@ void SetupVideo()
 
 	// figure out the region
 	framerate = 60;
-	if (sSettings->GetVideoMode() == 2)		// force PAL
+	if (conf->misc_video_region == 2)		// force PAL
 	{
 		machine.SetMode(Machine::PAL);
 		framerate = 50;
 	}
-	else if (sSettings->GetVideoMode() == 1) 	// force NTSC
+	else if (conf->misc_video_region == 1) 	// force NTSC
 	{
 		machine.SetMode(Machine::NTSC);
 	}
@@ -1339,7 +1338,7 @@ void SetupVideo()
 	get_screen_res();
 
 	// compute the major video parameters from the scaler type and scale factor
-	switch (sSettings->GetScale())
+	switch(conf->video_filter)
 	{
 		case 0:	// None (no scaling unless OpenGL)
 			filter = Video::RenderState::FILTER_NONE;
@@ -1414,22 +1413,21 @@ void SetupVideo()
 	}
 
 	int eFlags = SDL_HWSURFACE;
-        using_opengl = (sSettings->GetRenderType() > 0);
-	linear_filter = (sSettings->GetRenderType() == 2);
+	
+	using_opengl = (conf->video_renderer > 0);
+	linear_filter = (conf->video_renderer == 2);
+	
 	if (using_opengl)
 	{
 		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 		eFlags = SDL_OPENGL;
 	}
 
-	if (sSettings->GetFullscreen())
+	if (conf->video_fullscreen)
 	{
 		GdkScreen *gdkscreen = gdk_screen_get_default();
 		
-		int fullscreen = sSettings->GetFullscreen();
-		int fsnativeres = sSettings->GetFsNativeRes();
-
-		if (fullscreen && fsnativeres && using_opengl) {	// Force native resolution in fullscreen mode
+		if (conf->video_fullscreen && conf->video_stretch_fullscreen && using_opengl) {	// Force native resolution in fullscreen mode
 			cur_Rwidth = gdk_screen_get_width(gdkscreen);
 			cur_Rheight = gdk_screen_get_height(gdkscreen);
 		}
@@ -1481,10 +1479,10 @@ void SetupVideo()
 	Video video( emulator );
 
 	// set the sprite limit
-	video.EnableUnlimSprites(sSettings->GetSprlimit() ? false : true);
+	video.EnableUnlimSprites(conf->video_unlimited_sprites ? false : true);
 
 	// set up the NTSC type
-	switch (sSettings->GetNtscMode())
+	switch (conf->video_ntsc_mode)
 	{
 		case 0:	// composite
 			video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
@@ -1511,9 +1509,9 @@ void SetupVideo()
 			break;
 	}
 	
-	if (sSettings->GetScale() == 5) {
-		video.SetCornerRounding(sSettings->GetCornerRounding()); // 0 = none, 1 = some, 2 = all
-		video.SetBlend(sSettings->GetBlendPix()); // boolean
+	if (conf->video_filter == 5) {
+		video.SetCornerRounding(conf->video_xbr_corner_rounding); // 0 = none, 1 = some, 2 = all
+		video.SetBlend(conf->video_xbr_pixel_blending); // boolean
 	}
 	
 	video.ClearFilterUpdateFlag();
@@ -1525,7 +1523,7 @@ void SetupVideo()
 		::exit(0);
 	}
 
-	if (sSettings->GetFullscreen())
+	if (conf->video_fullscreen)
 	{
 		SDL_ShowCursor(0);
 	}
@@ -1537,20 +1535,18 @@ void SetupSound()
 	// acquire interface
 	Sound sound( emulator );
 
-	lnxdrv_apimode = sSettings->GetSndAPI();
-
-	m1sdr_Init(sSettings->GetRate());
+	m1sdr_Init(conf->audio_sample_rate);
 	m1sdr_SetCallback((void *)nst_do_frame);
 	m1sdr_PlayStart();
 
 	// init DSP module
-	seffect_init(sSettings);
+	seffect_init();
 
 	// example configuration (these are the default values)
 	sound.SetSampleBits( 16 );
-	sound.SetSampleRate(sSettings->GetRate());
-	sound.SetVolume(Sound::ALL_CHANNELS, sSettings->GetVolume());
-	if (sSettings->GetStereo())
+	sound.SetSampleRate(conf->audio_sample_rate);
+	sound.SetVolume(Sound::ALL_CHANNELS, conf->audio_volume);
+	if (conf->audio_stereo)
 	{
 		sound.SetSpeaker( Sound::SPEAKER_STEREO );
 	}
@@ -1620,7 +1616,7 @@ static int find_patch(char *patchname)
 	FILE *f;
 
 	// did the user turn off auto softpatching?
-	if (sSettings->GetSoftPatch() == 0)
+	if (!conf->misc_soft_patching)
 	{
 		return 0;
 	}
@@ -1813,7 +1809,7 @@ void NstLoadGame(const char* filename)
 		cNstPads  = new Input::Controllers;
 
 		cNstSound->samples[0] = lbuf;
-		cNstSound->length[0] = sSettings->GetRate()/framerate;
+		cNstSound->length[0] = conf->audio_sample_rate/framerate;
 		cNstSound->samples[1] = NULL;
 		cNstSound->length[1] = 0;
 
