@@ -8,13 +8,14 @@
 #include <math.h>
 #include <stdlib.h>
 
+#include "config.h"
 #include "settings.h"
 
 #define EXCITER_MAXGAIN			(256*6)
 #define EXCITER_SAFETHRESHOLD		(0x6000)
 #define EXCITER_COMPTHRESHOLD		(0x7f00)
 
-static LinuxNst::Settings *sSettings;
+extern settings *conf;
 
 static float	seffect_ex_nowgain;
 static float	seffect_ex_attgainunit;
@@ -28,9 +29,8 @@ int seffect_surround_lite_process(short *data, int length)
 	int i;
 	double avg, ldiff, rdiff, tmp;
 	double mul;
-	int seffect_surround_lite_multiplier = sSettings->GetSurrMult();
 
-	mul = (double)seffect_surround_lite_multiplier / 10.0f;
+	mul = (double)conf->audio_surround_multiplier / 10.0f;
 
 	for (i = 0; i < length / 2; i += 2)
 	{
@@ -103,15 +103,12 @@ void seffect_ex_process(long *pBuf,long samples)
 }
 
 // stereo exciter init
-void seffect_init(LinuxNst::Settings *settings)
+void seffect_init()
 {
-	// get our pointer to the settings object
-	sSettings = settings;
-
 	// sound exciter init
 	seffect_ex_wkcnt         = 0;
 	seffect_ex_nowgain       = 256;
-	seffect_ex_attgainunit   = (float)((44100.0/(double)sSettings->GetRate()) * 0.2);
-	seffect_ex_boostgainunit = (float)((44100.0/(double)sSettings->GetRate()) * (100.0 / (0.2 * 44100.0)));
-	seffect_ex_boostcnt      = sSettings->GetRate() / 6;
+	seffect_ex_attgainunit   = (float)((44100.0/(double)conf->audio_sample_rate) * 0.2);
+	seffect_ex_boostgainunit = (float)((44100.0/(double)conf->audio_sample_rate) * (100.0 / (0.2 * 44100.0)));
+	seffect_ex_boostcnt      = conf->audio_sample_rate / 6;
 }

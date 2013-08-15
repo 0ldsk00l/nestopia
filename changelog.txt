@@ -5,7 +5,15 @@ Unix Shell:
 
  Additions:
   - Mask Overscan option
-  
+
+ Changes:
+  - Completely rewrote config file handling
+
+libretro:
+
+ Additions:
+  - Ability to load NstDatabase.xml (needed for some games)
+
 ----------------------------------------------------------------
 1.45
 ----------------------------------------------------------------
