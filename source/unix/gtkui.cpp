@@ -292,7 +292,22 @@ void on_excitecheck_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
 }
 
 void on_ratecombo_changed(GtkComboBox *combobox, gpointer user_data) {
-	conf->audio_sample_rate = gtk_combo_box_get_active(combobox); // NEED TO FIX
+	
+	switch(gtk_combo_box_get_active(combobox)) {
+		case 0:
+			conf->audio_sample_rate = 11025;
+			break;
+		case 1:
+			conf->audio_sample_rate = 22050;
+			break;
+		case 2:
+			conf->audio_sample_rate = 44100;
+			break;
+		case 3:
+			conf->audio_sample_rate = 48000;
+			break;
+		default: break;
+	}
 }
 
 gboolean on_ratecombo_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer user_data)
@@ -956,7 +971,22 @@ GtkWidget* create_config(void) {
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "22050 Hz");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "44100 Hz");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (ratecombo), "48000 Hz");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(ratecombo), conf->audio_sample_rate);
+	// This is ugly and needs to be rethought.
+	switch (conf->audio_sample_rate) {
+		case 11025:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(ratecombo), 0);
+			break;
+		case 22050:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(ratecombo), 1);
+			break;
+		case 44100:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(ratecombo), 2);
+			break;
+		case 48000:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(ratecombo), 3);
+			break;
+		default: break;
+	}
 	
 	GtkWidget *audsettingslabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
 	gtk_label_set_markup(GTK_LABEL(audsettingslabel), "<b>Settings</b>");
