@@ -1,8 +1,7 @@
 #include <gtk/gtk.h>
 
-void UIHelp_Init(int argc, char *argv[], int xres, int yres);
+void gtkui_init(int argc, char *argv[], int xres, int yres);
 void UIHelp_NSFLoaded(void);
-GdkPixbuf *UIHelp_GetNSTIcon(void);
 
 void pause_clicked();
 void redraw_drawingarea(int xres, int yres);

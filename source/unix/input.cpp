@@ -38,7 +38,6 @@
 #include "core/api/NstApiFds.hpp"
 #include "core/api/NstApiRewinder.hpp"
 #include "audio.h"
-#include "settings.h"
 #include "fileio.h"
 #include "input.h"
 #include "kentry.h"

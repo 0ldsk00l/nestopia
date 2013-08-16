@@ -35,7 +35,7 @@ void read_config_file() {
 	
 	flags = G_KEY_FILE_KEEP_COMMENTS;
 	
-	if (!g_key_file_load_from_file(keyfile, "nestopia.conf", flags, NULL)){
+	if (!g_key_file_load_from_file(keyfile, "nestopia.conf", flags, NULL)) {
 		printf("Could not read config file.\n");
 		//set defaults;
 	}
@@ -71,6 +71,7 @@ void read_config_file() {
 	conf->misc_video_region = g_key_file_get_integer(keyfile, "misc", "video_region", NULL);
 	conf->misc_default_system = g_key_file_get_integer(keyfile, "misc", "default_system", NULL);
 	conf->misc_soft_patching = g_key_file_get_boolean(keyfile, "misc", "soft_patching", NULL);
+	conf->misc_disable_gui = g_key_file_get_boolean(keyfile, "misc", "disable_gui", NULL);
 	
 	g_key_file_free(keyfile);
 }

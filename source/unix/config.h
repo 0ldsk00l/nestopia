@@ -1,8 +1,9 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
 #include <glib.h>
-typedef struct
-{
+
+typedef struct {
+	
 	// Video
 	gint video_renderer;
 	gint video_filter;
@@ -29,6 +30,7 @@ typedef struct
 	gint misc_video_region;
 	gint misc_default_system;
 	gboolean misc_soft_patching;
+	gboolean misc_disable_gui;
 } settings;
 
 void read_config_file();

@@ -55,7 +55,6 @@
 #include "core/NstChecksum.hpp"
 #include "core/NstXml.hpp"
 #include "audio.h"
-#include "settings.h"
 #include "fileio.h"
 #include "input.h"
 #include "controlconfig.h"
@@ -109,7 +108,7 @@ static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
 extern settings *conf;
-Settings *sSettings;
+
 static CheatMgr *sCheatMgr;
 
 extern bool	using_opengl;
@@ -559,7 +558,7 @@ void NstScheduleQuit(void)
 void NstLaunchConfig(void)
 {
 	//run_configurator(ctl_defs, sSettings->GetConfigItem(), sSettings->GetUseJoypads());
-	run_configurator(ctl_defs, sSettings->GetConfigItem(), 1); // Force joypad detection
+	//run_configurator(ctl_defs, sSettings->GetConfigItem(), 1); // Force joypad detection
 }
 
 // toggle fullscreen state
@@ -1016,7 +1015,7 @@ int main(int argc, char *argv[])
 	
 	get_screen_res();
 
-	UIHelp_Init(argc, argv, cur_Rwidth, cur_Rheight);
+	gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
 	
 	// setup video lock/unlock callbacks
 	Video::Output::lockCallback.Set( VideoLock, userData );

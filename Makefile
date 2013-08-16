@@ -48,8 +48,8 @@ LIBS   += -lGL -lGLU -lX11
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Unix objs
-OBJS = objs/unix/main.o objs/unix/gtkui.o objs/unix/video.o objs/unix/audio.o objs/unix/seffect.o objs/unix/settings.o
-OBJS += objs/unix/config.o objs/unix/fileio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
+OBJS = objs/unix/main.o objs/unix/gtkui.o objs/unix/video.o objs/unix/audio.o objs/unix/seffect.o objs/unix/config.o
+OBJS += objs/unix/fileio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
 
 # core objs
 OBJS += objs/core/NstApu.o              objs/core/NstFds.o            objs/core/NstPpu.o              objs/core/NstVector.o

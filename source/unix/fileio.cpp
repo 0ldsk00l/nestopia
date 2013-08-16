@@ -40,7 +40,6 @@
 #include "core/api/NstApiFds.hpp"
 #include "core/api/NstApiCartridge.hpp"
 #include "audio.h"
-#include "settings.h"
 #include "unzip.h"
 #include "main.h"
 
