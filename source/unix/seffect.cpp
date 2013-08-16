@@ -9,7 +9,6 @@
 #include <stdlib.h>
 
 #include "config.h"
-#include "settings.h"
 
 #define EXCITER_MAXGAIN			(256*6)
 #define EXCITER_SAFETHRESHOLD		(0x6000)
