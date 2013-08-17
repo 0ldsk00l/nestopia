@@ -60,7 +60,7 @@
 #include "gtkui.h"
 #include "audio.h"
 #include "video.h"
-#include "input.h"
+//#include "input.h"
 #include "fileio.h"
 #include "cheats.h"
 #include "config.h"
@@ -82,7 +82,7 @@ static unsigned short keys[65536];
 int updateok, playing = 0, cur_width, cur_height, loaded = 0, framerate;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
-static SDL_Joystick *joy[10];
+//static SDL_Joystick *joy[10];
 
 int cur_Rheight, cur_Rwidth;
 
@@ -94,7 +94,7 @@ static char caption[128];
 char rootname[512], lastarchname[512];
 char msgbuf[512];
 
-static InputDefT *ctl_defs;
+//static InputDefT *ctl_defs;
 
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
@@ -164,7 +164,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 	long dtl, dtr;
 
 	outbuf = out;
-	if (nsf_mode)
+	/*if (nsf_mode)
 	{
 		Nsf nsf( emulator );
 
@@ -177,7 +177,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 			}
 			return;
 		}
-	}
+	}*/
 
 	if (conf->audio_stereo_exciter)
 	{
@@ -272,7 +272,7 @@ static void nst_unload(void)
 // if we're in full screen, kills video temporarily
 static void kill_video_if_fs(void)
 {
-	if (conf->video_fullscreen)
+	/*if (conf->video_fullscreen)
 	{
 		if (SDL_NumJoysticks() > 0)
 		{
@@ -292,7 +292,7 @@ static void kill_video_if_fs(void)
 
 		SDL_ShowCursor(1);
 		SDL_Quit();
-	}
+	}*/
 }
 
 // returns if we're currently playing a game or NSF
@@ -317,7 +317,7 @@ void NstStopPlaying()
 		// close video sanely
 		//if (!nsf_mode)
 		//{
-			SDL_FreeSurface(screen);
+			//SDL_FreeSurface(screen);
 			opengl_cleanup();
 			if (intbuffer)
 			{
@@ -337,7 +337,7 @@ void NstStopPlaying()
 		memset(lbuf, 0, sizeof(lbuf));
 
 		// kill SDL
-		if (SDL_NumJoysticks() > 0)
+		/*if (SDL_NumJoysticks() > 0)
 		{
 			for (i = 0; i < SDL_NumJoysticks(); i++)
 			{
@@ -351,7 +351,7 @@ void NstStopPlaying()
 			SDL_JoystickEventState(SDL_ENABLE);	// turn on regular updates
 		}
 		SDL_ShowCursor(1);
-		SDL_Quit();
+		SDL_Quit();*/
 	}
 
 	playing = 0;
@@ -464,12 +464,12 @@ void NstPlayGame(void)
 {
 	if (conf->video_fullscreen)
 	{
-		unsetenv("SDL_WINDOWID");
+		//unsetenv("SDL_WINDOWID");
 		NstStopPlaying();
 	}
 	else
 	{
-		putenv(windowid);
+		//putenv(windowid);
 		NstStopPlaying();
 	}
 
@@ -491,7 +491,7 @@ void NstPlayGame(void)
 	cNstSound->samples[1] = NULL;
 	cNstSound->length[1] = 0;
 
-	SDL_WM_SetCaption(caption, caption);
+	//SDL_WM_SetCaption(caption, caption);
 
 	m1sdr_SetSamplesPerTick(cNstSound->length[0]);
 	//m1sdr_SetSamplesPerTick(800);
@@ -556,7 +556,7 @@ void NstLaunchConfig(void)
 // toggle fullscreen state
 void ToggleFullscreen()
 {
-	if (SDL_NumJoysticks() > 0)
+	/*if (SDL_NumJoysticks() > 0)
 	{
 		for (int i = 0; i < SDL_NumJoysticks(); i++)
 		{
@@ -571,7 +571,7 @@ void ToggleFullscreen()
 	}
 
 	SDL_ShowCursor(1);
-	SDL_FreeSurface(screen);
+	SDL_FreeSurface(screen);*/
 	opengl_cleanup();
 
 	if (intbuffer)
@@ -580,7 +580,7 @@ void ToggleFullscreen()
 		intbuffer = NULL;
 	}
 
-	SDL_Quit();
+	//SDL_Quit();
 	
 	conf->video_fullscreen ^= 1;
 	
@@ -595,12 +595,12 @@ void ToggleFullscreen()
 	}
 
 
-	SDL_WM_SetCaption(caption, caption);
+	//SDL_WM_SetCaption(caption, caption);
 	NstPlayGame();
 }
 
 // handle input event
-static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
+/*static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
 {
 	#ifdef DEBUG_INPUT
 	printf("metaevent: %d\n", (int)inevt);
@@ -673,11 +673,11 @@ static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
 	default:
 		assert(0);
 	}
-}
+}*/
 
 // match input event; if pind is not NULL, continue after it
 // on is set if the key/button is hit, clear if key is up/axis centered
-static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, bool &on)
+/*static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, bool &on)
 {
 	pind = (pind == NULL) ? ctl_defs : pind + 1;
 	bool match = false;
@@ -771,12 +771,12 @@ static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, b
 	}
 
 	return NULL;
-}
+}*/
 
 // try to dispatch an input event
 static void nst_dispatch(Input::Controllers *controllers, const SDL_Event &evt)
 {
-	bool on;
+	/*bool on;
 	const InputDefT *pind = NULL;
 
 	controllers->vsSystem.insertCoin = 0;
@@ -811,7 +811,7 @@ static void nst_dispatch(Input::Controllers *controllers, const SDL_Event &evt)
 				controllers->pad[pind->player - 1].buttons &= ~pind->codeout;
 			}
 		}
-	}
+	}*/
 }
 
 // logging callback called by the core
@@ -976,7 +976,7 @@ int main(int argc, char *argv[])
 	read_config_file();
 
 	// read the key/controller mapping
-	ctl_defs = parse_input_file();
+	/*ctl_defs = parse_input_file();
 
 	if (!ctl_defs)
 	{
@@ -996,7 +996,7 @@ int main(int argc, char *argv[])
 			std::cout << "Reading ~/.nestopia/nstcontrols file: FAIL\n";
 			return -1;
 		}
-	} 
+	}*/
 
 	playing = 0;
 	intbuffer = NULL;
@@ -1066,7 +1066,7 @@ int main(int argc, char *argv[])
 						case SDL_KEYDOWN:
 						case SDL_KEYUP:
 							// ignore num lock, caps lock, and "mode" (whatever that is)
-							event.key.keysym.mod = (SDLMod)((int)event.key.keysym.mod & (~(KMOD_NUM | KMOD_CAPS | KMOD_MODE)));
+							//event.key.keysym.mod = (SDLMod)((int)event.key.keysym.mod & (~(KMOD_NUM | KMOD_CAPS | KMOD_MODE)));
 							
 							// (intentional fallthrough)
 						case SDL_JOYHATMOTION:
@@ -1144,8 +1144,8 @@ int main(int argc, char *argv[])
 
 	fileio_shutdown();
 
-	write_output_file(ctl_defs);
-	free(ctl_defs);
+	/*write_output_file(ctl_defs);
+	free(ctl_defs);*/
 	
 	write_config_file();
 
@@ -1272,12 +1272,12 @@ void SetupVideo()
 	int scalefactor = conf->video_scale_factor;
 	int i;
 
-	// init SDL
+	/*// init SDL
 	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK))
 	{
 		std::cout << "Unable to init SDL\n";
 		return;
-	}
+	}*/
 
 	// figure out the region
 	framerate = 60;
@@ -1316,7 +1316,7 @@ void SetupVideo()
 		return;
 	}
 
-	if (SDL_NumJoysticks() > 0)
+	/*if (SDL_NumJoysticks() > 0)
 	{
 		for (i = 0; i < SDL_NumJoysticks(); i++)
 		{
@@ -1328,7 +1328,7 @@ void SetupVideo()
 		}
 
 		SDL_JoystickEventState(SDL_ENABLE);	// turn on regular updates
-	}
+	}*/
 	
 	get_screen_res();
 
@@ -1407,12 +1407,12 @@ void SetupVideo()
 			break;
 	}
 
-	int eFlags = SDL_HWSURFACE;
+	//int eFlags = SDL_HWSURFACE;
 	
 	using_opengl = (conf->video_renderer > 0);
 	linear_filter = (conf->video_renderer == 2);
 	
-	if (using_opengl)
+	/*if (using_opengl)
 	{
 		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
 		eFlags = SDL_OPENGL;
@@ -1437,7 +1437,7 @@ void SetupVideo()
 	{
 		std::cout << "SDL couldn't set video mode\n";
 		exit(-1);
-	}
+	}*/
 
 	renderState.filter = filter;
 	renderState.width = cur_width;
@@ -1518,10 +1518,10 @@ void SetupVideo()
 		::exit(0);
 	}
 
-	if (conf->video_fullscreen)
+	/*if (conf->video_fullscreen)
 	{
 		SDL_ShowCursor(0);
-	}
+	}*/
 }
 
 // initialize sound going into the game

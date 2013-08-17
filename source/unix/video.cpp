@@ -31,7 +31,7 @@
 #include "main.h"
 
 extern settings *conf;
-extern SDL_Surface *screen;
+//extern SDL_Surface *screen;
 extern int cur_width, cur_height, cur_Rheight, cur_Rwidth;
 
 bool	using_opengl = false;
@@ -55,7 +55,8 @@ void opengl_init_structures() {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear_filter ? GL_LINEAR : GL_NEAREST) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) ;
 
-	glViewport( 0, 0, screen->w, screen->h);
+	//glViewport( 0, 0, screen->w, screen->h);
+	glViewport( 0, 0, 512, 480);
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_ALPHA_TEST );
 	glDisable( GL_BLEND );
@@ -64,7 +65,7 @@ void opengl_init_structures() {
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	
-	if (conf->video_mask_overscan) {
+	/*if (conf->video_mask_overscan) {
 		glOrtho(
 			0.0,													// Left
 			(GLdouble)screen->w,									// Right
@@ -73,9 +74,10 @@ void opengl_init_structures() {
 			-1.0, 1.0
 		);
 	}
-	else {
-		glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, -1.0, 1.0);
-	}
+	else {*/
+		//glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, -1.0, 1.0);
+		glOrtho(0.0, (GLdouble)512.0, (GLdouble)480.0, 0.0, -1.0, 1.0);
+	//}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -84,7 +86,7 @@ void opengl_init_structures() {
 void opengl_cleanup() {
 	
 	if (using_opengl) {
-		SDL_FreeSurface( screen );
+		//SDL_FreeSurface( screen );
 		glDeleteTextures( 1, &screenTexID );
 		
 		if (intbuffer) {
@@ -120,7 +122,7 @@ void opengl_blit() {
 		glVertex2i(0, cur_Rheight);
 	glEnd();
 
-	SDL_GL_SwapBuffers();	
+	//SDL_GL_SwapBuffers();	
 }
 
 long Linux_LockScreen(void*& ptr)
@@ -130,13 +132,13 @@ long Linux_LockScreen(void*& ptr)
 		return gl_w*4;
 	}
 	
-	else {
+	/*else {
 		if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
 
 		ptr = intbuffer;
 	}
 	
-	return screen->pitch;
+	return screen->pitch;*/
 }
 
 void Linux_UnlockScreen(void*) {
@@ -144,7 +146,7 @@ void Linux_UnlockScreen(void*) {
 	if (using_opengl) {
 		opengl_blit();
 	}
-	else {
+	/*else {
 		unsigned short *src, *dst1;
 		unsigned int *srcL, *dst1L;
 		int x, y, vdouble;
@@ -197,5 +199,5 @@ void Linux_UnlockScreen(void*) {
 
 		if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
 		SDL_Flip(screen);
-	}
+	}*/
 }
