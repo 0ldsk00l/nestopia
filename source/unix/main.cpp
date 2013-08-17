@@ -68,10 +68,6 @@
 #include <gtk/gtk.h>
 #include <gdk/gdk.h>
 
-extern "C" {
-#include "callbacks.h"
-}
-
 using namespace Nes::Api;
 using namespace LinuxNst;
 

@@ -44,11 +44,6 @@
 #include "../core/NstStream.hpp"
 #include "../core/NstXml.hpp"	// not entirely kosher but Marty does it on Windows :)
 #include "cheats.h"
-
-extern "C" {
-#include "callbacks.h"
-}
-
 #include "main.h"
 #include "gtkui.h"
 
