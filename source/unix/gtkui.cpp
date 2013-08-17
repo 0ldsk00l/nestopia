@@ -64,12 +64,6 @@
 #include "gtkui.h"
 #include "main.h"
 
-
-extern "C" {
-#include "callbacks.h"
-}
-
-
 using namespace Nes::Api;
 using namespace LinuxNst;
 
