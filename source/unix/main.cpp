@@ -26,18 +26,19 @@
 #include <strstream>
 #include <sstream>
 #include <iomanip>
-#include <SDL.h>
-#include <SDL_endian.h>
 #include <string.h>
 #include <cassert>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
 #include <vector>
-
-#ifdef BSD
 #include <libgen.h>
-#endif
+
+#include <SDL.h>
+#include <SDL_endian.h>
+#include <gtk/gtk.h>
+#include <gdk/gdk.h>
+#include "GL/glu.h"
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -54,19 +55,16 @@
 #include "core/NstCrc32.hpp"
 #include "core/NstChecksum.hpp"
 #include "core/NstXml.hpp"
-#include "audio.h"
-#include "fileio.h"
-#include "input.h"
-#include "controlconfig.h"
-#include "config.h"
-#include "cheats.h"
-#include "seffect.h"
-#include "gtkui.h"
-#include "video.h"
+
 #include "main.h"
-#include "GL/glu.h"
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
+#include "gtkui.h"
+#include "audio.h"
+#include "video.h"
+#include "input.h"
+#include "fileio.h"
+#include "cheats.h"
+#include "config.h"
+#include "seffect.h"
 
 using namespace Nes::Api;
 using namespace LinuxNst;
@@ -317,8 +315,8 @@ void NstStopPlaying()
 		fileio_do_movie_stop();
 
 		// close video sanely
-		if (!nsf_mode)
-		{
+		//if (!nsf_mode)
+		//{
 			SDL_FreeSurface(screen);
 			opengl_cleanup();
 			if (intbuffer)
@@ -326,7 +324,7 @@ void NstStopPlaying()
 				free(intbuffer);
 				intbuffer = NULL;
 			}
-		}
+		//}
 
 		// get machine interface...
 		Machine machine(emulator);
@@ -474,8 +472,6 @@ void NstPlayGame(void)
 		putenv(windowid);
 		NstStopPlaying();
 	}
-	
-	gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, "");
 
 	// initialization
 	SetupVideo();
@@ -506,7 +502,7 @@ void NstPlayGame(void)
 }
 
 // start playing an NSF file
-void NstPlayNsf(void)
+/*void NstPlayNsf(void)
 {
 	Nsf nsf( emulator );
 	
@@ -522,7 +518,7 @@ void NstStopNsf(void)
 
 	// clear the audio buffer
 	memset(lbuf, 0, sizeof(lbuf));
-}
+}*/
 
 void NstSoftReset() {
 	Machine machine(emulator);
@@ -590,7 +586,7 @@ void ToggleFullscreen()
 	
 	SetupVideo();
 
-	if (conf->audio_api == 0) 	// the SDL driver needs a harder restart
+	if (conf->audio_api == 0)	// the SDL driver needs a harder restart
 	{
 		m1sdr_Exit();
 		m1sdr_Init(conf->audio_sample_rate);
@@ -1010,8 +1006,10 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 	
 	get_screen_res();
-
-	gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
+	
+	if (!conf->misc_disable_gui) {
+		gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
+	}
 	
 	// setup video lock/unlock callbacks
 	Video::Output::lockCallback.Set( VideoLock, userData );
@@ -1789,10 +1787,10 @@ void NstLoadGame(const char* filename)
 	}
 
 	// is this an NSF?
-	nsf_mode = (machine.Is(Machine::SOUND)) ? 1 : 0;
+	/*nsf_mode = (machine.Is(Machine::SOUND)) ? 1 : 0;
 
-	if (nsf_mode)
-	{
+	if (nsf_mode) {
+		printf("Tried to load an NSF\n");
 		// update the UI
 		UIHelp_NSFLoaded();
 
@@ -1815,7 +1813,7 @@ void NstLoadGame(const char* filename)
 		updateok = 0;
 		playing = 1;
 		schedule_stop = 0;
-	}
+	}*/
 	else
 	{
 		if (machine.Is(Machine::DISK))

@@ -24,7 +24,10 @@ UNAME := $(shell uname)
 
 LDFLAGS += -Wl,--as-needed
 
-BIN  = nestopia
+PREFIX = /usr/local
+BINDIR = $(PREFIX)/bin
+DATADIR = $(PREFIX)/share/nestopia
+BIN = nestopia
 
 ifeq ($(UNAME), Linux)
 	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
@@ -36,10 +39,6 @@ ifneq ($(UNAME), Linux)
 	CPPFLAGS += -DBSD
 endif
 
-PREFIX = /usr/local
-BINDIR = $(PREFIX)/bin
-DATADIR = $(PREFIX)/share/nestopia
-
 # OpenGL Support
 CPPFLAGS += -DINCLUDE_OPENGL
 LIBS   += -lGL -lGLU -lX11
@@ -48,8 +47,16 @@ LIBS   += -lGL -lGLU -lX11
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Unix objs
-OBJS = objs/unix/main.o objs/unix/gtkui.o objs/unix/video.o objs/unix/audio.o objs/unix/seffect.o objs/unix/config.o
-OBJS += objs/unix/fileio.o objs/unix/input.o objs/unix/kentry.o objs/unix/controlconfig.o objs/unix/cheats.o
+OBJS = objs/unix/main.o
+OBJS += objs/unix/gtkui.o
+OBJS += objs/unix/audio.o
+OBJS += objs/unix/video.o
+OBJS += objs/unix/input.o
+OBJS += objs/unix/fileio.o
+OBJS += objs/unix/cheats.o
+OBJS += objs/unix/config.o
+OBJS += objs/unix/seffect.o
+OBJS += objs/unix/kentry.o
 
 # core objs
 OBJS += objs/core/NstApu.o              objs/core/NstFds.o            objs/core/NstPpu.o              objs/core/NstVector.o
@@ -152,7 +159,10 @@ OBJS += objs/core/input/NstInpHoriTrack.o          objs/core/input/NstInpPokkunM
 
 
 # core/vssystem
-OBJS += objs/core/vssystem/NstVsRbiBaseball.o  objs/core/vssystem/NstVsSuperXevious.o  objs/core/vssystem/NstVsSystem.o  objs/core/vssystem/NstVsTkoBoxing.o
+OBJS += objs/core/vssystem/NstVsRbiBaseball.o
+OBJS += objs/core/vssystem/NstVsTkoBoxing.o
+OBJS += objs/core/vssystem/NstVsSuperXevious.o
+OBJS += objs/core/vssystem/NstVsSystem.o
 
 # object dirs
 OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc objs/unix

@@ -75,6 +75,7 @@ void read_config_file() {
 		conf->misc_video_region = g_key_file_get_integer(keyfile, "misc", "video_region", NULL);
 		conf->misc_default_system = g_key_file_get_integer(keyfile, "misc", "default_system", NULL);
 		conf->misc_soft_patching = g_key_file_get_boolean(keyfile, "misc", "soft_patching", NULL);
+		conf->misc_suppress_screensaver = g_key_file_get_boolean(keyfile, "misc", "suppress_screensaver", NULL);
 		conf->misc_disable_gui = g_key_file_get_boolean(keyfile, "misc", "disable_gui", NULL);
 	}
 	else {
@@ -113,6 +114,7 @@ void write_config_file() {
 	g_key_file_set_integer(keyfile, "misc", "video_region", conf->misc_video_region);
 	g_key_file_set_integer(keyfile, "misc", "default_system", conf->misc_default_system);
 	g_key_file_set_boolean(keyfile, "misc", "soft_patching", conf->misc_soft_patching);
+	g_key_file_set_boolean(keyfile, "misc", "suppress_screensaver", conf->misc_suppress_screensaver);
 	g_key_file_set_boolean(keyfile, "misc", "disable_gui", conf->misc_disable_gui);
 	
 	FILE *fp = fopen(confpath, "w");
@@ -155,5 +157,6 @@ void set_default_config() {
 	conf->misc_video_region = 0;
 	conf->misc_default_system = 0;
 	conf->misc_soft_patching = true;
+	conf->misc_suppress_screensaver = true;
 	conf->misc_disable_gui = false;
 }

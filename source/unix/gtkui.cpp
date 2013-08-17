@@ -54,15 +54,15 @@
 #include "core/NstCrc32.hpp"
 #include "core/NstChecksum.hpp"
 #include "core/NstXml.hpp"
-#include "audio.h"
-#include "config.h"
-#include "fileio.h"
-#include "input.h"
-#include "controlconfig.h"
-#include "cheats.h"
-#include "seffect.h"
-#include "gtkui.h"
+
 #include "main.h"
+#include "gtkui.h"
+#include "audio.h"
+#include "input.h"
+#include "fileio.h"
+#include "cheats.h"
+#include "config.h"
+#include "seffect.h"
 
 using namespace Nes::Api;
 using namespace LinuxNst;
@@ -94,7 +94,7 @@ extern int cur_Rheight, cur_Rwidth, schedule_stop;
 
 bool wasplaying = 0;
 
-void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
+/*void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
 {
 }
 
@@ -120,7 +120,7 @@ void on_nsfstop_clicked(GtkButton       *button, gpointer         user_data)
 
 	//gtk_widget_set_sensitive(button_nsfplay, TRUE);
 	//gtk_widget_set_sensitive(button_nsfstop, FALSE);
-}
+}*/
 
 void on_videocombo_changed(GtkComboBox *combobox, gpointer user_data) {
 	conf->misc_video_region = gtk_combo_box_get_active(combobox);
@@ -456,11 +456,11 @@ void inputcfg_clicked(GtkButton *button, int data) {
 	NstLaunchConfig();*/
 }
 
-void on_nsfplayer_destroy(GObject *object, gpointer user_data)
+/*void on_nsfplayer_destroy(GObject *object, gpointer user_data)
 {
 	NstStopNsf();
 	//gtk_widget_destroy(nsfplayer);
-}
+}*/
 
 void load_file_by_uri(char *filename) {
 	char *fsub;
@@ -570,7 +570,7 @@ void gtkui_init(int argc, char *argv[], int xres, int yres)
 	
 }
 
-void UIHelp_NSFLoaded(void)
+/*void UIHelp_NSFLoaded(void)
 {
 	Nsf nsf( emulator );
 	
@@ -580,7 +580,7 @@ void UIHelp_NSFLoaded(void)
 	gtk_label_set_text(GTK_LABEL(nsftitle), nsf.GetName());
 	gtk_label_set_text(GTK_LABEL(nsfauthor), nsf.GetArtist());
 	gtk_label_set_text(GTK_LABEL(nsfmaker), nsf.GetCopyright());
-}
+}*/
 
 // return the icon for alternate windows to use
 GdkPixbuf *get_icon() {
@@ -1255,7 +1255,7 @@ GtkWidget* create_config(void) {
 	return configwindow;
 }
 
-GtkWidget* create_nsfplayer (void) {
+/*GtkWidget* create_nsfplayer (void) {
 
 	// Pause if playing
 	bool playing = NstIsPlaying();
@@ -1329,7 +1329,7 @@ GtkWidget* create_nsfplayer (void) {
 	gtk_widget_show_all(nsfplayer);
 
 	return nsfplayer;
-}
+}*/
 
 GtkWidget* create_about (void) {
 
