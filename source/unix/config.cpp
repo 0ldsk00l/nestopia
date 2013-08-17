@@ -28,6 +28,7 @@
 settings *conf;
 GKeyFile *keyfile;
 GKeyFileFlags flags;
+gsize length;
 	
 void read_config_file() {
 	
@@ -72,10 +73,46 @@ void read_config_file() {
 	conf->misc_default_system = g_key_file_get_integer(keyfile, "misc", "default_system", NULL);
 	conf->misc_soft_patching = g_key_file_get_boolean(keyfile, "misc", "soft_patching", NULL);
 	conf->misc_disable_gui = g_key_file_get_boolean(keyfile, "misc", "disable_gui", NULL);
-	
-	g_key_file_free(keyfile);
 }
 
 void write_config_file() {
-	printf("Tried to write config file\n");
+	
+	// Video
+	g_key_file_set_integer(keyfile, "video", "renderer", conf->video_renderer);
+	g_key_file_set_integer(keyfile, "video", "filter", conf->video_filter);
+	g_key_file_set_integer(keyfile, "video", "scale_factor", conf->video_scale_factor);
+	g_key_file_set_integer(keyfile, "video", "ntsc_mode", conf->video_ntsc_mode);
+	g_key_file_set_integer(keyfile, "video", "xbr_corner_rounding", conf->video_xbr_corner_rounding);
+	
+	g_key_file_set_boolean(keyfile, "video", "xbr_pixel_blending", conf->video_xbr_pixel_blending);
+	g_key_file_set_boolean(keyfile, "video", "tv_aspect", conf->video_tv_aspect);
+	g_key_file_set_boolean(keyfile, "video", "mask_overscan", conf->video_mask_overscan);
+	g_key_file_set_boolean(keyfile, "video", "fullscreen", conf->video_fullscreen);
+	g_key_file_set_boolean(keyfile, "video", "stretch_fullscreen", conf->video_stretch_fullscreen);
+	g_key_file_set_boolean(keyfile, "video", "unlimited_sprites", conf->video_unlimited_sprites);
+	
+	// Audio
+	g_key_file_set_integer(keyfile, "audio", "api", conf->audio_api);
+	g_key_file_set_integer(keyfile, "audio", "sample_rate", conf->audio_sample_rate);
+	g_key_file_set_integer(keyfile, "audio", "volume", conf->audio_volume);
+	g_key_file_set_integer(keyfile, "audio", "surround_multiplier", conf->audio_surround_multiplier);
+	
+	g_key_file_set_boolean(keyfile, "audio", "surround", conf->audio_surround);
+	g_key_file_set_boolean(keyfile, "audio", "stereo", conf->audio_stereo);
+	g_key_file_set_boolean(keyfile, "audio", "stereo_exciter", conf->audio_stereo_exciter);
+	
+	// Misc
+	g_key_file_set_integer(keyfile, "misc", "video_region", conf->misc_video_region);
+	g_key_file_set_integer(keyfile, "misc", "default_system", conf->misc_default_system);
+	g_key_file_set_boolean(keyfile, "misc", "soft_patching", conf->misc_soft_patching);
+	g_key_file_set_boolean(keyfile, "misc", "disable_gui", conf->misc_disable_gui);
+	
+	FILE *fp = fopen("nestopia.conf", "w");
+	if (fp != NULL)	{
+		fputs(g_key_file_to_data(keyfile, &length, NULL), fp);
+		fclose(fp);
+	}
+	
+	g_slice_free(settings, conf);
+	g_key_file_free(keyfile);
 }

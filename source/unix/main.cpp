@@ -1152,6 +1152,8 @@ int main(int argc, char *argv[])
 
 	write_output_file(ctl_defs);
 	free(ctl_defs);
+	
+	write_config_file();
 
 	return 0;
 }
