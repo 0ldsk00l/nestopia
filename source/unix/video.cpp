@@ -30,6 +30,10 @@
 #include "video.h"
 #include "main.h"
 
+SDL_Window *sdlwindow;
+SDL_Renderer *renderer;
+SDL_GLContext glcontext;
+
 extern settings *conf;
 //extern SDL_Surface *screen;
 extern int cur_width, cur_height, cur_Rheight, cur_Rwidth;
@@ -56,7 +60,7 @@ void opengl_init_structures() {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) ;
 
 	//glViewport( 0, 0, screen->w, screen->h);
-	glViewport( 0, 0, 512, 480);
+	glViewport( 0, 0, cur_Rwidth, cur_Rheight);
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_ALPHA_TEST );
 	glDisable( GL_BLEND );
@@ -76,7 +80,7 @@ void opengl_init_structures() {
 	}
 	else {*/
 		//glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, -1.0, 1.0);
-		glOrtho(0.0, (GLdouble)512.0, (GLdouble)480.0, 0.0, -1.0, 1.0);
+		glOrtho(0.0, (GLdouble)cur_Rwidth, (GLdouble)cur_Rheight, 0.0, -1.0, 1.0);
 	//}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -122,7 +126,41 @@ void opengl_blit() {
 		glVertex2i(0, cur_Rheight);
 	glEnd();
 
-	//SDL_GL_SwapBuffers();	
+	SDL_GL_SwapWindow(sdlwindow);
+}
+
+void create_sdlwindow() {
+	
+	sdlwindow = SDL_CreateWindow(
+	"Nestopia",							//    window title
+	SDL_WINDOWPOS_UNDEFINED,			//    initial x position
+	SDL_WINDOWPOS_UNDEFINED,			//    initial y position
+	cur_Rwidth,							//    width, in pixels
+	cur_Rheight,						//    height, in pixels
+	SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
+	
+	if(sdlwindow == NULL) {
+		fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
+	}
+	
+	printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
+	
+	glcontext = SDL_GL_CreateContext(sdlwindow);
+	
+	if(glcontext == NULL) {
+		fprintf(stderr, "Could not create glcontext: %s\n", SDL_GetError());
+	}
+	
+	SDL_GL_MakeCurrent(sdlwindow, glcontext);
+	
+	renderer = SDL_CreateRenderer(sdlwindow, -1, SDL_RENDERER_ACCELERATED);
+	//renderer = SDL_CreateRenderer(sdlwindow, -1, SDL_RENDERER_SOFTWARE);
+	
+	if(renderer == NULL) {
+		fprintf(stderr, "Could not create renderer: %s\n", SDL_GetError());
+	}
+	
+	SDL_GL_SetSwapInterval(1);
 }
 
 long Linux_LockScreen(void*& ptr)

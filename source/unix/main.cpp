@@ -472,7 +472,7 @@ void NstPlayGame(void)
 		//putenv(windowid);
 		NstStopPlaying();
 	}
-
+	
 	// initialization
 	SetupVideo();
 	SetupSound();
@@ -1002,10 +1002,17 @@ int main(int argc, char *argv[])
 	intbuffer = NULL;
 
 	fileio_init();
-
-	gtk_init(&argc, &argv);
+	
+	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		return 1;
+	}
 	
 	get_screen_res();
+	
+	create_sdlwindow();
+	
+	gtk_init(&argc, &argv);
 	
 	if (!conf->misc_disable_gui) {
 		gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
@@ -1061,6 +1068,7 @@ int main(int argc, char *argv[])
 					{
 						case SDL_QUIT:
 							schedule_stop = 1;
+							return 0; // FIX
 							break;
 
 						case SDL_KEYDOWN:
