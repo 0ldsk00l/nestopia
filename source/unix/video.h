@@ -10,6 +10,8 @@ void opengl_init_structures();
 void opengl_cleanup();
 void opengl_blit();
 
+void create_sdlwindow();
+
 long Linux_LockScreen(void*& ptr);
 void Linux_UnlockScreen(void*);
 
