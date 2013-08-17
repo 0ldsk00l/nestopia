@@ -29,50 +29,58 @@ settings *conf;
 GKeyFile *keyfile;
 GKeyFileFlags flags;
 gsize length;
+
+char confpath[256];
 	
 void read_config_file() {
+	
+	char *homedir;
+
+	homedir = getenv("HOME");
+	snprintf(confpath, sizeof(confpath), "%s/.nestopia/nestopia.conf", homedir);
 	
 	keyfile = g_key_file_new();
 	
 	flags = G_KEY_FILE_KEEP_COMMENTS;
 	
-	if (!g_key_file_load_from_file(keyfile, "nestopia.conf", flags, NULL)) {
-		printf("Could not read config file.\n");
-		//set defaults;
-	}
-	
 	// Set aside memory for the settings
 	conf = g_slice_new(settings);
 	
-	// Video
-	conf->video_renderer = g_key_file_get_integer(keyfile, "video", "renderer", NULL);
-	conf->video_filter = g_key_file_get_integer(keyfile, "video", "filter", NULL);
-	conf->video_scale_factor = g_key_file_get_integer(keyfile, "video", "scale_factor", NULL);
-	conf->video_ntsc_mode = g_key_file_get_integer(keyfile, "video", "ntsc_mode", NULL);
-	conf->video_xbr_corner_rounding = g_key_file_get_integer(keyfile, "video", "xbr_corner_rounding", NULL);
+	if (g_key_file_load_from_file(keyfile, confpath, flags, NULL)) {
+		// Video
+		conf->video_renderer = g_key_file_get_integer(keyfile, "video", "renderer", NULL);
+		conf->video_filter = g_key_file_get_integer(keyfile, "video", "filter", NULL);
+		conf->video_scale_factor = g_key_file_get_integer(keyfile, "video", "scale_factor", NULL);
+		conf->video_ntsc_mode = g_key_file_get_integer(keyfile, "video", "ntsc_mode", NULL);
+		conf->video_xbr_corner_rounding = g_key_file_get_integer(keyfile, "video", "xbr_corner_rounding", NULL);
+		
+		conf->video_xbr_pixel_blending = g_key_file_get_boolean(keyfile, "video", "xbr_pixel_blending", NULL);
+		conf->video_tv_aspect = g_key_file_get_boolean(keyfile, "video", "tv_aspect", NULL);
+		conf->video_mask_overscan = g_key_file_get_boolean(keyfile, "video", "mask_overscan", NULL);
+		conf->video_fullscreen = g_key_file_get_boolean(keyfile, "video", "fullscreen", NULL);
+		conf->video_stretch_fullscreen = g_key_file_get_boolean(keyfile, "video", "stretch_fullscreen", NULL);
+		conf->video_unlimited_sprites = g_key_file_get_boolean(keyfile, "video", "unlimited_sprites", NULL);
 	
-	conf->video_xbr_pixel_blending = g_key_file_get_boolean(keyfile, "video", "xbr_pixel_blending", NULL);
-	conf->video_tv_aspect = g_key_file_get_boolean(keyfile, "video", "tv_aspect", NULL);
-	conf->video_mask_overscan = g_key_file_get_boolean(keyfile, "video", "mask_overscan", NULL);
-	conf->video_fullscreen = g_key_file_get_boolean(keyfile, "video", "fullscreen", NULL);
-	conf->video_stretch_fullscreen = g_key_file_get_boolean(keyfile, "video", "stretch_fullscreen", NULL);
-	conf->video_unlimited_sprites = g_key_file_get_boolean(keyfile, "video", "unlimited_sprites", NULL);
-	
-	// Audio
-	conf->audio_api = g_key_file_get_integer(keyfile, "audio", "api", NULL);
-	conf->audio_sample_rate = g_key_file_get_integer(keyfile, "audio", "sample_rate", NULL);
-	conf->audio_volume = g_key_file_get_integer(keyfile, "audio", "volume", NULL);
-	conf->audio_surround_multiplier = g_key_file_get_integer(keyfile, "audio", "surround_multiplier", NULL);
-	
-	conf->audio_surround = g_key_file_get_boolean(keyfile, "audio", "surround", NULL);
-	conf->audio_stereo = g_key_file_get_boolean(keyfile, "audio", "stereo", NULL);
-	conf->audio_stereo_exciter = g_key_file_get_boolean(keyfile, "audio", "stereo_exciter", NULL);
-	
-	// Misc
-	conf->misc_video_region = g_key_file_get_integer(keyfile, "misc", "video_region", NULL);
-	conf->misc_default_system = g_key_file_get_integer(keyfile, "misc", "default_system", NULL);
-	conf->misc_soft_patching = g_key_file_get_boolean(keyfile, "misc", "soft_patching", NULL);
-	conf->misc_disable_gui = g_key_file_get_boolean(keyfile, "misc", "disable_gui", NULL);
+		// Audio
+		conf->audio_api = g_key_file_get_integer(keyfile, "audio", "api", NULL);
+		conf->audio_sample_rate = g_key_file_get_integer(keyfile, "audio", "sample_rate", NULL);
+		conf->audio_volume = g_key_file_get_integer(keyfile, "audio", "volume", NULL);
+		conf->audio_surround_multiplier = g_key_file_get_integer(keyfile, "audio", "surround_multiplier", NULL);
+		
+		conf->audio_surround = g_key_file_get_boolean(keyfile, "audio", "surround", NULL);
+		conf->audio_stereo = g_key_file_get_boolean(keyfile, "audio", "stereo", NULL);
+		conf->audio_stereo_exciter = g_key_file_get_boolean(keyfile, "audio", "stereo_exciter", NULL);
+		
+		// Misc
+		conf->misc_video_region = g_key_file_get_integer(keyfile, "misc", "video_region", NULL);
+		conf->misc_default_system = g_key_file_get_integer(keyfile, "misc", "default_system", NULL);
+		conf->misc_soft_patching = g_key_file_get_boolean(keyfile, "misc", "soft_patching", NULL);
+		conf->misc_disable_gui = g_key_file_get_boolean(keyfile, "misc", "disable_gui", NULL);
+	}
+	else {
+		printf("Failed to read config file %s: Using defaults.\n", confpath);
+		set_default_config();
+	}
 }
 
 void write_config_file() {
@@ -107,7 +115,7 @@ void write_config_file() {
 	g_key_file_set_boolean(keyfile, "misc", "soft_patching", conf->misc_soft_patching);
 	g_key_file_set_boolean(keyfile, "misc", "disable_gui", conf->misc_disable_gui);
 	
-	FILE *fp = fopen("nestopia.conf", "w");
+	FILE *fp = fopen(confpath, "w");
 	if (fp != NULL)	{
 		fputs(g_key_file_to_data(keyfile, &length, NULL), fp);
 		fclose(fp);
@@ -115,4 +123,37 @@ void write_config_file() {
 	
 	g_slice_free(settings, conf);
 	g_key_file_free(keyfile);
+}
+
+void set_default_config() {
+	
+	// Video
+	conf->video_renderer = 1;
+	conf->video_filter = 0;
+	conf->video_scale_factor = 2;
+	conf->video_ntsc_mode = 0;
+	conf->video_xbr_corner_rounding = 0;
+	
+	conf->video_xbr_pixel_blending = true;
+	conf->video_tv_aspect = false;
+	conf->video_mask_overscan = false;
+	conf->video_fullscreen = false;
+	conf->video_stretch_fullscreen = true;
+	conf->video_unlimited_sprites = true;
+	
+	// Audio
+	conf->audio_api = 0;
+	conf->audio_sample_rate = 48000;
+	conf->audio_volume = 85;
+	conf->audio_surround_multiplier = 50;
+	
+	conf->audio_surround = false;
+	conf->audio_stereo = false;
+	conf->audio_stereo_exciter = false;
+	
+	// Misc
+	conf->misc_video_region = 0;
+	conf->misc_default_system = 0;
+	conf->misc_soft_patching = true;
+	conf->misc_disable_gui = false;
 }
