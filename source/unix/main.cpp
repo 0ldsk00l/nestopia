@@ -872,7 +872,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 		case User::File::LOAD_TAPE: // for loading Famicom cassette tapes
 		case User::File::LOAD_TURBOFILE: // for loading turbofile data
 		{
-			int size;
+			//int size;
 			FILE *f;
 
 			f = fopen(savename, "rb");
@@ -881,7 +881,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 				return;
 			}
 			fseek(f, 0, SEEK_END);
-			size = ftell(f);
+			//size = ftell(f);
 			fclose(f);
 
 			std::ifstream batteryFile( savename, std::ifstream::in|std::ifstream::binary );
@@ -1331,6 +1331,7 @@ void SetupVideo()
 	}*/
 	
 	get_screen_res();
+	filter = Video::RenderState::FILTER_NONE;
 
 	// compute the major video parameters from the scaler type and scale factor
 	switch(conf->video_filter)

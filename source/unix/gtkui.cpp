@@ -304,7 +304,7 @@ void on_ratecombo_changed(GtkComboBox *combobox, gpointer user_data) {
 	}
 }
 
-gboolean on_ratecombo_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer user_data)
+void on_ratecombo_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer user_data)
 {
 }
 
@@ -368,7 +368,7 @@ void on_aboutbutton_clicked(GtkButton *button,  gpointer user_data)
 	create_about();
 }
 
-gboolean on_volumescroll_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer user_data) {
+void on_volumescroll_configure_event(GtkWidget *widget, GdkEventConfigure *event, gpointer user_data) {
 
 }
 

@@ -81,7 +81,7 @@ static int find_current_selection(void)
 {
 	int i;
 
-	for (i = 0; i < treeiters.size(); i++)
+	for (i = 0; (unsigned)i < treeiters.size(); i++)
 	{
 		if (gtk_tree_selection_iter_is_selected(selection, &treeiters[i]))
 		{
@@ -144,7 +144,7 @@ void CheatMgr::ShowManager()
 	// make a copy of the cheatlist, clear the master, then insert from the copy
 	templist = cheatlist;
 	cheatlist.clear();
-	for (i = 0; i < templist.size(); i++)
+	for (i = 0; (unsigned)i < templist.size(); i++)
 	{
 		Cheats::Code codetoadd;
 
@@ -162,7 +162,7 @@ void CheatMgr::Enable(void)
 	cheats.ClearCodes();	
 
 	// now scan our list and add any enabled codes
-	for (i = 0; i < cheatlist.size(); i++)
+	for (i = 0; (unsigned)i < cheatlist.size(); i++)
 	{
 		if (cheatlist[i].enabled) 
 		{
@@ -606,7 +606,7 @@ void on_cheatsave_clicked(GtkButton *button, gpointer user_data)
 			root = xml.Create( L"cheats" );
 			root.AddAttribute( L"version", L"1.0" );
 
-			for (i = 0; i < cheatlist.size(); i++)
+			for (i = 0; (unsigned)i < cheatlist.size(); i++)
 			{
 				Cheats::Code code;
 				char buffer[9];
