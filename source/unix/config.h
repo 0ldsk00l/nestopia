@@ -30,6 +30,7 @@ typedef struct {
 	gint misc_video_region;
 	gint misc_default_system;
 	gboolean misc_soft_patching;
+	gboolean misc_suppress_screensaver;
 	gboolean misc_disable_gui;
 } settings;
 

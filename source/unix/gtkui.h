@@ -1,7 +1,7 @@
 #include <gtk/gtk.h>
 
 void gtkui_init(int argc, char *argv[], int xres, int yres);
-void UIHelp_NSFLoaded(void);
+//void UIHelp_NSFLoaded(void);
 
 void pause_clicked();
 void redraw_drawingarea(int xres, int yres);
