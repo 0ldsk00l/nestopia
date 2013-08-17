@@ -58,7 +58,7 @@
 #include "main.h"
 #include "gtkui.h"
 #include "audio.h"
-#include "input.h"
+//#include "input.h"
 #include "fileio.h"
 #include "cheats.h"
 #include "config.h"
@@ -806,11 +806,11 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
 
-	g_signal_connect(G_OBJECT(window), "key_press_event",
+	/*g_signal_connect(G_OBJECT(window), "key_press_event",
 		G_CALLBACK(convertKeypress), NULL);
 
 	g_signal_connect(G_OBJECT(window), "key_release_event",
-		G_CALLBACK(convertKeypress), NULL);
+		G_CALLBACK(convertKeypress), NULL);*/
 
 	gtksettings = gtk_settings_get_default();
 	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
@@ -1370,7 +1370,7 @@ void create_messagewindow(char* message) {
 
 // Ripped this straight out of FCEUX and Gens/GS
 
-unsigned short GDKToSDLKeyval(int gdk_key)
+/*unsigned short GDKToSDLKeyval(int gdk_key)
 {
 	if (!(gdk_key & 0xFF00))
 	{
@@ -1554,7 +1554,7 @@ gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data)
 	
 	// Allow GTK+ to process this key.
 	return FALSE;
-}
+}*/
 
 void set_window_id(char* sdlwindowid) {
 	//printf("%s\n", sdlwindowid);

@@ -11,7 +11,7 @@ CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
 CPPFLAGS += -Isource -Isource/core -Isource/zlib -Isource/core/api -Isource/core/board -Isource/core/input
 CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc
-SDL_CFLAGS = $(shell sdl-config --cflags)
+SDL_CFLAGS = $(shell sdl2-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
 CFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
 CFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
@@ -30,12 +30,12 @@ DATADIR = $(PREFIX)/share/nestopia
 BIN = nestopia
 
 ifeq ($(UNAME), Linux)
-	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
-	LIBS = -lstdc++ -lm -lz -larchive -lasound $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -Wno-unused-variable -fno-rtti
+	LIBS = -lstdc++ -lm -lz -larchive -lasound $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
 endif
 ifneq ($(UNAME), Linux)
 	CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
-	LIBS = -lstdc++ -lm -lz -larchive $(shell sdl-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	LIBS = -lstdc++ -lm -lz -larchive $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
 	CPPFLAGS += -DBSD
 endif
 
@@ -51,12 +51,10 @@ OBJS = objs/unix/main.o
 OBJS += objs/unix/gtkui.o
 OBJS += objs/unix/audio.o
 OBJS += objs/unix/video.o
-OBJS += objs/unix/input.o
 OBJS += objs/unix/fileio.o
 OBJS += objs/unix/cheats.o
 OBJS += objs/unix/config.o
 OBJS += objs/unix/seffect.o
-OBJS += objs/unix/kentry.o
 
 # core objs
 OBJS += objs/core/NstApu.o              objs/core/NstFds.o            objs/core/NstPpu.o              objs/core/NstVector.o
