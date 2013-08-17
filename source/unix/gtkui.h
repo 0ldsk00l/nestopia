@@ -91,7 +91,7 @@ void
 on_volumescroll_value_changed          (GtkRange        *range,
                                         gpointer         user_data);
 
-gboolean
+void
 on_volumescroll_configure_event        (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data);
@@ -100,7 +100,7 @@ void
 on_ratecombo_changed                   (GtkComboBox     *combobox,
                                         gpointer         user_data);
 
-gboolean
+void
 on_ratecombo_configure_event           (GtkWidget       *widget,
                                         GdkEventConfigure *event,
                                         gpointer         user_data);

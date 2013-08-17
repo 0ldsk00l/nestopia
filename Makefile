@@ -30,7 +30,9 @@ DATADIR = $(PREFIX)/share/nestopia
 BIN = nestopia
 
 ifeq ($(UNAME), Linux)
-	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -Wno-unused-variable -fno-rtti
+	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
+	CXXFLAGS += -Wno-switch -Wno-sign-compare -Wno-unused-function -Wno-parentheses -Wno-narrowing -Wno-unused-variable
+	CXXFLAGS += -Wno-delete-non-virtual-dtor -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-reorder -Wno-array-bounds
 	LIBS = -lstdc++ -lm -lz -larchive -lasound $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
 endif
 ifneq ($(UNAME), Linux)

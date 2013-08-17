@@ -127,10 +127,10 @@ void opengl_blit() {
 
 long Linux_LockScreen(void*& ptr)
 {
-	if (using_opengl) { // have the engine blit directly to our memory buffer
+	//if (using_opengl) { // have the engine blit directly to our memory buffer
 		ptr = intbuffer;
 		return gl_w*4;
-	}
+	//}
 	
 	/*else {
 		if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
