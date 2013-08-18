@@ -60,7 +60,7 @@
 #include "gtkui.h"
 #include "audio.h"
 #include "video.h"
-//#include "input.h"
+#include "input.h"
 #include "fileio.h"
 #include "cheats.h"
 #include "config.h"
@@ -72,8 +72,6 @@ using namespace LinuxNst;
 // base class, all interfaces derives from this
 Emulator emulator;
 
-SDL_Surface *screen;
-
 static short lbuf[48000];
 static long exholding[48000*2];
 
@@ -82,7 +80,6 @@ static unsigned short keys[65536];
 int updateok, playing = 0, cur_width, cur_height, loaded = 0, framerate;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
-//static SDL_Joystick *joy[10];
 
 int cur_Rheight, cur_Rwidth;
 
@@ -93,8 +90,6 @@ static char savename[512], capname[512], gamebasename[512];
 static char caption[128];
 char rootname[512], lastarchname[512];
 char msgbuf[512];
-
-//static InputDefT *ctl_defs;
 
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
@@ -422,11 +417,11 @@ void print_fds_info() {
 
 void print_message(char* message) {
 	printf("%s\n", message);
-	gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, message);
+	//gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, message);
 }
 
 // save state to memory slot
-static void QuickSave(int isvst)
+void QuickSave(int isvst)
 {
 	std::string strFile = StrQuickSaveFile(isvst);
 
@@ -440,7 +435,7 @@ static void QuickSave(int isvst)
 
 
 // restore state from memory slot
-static void QuickLoad(int isvst)
+void QuickLoad(int isvst)
 {
 	std::string strFile = StrQuickSaveFile(isvst);
 	
@@ -1003,10 +998,12 @@ int main(int argc, char *argv[])
 
 	fileio_init();
 	
-	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
+	
+	input_init();
 	
 	get_screen_res();
 	
@@ -1015,7 +1012,7 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 	
 	if (!conf->misc_disable_gui) {
-		gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
+		//gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
 	}
 	
 	// setup video lock/unlock callbacks
@@ -1081,7 +1078,8 @@ int main(int argc, char *argv[])
 						case SDL_JOYAXISMOTION:
 						case SDL_JOYBUTTONDOWN:
 						case SDL_JOYBUTTONUP:
-							nst_dispatch(cNstPads, event);
+							//nst_dispatch(cNstPads, event);
+							input_process(cNstPads, event);
 							break;
 					}	
 				}
@@ -1151,9 +1149,6 @@ int main(int argc, char *argv[])
 	nst_unload();
 
 	fileio_shutdown();
-
-	/*write_output_file(ctl_defs);
-	free(ctl_defs);*/
 	
 	write_config_file();
 
@@ -1453,8 +1448,8 @@ void SetupVideo()
 	renderState.height = cur_height;
 
 	// example configuration
-	if (using_opengl)
-	{
+	//if (using_opengl)
+	//{
 		opengl_init_structures();
 
 		renderState.bits.count = 32;
@@ -1467,14 +1462,14 @@ void SetupVideo()
 		renderState.bits.mask.g = 0x0000ff00;
 		renderState.bits.mask.b = 0x000000ff;
 	#endif
-	}
+	/*}
 	else
 	{
 		renderState.bits.count = screen->format->BitsPerPixel;
 		renderState.bits.mask.r = screen->format->Rmask;
 		renderState.bits.mask.g = screen->format->Gmask;
 		renderState.bits.mask.b = screen->format->Bmask;
-	}
+	}*/
 
 	// allocate the intermediate render buffer
 	intbuffer = malloc(renderState.bits.count * renderState.width * renderState.height);
@@ -1550,6 +1545,7 @@ void SetupSound()
 	sound.SetSampleBits( 16 );
 	sound.SetSampleRate(conf->audio_sample_rate);
 	sound.SetVolume(Sound::ALL_CHANNELS, conf->audio_volume);
+
 	if (conf->audio_stereo)
 	{
 		sound.SetSpeaker( Sound::SPEAKER_STEREO );

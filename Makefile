@@ -53,6 +53,7 @@ OBJS = objs/unix/main.o
 OBJS += objs/unix/gtkui.o
 OBJS += objs/unix/audio.o
 OBJS += objs/unix/video.o
+OBJS += objs/unix/input.o
 OBJS += objs/unix/fileio.o
 OBJS += objs/unix/cheats.o
 OBJS += objs/unix/config.o
