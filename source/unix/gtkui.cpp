@@ -806,11 +806,11 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(create_about), NULL);
 
-	/*g_signal_connect(G_OBJECT(window), "key_press_event",
-		G_CALLBACK(convertKeypress), NULL);
+	g_signal_connect(G_OBJECT(window), "key_press_event",
+		G_CALLBACK(convert_keypress), NULL);
 
 	g_signal_connect(G_OBJECT(window), "key_release_event",
-		G_CALLBACK(convertKeypress), NULL);*/
+		G_CALLBACK(convert_keypress), NULL);
 
 	gtksettings = gtk_settings_get_default();
 	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
@@ -1368,35 +1368,27 @@ void create_messagewindow(char* message) {
 	gtk_widget_destroy (messagewindow);
 }
 
-// Ripped this straight out of FCEUX and Gens/GS
+// Adapted the following from FCEUX and Gens/GS, whoever wrote it first is unknown
 
-/*unsigned short GDKToSDLKeyval(int gdk_key)
-{
-	if (!(gdk_key & 0xFF00))
-	{
-		// ASCII symbol.
-		// SDL and GDK use the same values for these keys.
+unsigned int translate_gdk_sdl(int gdk_keyval) {
+	
+	if (!(gdk_keyval & 0xFF00))	{
+
+		//printf("GDK key: %x\n", gdk_keyval);
+		gdk_keyval = tolower(gdk_keyval);
 		
-		// Make sure the key value is lowercase.
-		gdk_key = tolower(gdk_key);
-		
-		// Return the key value.
-		return gdk_key;
+		return gdk_keyval;
 	}
 	
-	if (gdk_key & 0xFFFF0000)
-	{
-		// Extended X11 key. Not supported by SDL.
-#ifdef GDK_WINDOWING_X11
-		fprintf(stderr, "Unhandled extended X11 key: 0x%08X (%s)", gdk_key, XKeysymToString(gdk_key));
-#else
-		fprintf(stderr, "Unhandled extended key: 0x%08X\n", gdk_key);
-#endif
+	if (gdk_keyval & 0xFFFF0000) {
+
+		printf("Unhandled extended key: 0x%08X\n", gdk_keyval);
+
 		return 0;
 	}
 	
 	// Non-ASCII symbol.
-	static const uint16_t gdk_to_sdl_table[0x100] =
+	static const SDL_Keycode gdk_to_sdl_table[0x100] =
 	{
 		// 0x00 - 0x0F
 		0x0000, 0x0000, 0x0000, 0x0000,
@@ -1406,12 +1398,12 @@ void create_messagewindow(char* message) {
 		
 		// 0x10 - 0x1F
 		0x0000, 0x0000, 0x0000, SDLK_PAUSE,
-		SDLK_SCROLLOCK, SDLK_SYSREQ, 0x0000, 0x0000,
+		SDLK_SCROLLLOCK, SDLK_SYSREQ, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, SDLK_ESCAPE,
 		0x0000, 0x0000, 0x0000, 0x0000,
 		
 		// 0x20 - 0x2F
-		SDLK_COMPOSE, 0x0000, 0x0000, 0x0000,
+		SDLK_APPLICATION, 0x0000, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
@@ -1435,28 +1427,28 @@ void create_messagewindow(char* message) {
 		0x0000, 0x0000, 0x0000, 0x0000,
 		
 		// 0x60 - 0x6F
-		0x0000, SDLK_PRINT, 0x0000, SDLK_INSERT,
-		SDLK_UNDO, 0x0000, 0x0000, SDLK_MENU,
-		0x0000, SDLK_HELP, SDLK_BREAK, 0x0000,
+		0x0000, SDLK_PRINTSCREEN, 0x0000, SDLK_INSERT,
+		SDLK_UNDO, 0x0000, 0x0000, SDLK_MENU,		
+		0x0000, SDLK_HELP, SDLK_PAUSE, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
 		
 		// 0x70 - 0x7F [mostly unused, except for Alt Gr and Num Lock]
 		0x0000, 0x0000, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
-		0x0000, 0x0000, SDLK_MODE, SDLK_NUMLOCK,
+		0x0000, 0x0000, SDLK_MODE, SDLK_NUMLOCKCLEAR,
 		
 		// 0x80 - 0x8F [mostly unused, except for some numeric keypad keys]
-		SDLK_KP5, 0x0000, 0x0000, 0x0000,
+		SDLK_KP_5, 0x0000, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
 		0x0000, 0x0000, 0x0000, 0x0000,
 		0x0000, SDLK_KP_ENTER, 0x0000, 0x0000,
 		
 		// 0x90 - 0x9F
 		0x0000, 0x0000, 0x0000, 0x0000,
-		0x0000, SDLK_KP7, SDLK_KP4, SDLK_KP8,
-		SDLK_KP6, SDLK_KP2, SDLK_KP9, SDLK_KP3,
-		SDLK_KP1, SDLK_KP5, SDLK_KP0, SDLK_KP_PERIOD,
+		0x0000, SDLK_KP_7, SDLK_KP_4, SDLK_KP_8,
+		SDLK_KP_6, SDLK_KP_2, SDLK_KP_9, SDLK_KP_3,
+		SDLK_KP_1, SDLK_KP_5, SDLK_KP_0, SDLK_KP_PERIOD,
 		
 		// 0xA0 - 0xAF
 		0x0000, 0x0000, 0x0000, 0x0000,
@@ -1465,9 +1457,9 @@ void create_messagewindow(char* message) {
 		0x0000, SDLK_KP_MINUS, SDLK_KP_PERIOD, SDLK_KP_DIVIDE,
 		
 		// 0xB0 - 0xBF
-		SDLK_KP0, SDLK_KP1, SDLK_KP2, SDLK_KP3,
-		SDLK_KP4, SDLK_KP5, SDLK_KP6, SDLK_KP7,
-		SDLK_KP8, SDLK_KP9, 0x0000, 0x0000,
+		SDLK_KP_0, SDLK_KP_1, SDLK_KP_2, SDLK_KP_3,
+		SDLK_KP_4, SDLK_KP_5, SDLK_KP_6, SDLK_KP_7,
+		SDLK_KP_8, SDLK_KP_9, 0x0000, 0x0000,
 		0x0000, SDLK_KP_EQUALS, SDLK_F1, SDLK_F2,
 		
 		// 0xC0 - 0xCF
@@ -1484,9 +1476,9 @@ void create_messagewindow(char* message) {
 		
 		// 0xE0 - 0xEF
 		0x0000, SDLK_LSHIFT, SDLK_RSHIFT, SDLK_LCTRL,
-		SDLK_RCTRL, SDLK_CAPSLOCK, 0x0000, SDLK_LMETA,
-		SDLK_RMETA, SDLK_LALT, SDLK_RALT, SDLK_LSUPER,
-		SDLK_RSUPER, 0x0000, 0x0000, 0x0000,
+		SDLK_RCTRL, SDLK_CAPSLOCK, 0x0000, SDLK_LGUI,
+		SDLK_RGUI, SDLK_LALT, SDLK_RALT, SDLK_LGUI,
+		SDLK_RGUI, 0x0000, 0x0000, 0x0000,
 		
 		// 0xF0 - 0xFF [mostly unused, except for Delete]
 		0x0000, 0x0000, 0x0000, 0x0000,
@@ -1495,66 +1487,53 @@ void create_messagewindow(char* message) {
 		0x0000, 0x0000, 0x0000, SDLK_DELETE,		
 	};
 	
-	unsigned short sdl_key = gdk_to_sdl_table[gdk_key & 0xFF];
-	if (sdl_key == 0)
-	{
-		// Unhandled GDK key.
-		fprintf(stderr, "Unhandled GDK key: 0x%04X (%s)", gdk_key, gdk_keyval_name(gdk_key));
-		return 0;
-	}
+	SDL_Keycode sdl_keycode = gdk_to_sdl_table[gdk_keyval & 0xFF];
 	
-	return sdl_key;
+	//printf("GDK key: %x\n", gdk_keyval);
+	//printf("SDL key: %s\n", SDL_GetKeyName(sdl_keycode));
+	
+	return sdl_keycode;
 }
 
-// Function adapted from Gens/GS (source/gens/input/input_sdl.c)
-gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data)
-{
-	SDL_Event sdlev;
-	SDLKey sdlkey;
-	int keystate;
+int convert_keypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data) {
+
+	SDL_Event sdlevent;
+	SDL_Keycode sdlkeycode;
+	char keystate;
 	
 	switch (event->type)
 	{
 		case GDK_KEY_PRESS:
-			sdlev.type = SDL_KEYDOWN;
-			sdlev.key.state = SDL_PRESSED;
+			sdlevent.type = SDL_KEYDOWN;
+			sdlevent.key.state = SDL_PRESSED;
 			keystate = 1;
 			break;
 		
 		case GDK_KEY_RELEASE:
-			sdlev.type = SDL_KEYUP;
-			sdlev.key.state = SDL_RELEASED;
+			sdlevent.type = SDL_KEYUP;
+			sdlevent.key.state = SDL_RELEASED;
 			keystate = 0;
 			break;
 		
 		default:
-			fprintf(stderr, "Unhandled GDK event type: %d", event->type);
+			fprintf(stderr, "Unhandled GDK event type: %d\n", event->type);
 			return FALSE;
 	}
 	
-	// Convert this keypress from GDK to SDL.
-	sdlkey = (SDLKey)GDKToSDLKeyval(event->keyval);
+	sdlkeycode = (SDL_Keycode)translate_gdk_sdl(event->keyval);
 	
-	// Create an SDL event from the keypress.
-	sdlev.key.keysym.sym = sdlkey;
-	if (sdlkey != 0)
-	{
-		SDL_PushEvent(&sdlev);
+	sdlevent.key.keysym.sym = sdlkeycode;
+	
+	if (sdlkeycode != 0) {
+		SDL_PushEvent(&sdlevent);
 		
-		// Only let the emulator handle the key event if this window has the input focus.
-		//if(keystate == 0 || gtk_window_is_active(GTK_WINDOW(mainwindow)))
-		//{
-		//	#if SDL_VERSION_ATLEAST(1, 3, 0)
-		//	SDL_GetKeyboardState(NULL)[SDL_GetScancodeFromKey(sdlkey)] = keystate;
-		//	#else
-			SDL_GetKeyState(NULL)[sdlkey] = keystate;
-		//	#endif
-		//}
+		const Uint8 *statebuffer = SDL_GetKeyboardState(NULL);
+		Uint8 *state = (Uint8*)statebuffer;
+		state[SDL_GetScancodeFromKey(sdlkeycode)] = keystate;
 	}
-	
-	// Allow GTK+ to process this key.
+
 	return FALSE;
-}*/
+}
 
 void set_window_id(char* sdlwindowid) {
 	//printf("%s\n", sdlwindowid);

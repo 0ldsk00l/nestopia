@@ -1,7 +1,9 @@
+#ifndef _GTKUI_H_
+#define _GTKUI_H_
+
 #include <gtk/gtk.h>
 
 void gtkui_init(int argc, char *argv[], int xres, int yres);
-//void UIHelp_NSFLoaded(void);
 
 void pause_clicked();
 void redraw_drawingarea(int xres, int yres);
@@ -18,7 +20,7 @@ GtkWidget* create_cheatwindow();
 
 void create_messagewindow(char* message);
 
-gint convertKeypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data);
+gint convert_keypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data);
 
 /* This is old stuff that needs to be removed at some point */
 gboolean
@@ -208,3 +210,4 @@ on_chdelete_clicked                    (GtkButton       *button,
 void
 on_sndapicombo_changed                 (GtkComboBox     *combobox,
                                         gpointer         user_data);
+#endif

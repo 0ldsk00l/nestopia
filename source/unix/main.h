@@ -26,4 +26,7 @@ void SwitchFDSDisk();
 void print_fds_info();
 void print_message(char* message);
 
+void QuickLoad(int isvst);
+void QuickSave(int isvst);
+
 #endif
