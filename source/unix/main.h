@@ -28,5 +28,6 @@ void print_message(char* message);
 
 void QuickLoad(int isvst);
 void QuickSave(int isvst);
+void NstScheduleQuit();
 
 #endif
