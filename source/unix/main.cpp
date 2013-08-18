@@ -536,8 +536,7 @@ void NstHardReset() {
 }
 
 // schedule a NEStopia quit
-void NstScheduleQuit(void)
-{
+void NstScheduleQuit() {
 	nst_quit = 1;
 }
 
@@ -1012,7 +1011,7 @@ int main(int argc, char *argv[])
 	gtk_init(&argc, &argv);
 	
 	if (!conf->misc_disable_gui) {
-		//gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
+		gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
 	}
 	
 	// setup video lock/unlock callbacks
