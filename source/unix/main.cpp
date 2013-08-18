@@ -1003,6 +1003,7 @@ int main(int argc, char *argv[])
 	}
 	
 	input_init();
+	input_read_config();
 	
 	get_screen_res();
 	

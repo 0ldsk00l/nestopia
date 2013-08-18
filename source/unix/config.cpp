@@ -27,8 +27,8 @@
 
 settings *conf;
 GKeyFile *keyfile;
-GKeyFileFlags flags;
-gsize length;
+static GKeyFileFlags flags;
+static gsize length;
 
 char confpath[256];
 	
