@@ -71,12 +71,17 @@ typedef struct {
 	gchar *js_p2b;
 } inputsettings;
 
+typedef struct {
+	unsigned char player;
+	unsigned char nescode;
+	unsigned char pressed;
+} nesinput;
+
 void input_init();
 void input_process(Input::Controllers *controllers, SDL_Event event);
-void input_inject(Input::Controllers *controllers, unsigned char nescode, int player, int pressed);
-unsigned char input_match_keyboard(SDL_Event event);
-unsigned char input_match_joystick(SDL_Event event);
-int input_pressed(SDL_Event event);
+void input_inject(Input::Controllers *controllers, nesinput input);
+nesinput input_match_keyboard(SDL_Event event);
+nesinput input_match_joystick(SDL_Event event);
 char* input_translate_event(SDL_Event event);
 SDL_Event input_translate_string(char *string);
 int input_checksign(int axisvalue);
