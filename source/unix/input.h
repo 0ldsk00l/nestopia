@@ -2,6 +2,7 @@
 #define _INPUT_H_
 
 #define NUMGAMEPADS 2
+#define DEADZONE (32768/3)
 
 #include <glib.h>
 #include <SDL.h>
@@ -18,6 +19,15 @@ typedef struct {
 	SDL_Scancode start;
 	SDL_Scancode a;
 	SDL_Scancode b;
+	
+	SDL_Event ju;
+	SDL_Event jd;
+	SDL_Event jl;
+	SDL_Event jr;
+	SDL_Event jselect;
+	SDL_Event jstart;
+	SDL_Event ja;
+	SDL_Event jb;
 } gamepad;
 
 typedef struct {
@@ -32,6 +42,15 @@ typedef struct {
 	gchar *kb_p1a;
 	gchar *kb_p1b;
 	
+	gchar *js_p1u;
+	gchar *js_p1d;
+	gchar *js_p1l;
+	gchar *js_p1r;
+	gchar *js_p1select;
+	gchar *js_p1start;
+	gchar *js_p1a;
+	gchar *js_p1b;
+	
 	// Player 2
 	gchar *kb_p2u;
 	gchar *kb_p2d;
@@ -41,10 +60,26 @@ typedef struct {
 	gchar *kb_p2start;
 	gchar *kb_p2a;
 	gchar *kb_p2b;
+	
+	gchar *js_p2u;
+	gchar *js_p2d;
+	gchar *js_p2l;
+	gchar *js_p2r;
+	gchar *js_p2select;
+	gchar *js_p2start;
+	gchar *js_p2a;
+	gchar *js_p2b;
 } inputsettings;
 
 void input_init();
 void input_process(Input::Controllers *controllers, SDL_Event event);
+void input_inject(Input::Controllers *controllers, unsigned char nescode, int player, int pressed);
+unsigned char input_match_keyboard(SDL_Event event);
+unsigned char input_match_joystick(SDL_Event event);
+int input_pressed(SDL_Event event);
+char* input_translate_event(SDL_Event event);
+SDL_Event input_translate_string(char *string);
+int input_checksign(int axisvalue);
 void input_read_config();
 
 #endif
