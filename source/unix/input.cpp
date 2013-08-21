@@ -57,10 +57,9 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	Uint8 *keys = (Uint8*)keybuffer;
 	
 	int player;
-	unsigned char nescode;
+	nesinput input;
 	
-	int i;
-	
+	// Process non-game events
 	if (keys[SDL_SCANCODE_F1]) { FlipFDSDisk(); }
 	if (keys[SDL_SCANCODE_F2]) { NstSoftReset(); }
 	//if (keys[SDL_SCANCODE_F3]) {  }
@@ -79,89 +78,101 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 		if (conf->misc_disable_gui) { NstScheduleQuit(); }
 	}
 	
-	int pressed = input_pressed(event);
-	
 	// Match keyboard and joystick input
 	switch(event.type) {
 		case SDL_KEYUP:
 		case SDL_KEYDOWN:
-			nescode = input_match_keyboard(event);
+			input = input_match_keyboard(event);
 			break;
 			
 		case SDL_JOYBUTTONUP:
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYAXISMOTION:
 		case SDL_JOYHATMOTION:
-			nescode = input_match_joystick(event);
+			input = input_match_joystick(event);
 			break;
 			
 		default:
-			nescode = 0x00;
+			input.nescode = 0x00;
+			input.player = 0;
+			input.pressed = 0;
 			break;
 	}
 	
-	player = 0;
-	
-	input_inject(controllers, nescode, player, pressed);
+	input_inject(controllers, input);
 }
 
-void input_inject(Input::Controllers *controllers, unsigned char nescode, int player, int pressed) {
+void input_inject(Input::Controllers *controllers, nesinput input) {
 	
-	if (pressed) {
-		controllers->pad[player].buttons |= nescode;
+	if (input.pressed) {
+		controllers->pad[input.player].buttons |= input.nescode;
 	}
 	else {
-		controllers->pad[player].buttons &= ~nescode;
+		controllers->pad[input.player].buttons &= ~input.nescode;
 	}
 }
 
-unsigned char input_match_joystick(SDL_Event event) {
+nesinput input_match_joystick(SDL_Event event) {
 	// Match NES buttons to joystick input
+	int i;
+	
+	nesinput input;
+	
+	input.nescode = 0x00;
+	input.player = 0;
+	input.pressed = 0;
 
-	return 0x00;
+	return input;
 }
 
-unsigned char input_match_keyboard(SDL_Event event) {
+nesinput input_match_keyboard(SDL_Event event) {
 	// Match NES buttons to keyboard buttons
 	int i;
 	
+	nesinput input;
+	
+	input.nescode = 0x00;
+	input.player = 0;
+	input.pressed = 0;
+	
+	if (event.type == SDL_KEYDOWN) { input.pressed = 1; }
+	
 	for (i = 0; i < NUMGAMEPADS; i++) {
-		if (player[i].u == event.key.keysym.scancode) { return Input::Controllers::Pad::UP;	}
-		if (player[i].d == event.key.keysym.scancode) { return Input::Controllers::Pad::DOWN; }
-		if (player[i].l == event.key.keysym.scancode) { return Input::Controllers::Pad::LEFT; }
-		if (player[i].r == event.key.keysym.scancode) { return Input::Controllers::Pad::RIGHT; }
-		if (player[i].select == event.key.keysym.scancode) { return Input::Controllers::Pad::SELECT; }
-		if (player[i].start == event.key.keysym.scancode) { return Input::Controllers::Pad::START; }
-		if (player[i].a == event.key.keysym.scancode) { return Input::Controllers::Pad::A; }
-		if (player[i].b == event.key.keysym.scancode) { return Input::Controllers::Pad::B; }
+		if (player[i].u == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::UP;
+			input.player = i;
+		}
+		if (player[i].d == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::DOWN;
+			input.player = i;
+		}
+		if (player[i].l == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::LEFT;
+			input.player = i;
+		}
+		if (player[i].r == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::RIGHT;
+			input.player = i;
+		}
+		if (player[i].select == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::SELECT;
+			input.player = i;
+		}
+		if (player[i].start == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::START;
+			input.player = i;
+		}
+		if (player[i].a == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::A;
+			input.player = i;
+		}
+		if (player[i].b == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::B;
+			input.player = i;
+		}
 	}
 	
-	// Return 0x00 if nothing matches
-	return 0x00;
-}
-
-int input_pressed(SDL_Event event) {
-	// Check if it's pressed or not
-	int pressed = 0;
-	
-	switch(event.type) {
-		case SDL_KEYDOWN:
-		case SDL_JOYBUTTONDOWN:
-			pressed = 1;
-			break;
-			
-		case SDL_JOYHATMOTION:
-			if (event.jhat.value != SDL_HAT_CENTERED) { pressed = 1; }
-			break;
-			
-		case SDL_JOYAXISMOTION:
-			if (abs(event.jaxis.value) > DEADZONE) { pressed = 1; }
-			break;
-			
-		default: break;
-	}
-	
-	return pressed;
+	return input;
 }
 
 char* input_translate_event(SDL_Event event) {
