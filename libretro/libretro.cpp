@@ -32,6 +32,8 @@ static Api::Machine *machine;
 static Api::Fds *fds;
 static char g_basename[256];
 static char g_rom_dir[256];
+static bool use_overscan;
+static unsigned blargg_ntsc;
 
 int16_t video_width = Api::Video::Output::WIDTH;
 size_t pitch;
@@ -154,10 +156,10 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    const retro_system_timing timing = { is_pal ? 50.0 : 60.0, 44100.0 };
    info->timing = timing;
 
-// It's better if the size is based on NTSC_WIDTH if the filter is on
+   // It's better if the size is based on NTSC_WIDTH if the filter is on
    const retro_game_geometry geom = {
-      Api::Video::Output::WIDTH,
-      Api::Video::Output::HEIGHT,
+      Api::Video::Output::WIDTH - (use_overscan ? 0 : 16),
+      Api::Video::Output::HEIGHT - (use_overscan ? 0 : 16),
       Api::Video::Output::NTSC_WIDTH,
       Api::Video::Output::HEIGHT,
       4.0 / 3.0,
@@ -272,7 +274,6 @@ static void update_input()
 
 static void check_variables(void)
 {
-   static unsigned blargg_ntsc = 0;
    static bool last_ntsc_val_same;
    struct retro_variable var = {0};
 
@@ -380,7 +381,11 @@ void retro_run(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
       
-   video_cb(video_buffer, video_width, Api::Video::Output::HEIGHT, pitch);
+   bool overscan = blargg_ntsc || use_overscan;
+   video_cb(video_buffer + (overscan ? 0 : (8 + 256 * 8)),
+         video_width - (overscan ? 0 : 16),
+         Api::Video::Output::HEIGHT - (overscan ? 0 : 16),
+         pitch);
 }
 
 static void extract_basename(char *buf, const char *path, size_t size)
@@ -432,6 +437,9 @@ bool retro_load_game(const struct retro_game_info *info)
 
    if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
       return false;
+
+   if (!environ_cb(RETRO_ENVIRONMENT_GET_OVERSCAN, &use_overscan))
+      use_overscan = true;
 
    snprintf(db_path, sizeof(db_path), "%s%cNstDatabase.xml", dir, slash);
    fprintf(stderr, "NstDatabase.xml path: %s\n", db_path);
