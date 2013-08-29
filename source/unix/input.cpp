@@ -115,7 +115,7 @@ void input_inject(Input::Controllers *controllers, nesinput input) {
 
 void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	// Match NES buttons to joystick input
-	int i, j;
+	int j;
 	
 	nesinput input, reverseinput;
 	
@@ -159,12 +159,11 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 		// Handle button input
 		case SDL_JOYBUTTONUP:
 		case SDL_JOYBUTTONDOWN:
-			for (i = 0; i < NUMGAMEPADS; i++) {
-				for (j = 0; j < 16; j++) {
-					if (buttons[j].jbutton.button == event.jbutton.button
-						&& buttons[j].jbutton.which == event.jbutton.which) {
-						input.nescode = nescodes[j];
-					}
+			for (j = 0; j < 16; j++) {
+				if (buttons[j].jbutton.button == event.jbutton.button
+					&& buttons[j].jbutton.which == event.jbutton.which) {
+					input.nescode = nescodes[j];
+					if (j >= 8) { input.player = 1; }
 				}
 			}
 			input.pressed = event.jbutton.state;
@@ -172,102 +171,99 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 		
 		// Handling hat input can be a lot of fun if you like pain
 		case SDL_JOYHATMOTION:
-			// Start a loop for each player
-			for (i = 0; i < NUMGAMEPADS; i++) {
-				unsigned char hu, hd, hl, hr;
-				hu = hd = hl = hr = 0;
+			unsigned char hu, hd, hl, hr;
+			hu = hd = hl = hr = 0;
+			
+			// Start a loop to check if input matches
+			for (j = 0; j < 16; j++) {
 				
-				// Start a loop to check if input matches
-				for (j = 0; j < 16; j++) {
-					
-					// Read value of each hat direction on current hat
-					if (buttons[j].type == event.type
-						&& buttons[j].jhat.which == event.jhat.which
-						&& buttons[j].jhat.hat == event.jhat.hat) {
+				// Read value of each hat direction on current hat
+				if (buttons[j].type == event.type
+					&& buttons[j].jhat.which == event.jhat.which
+					&& buttons[j].jhat.hat == event.jhat.hat) {
+					if (j >= 8) { input.player = reverseinput.player = 1; }
 
-						// Find the values at each hat position on the current hat
-						if (buttons[j].jhat.value == SDL_HAT_UP) { hu = nescodes[j]; }
-						else if (buttons[j].jhat.value == SDL_HAT_DOWN) { hd = nescodes[j]; }
-						else if (buttons[j].jhat.value == SDL_HAT_LEFT) { hl = nescodes[j]; }
-						else if (buttons[j].jhat.value == SDL_HAT_RIGHT) { hr = nescodes[j]; }
-						
-						// Make sure opposing hat positions are turned off
-						switch(event.jhat.value) {
-							case SDL_HAT_UP:
-								input.pressed = 1;
-								input.nescode |= hu;
-								reverseinput.nescode |= hd |= hl |= hr;
-								break;
-							case SDL_HAT_LEFTUP:
-								input.pressed = 1;
-								input.nescode |= hu |= hl;
-								reverseinput.nescode |= hd |= hr;
-								break;
-							case SDL_HAT_RIGHTUP:
-								input.pressed = 1;
-								input.nescode |= hu |= hr;
-								reverseinput.nescode |= hd |= hl;
-								break;
-							case SDL_HAT_DOWN:
-								input.pressed = 1;
-								input.nescode |= hd;
-								reverseinput.nescode |= hu |= hl |= hr;
-								break;
-							case SDL_HAT_LEFTDOWN:
-								input.pressed = 1;
-								input.nescode |= hd |= hl;
-								reverseinput.nescode |= hu |= hr;
-								break;
-							case SDL_HAT_RIGHTDOWN:
-								input.pressed = 1;
-								input.nescode |= hd |= hr;
-								reverseinput.nescode |= hu |= hl;
-								break;
-							case SDL_HAT_LEFT:
-								input.pressed = 1;
-								input.nescode |= hl;
-								reverseinput.nescode |= hr |= hu |= hd;
-								break;
-							case SDL_HAT_RIGHT:
-								input.pressed = 1;
-								input.nescode |= hr;
-								reverseinput.nescode |= hl |= hu |= hd;
-								break;
-							default:
-								input.nescode |= hu |= hd |= hl |= hr;
-								break;
-						}
+					// Find the values at each hat position on the current hat
+					if (buttons[j].jhat.value == SDL_HAT_UP) { hu = nescodes[j]; }
+					else if (buttons[j].jhat.value == SDL_HAT_DOWN) { hd = nescodes[j]; }
+					else if (buttons[j].jhat.value == SDL_HAT_LEFT) { hl = nescodes[j]; }
+					else if (buttons[j].jhat.value == SDL_HAT_RIGHT) { hr = nescodes[j]; }
+					
+					// Make sure opposing hat positions are turned off
+					switch(event.jhat.value) {
+						case SDL_HAT_UP:
+							input.pressed = 1;
+							input.nescode |= hu;
+							reverseinput.nescode |= hd |= hl |= hr;
+							break;
+						case SDL_HAT_LEFTUP:
+							input.pressed = 1;
+							input.nescode |= hu |= hl;
+							reverseinput.nescode |= hd |= hr;
+							break;
+						case SDL_HAT_RIGHTUP:
+							input.pressed = 1;
+							input.nescode |= hu |= hr;
+							reverseinput.nescode |= hd |= hl;
+							break;
+						case SDL_HAT_DOWN:
+							input.pressed = 1;
+							input.nescode |= hd;
+							reverseinput.nescode |= hu |= hl |= hr;
+							break;
+						case SDL_HAT_LEFTDOWN:
+							input.pressed = 1;
+							input.nescode |= hd |= hl;
+							reverseinput.nescode |= hu |= hr;
+							break;
+						case SDL_HAT_RIGHTDOWN:
+							input.pressed = 1;
+							input.nescode |= hd |= hr;
+							reverseinput.nescode |= hu |= hl;
+							break;
+						case SDL_HAT_LEFT:
+							input.pressed = 1;
+							input.nescode |= hl;
+							reverseinput.nescode |= hr |= hu |= hd;
+							break;
+						case SDL_HAT_RIGHT:
+							input.pressed = 1;
+							input.nescode |= hr;
+							reverseinput.nescode |= hl |= hu |= hd;
+							break;
+						default:
+							input.nescode |= hu |= hd |= hl |= hr;
+							break;
 					}
-				} // End of the second loop
-			} // End of the first loop
+				}
+			}
 			break;
 
 		// Handle axis input
 		case SDL_JOYAXISMOTION:
-			for (i = 0; i < NUMGAMEPADS; i++) {
-			
-				for (j = 0; j < 16; j++) {
+			for (j = 0; j < 16; j++) {
+				
+				int nvalue = input_checksign(event.jaxis.value);
+
+				if (buttons[j].jaxis.axis == event.jaxis.axis
+					&& buttons[j].jaxis.which == event.jaxis.which
+					&& buttons[j].jaxis.type == event.jaxis.type
+					&& buttons[j].jaxis.value == nvalue) {
+
+					if (j >= 8) { input.player = reverseinput.player = 1; }
 					
-					int nvalue = input_checksign(event.jaxis.value);
-
-					if (buttons[j].jaxis.axis == event.jaxis.axis
-						&& buttons[j].jaxis.which == event.jaxis.which
-						&& buttons[j].jaxis.type == event.jaxis.type
-						&& buttons[j].jaxis.value == nvalue) {
-						
-						input.nescode = nescodes[j];
-					}
-
-					if (buttons[j].jaxis.axis == event.jaxis.axis
-						&& buttons[j].jaxis.which == event.jaxis.which
-						&& buttons[j].jaxis.type == event.jaxis.type
-						&& buttons[j].jaxis.value == !nvalue) {
-						
-						reverseinput.nescode = nescodes[j];
-					}
-
-					if (abs(event.jaxis.value) > DEADZONE) { input.pressed = 1; }
+					input.nescode = nescodes[j];
 				}
+
+				if (buttons[j].jaxis.axis == event.jaxis.axis
+					&& buttons[j].jaxis.which == event.jaxis.which
+					&& buttons[j].jaxis.type == event.jaxis.type
+					&& buttons[j].jaxis.value == !nvalue) {
+					
+					reverseinput.nescode = nescodes[j];
+				}
+
+				if (abs(event.jaxis.value) > DEADZONE) { input.pressed = 1; }
 			}
 			break;
 			
