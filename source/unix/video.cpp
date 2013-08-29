@@ -25,10 +25,10 @@
 #include <SDL_endian.h>
 #include "GL/glu.h"
 
-#include "config.h"
+#include "main.h"
 #include "audio.h"
 #include "video.h"
-#include "main.h"
+#include "config.h"
 
 SDL_Window *sdlwindow;
 SDL_Renderer *renderer;
@@ -58,8 +58,7 @@ void opengl_init_structures() {
 	glBindTexture( GL_TEXTURE_2D, screenTexID ) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear_filter ? GL_LINEAR : GL_NEAREST) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) ;
-
-	//glViewport( 0, 0, screen->w, screen->h);
+	
 	glViewport( 0, 0, cur_Rwidth, cur_Rheight);
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_ALPHA_TEST );
@@ -69,19 +68,18 @@ void opengl_init_structures() {
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	
-	/*if (conf->video_mask_overscan) {
+	if (conf->video_mask_overscan) {
 		glOrtho(
 			0.0,													// Left
-			(GLdouble)screen->w,									// Right
-			(GLdouble)screen->h - (OVERSCAN_BOTTOM * scalefactor),	// Bottom
+			(GLdouble)cur_Rwidth,									// Right
+			(GLdouble)cur_Rheight - (OVERSCAN_BOTTOM * scalefactor),	// Bottom
 			(GLdouble)(OVERSCAN_TOP * scalefactor),					// Top
 			-1.0, 1.0
 		);
 	}
-	else {*/
-		//glOrtho(0.0, (GLdouble)screen->w, (GLdouble)screen->h, 0.0, -1.0, 1.0);
+	else {
 		glOrtho(0.0, (GLdouble)cur_Rwidth, (GLdouble)cur_Rheight, 0.0, -1.0, 1.0);
-	//}
+	}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
@@ -129,7 +127,15 @@ void opengl_blit() {
 	SDL_GL_SwapWindow(sdlwindow);
 }
 
-void create_sdlwindow() {
+void video_create() {
+	
+	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
+	
+	if(conf->video_fullscreen) {
+		SDL_ShowCursor(0);
+		windowflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+		//windowflags |= SDL_WINDOW_FULLSCREEN;
+	}
 	
 	sdlwindow = SDL_CreateWindow(
 	"Nestopia",							//    window title
@@ -137,7 +143,7 @@ void create_sdlwindow() {
 	SDL_WINDOWPOS_UNDEFINED,			//    initial y position
 	cur_Rwidth,							//    width, in pixels
 	cur_Rheight,						//    height, in pixels
-	SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE);
+	windowflags);
 	
 	if(sdlwindow == NULL) {
 		fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
@@ -161,6 +167,32 @@ void create_sdlwindow() {
 	}
 	
 	SDL_GL_SetSwapInterval(1);
+}
+
+void video_resize() {
+	SDL_GetWindowSize(sdlwindow, &cur_Rwidth, &cur_Rheight);
+}
+
+void video_toggle_fullscreen() {
+	
+	Uint32 flags;
+	int cursor;
+	
+	conf->video_fullscreen ^= 1;
+	
+	if(conf->video_fullscreen) {
+		cursor = 0;
+		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+		//flags = SDL_WINDOW_FULLSCREEN;
+	}
+	else { flags = 0; cursor = 1; }
+	
+	SDL_ShowCursor(cursor);
+	SDL_SetWindowFullscreen(sdlwindow, flags);
+}
+
+void video_toggle_renderer() {
+
 }
 
 long Linux_LockScreen(void*& ptr)

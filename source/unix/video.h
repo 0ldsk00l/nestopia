@@ -10,7 +10,9 @@ void opengl_init_structures();
 void opengl_cleanup();
 void opengl_blit();
 
-void create_sdlwindow();
+void video_create();
+void video_resize();
+void video_toggle_fullscreen();
 
 long Linux_LockScreen(void*& ptr);
 void Linux_UnlockScreen(void*);

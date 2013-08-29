@@ -4,8 +4,6 @@
 #define TV_WIDTH 292
 
 void NstPlayGame();
-void NstPlayNsf();
-void NstStopNsf();
 void NstScheduleQuit();
 void NstStopPlaying();
 void NstSoftReset();

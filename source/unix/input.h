@@ -78,13 +78,16 @@ typedef struct {
 } nesinput;
 
 void input_init();
+void input_deinit();
 void input_process(Input::Controllers *controllers, SDL_Event event);
 void input_inject(Input::Controllers *controllers, nesinput input);
-nesinput input_match_keyboard(SDL_Event event);
-nesinput input_match_joystick(SDL_Event event);
+void input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
+void input_match_joystick(Input::Controllers *controllers, SDL_Event event);
 char* input_translate_event(SDL_Event event);
 SDL_Event input_translate_string(char *string);
 int input_checksign(int axisvalue);
 void input_read_config();
+void input_write_config();
+void input_set_default();
 
 #endif

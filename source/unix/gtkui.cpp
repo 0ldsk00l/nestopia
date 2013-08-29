@@ -382,7 +382,7 @@ void on_xbrcombo_changed (GtkComboBox *combobox, gpointer user_data) {
 
 void on_configbutton_clicked(GtkButton *button, gpointer user_data)
 {
-	NstLaunchConfig();
+	//NstLaunchConfig();
 }
 
 void inputcfg_clicked(GtkButton *button, int data) {
