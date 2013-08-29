@@ -330,9 +330,7 @@ char* input_translate_event(SDL_Event event) {
 	
 	switch(event.type) {
 		case SDL_JOYAXISMOTION:
-			if (abs(event.jaxis.value) > DEADZONE) {
-				sprintf(inputcode, "j%da%d%d", event.jaxis.which, event.jaxis.axis, input_checksign(event.jaxis.value));
-			}
+			sprintf(inputcode, "j%da%d%d", event.jaxis.which, event.jaxis.axis, input_checksign(event.jaxis.value));
 			break;
 			
 		case SDL_JOYHATMOTION:
@@ -507,7 +505,7 @@ void input_write_config() {
 	g_key_file_set_string(inputfile, "gamepad1", "kb_start", SDL_GetScancodeName(player[0].start));
 	g_key_file_set_string(inputfile, "gamepad1", "kb_a", SDL_GetScancodeName(player[0].a));
 	g_key_file_set_string(inputfile, "gamepad1", "kb_b", SDL_GetScancodeName(player[0].b));
-
+	
 	g_key_file_set_string(inputfile, "gamepad1", "js_u", input_translate_event(player[0].ju));
 	g_key_file_set_string(inputfile, "gamepad1", "js_d", input_translate_event(player[0].jd));
 	g_key_file_set_string(inputfile, "gamepad1", "js_l", input_translate_event(player[0].jl));
@@ -516,7 +514,7 @@ void input_write_config() {
 	g_key_file_set_string(inputfile, "gamepad1", "js_start", input_translate_event(player[0].jstart));
 	g_key_file_set_string(inputfile, "gamepad1", "js_a", input_translate_event(player[0].ja));
 	g_key_file_set_string(inputfile, "gamepad1", "js_b", input_translate_event(player[0].jb));
-
+	
 	g_key_file_set_string(inputfile, "gamepad2", "kb_u", SDL_GetScancodeName(player[1].u));
 	g_key_file_set_string(inputfile, "gamepad2", "kb_d", SDL_GetScancodeName(player[1].d));
 	g_key_file_set_string(inputfile, "gamepad2", "kb_l", SDL_GetScancodeName(player[1].l));
@@ -525,7 +523,7 @@ void input_write_config() {
 	g_key_file_set_string(inputfile, "gamepad2", "kb_start", SDL_GetScancodeName(player[1].start));
 	g_key_file_set_string(inputfile, "gamepad2", "kb_a", SDL_GetScancodeName(player[1].a));
 	g_key_file_set_string(inputfile, "gamepad2", "kb_b", SDL_GetScancodeName(player[1].b));
-
+	
 	g_key_file_set_string(inputfile, "gamepad2", "js_u", input_translate_event(player[1].ju));
 	g_key_file_set_string(inputfile, "gamepad2", "js_d", input_translate_event(player[1].jd));
 	g_key_file_set_string(inputfile, "gamepad2", "js_l", input_translate_event(player[1].jl));
