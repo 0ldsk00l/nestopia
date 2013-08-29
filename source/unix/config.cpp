@@ -79,7 +79,7 @@ void read_config_file() {
 		conf->misc_disable_gui = g_key_file_get_boolean(keyfile, "misc", "disable_gui", NULL);
 	}
 	else {
-		printf("Failed to read config file %s: Using defaults.\n", confpath);
+		fprintf(stderr, "Failed to read config file %s: Using defaults.\n", confpath);
 		set_default_config();
 	}
 }

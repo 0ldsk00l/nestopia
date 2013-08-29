@@ -159,20 +159,6 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 	long dtl, dtr;
 
 	outbuf = out;
-	/*if (nsf_mode)
-	{
-		Nsf nsf( emulator );
-
-		if (!nsf.IsPlaying())
-		{
-			for (s = 0; s < dwSamples; s++)
-			{
-				*out++ = 0;
-				*out++ = 0;
-			}
-			return;
-		}
-	}*/
 
 	if (conf->audio_stereo_exciter)
 	{
@@ -496,25 +482,6 @@ void NstPlayGame(void)
 	playing = 1;
 }
 
-// start playing an NSF file
-/*void NstPlayNsf(void)
-{
-	Nsf nsf( emulator );
-	
-	nsf.PlaySong();
-}
-
-// stop playing an NSF file
-void NstStopNsf(void)
-{
-	Nsf nsf( emulator );
-	
-	nsf.StopSong();
-
-	// clear the audio buffer
-	memset(lbuf, 0, sizeof(lbuf));
-}*/
-
 void NstSoftReset() {
 	Machine machine(emulator);
 	Fds fds(emulator);
@@ -538,13 +505,6 @@ void NstHardReset() {
 // schedule a NEStopia quit
 void NstScheduleQuit() {
 	nst_quit = 1;
-}
-
-// launch the controller configurator
-void NstLaunchConfig(void)
-{
-	//run_configurator(ctl_defs, sSettings->GetConfigItem(), sSettings->GetUseJoypads());
-	//run_configurator(ctl_defs, sSettings->GetConfigItem(), 1); // Force joypad detection
 }
 
 // toggle fullscreen state
@@ -668,145 +628,6 @@ void ToggleFullscreen()
 		assert(0);
 	}
 }*/
-
-// match input event; if pind is not NULL, continue after it
-// on is set if the key/button is hit, clear if key is up/axis centered
-/*static const InputDefT *nst_match(const SDL_Event &evt, const InputDefT *pind, bool &on)
-{
-	pind = (pind == NULL) ? ctl_defs : pind + 1;
-	bool match = false;
-
-	for (; pind->player != -1 && !match; ++pind)
-	{
-		switch (evt.type)
-		{
-			case SDL_KEYDOWN:
-			case SDL_KEYUP:
-				#ifdef DEBUG_INPUT
-				if (evt.type == SDL_KEYDOWN)
-				{
-					printf("key is down: sym %x mod %x vs sym %x mod %x\n", evt.key.keysym.sym, evt.key.keysym.mod, pind->evt.key.keysym.sym, pind->evt.key.keysym.mod);
-				}
-				#endif
-
-				match = (pind->evt.type == SDL_KEYDOWN && pind->evt.key.keysym.sym == evt.key.keysym.sym);
-				// do better mod checking
-				if ((pind->evt.key.keysym.mod & evt.key.keysym.mod) != pind->evt.key.keysym.mod)
-				{
-					match = 0;
-				}
-
-				on = (evt.key.state == SDL_PRESSED);
-				break;
-
-			case SDL_JOYBUTTONDOWN:
-			case SDL_JOYBUTTONUP:
-				match = pind->evt.type == SDL_JOYBUTTONDOWN
-					&& pind->evt.jbutton.which == evt.jbutton.which
-					&& pind->evt.jbutton.button == evt.jbutton.button;
-				on = (evt.jbutton.state == SDL_PRESSED);
-				break;
-
-			case SDL_JOYHATMOTION:
-					match = pind->evt.type == SDL_JOYHATMOTION
-						&& pind->evt.jhat.which == evt.jhat.which
-						&& pind->evt.jhat.hat == evt.jhat.hat
-						&& pind->evt.jhat.value & SDL_HAT_UP;
-					on = evt.jhat.value & SDL_HAT_UP;
-					if (match) {
-						return pind;
-					}
-					
-					match = pind->evt.type == SDL_JOYHATMOTION
-						&& pind->evt.jhat.which == evt.jhat.which
-						&& pind->evt.jhat.hat == evt.jhat.hat
-						&& pind->evt.jhat.value & SDL_HAT_DOWN;
-					on = evt.jhat.value & SDL_HAT_DOWN;
-					if (match) {
-						return pind;
-					}
-					
-					match = pind->evt.type == SDL_JOYHATMOTION
-						&& pind->evt.jhat.which == evt.jhat.which
-						&& pind->evt.jhat.hat == evt.jhat.hat
-						&& pind->evt.jhat.value & SDL_HAT_LEFT;
-					on = evt.jhat.value & SDL_HAT_LEFT;
-					if (match) {
-						return pind;
-					}
-										
-					match = pind->evt.type == SDL_JOYHATMOTION
-						&& pind->evt.jhat.which == evt.jhat.which
-						&& pind->evt.jhat.hat == evt.jhat.hat
-						&& pind->evt.jhat.value & SDL_HAT_RIGHT;
-					on = evt.jhat.value & SDL_HAT_RIGHT;
-					if (match) {
-						return pind;
-					}
-				break;
-
-			case SDL_JOYAXISMOTION:
-			{
-				const Sint16 nvalue = (abs(evt.jaxis.value) < DEADZONE) ? 0 :
-					(evt.jaxis.value < 0) ? -1 : 1; 	// normalized axis direction
-				match = pind->evt.type == evt.type
-					&& pind->evt.jaxis.which == evt.jaxis.which
-					&& pind->evt.jaxis.axis == evt.jaxis.axis
-					&& (nvalue == 0 || pind->evt.jaxis.value == nvalue);
-				on = nvalue != 0;
-				break;
-			}
-		}
-
-		if (match)
-		{
-			return pind;
-		}
-	}
-
-	return NULL;
-}*/
-
-// try to dispatch an input event
-static void nst_dispatch(Input::Controllers *controllers, const SDL_Event &evt)
-{
-	/*bool on;
-	const InputDefT *pind = NULL;
-
-	controllers->vsSystem.insertCoin = 0;
-
-	while ((pind = nst_match(evt, pind, on)) != NULL)
-	{
-		if (on)
-		{
-			if (pind->player == 0)
-            {    
-				handle_input_event(controllers, (InputEvtT)pind->codeout);
-				#ifdef DEBUG_INPUT
-				printf("player %d event1: codeout %x\n", pind->player, pind->codeout);
-				#endif
-			}
-			else
-            {    
-				#ifdef DEBUG_INPUT
-				printf("player %d event2: codeout %x\n", pind->player, pind->codeout);
-				#endif
-				controllers->pad[pind->player - 1].buttons |= pind->codeout;
-			}
-		}
-
-		else
-		{
-			if (pind->player != 0)
-            {    
-				#ifdef DEBUG_INPUT
-				printf("player %d event3: codeout %x\n\n", pind->player, pind->codeout);
-				#endif
-				controllers->pad[pind->player - 1].buttons &= ~pind->codeout;
-			}
-		}
-	}*/
-}
 
 // logging callback called by the core
 static void NST_CALLBACK DoLog(void *userData, const char *string, unsigned long int length)
@@ -968,49 +789,31 @@ int main(int argc, char *argv[])
 	
 	// read the config file
 	read_config_file();
-
-	// read the key/controller mapping
-	/*ctl_defs = parse_input_file();
-
-	if (!ctl_defs)
-	{
-		std::cout << "~/.nestopia/nstcontrols not found, creating a new one.\n";
-		
-		// make sure the output directory exists
-		home = getenv("HOME");
-		snprintf(dirname, sizeof(dirname), "%s/.nestopia/", home);
-		snprintf(savedirname, sizeof(dirname), "%ssave/", dirname);
-		mkdir(dirname, 0700);
-		mkdir(savedirname, 0700);
-		create_input_file();
-		
-		ctl_defs = parse_input_file();
-		if (!ctl_defs)
-		{
-			std::cout << "Reading ~/.nestopia/nstcontrols file: FAIL\n";
-			return -1;
-		}
-	}*/
-
+	
 	playing = 0;
 	intbuffer = NULL;
-
+	
 	fileio_init();
 	
+	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
 	
+	// Set up input and read input config
 	input_init();
 	input_read_config();
 	
 	get_screen_res();
 	
-	create_sdlwindow();
+	// Create the game window
+	video_create();
 	
+	// Initialize GTK+
 	gtk_init(&argc, &argv);
 	
+	// Don't show a GUI if it has been disabled in the config
 	if (!conf->misc_disable_gui) {
 		gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
 	}
@@ -1067,7 +870,7 @@ int main(int argc, char *argv[])
 							schedule_stop = 1;
 							return 0; // FIX
 							break;
-
+						
 						case SDL_KEYDOWN:
 						case SDL_KEYUP:
 							// ignore num lock, caps lock, and "mode" (whatever that is)
@@ -1078,7 +881,6 @@ int main(int argc, char *argv[])
 						case SDL_JOYAXISMOTION:
 						case SDL_JOYBUTTONDOWN:
 						case SDL_JOYBUTTONUP:
-							//nst_dispatch(cNstPads, event);
 							input_process(cNstPads, event);
 							break;
 					}	
@@ -1150,7 +952,10 @@ int main(int argc, char *argv[])
 
 	fileio_shutdown();
 	
+	input_deinit();
+	
 	write_config_file();
+	input_write_config();
 
 	return 0;
 }
