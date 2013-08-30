@@ -57,6 +57,7 @@
 #include "core/NstXml.hpp"
 
 #include "main.h"
+#include "cli.h"
 #include "gtkui.h"
 #include "audio.h"
 #include "video.h"
@@ -789,10 +790,18 @@ int main(int argc, char *argv[])
 	
 	// read the config file
 	read_config_file();
+
+	if (argc == 1 && conf->misc_disable_gui) {
+		// Show usage and free config data
+		cli_show_usage(argv);
+		config_file_free();
+		return 0;
+	}
 	
 	playing = 0;
 	intbuffer = NULL;
-	
+
+	// Initialize File input/output routines
 	fileio_init();
 	
 	// Initialize SDL
@@ -801,22 +810,26 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 	
-	// Set up input and read input config
+	// Initialize input and read input config
 	input_init();
 	input_read_config();
 	
 	get_screen_res();
 	
-	// Create the game window
-	video_create();
 	
 	// Initialize GTK+
 	gtk_init(&argc, &argv);
 	
+	if (conf->misc_disable_gui) {
+		// do nothing at this point
+	}
 	// Don't show a GUI if it has been disabled in the config
-	if (!conf->misc_disable_gui) {
+	else {
 		gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
 	}
+
+	// Create the game window
+	video_create();
 	
 	// setup video lock/unlock callbacks
 	Video::Output::lockCallback.Set( VideoLock, userData );

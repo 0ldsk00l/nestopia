@@ -1350,10 +1350,10 @@ GtkWidget* create_about (void) {
 	gtk_window_set_icon(GTK_WINDOW(aboutdialog), app_icon);
 	
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
-	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia - Undead Edition");
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "1.46-WIP");
+	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia UE");
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), VERSION);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "An accurate Nintendo Entertainment System Emulator");
-	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/");
+	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/nestopia");
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2013, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
 	g_object_unref(pixbuf), pixbuf = NULL;
 	gtk_dialog_run(GTK_DIALOG(aboutdialog));

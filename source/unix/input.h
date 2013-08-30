@@ -2,6 +2,8 @@
 #define _INPUT_H_
 
 #define NUMGAMEPADS 2
+#define NUMBUTTONS 8
+#define TOTALBUTTONS (NUMGAMEPADS*NUMBUTTONS)
 #define DEADZONE (32768/3)
 
 #include <glib.h>

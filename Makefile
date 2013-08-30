@@ -50,6 +50,7 @@ CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Unix objs
 OBJS = objs/unix/main.o
+OBJS += objs/unix/cli.o
 OBJS += objs/unix/gtkui.o
 OBJS += objs/unix/audio.o
 OBJS += objs/unix/video.o
