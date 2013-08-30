@@ -128,7 +128,7 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	reverseinput.player = 0;
 	reverseinput.pressed = 0;
 	
-	SDL_Event buttons[16] = {
+	SDL_Event buttons[TOTALBUTTONS] = {
 		player[0].ju, player[0].jd, player[0].jl, player[0].jr,
 		player[0].jselect, player[0].jstart, player[0].ja, player[0].jb,
 		
@@ -136,7 +136,7 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 		player[1].jselect, player[1].jstart, player[1].ja, player[1].jb
 	};
 	
-	static unsigned char nescodes[16] = {
+	static unsigned char nescodes[TOTALBUTTONS] = {
 		Input::Controllers::Pad::UP,
 		Input::Controllers::Pad::DOWN,
 		Input::Controllers::Pad::LEFT,
@@ -159,11 +159,11 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 		// Handle button input
 		case SDL_JOYBUTTONUP:
 		case SDL_JOYBUTTONDOWN:
-			for (j = 0; j < 16; j++) {
+			for (j = 0; j < TOTALBUTTONS; j++) {
 				if (buttons[j].jbutton.button == event.jbutton.button
 					&& buttons[j].jbutton.which == event.jbutton.which) {
 					input.nescode = nescodes[j];
-					if (j >= 8) { input.player = 1; }
+					if (j >= NUMBUTTONS) { input.player = 1; }
 				}
 			}
 			input.pressed = event.jbutton.state;
@@ -175,13 +175,13 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 			hu = hd = hl = hr = 0;
 			
 			// Start a loop to check if input matches
-			for (j = 0; j < 16; j++) {
+			for (j = 0; j < TOTALBUTTONS; j++) {
 				
 				// Read value of each hat direction on current hat
 				if (buttons[j].type == event.type
 					&& buttons[j].jhat.which == event.jhat.which
 					&& buttons[j].jhat.hat == event.jhat.hat) {
-					if (j >= 8) { input.player = reverseinput.player = 1; }
+					if (j >= NUMBUTTONS) { input.player = reverseinput.player = 1; }
 
 					// Find the values at each hat position on the current hat
 					if (buttons[j].jhat.value == SDL_HAT_UP) { hu = nescodes[j]; }
@@ -189,45 +189,39 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 					else if (buttons[j].jhat.value == SDL_HAT_LEFT) { hl = nescodes[j]; }
 					else if (buttons[j].jhat.value == SDL_HAT_RIGHT) { hr = nescodes[j]; }
 					
+					input.pressed = 1;
+					
 					// Make sure opposing hat positions are turned off
 					switch(event.jhat.value) {
 						case SDL_HAT_UP:
-							input.pressed = 1;
 							input.nescode |= hu;
 							reverseinput.nescode |= hd |= hl |= hr;
 							break;
 						case SDL_HAT_LEFTUP:
-							input.pressed = 1;
 							input.nescode |= hu |= hl;
 							reverseinput.nescode |= hd |= hr;
 							break;
 						case SDL_HAT_RIGHTUP:
-							input.pressed = 1;
 							input.nescode |= hu |= hr;
 							reverseinput.nescode |= hd |= hl;
 							break;
 						case SDL_HAT_DOWN:
-							input.pressed = 1;
 							input.nescode |= hd;
 							reverseinput.nescode |= hu |= hl |= hr;
 							break;
 						case SDL_HAT_LEFTDOWN:
-							input.pressed = 1;
 							input.nescode |= hd |= hl;
 							reverseinput.nescode |= hu |= hr;
 							break;
 						case SDL_HAT_RIGHTDOWN:
-							input.pressed = 1;
 							input.nescode |= hd |= hr;
 							reverseinput.nescode |= hu |= hl;
 							break;
 						case SDL_HAT_LEFT:
-							input.pressed = 1;
 							input.nescode |= hl;
 							reverseinput.nescode |= hr |= hu |= hd;
 							break;
 						case SDL_HAT_RIGHT:
-							input.pressed = 1;
 							input.nescode |= hr;
 							reverseinput.nescode |= hl |= hu |= hd;
 							break;
@@ -241,7 +235,7 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 
 		// Handle axis input
 		case SDL_JOYAXISMOTION:
-			for (j = 0; j < 16; j++) {
+			for (j = 0; j < TOTALBUTTONS; j++) {
 				
 				int nvalue = input_checksign(event.jaxis.value);
 
@@ -250,7 +244,7 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 					&& buttons[j].jaxis.type == event.jaxis.type
 					&& buttons[j].jaxis.value == nvalue) {
 
-					if (j >= 8) { input.player = reverseinput.player = 1; }
+					if (j >= NUMBUTTONS) { input.player = reverseinput.player = 1; }
 					
 					input.nescode = nescodes[j];
 				}
@@ -349,10 +343,7 @@ SDL_Event input_translate_string(char *string) {
 	// Translate an inputcode to an SDL_Event
 	SDL_Event event;
 	
-	int type;
-	int which;
-	int axis;
-	int value;
+	int type, which, axis, value;
 	
 	if ((unsigned char)string[2] == 0x61) { // Axis
 		which = string[1] - '0';
@@ -388,8 +379,6 @@ SDL_Event input_translate_string(char *string) {
 }
 
 int input_checksign(int axisvalue) {
-
-	int nvalue = abs(axisvalue) < DEADZONE;
 	
 	if (axisvalue <= 0) { return 0; }
 	else { return 1; }

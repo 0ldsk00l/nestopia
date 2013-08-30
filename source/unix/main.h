@@ -1,6 +1,8 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
+#define VERSION "1.46-WIP"
+
 #define TV_WIDTH 292
 
 void NstPlayGame();

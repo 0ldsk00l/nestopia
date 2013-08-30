@@ -84,6 +84,11 @@ void read_config_file() {
 	}
 }
 
+void config_file_free() {
+	g_slice_free(settings, conf);
+	g_key_file_free(keyfile);
+}
+
 void write_config_file() {
 	
 	// Video
@@ -122,9 +127,8 @@ void write_config_file() {
 		fputs(g_key_file_to_data(keyfile, &length, NULL), fp);
 		fclose(fp);
 	}
-	
-	g_slice_free(settings, conf);
-	g_key_file_free(keyfile);
+
+	config_file_free();
 }
 
 void set_default_config() {

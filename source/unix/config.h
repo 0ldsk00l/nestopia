@@ -35,6 +35,7 @@ typedef struct {
 } settings;
 
 void read_config_file();
+void config_file_free();
 void write_config_file();
 void set_default_config();
 #endif
