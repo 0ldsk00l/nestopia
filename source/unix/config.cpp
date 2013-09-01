@@ -162,5 +162,5 @@ void set_default_config() {
 	conf->misc_default_system = 0;
 	conf->misc_soft_patching = true;
 	conf->misc_suppress_screensaver = true;
-	conf->misc_disable_gui = false;
+	conf->misc_disable_gui = true;
 }

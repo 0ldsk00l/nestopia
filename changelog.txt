@@ -6,6 +6,7 @@ Unix Shell:
  Additions:
   - Mask Overscan option
   - Disable GUI option
+  - Command line interface
 
  Changes:
   - Ported to SDL 2.0
