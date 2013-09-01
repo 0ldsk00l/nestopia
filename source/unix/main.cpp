@@ -792,11 +792,13 @@ int main(int argc, char *argv[])
 	read_config_file();
 
 	if (argc == 1 && conf->misc_disable_gui) {
-		// Show usage and free config data
-		cli_show_usage(argv);
+		// Show usage and free config 
+		cli_show_usage();
 		config_file_free();
 		return 0;
 	}
+
+	cli_handle_command(argc, argv);
 	
 	playing = 0;
 	intbuffer = NULL;
@@ -848,7 +850,7 @@ int main(int argc, char *argv[])
 	// attempt to load and autostart a file specified on the commandline
 	if (argc > 1)
 	{
-		NstLoadGame(argv[1]);
+		NstLoadGame(argv[argc - 1]);
 
 		if (loaded)
 		{
