@@ -58,7 +58,8 @@
 #include "main.h"
 #include "gtkui.h"
 #include "audio.h"
-//#include "input.h"
+#include "video.h"
+#include "input.h"
 #include "fileio.h"
 #include "cheats.h"
 #include "config.h"
@@ -224,7 +225,7 @@ void configwindow_destroyed() {
 		NstPlayGame();
 	}
 	else {
-		get_screen_res();
+		//get_screen_res();
 	}
 
 	redraw_drawingarea(cur_Rwidth, cur_Rheight);
@@ -774,7 +775,7 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 		G_CALLBACK(NstHardReset), NULL);
 
 	g_signal_connect(G_OBJECT(fullscreen), "activate",
-		G_CALLBACK(ToggleFullscreen), NULL);
+		G_CALLBACK(video_toggle_fullscreen), NULL);
 
 	g_signal_connect(G_OBJECT(loadstate), "activate",
 		G_CALLBACK(fileio_do_state_load), NULL);

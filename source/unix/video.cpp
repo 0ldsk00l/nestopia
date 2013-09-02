@@ -433,7 +433,7 @@ void video_set_params() {
 		cur_Rwidth = displaymode.w;
 	}
 	
-	opengl_cleanup();
+	//opengl_cleanup();
 	if (intbuffer) {
 		free(intbuffer);
 		intbuffer = NULL;

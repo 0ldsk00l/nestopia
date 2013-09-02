@@ -273,18 +273,6 @@ void NstStopPlaying()
 		// kill any movie
 		fileio_do_movie_stop();
 
-		// close video sanely
-		//if (!nsf_mode)
-		//{
-			//SDL_FreeSurface(screen);
-			/*opengl_cleanup();
-			if (intbuffer)
-			{
-				free(intbuffer);
-				intbuffer = NULL;
-			}*/
-		//}
-
 		// get machine interface...
 		Machine machine(emulator);
 
@@ -294,23 +282,6 @@ void NstStopPlaying()
 
 		// flush the sound buffer
 		memset(lbuf, 0, sizeof(lbuf));
-
-		// kill SDL
-		/*if (SDL_NumJoysticks() > 0)
-		{
-			for (i = 0; i < SDL_NumJoysticks(); i++)
-			{
-				// we only? support 10 joysticks
-				if (i < 10)
-				{
-					SDL_JoystickClose(joy[i]);
-				}
-			}
-
-			SDL_JoystickEventState(SDL_ENABLE);	// turn on regular updates
-		}
-		SDL_ShowCursor(1);
-		SDL_Quit();*/
 	}
 
 	playing = 0;
@@ -452,8 +423,6 @@ void NstPlayGame(void)
 	cNstSound->samples[1] = NULL;
 	cNstSound->length[1] = 0;
 
-	//SDL_WM_SetCaption(caption, caption);
-
 	m1sdr_SetSamplesPerTick(cNstSound->length[0]);
 	//m1sdr_SetSamplesPerTick(800);
 
@@ -486,128 +455,6 @@ void NstHardReset() {
 void NstScheduleQuit() {
 	nst_quit = 1;
 }
-
-// toggle fullscreen state
-void ToggleFullscreen()
-{
-	/*if (SDL_NumJoysticks() > 0)
-	{
-		for (int i = 0; i < SDL_NumJoysticks(); i++)
-		{
-			// we only? support 10 joysticks
-			if (i < 10)
-			{
-				SDL_JoystickClose(joy[i]);
-			}
-		}
-
-		SDL_JoystickEventState(SDL_ENABLE);	// turn on regular updates
-	}
-
-	SDL_ShowCursor(1);
-	SDL_FreeSurface(screen);*/
-	opengl_cleanup();
-
-	if (intbuffer)
-	{
-		free(intbuffer);
-		intbuffer = NULL;
-	}
-
-	//SDL_Quit();
-	
-	conf->video_fullscreen ^= 1;
-	
-	//SetupVideo();
-
-	if (conf->audio_api == 0)	// the SDL driver needs a harder restart
-	{
-		m1sdr_Exit();
-		m1sdr_Init(conf->audio_sample_rate);
-		m1sdr_SetCallback((void *)nst_do_frame);
-		m1sdr_PlayStart();
-	}
-
-
-	//SDL_WM_SetCaption(caption, caption);
-	NstPlayGame();
-}
-
-// handle input event
-/*static void handle_input_event(Input::Controllers *controllers, InputEvtT inevt)
-{
-	#ifdef DEBUG_INPUT
-	printf("metaevent: %d\n", (int)inevt);
-	#endif
-	switch (inevt)
-	{
-	case MSAVE:
-		movie_save = 1;
-		break;
-	case MLOAD:
-		movie_load = 1;
-		break;
-	case MSTOP:
-		movie_stop = 1;
-		break;
-
-	case RESET:
-		NstSoftReset();
-		break;
-
-	case FLIP:
-		FlipFDSDisk();
-		break;
-
-	case FSCREEN:
-		ToggleFullscreen();
-		break;
-
-	case RBACK:
-		Rewinder(emulator).SetDirection(Rewinder::BACKWARD);
-		break;
-	case RFORE:
-		Rewinder(emulator).SetDirection(Rewinder::FORWARD);
-		break;
-
-	case QSAVE1:
-		QuickSave(0);
-		break;
-	case QLOAD1:
-		QuickLoad(0);
-		break;
-	case QSAVE2:
-		QuickSave(1);
-		break;
-	case QLOAD2:
-		QuickLoad(1);
-		break;
-
-	case SAVE:
-		state_save = 1;
-		break;
-	case LOAD:
-		state_load = 1;
-		break;
-
-	case STOP:
-		schedule_stop = 1;
-		break;
-	case EXIT:
-		schedule_stop = 1;
-		nst_quit = 1;
-		break;
-	case COIN1:
-		controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1;
-		break;
-	case COIN2:
-		controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2;
-		break;
-
-	default:
-		assert(0);
-	}
-}*/
 
 // logging callback called by the core
 static void NST_CALLBACK DoLog(void *userData, const char *string, unsigned long int length)
@@ -749,15 +596,10 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 	}
 }
 
-static void cleanup_after_io(void)
-{
+static void cleanup_after_io(void) {
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
-	/*if (conf->video_fullscreen)
-	{
-		SetupVideo();
-	}*/
 }
 
 int main(int argc, char *argv[])
@@ -794,9 +636,8 @@ int main(int argc, char *argv[])
 	// Initialize input and read input config
 	input_init();
 	input_read_config();
-	
-	get_screen_res();
-	
+
+	video_set_params();
 	
 	// Initialize GTK+
 	gtk_init(&argc, &argv);
@@ -950,115 +791,6 @@ int main(int argc, char *argv[])
 	return 0;
 }
 
-void get_screen_res() {
-
-	int scalefactor = conf->video_scale_factor;
-	
-	switch(conf->video_filter)
-	{
-		case 0:	// None (no scaling unless OpenGL)
-			if (conf->video_renderer == 0)
-			{
-				if (scalefactor > 1)
-				{
-					std::cout << "Warning: raw scale factors > 1 not allowed with pure software, use OpenGL\n";
-				}
-				cur_width = cur_Rwidth = Video::Output::WIDTH;
-				cur_height = cur_Rheight = Video::Output::HEIGHT;
-			}
-			else
-			{
-				cur_width = Video::Output::WIDTH;
-				cur_height = Video::Output::HEIGHT;
-				conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width * scalefactor;
-				if (conf->video_mask_overscan) {
-					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-				}
-				else {
-					cur_Rheight = cur_height * scalefactor;
-				}
-			}
-
-			break;
-
-		case 1: // NTSC
-			if (conf->video_renderer == 0)
-			{
-				if (scalefactor != 2)
-				{
-					std::cout << "Warning: NTSC only runs at 2x scale in Software mode.\n";
-				}
-
-				scalefactor = 2;
-			}
-
-			cur_width = Video::Output::NTSC_WIDTH;
-			cur_Rwidth = (cur_width / 2) * scalefactor;
-			cur_height = Video::Output::HEIGHT;
-			if (conf->video_mask_overscan) {
-					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				cur_Rheight = cur_height * scalefactor;
-			}
-			break;
-
-		case 2: // scale x
-			if (scalefactor == 4) 
-			{
-				std::cout << "Warning: Scale x only allows scale factors of 3 or less\n";
-				scalefactor = 3;	// there is no scale4x
-			}
-
-			cur_width = Video::Output::WIDTH * scalefactor;
-			cur_height = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			if (conf->video_mask_overscan) {
-				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				cur_Rheight = cur_height;
-			}
-			break;
-
-		case 3: // scale HQx
-			cur_width = Video::Output::WIDTH * scalefactor;
-			cur_height = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			if (conf->video_mask_overscan) {
-				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				cur_Rheight = cur_height;
-			}
-			break;
-
-		case 4: // 2xSaI
-			cur_width = Video::Output::WIDTH * 2;
-			cur_height = Video::Output::HEIGHT * 2;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = Video::Output::WIDTH * scalefactor;
-			if (conf->video_mask_overscan) {
-				cur_Rheight = Video::Output::HEIGHT * scalefactor - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				cur_Rheight = Video::Output::HEIGHT * scalefactor;
-			}
-			break;
-
-		case 5: // scale xBR
-			cur_width = Video::Output::WIDTH * scalefactor;
-			cur_height = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
-			if (conf->video_mask_overscan) {
-				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				cur_Rheight = cur_height;
-			}
-			break;
-	}
-}
-
 void main_set_framerate() {
 	// Set the framerate based on region
 	Machine machine(emulator);
@@ -1094,7 +826,6 @@ void main_init_video() {
 	int scalefactor = conf->video_scale_factor;
 
 	//filter = Video::RenderState::FILTER_NONE;
-	//get_screen_res();
 	video_set_params();
 	video_set_filter();
 
@@ -1399,34 +1130,6 @@ void NstLoadGame(const char* filename)
 		free(compbuffer);
 	}
 
-	// is this an NSF?
-	/*nsf_mode = (machine.Is(Machine::SOUND)) ? 1 : 0;
-
-	if (nsf_mode) {
-		printf("Tried to load an NSF\n");
-		// update the UI
-		UIHelp_NSFLoaded();
-
-		// initialization
-		SetupVideo();
-		SetupSound();
-		SetupInput();
-
-		cNstVideo = new Video::Output;
-		cNstSound = new Sound::Output;
-		cNstPads  = new Input::Controllers;
-
-		cNstSound->samples[0] = lbuf;
-		cNstSound->length[0] = conf->audio_sample_rate/framerate;
-		cNstSound->samples[1] = NULL;
-		cNstSound->length[1] = 0;
-
-		m1sdr_SetSamplesPerTick(cNstSound->length[0]);
-
-		updateok = 0;
-		playing = 1;
-		schedule_stop = 0;
-	}*/
 	else
 	{
 		if (machine.Is(Machine::DISK))
