@@ -130,6 +130,7 @@ void opengl_blit() {
 void video_create() {
 	
 	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
+	Uint32 renderflags = SDL_RENDERER_ACCELERATED;//|SDL_RENDERER_PRESENTVSYNC;
 	
 	if(conf->video_fullscreen) {
 		SDL_ShowCursor(0);
@@ -149,7 +150,7 @@ void video_create() {
 		fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
 	}
 	
-	printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
+	//printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
 	
 	glcontext = SDL_GL_CreateContext(sdlwindow);
 	
@@ -159,8 +160,7 @@ void video_create() {
 	
 	SDL_GL_MakeCurrent(sdlwindow, glcontext);
 	
-	renderer = SDL_CreateRenderer(sdlwindow, -1, SDL_RENDERER_ACCELERATED);
-	//renderer = SDL_CreateRenderer(sdlwindow, -1, SDL_RENDERER_SOFTWARE);
+	renderer = SDL_CreateRenderer(sdlwindow, -1, renderflags);
 	
 	if(renderer == NULL) {
 		fprintf(stderr, "Could not create renderer: %s\n", SDL_GetError());
