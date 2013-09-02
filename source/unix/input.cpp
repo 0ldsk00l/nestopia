@@ -84,6 +84,9 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	
 	// F toggles fullscreen
 	if (keys[SDL_SCANCODE_F]) { video_toggle_fullscreen(); }
+	if (keys[SDL_SCANCODE_T]) { video_toggle_filter(); }
+	if (keys[SDL_SCANCODE_G]) { video_toggle_scalefactor(); }
+	if (keys[SDL_SCANCODE_B]) { video_toggle_filter(); video_toggle_scalefactor(); }
 	
 	// Match keyboard and joystick input
 	switch(event.type) {

@@ -97,6 +97,9 @@ static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
+Video::RenderState renderstate;
+Video::RenderState::Filter filter;
+
 extern settings *conf;
 
 static CheatMgr *sCheatMgr;
@@ -251,32 +254,6 @@ static void nst_unload(void)
 	sCheatMgr->Unload();
 }
 
-// if we're in full screen, kills video temporarily
-static void kill_video_if_fs(void)
-{
-	/*if (conf->video_fullscreen)
-	{
-		if (SDL_NumJoysticks() > 0)
-		{
-			int i;
-
-			for (i = 0; i < SDL_NumJoysticks(); i++)
-			{
-				// we only? support 10 joysticks
-				if (i < 10)
-				{
-					SDL_JoystickClose(joy[i]);
-				}
-			}
-
-			SDL_JoystickEventState(SDL_ENABLE);	// turn on regular updates
-		}
-
-		SDL_ShowCursor(1);
-		SDL_Quit();
-	}*/
-}
-
 // returns if we're currently playing a game or NSF
 bool NstIsPlaying() {
 	return playing;
@@ -300,12 +277,12 @@ void NstStopPlaying()
 		//if (!nsf_mode)
 		//{
 			//SDL_FreeSurface(screen);
-			opengl_cleanup();
+			/*opengl_cleanup();
 			if (intbuffer)
 			{
 				free(intbuffer);
 				intbuffer = NULL;
-			}
+			}*/
 		//}
 
 		// get machine interface...
@@ -456,9 +433,11 @@ void NstPlayGame(void)
 	}
 	
 	// initialization
-	SetupVideo();
+	//TESTSetupVideo();
+	main_init_video();
 	SetupSound();
 	SetupInput();
+	main_set_framerate();
 
 	// apply any cheats into the engine
 	sCheatMgr->Enable();
@@ -539,7 +518,7 @@ void ToggleFullscreen()
 	
 	conf->video_fullscreen ^= 1;
 	
-	SetupVideo();
+	//SetupVideo();
 
 	if (conf->audio_api == 0)	// the SDL driver needs a harder restart
 	{
@@ -775,10 +754,10 @@ static void cleanup_after_io(void)
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
-	if (conf->video_fullscreen)
+	/*if (conf->video_fullscreen)
 	{
 		SetupVideo();
-	}
+	}*/
 }
 
 int main(int argc, char *argv[])
@@ -916,7 +895,6 @@ int main(int argc, char *argv[])
 
 			if (state_save)
 			{
-				kill_video_if_fs();
 				fileio_do_state_save();
 				state_save = 0;
 				cleanup_after_io();
@@ -924,7 +902,6 @@ int main(int argc, char *argv[])
 
 			if (state_load)
 			{
-				kill_video_if_fs();
 				fileio_do_state_load();
 				state_load = 0;
 				cleanup_after_io();
@@ -932,7 +909,6 @@ int main(int argc, char *argv[])
 
 			if (movie_load)
 			{
-				kill_video_if_fs();
 				fileio_do_movie_load();
 				movie_load = 0;
 				cleanup_after_io();
@@ -940,7 +916,6 @@ int main(int argc, char *argv[])
 
 			if (movie_save)
 			{
-				kill_video_if_fs();
 				fileio_do_movie_save();
 				movie_load = 0;
 				cleanup_after_io();
@@ -1084,268 +1059,81 @@ void get_screen_res() {
 	}
 }
 
-void SetupVideo()
-{
-	// renderstate structure
-	Video::RenderState renderState;
-	Machine machine( emulator );
-	Cartridge::Database database( emulator );
-	Video::RenderState::Filter filter;
-	
-	int scalefactor = conf->video_scale_factor;
-	int i;
+void main_set_framerate() {
+	// Set the framerate based on region
+	Machine machine(emulator);
+	Cartridge::Database database(emulator);
 
-	/*// init SDL
-	if (SDL_Init(SDL_INIT_VIDEO|SDL_INIT_JOYSTICK))
-	{
-		std::cout << "Unable to init SDL\n";
-		return;
-	}*/
-
-	// figure out the region
 	framerate = 60;
-	if (conf->misc_video_region == 2)		// force PAL
-	{
+	if (conf->misc_video_region == 2) {
 		machine.SetMode(Machine::PAL);
 		framerate = 50;
 	}
-	else if (conf->misc_video_region == 1) 	// force NTSC
-	{
+	else if (conf->misc_video_region == 1) {
 		machine.SetMode(Machine::NTSC);
 	}
-	else	// auto
-	{
-		if (database.IsLoaded())
-		{
-			if (dbentry.GetSystem() == Cartridge::Profile::System::NES_PAL)
-			{
+	else {
+		if (database.IsLoaded()) {
+			if (dbentry.GetSystem() == Cartridge::Profile::System::NES_PAL) {
 				machine.SetMode(Machine::PAL);
 				framerate = 50;
 			}
-			else
-			{
+			else {
 				machine.SetMode(Machine::NTSC);
 			}
 		}
-		else
-		{
+		else {
 			machine.SetMode(machine.GetDesiredMode());
 		}
 	}
+}
 
-	// we don't create a window in NSF mode
-	if (nsf_mode) 
-	{
-		return;
-	}
-
-	/*if (SDL_NumJoysticks() > 0)
-	{
-		for (i = 0; i < SDL_NumJoysticks(); i++)
-		{
-			// we only? support 10 joysticks
-			if (i < 10)
-			{
-				joy[i] = SDL_JoystickOpen(i);
-			}
-		}
-
-		SDL_JoystickEventState(SDL_ENABLE);	// turn on regular updates
-	}*/
+void main_init_video() {
+	// Initialize video structures
 	
-	get_screen_res();
-	filter = Video::RenderState::FILTER_NONE;
+	int scalefactor = conf->video_scale_factor;
 
-	// compute the major video parameters from the scaler type and scale factor
-	switch(conf->video_filter)
-	{
-		case 0:	// None (no scaling unless OpenGL)
-			filter = Video::RenderState::FILTER_NONE;
-			break;
+	//filter = Video::RenderState::FILTER_NONE;
+	//get_screen_res();
+	video_set_params();
+	video_set_filter();
 
-		case 1: // NTSC
-			filter = Video::RenderState::FILTER_NTSC;
-			break;
-
-		case 2: // scale x
-			switch (scalefactor)
-			{
-				case 2:
-					filter = Video::RenderState::FILTER_SCALE2X;
-					break;
-
-				case 3:
-					filter = Video::RenderState::FILTER_SCALE3X;
-					break;
-
-				default:
-					filter = Video::RenderState::FILTER_NONE;
-					break;
-			}
-			break;
-
-		case 3: // scale HQx
-			switch (scalefactor)
-			{
-				case 2:
-					filter = Video::RenderState::FILTER_HQ2X;
-					break;
-
-				case 3:
-					filter = Video::RenderState::FILTER_HQ3X;
-					break;
-
-				case 4:
-					filter = Video::RenderState::FILTER_HQ4X;
-					break;
-
-				default:
-					filter = Video::RenderState::FILTER_NONE;
-					break;
-			}
-			break;
-		
-		case 4: // 2xSaI
-			filter = Video::RenderState::FILTER_2XSAI;
-			break;
-
-		case 5: // xBR
-			switch (scalefactor)
-			{
-				case 2:
-					filter = Video::RenderState::FILTER_2XBR;
-					break;
-
-				case 3:
-					filter = Video::RenderState::FILTER_3XBR;
-					break;
-
-				case 4:
-					filter = Video::RenderState::FILTER_4XBR;
-					break;
-
-				default:
-					filter = Video::RenderState::FILTER_NONE;
-					break;
-			}
-			break;
-	}
-
-	//int eFlags = SDL_HWSURFACE;
-	
 	using_opengl = (conf->video_renderer > 0);
 	linear_filter = (conf->video_renderer == 2);
 	
-	/*if (using_opengl)
-	{
-		SDL_GL_SetAttribute( SDL_GL_DOUBLEBUFFER, 1 );
-		eFlags = SDL_OPENGL;
-	}
+	// Dirty shit below
+	renderstate.filter = filter;
+	renderstate.width = cur_width;
+	renderstate.height = cur_height;
 
-	if (conf->video_fullscreen)
-	{
-		GdkScreen *gdkscreen = gdk_screen_get_default();
-		
-		if (conf->video_fullscreen && conf->video_stretch_fullscreen && using_opengl) {	// Force native resolution in fullscreen mode
-			cur_Rwidth = gdk_screen_get_width(gdkscreen);
-			cur_Rheight = gdk_screen_get_height(gdkscreen);
-		}
-		screen = SDL_SetVideoMode(cur_Rwidth, cur_Rheight, 16, SDL_ANYFORMAT | SDL_DOUBLEBUF | SDL_FULLSCREEN | eFlags);
-	}
-	else
-	{
-		screen = SDL_SetVideoMode(cur_Rwidth, cur_Rheight, 16, SDL_ANYFORMAT | SDL_DOUBLEBUF | eFlags);
-	}
+	opengl_init_structures();
 
-	if (!screen)
-	{
-		std::cout << "SDL couldn't set video mode\n";
-		exit(-1);
-	}*/
-
-	renderState.filter = filter;
-	renderState.width = cur_width;
-	renderState.height = cur_height;
-
-	// example configuration
-	//if (using_opengl)
-	//{
-		opengl_init_structures();
-
-		renderState.bits.count = 32;
-	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-		renderState.bits.mask.r = 0x000000ff;
-		renderState.bits.mask.g = 0xff000000;
-		renderState.bits.mask.b = 0x00ff0000;
-	#else
-		renderState.bits.mask.r = 0x00ff0000;
-		renderState.bits.mask.g = 0x0000ff00;
-		renderState.bits.mask.b = 0x000000ff;
-	#endif
-	/*}
-	else
-	{
-		renderState.bits.count = screen->format->BitsPerPixel;
-		renderState.bits.mask.r = screen->format->Rmask;
-		renderState.bits.mask.g = screen->format->Gmask;
-		renderState.bits.mask.b = screen->format->Bmask;
-	}*/
+	renderstate.bits.count = 32;
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	renderstate.bits.mask.r = 0x000000ff;
+	renderstate.bits.mask.g = 0xff000000;
+	renderstate.bits.mask.b = 0x00ff0000;
+#else
+	renderstate.bits.mask.r = 0x00ff0000;
+	renderstate.bits.mask.g = 0x0000ff00;
+	renderstate.bits.mask.b = 0x000000ff;
+#endif
 
 	// allocate the intermediate render buffer
-	intbuffer = malloc(renderState.bits.count * renderState.width * renderState.height);
+	intbuffer = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
 
 	// acquire the video interface
-	Video video( emulator );
+	Video video(emulator);
 
 	// set the sprite limit
 	video.EnableUnlimSprites(conf->video_unlimited_sprites ? false : true);
-
-	// set up the NTSC type
-	switch (conf->video_ntsc_mode)
-	{
-		case 0:	// composite
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_COMP);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_COMP);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_COMP);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_COMP);
-			break;
-
-		case 1:	// S-Video
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_SVIDEO);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_SVIDEO);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_SVIDEO);
-			break;
-
-		case 2:	// RGB
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_RGB);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_RGB);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_RGB);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_RGB);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
-			break;
-	}
-	
-	if (conf->video_filter == 5) {
-		video.SetCornerRounding(conf->video_xbr_corner_rounding); // 0 = none, 1 = some, 2 = all
-		video.SetBlend(conf->video_xbr_pixel_blending); // boolean
-	}
-	
 	video.ClearFilterUpdateFlag();
 
 	// set the render state
-	if (NES_FAILED(video.SetRenderState( renderState )))
-	{
-		std::cout << "Nestopia core rejected render state\n";
-		::exit(0);
+	if (NES_FAILED(video.SetRenderState(renderstate))) {
+		fprintf(stderr, "Nestopia core rejected render state\n");
+		exit(1);
 	}
-
-	/*if (conf->video_fullscreen)
-	{
-		SDL_ShowCursor(0);
-	}*/
 }
 
 // initialize sound going into the game

@@ -10,9 +10,14 @@ void opengl_init_structures();
 void opengl_cleanup();
 void opengl_blit();
 
+void video_init();
 void video_create();
 void video_resize();
 void video_toggle_fullscreen();
+void video_toggle_filter();
+void video_toggle_scalefactor();
+void video_set_filter();
+void video_set_params();
 
 long Linux_LockScreen(void*& ptr);
 void Linux_UnlockScreen(void*);
