@@ -50,6 +50,8 @@ void input_init() {
 		joystick = SDL_JoystickOpen(i);
 		printf("%s\n", SDL_JoystickName(joystick));
 	}
+
+	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
 }
 
 void input_deinit() {
@@ -60,8 +62,6 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	
 	const Uint8 *keybuffer = SDL_GetKeyboardState(NULL);
 	Uint8 *keys = (Uint8*)keybuffer;
-	
-	int player;
 	
 	// Process non-game events
 	if (keys[SDL_SCANCODE_F1]) { FlipFDSDisk(); }
