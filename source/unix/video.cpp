@@ -97,7 +97,6 @@ void opengl_init_structures() {
 void opengl_cleanup() {
 	
 	if (using_opengl) {
-		//SDL_FreeSurface( screen );
 		glDeleteTextures( 1, &screenTexID );
 		
 		if (intbuffer) {
@@ -143,10 +142,15 @@ void video_init() {
 void video_toggle_filter() {
 	conf->video_filter++;
 	if (conf->video_filter > 5) { conf->video_filter = 0; }
+	
+	// The scalex filter only allows 3x scale and crashes otherwise
+	if (conf->video_filter == 2 && conf->video_scale_factor == 4) {
+		conf->video_scale_factor = 3;
+	}
+	
 	Video video(emulator);
 	video.ClearFilterUpdateFlag();
-
-	opengl_cleanup();
+	
 	if (intbuffer) {
 		free(intbuffer);
 		intbuffer = NULL;
@@ -159,8 +163,12 @@ void video_toggle_filter() {
 void video_toggle_scalefactor() {
 	conf->video_scale_factor++;
 	if (conf->video_scale_factor > 4) { conf->video_scale_factor = 1; }
-
-	opengl_cleanup();
+	
+	// The scalex filter only allows 3x scale and crashes otherwise
+	if (conf->video_filter == 2 && conf->video_scale_factor == 4) {
+		conf->video_scale_factor = 1;
+	}
+	
 	if (intbuffer) {
 		free(intbuffer);
 		intbuffer = NULL;
@@ -374,10 +382,10 @@ void video_set_params() {
 			break;
 
 		case 2: // scale x
-			if (scalefactor == 4) 
-			{
-				//std::cout << "Warning: Scale x only allows scale factors of 3 or less\n";
-				scalefactor = 3;	// there is no scale4x
+			if (scalefactor == 4) {
+				fprintf(stderr, "error: ScaleX filter cannot scale to 4x\n");
+				scalefactor = 3;
+				conf->video_scale_factor = 3;
 			}
 
 			cur_width = Video::Output::WIDTH * scalefactor;
