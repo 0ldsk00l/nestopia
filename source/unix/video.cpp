@@ -428,7 +428,7 @@ void video_set_params() {
 			break;
 	}
 
-	if(conf->video_fullscreen) {
+	if (conf->video_fullscreen && sdlwindow) {
 		cur_Rheight = displaymode.h;
 		cur_Rwidth = displaymode.w;
 	}
