@@ -636,7 +636,8 @@ int main(int argc, char *argv[])
 	// Initialize input and read input config
 	input_init();
 	input_read_config();
-
+	
+	// Set up the video parameters
 	video_set_params();
 	
 	// Initialize GTK+
