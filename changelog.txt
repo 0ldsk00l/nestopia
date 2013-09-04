@@ -7,6 +7,7 @@ Unix Shell:
   - Mask Overscan option
   - Disable GUI option
   - Command line interface
+  - Scale Factor and Filters can be changed while playing
 
  Changes:
   - Ported to SDL 2.0
