@@ -6,6 +6,11 @@
 #define OVERSCAN_BOTTOM 8
 #define OVERSCAN_TOP 8
 
+typedef struct {
+	int w;
+	int h;
+} dimensions;
+
 void opengl_init_structures();
 void opengl_cleanup();
 void opengl_blit();

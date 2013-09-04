@@ -91,37 +91,10 @@ char windowid[24];
 
 int playernumber = 0;
 
-extern int cur_Rheight, cur_Rwidth, schedule_stop;
+extern int schedule_stop;
+extern dimensions rendersize;
 
 bool wasplaying = 0;
-
-/*void on_nsfspinbutton_input(GtkSpinButton   *spinbutton, GtkScrollType    scroll, gpointer         user_data)
-{
-}
-
-void on_nsfspinbutton_change_value(GtkSpinButton   *spinbutton, GtkScrollType scroll, gpointer user_data)
-{
-}
-
-void on_nsfspinbutton_value_changed(GtkSpinButton   *spinbutton, gpointer         user_data)
-{
-	Nsf nsf( emulator );
-
-	nsf.SelectSong((int)gtk_spin_button_get_value(spinbutton));
-}
-
-void on_nsfplay_clicked(GtkButton       *button,  gpointer         user_data)
-{
-	NstPlayNsf();
-}
-
-void on_nsfstop_clicked(GtkButton       *button, gpointer         user_data)
-{
-	NstStopNsf();
-
-	//gtk_widget_set_sensitive(button_nsfplay, TRUE);
-	//gtk_widget_set_sensitive(button_nsfstop, FALSE);
-}*/
 
 void on_videocombo_changed(GtkComboBox *combobox, gpointer user_data) {
 	conf->misc_video_region = gtk_combo_box_get_active(combobox);
@@ -228,7 +201,7 @@ void configwindow_destroyed() {
 		//get_screen_res();
 	}
 
-	redraw_drawingarea(cur_Rwidth, cur_Rheight);
+	redraw_drawingarea(rendersize.w, rendersize.h);
 }
 
 void on_check_blendpix_toggled(GtkToggleButton *togglebutton, gpointer user_data) {

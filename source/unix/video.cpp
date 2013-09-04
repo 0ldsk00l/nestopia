@@ -41,9 +41,6 @@ SDL_GLContext glcontext;
 SDL_DisplayMode displaymode;
 
 extern settings *conf;
-extern int cur_width, cur_height, cur_Rheight, cur_Rwidth;
-
-//extern Video::RenderState renderstate;
 extern Video::RenderState::Filter filter;
 extern Emulator emulator;
 
@@ -53,22 +50,24 @@ GLuint	screenTexID = 0;
 int		gl_w, gl_h;
 void	*intbuffer;
 
-// init OpenGL and set up for blitting
+dimensions rendersize;
+dimensions basesize;
+
 void opengl_init_structures() {
-	
+	// init OpenGL and set up for blitting
 	int scalefactor = conf->video_scale_factor;
 
 	glEnable( GL_TEXTURE_2D );
 
-	gl_w = cur_width;
-	gl_h = cur_height;
+	gl_w = basesize.w;
+	gl_h = basesize.h;
 
 	glGenTextures( 1, &screenTexID ) ;
 	glBindTexture( GL_TEXTURE_2D, screenTexID ) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear_filter ? GL_LINEAR : GL_NEAREST) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) ;
 	
-	glViewport( 0, 0, cur_Rwidth, cur_Rheight);
+	glViewport( 0, 0, rendersize.w, rendersize.h);
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_ALPHA_TEST );
 	glDisable( GL_BLEND );
@@ -80,22 +79,21 @@ void opengl_init_structures() {
 	if (conf->video_mask_overscan) {
 		glOrtho(
 			0.0,													// Left
-			(GLdouble)cur_Rwidth,									// Right
-			(GLdouble)cur_Rheight - (OVERSCAN_BOTTOM * scalefactor),	// Bottom
+			(GLdouble)rendersize.w,									// Right
+			(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor),	// Bottom
 			(GLdouble)(OVERSCAN_TOP * scalefactor),					// Top
 			-1.0, 1.0
 		);
 	}
 	else {
-		glOrtho(0.0, (GLdouble)cur_Rwidth, (GLdouble)cur_Rheight, 0.0, -1.0, 1.0);
+		glOrtho(0.0, (GLdouble)rendersize.w, (GLdouble)rendersize.h, 0.0, -1.0, 1.0);
 	}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
 }
 
-// tears down OpenGL when it's no longer needed
 void opengl_cleanup() {
-	
+	// tears down OpenGL when it's no longer needed
 	if (using_opengl) {
 		glDeleteTextures( 1, &screenTexID );
 		
@@ -106,9 +104,8 @@ void opengl_cleanup() {
 	}
 }
 
-// blit the image using OpenGL
 void opengl_blit() {
-
+	// blit the image using OpenGL
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
 				GL_RGBA,
@@ -120,16 +117,16 @@ void opengl_blit() {
 
 	glBegin( GL_QUADS ) ;
 		glTexCoord2f(1.0f, 1.0f);
-		glVertex2i(cur_Rwidth, cur_Rheight);
+		glVertex2i(rendersize.w, rendersize.h);
 		
 		glTexCoord2f(1.0f, 0.0f);
-		glVertex2i(cur_Rwidth, 0);
+		glVertex2i(rendersize.w, 0);
 		
 		glTexCoord2f(0.0f, 0.0f);
 		glVertex2i(0, 0);
 		
 		glTexCoord2f(0.0f, 1.0f);
-		glVertex2i(0, cur_Rheight);
+		glVertex2i(0, rendersize.h);
 	glEnd();
 
 	SDL_GL_SwapWindow(sdlwindow);
@@ -157,7 +154,7 @@ void video_toggle_filter() {
 	}
 	
 	main_init_video();
-	SDL_SetWindowSize(sdlwindow, cur_Rwidth, cur_Rheight);
+	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
 void video_toggle_scalefactor() {
@@ -175,11 +172,11 @@ void video_toggle_scalefactor() {
 	}
 	
 	main_init_video();
-	SDL_SetWindowSize(sdlwindow, cur_Rwidth, cur_Rheight);
+	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
 void video_create() {
-
+	// Create the SDL window
 	int displayindex;
 	
 	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
@@ -194,8 +191,8 @@ void video_create() {
 	"Nestopia",							//    window title
 	SDL_WINDOWPOS_UNDEFINED,			//    initial x position
 	SDL_WINDOWPOS_UNDEFINED,			//    initial y position
-	cur_Rwidth,							//    width, in pixels
-	cur_Rheight,						//    height, in pixels
+	rendersize.w,							//    width, in pixels
+	rendersize.h,						//    height, in pixels
 	windowflags);
 	
 	if(sdlwindow == NULL) {
@@ -226,15 +223,8 @@ void video_create() {
 	SDL_GL_SetSwapInterval(1);
 }
 
-void video_resize() {
-	//SDL_GetWindowSize(sdlwindow, &cur_Rwidth, &cur_Rheight);
-	SDL_SetWindowSize(sdlwindow, displaymode.w, displaymode.h);
-	cur_Rwidth = displaymode.w;
-	cur_Rheight = displaymode.h;
-}
-
 void video_toggle_fullscreen() {
-	
+	// Toggle between fullscreen and window mode
 	Uint32 flags;
 	int cursor;
 	
@@ -251,6 +241,7 @@ void video_toggle_fullscreen() {
 	
 	SDL_ShowCursor(cursor);
 	SDL_SetWindowFullscreen(sdlwindow, flags);
+	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
 void video_set_filter() {
@@ -341,19 +332,19 @@ void video_set_params() {
 				{
 					//std::cout << "Warning: raw scale factors > 1 not allowed with pure software, use OpenGL\n";
 				}
-				cur_width = cur_Rwidth = Video::Output::WIDTH;
-				cur_height = cur_Rheight = Video::Output::HEIGHT;
+				basesize.w = rendersize.w = Video::Output::WIDTH;
+				basesize.h = rendersize.h = Video::Output::HEIGHT;
 			}
 			else
 			{
-				cur_width = Video::Output::WIDTH;
-				cur_height = Video::Output::HEIGHT;
-				conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width * scalefactor;
+				basesize.w = Video::Output::WIDTH;
+				basesize.h = Video::Output::HEIGHT;
+				conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
 				if (conf->video_mask_overscan) {
-					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+					rendersize.h = (basesize.h * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 				}
 				else {
-					cur_Rheight = cur_height * scalefactor;
+					rendersize.h = basesize.h * scalefactor;
 				}
 			}
 
@@ -370,14 +361,14 @@ void video_set_params() {
 				scalefactor = 2;
 			}
 
-			cur_width = Video::Output::NTSC_WIDTH;
-			cur_Rwidth = (cur_width / 2) * scalefactor;
-			cur_height = Video::Output::HEIGHT;
+			basesize.w = Video::Output::NTSC_WIDTH;
+			rendersize.w = (basesize.w / 2) * scalefactor;
+			basesize.h = Video::Output::HEIGHT;
 			if (conf->video_mask_overscan) {
-					cur_Rheight = (cur_height * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+					rendersize.h = (basesize.h * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
-				cur_Rheight = cur_height * scalefactor;
+				rendersize.h = basesize.h * scalefactor;
 			}
 			break;
 
@@ -388,57 +379,57 @@ void video_set_params() {
 				conf->video_scale_factor = 3;
 			}
 
-			cur_width = Video::Output::WIDTH * scalefactor;
-			cur_height = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
+			basesize.w = Video::Output::WIDTH * scalefactor;
+			basesize.h = Video::Output::HEIGHT * scalefactor;
+			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
 			if (conf->video_mask_overscan) {
-				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+				rendersize.h = basesize.h - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
-				cur_Rheight = cur_height;
+				rendersize.h = basesize.h;
 			}
 			break;
 
 		case 3: // scale HQx
-			cur_width = Video::Output::WIDTH * scalefactor;
-			cur_height = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
+			basesize.w = Video::Output::WIDTH * scalefactor;
+			basesize.h = Video::Output::HEIGHT * scalefactor;
+			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
 			if (conf->video_mask_overscan) {
-				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+				rendersize.h = basesize.h - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
-				cur_Rheight = cur_height;
+				rendersize.h = basesize.h;
 			}
 			break;
 
 		case 4: // 2xSaI
-			cur_width = Video::Output::WIDTH * 2;
-			cur_height = Video::Output::HEIGHT * 2;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = Video::Output::WIDTH * scalefactor;
+			basesize.w = Video::Output::WIDTH * 2;
+			basesize.h = Video::Output::HEIGHT * 2;
+			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
 			if (conf->video_mask_overscan) {
-				cur_Rheight = Video::Output::HEIGHT * scalefactor - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+				rendersize.h = Video::Output::HEIGHT * scalefactor - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
-				cur_Rheight = Video::Output::HEIGHT * scalefactor;
+				rendersize.h = Video::Output::HEIGHT * scalefactor;
 			}
 			break;
 
 		case 5: // scale xBR
-			cur_width = Video::Output::WIDTH * scalefactor;
-			cur_height = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? cur_Rwidth = TV_WIDTH * scalefactor : cur_Rwidth = cur_width;
+			basesize.w = Video::Output::WIDTH * scalefactor;
+			basesize.h = Video::Output::HEIGHT * scalefactor;
+			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
 			if (conf->video_mask_overscan) {
-				cur_Rheight = cur_height - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
+				rendersize.h = basesize.h - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
 			else {
-				cur_Rheight = cur_height;
+				rendersize.h = basesize.h;
 			}
 			break;
 	}
 
 	if (conf->video_fullscreen && sdlwindow) {
-		cur_Rheight = displaymode.h;
-		cur_Rwidth = displaymode.w;
+		rendersize.h = displaymode.h;
+		rendersize.w = displaymode.w;
 	}
 	
 	//opengl_cleanup();
@@ -477,7 +468,7 @@ void Linux_UnlockScreen(void*) {
 
 		// is this a software x2 expand for NTSC mode?
 		vdouble = 0;
-		if (screen->h == (cur_height<<1)) {
+		if (screen->h == (basesize.h<<1)) {
 			vdouble = 1;
 		}
 
@@ -485,17 +476,17 @@ void Linux_UnlockScreen(void*) {
 			src = (UINT16 *)intbuffer;
 			dst1 = (UINT16 *)screen->pixels;
 
-			for (y = 0; y < cur_Rheight; y++) {
-				memcpy(dst1, src, cur_width*screen->format->BitsPerPixel/8);
+			for (y = 0; y < rendersize.h; y++) {
+				memcpy(dst1, src, basesize.w*screen->format->BitsPerPixel/8);
 				
 				if (vdouble) {
 					if (!(y & 1)) {
-						src += cur_width;
+						src += basesize.w;
 					}
 				}
 				
 				else {
-					src += cur_width;
+					src += basesize.w;
 				}
 				dst1 += screen->pitch/2;
 			}
@@ -504,17 +495,17 @@ void Linux_UnlockScreen(void*) {
 			srcL = (UINT32 *)intbuffer;
 			dst1L = (UINT32 *)screen->pixels;
 
-			for (y = 0; y < cur_Rheight; y++) {
-				memcpy(dst1L, srcL, cur_width*screen->format->BitsPerPixel/8);
+			for (y = 0; y < rendersize.h; y++) {
+				memcpy(dst1L, srcL, basesize.w*screen->format->BitsPerPixel/8);
 				
 				if (vdouble) {
 					if (!(y & 1)) {
-						srcL += cur_width;
+						srcL += basesize.w;
 					}
 				}
 				
 				else {
-					srcL += cur_width;
+					srcL += basesize.w;
 				}
 				dst1L += screen->pitch/4;
 			}

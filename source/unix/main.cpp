@@ -78,11 +78,12 @@ static long exholding[48000*2];
 
 static unsigned short keys[65536];
 
-int updateok, playing = 0, cur_width, cur_height, loaded = 0, framerate;
+int updateok, playing = 0, loaded = 0, framerate;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
 
-int cur_Rheight, cur_Rwidth;
+extern dimensions rendersize;
+extern dimensions basesize;
 
 extern GtkWidget *mainwindow, *statusbar;
 extern char windowid[24];
@@ -648,7 +649,7 @@ int main(int argc, char *argv[])
 	}
 	// Don't show a GUI if it has been disabled in the config
 	else {
-		gtkui_init(argc, argv, cur_Rwidth, cur_Rheight);
+		gtkui_init(argc, argv, rendersize.w, rendersize.h);
 	}
 
 	// Create the game window
@@ -835,8 +836,8 @@ void main_init_video() {
 	
 	// Dirty shit below
 	renderstate.filter = filter;
-	renderstate.width = cur_width;
-	renderstate.height = cur_height;
+	renderstate.width = basesize.w;
+	renderstate.height = basesize.h;
 
 	opengl_init_structures();
 
