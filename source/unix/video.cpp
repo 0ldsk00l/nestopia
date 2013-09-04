@@ -35,23 +35,25 @@
 
 using namespace Nes::Api;
 
-SDL_Window *sdlwindow;
-SDL_Renderer *renderer;
-SDL_GLContext glcontext;
-SDL_DisplayMode displaymode;
-
-extern settings *conf;
-extern Video::RenderState::Filter filter;
-extern Emulator emulator;
-
 bool	using_opengl = false;
 bool	linear_filter = false;
 GLuint	screenTexID = 0;
 int		gl_w, gl_h;
 void	*intbuffer;
 
+SDL_Window *sdlwindow;
+SDL_Renderer *renderer;
+SDL_GLContext glcontext;
+SDL_DisplayMode displaymode;
+
+Video::RenderState::Filter filter;
+Video::RenderState renderstate;
+
 dimensions rendersize;
 dimensions basesize;
+
+extern settings *conf;
+extern Emulator emulator;
 
 void opengl_init_structures() {
 	// init OpenGL and set up for blitting
@@ -133,7 +135,69 @@ void opengl_blit() {
 }
 
 void video_init() {
-	printf("Initializing video...\n");
+	// Initialize video structures	
+	int scalefactor = conf->video_scale_factor;
+	
+	video_set_params();
+	video_set_filter();
+	
+	using_opengl = (conf->video_renderer > 0);
+	linear_filter = (conf->video_renderer == 2);
+	
+	opengl_init_structures();
+	
+	// Set up the render state parameters
+	renderstate.filter = filter;
+	renderstate.width = basesize.w;
+	renderstate.height = basesize.h;
+	renderstate.bits.count = 32;
+	
+#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	renderstate.bits.mask.r = 0x000000ff;
+	renderstate.bits.mask.g = 0xff000000;
+	renderstate.bits.mask.b = 0x00ff0000;
+#else
+	renderstate.bits.mask.r = 0x00ff0000;
+	renderstate.bits.mask.g = 0x0000ff00;
+	renderstate.bits.mask.b = 0x000000ff;
+#endif
+	
+	// allocate the intermediate render buffer
+	intbuffer = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
+	
+	// acquire the video interface
+	Video video(emulator);
+	
+	// set the sprite limit
+	video.EnableUnlimSprites(conf->video_unlimited_sprites ? false : true);
+	video.ClearFilterUpdateFlag();
+	
+	// set the render state
+	if (NES_FAILED(video.SetRenderState(renderstate))) {
+		fprintf(stderr, "Nestopia core rejected render state\n");
+		exit(1);
+	}
+}
+
+void video_toggle_fullscreen() {
+	// Toggle between fullscreen and window mode
+	Uint32 flags;
+	int cursor;
+	
+	conf->video_fullscreen ^= 1;
+	
+	if(conf->video_fullscreen) {
+		cursor = 0;
+		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+	}
+	else { flags = 0; cursor = 1; }
+	
+	video_set_params();
+	video_init();
+	
+	SDL_ShowCursor(cursor);
+	SDL_SetWindowFullscreen(sdlwindow, flags);
+	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
 void video_toggle_filter() {
@@ -155,7 +219,7 @@ void video_toggle_filter() {
 		intbuffer = NULL;
 	}
 	
-	main_init_video();
+	video_init();
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
@@ -173,7 +237,7 @@ void video_toggle_scalefactor() {
 		intbuffer = NULL;
 	}
 	
-	main_init_video();
+	video_init();
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
@@ -222,27 +286,6 @@ void video_create() {
 	}
 	
 	SDL_GL_SetSwapInterval(1);
-}
-
-void video_toggle_fullscreen() {
-	// Toggle between fullscreen and window mode
-	Uint32 flags;
-	int cursor;
-	
-	conf->video_fullscreen ^= 1;
-	
-	if(conf->video_fullscreen) {
-		cursor = 0;
-		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
-	}
-	else { flags = 0; cursor = 1; }
-	
-	video_set_params();
-	main_init_video();
-	
-	SDL_ShowCursor(cursor);
-	SDL_SetWindowFullscreen(sdlwindow, flags);
-	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
 void video_set_filter() {
@@ -441,20 +484,11 @@ void video_set_params() {
 	//intbuffer = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
 }
 
-long Linux_LockScreen(void*& ptr)
-{
+long Linux_LockScreen(void*& ptr) {
 	//if (using_opengl) { // have the engine blit directly to our memory buffer
 		ptr = intbuffer;
 		return gl_w*4;
 	//}
-	
-	/*else {
-		if (SDL_MUSTLOCK(screen)) SDL_LockSurface(screen);
-
-		ptr = intbuffer;
-	}
-	
-	return screen->pitch;*/
 }
 
 void Linux_UnlockScreen(void*) {
@@ -462,58 +496,4 @@ void Linux_UnlockScreen(void*) {
 	if (using_opengl) {
 		opengl_blit();
 	}
-	/*else {
-		unsigned short *src, *dst1;
-		unsigned int *srcL, *dst1L;
-		int x, y, vdouble;
-
-		// is this a software x2 expand for NTSC mode?
-		vdouble = 0;
-		if (screen->h == (basesize.h<<1)) {
-			vdouble = 1;
-		}
-
-		if (screen->format->BitsPerPixel == 16) {
-			src = (UINT16 *)intbuffer;
-			dst1 = (UINT16 *)screen->pixels;
-
-			for (y = 0; y < rendersize.h; y++) {
-				memcpy(dst1, src, basesize.w*screen->format->BitsPerPixel/8);
-				
-				if (vdouble) {
-					if (!(y & 1)) {
-						src += basesize.w;
-					}
-				}
-				
-				else {
-					src += basesize.w;
-				}
-				dst1 += screen->pitch/2;
-			}
-		}
-		else if (screen->format->BitsPerPixel == 32) {
-			srcL = (UINT32 *)intbuffer;
-			dst1L = (UINT32 *)screen->pixels;
-
-			for (y = 0; y < rendersize.h; y++) {
-				memcpy(dst1L, srcL, basesize.w*screen->format->BitsPerPixel/8);
-				
-				if (vdouble) {
-					if (!(y & 1)) {
-						srcL += basesize.w;
-					}
-				}
-				
-				else {
-					srcL += basesize.w;
-				}
-				dst1L += screen->pitch/4;
-			}
-		}
-		else printf("ERROR: Unknown pixel format %d bpp\n", screen->format->BitsPerPixel);
-
-		if (SDL_MUSTLOCK(screen)) SDL_UnlockSurface(screen);
-		SDL_Flip(screen);
-	}*/
 }

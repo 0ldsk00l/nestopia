@@ -36,9 +36,6 @@
 
 #include <SDL.h>
 #include <SDL_endian.h>
-#include <gtk/gtk.h>
-#include <gdk/gdk.h>
-#include "GL/glu.h"
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -76,39 +73,28 @@ Emulator emulator;
 static short lbuf[48000];
 static long exholding[48000*2];
 
-static unsigned short keys[65536];
-
 int updateok, playing = 0, loaded = 0, framerate;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
 
-extern dimensions rendersize;
-extern dimensions basesize;
-
-extern GtkWidget *mainwindow, *statusbar;
-extern char windowid[24];
-
 static char savename[512], capname[512], gamebasename[512];
-static char caption[128];
 char rootname[512], lastarchname[512];
 char msgbuf[512];
+
+static CheatMgr *sCheatMgr;
 
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
-Video::RenderState renderstate;
-Video::RenderState::Filter filter;
+extern GtkWidget *mainwindow, *statusbar;
+extern char windowid[24];
+extern dimensions rendersize;
+extern dimensions basesize;
+extern void	*intbuffer;
 
 extern settings *conf;
-
-static CheatMgr *sCheatMgr;
-
-extern bool	using_opengl;
-extern bool	linear_filter;
-
-extern void	*intbuffer;
 
 // get the favored system selected by the user
 static Machine::FavoredSystem get_favored_system(void)
@@ -405,8 +391,7 @@ void NstPlayGame(void)
 	}
 	
 	// initialization
-	//TESTSetupVideo();
-	main_init_video();
+	video_init();
 	SetupSound();
 	SetupInput();
 	main_set_framerate();
@@ -822,53 +807,6 @@ void main_set_framerate() {
 	}
 }
 
-void main_init_video() {
-	// Initialize video structures
-	
-	int scalefactor = conf->video_scale_factor;
-
-	//filter = Video::RenderState::FILTER_NONE;
-	video_set_params();
-	video_set_filter();
-
-	using_opengl = (conf->video_renderer > 0);
-	linear_filter = (conf->video_renderer == 2);
-	
-	// Dirty shit below
-	renderstate.filter = filter;
-	renderstate.width = basesize.w;
-	renderstate.height = basesize.h;
-
-	opengl_init_structures();
-
-	renderstate.bits.count = 32;
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	renderstate.bits.mask.r = 0x000000ff;
-	renderstate.bits.mask.g = 0xff000000;
-	renderstate.bits.mask.b = 0x00ff0000;
-#else
-	renderstate.bits.mask.r = 0x00ff0000;
-	renderstate.bits.mask.g = 0x0000ff00;
-	renderstate.bits.mask.b = 0x000000ff;
-#endif
-
-	// allocate the intermediate render buffer
-	intbuffer = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
-
-	// acquire the video interface
-	Video video(emulator);
-
-	// set the sprite limit
-	video.EnableUnlimSprites(conf->video_unlimited_sprites ? false : true);
-	video.ClearFilterUpdateFlag();
-
-	// set the render state
-	if (NES_FAILED(video.SetRenderState(renderstate))) {
-		fprintf(stderr, "Nestopia core rejected render state\n");
-		exit(1);
-	}
-}
-
 // initialize sound going into the game
 void SetupSound()
 {
@@ -944,9 +882,6 @@ void configure_savename( const char* filename )
 	strcat(savedir, capname);
 	strcpy(savename, savedir);
 	
-	// also generate the window caption
-	snprintf(caption, sizeof(caption), "Nestopia");
-
 	strcpy(rootname, savename);
 	strcat(savename, ".sav");
 }
