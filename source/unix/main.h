@@ -26,7 +26,6 @@ void SwitchFDSDisk();
 void print_fds_info();
 void print_message(char* message);
 void main_set_framerate();
-void main_init_video();
 
 void QuickLoad(int isvst);
 void QuickSave(int isvst);
