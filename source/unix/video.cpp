@@ -138,10 +138,12 @@ void video_init() {
 
 void video_toggle_filter() {
 	conf->video_filter++;
-	if (conf->video_filter > 5) { conf->video_filter = 0; }
+	
+	// Intentionally leaving out scalex
+	if (conf->video_filter > 4) { conf->video_filter = 0; }
 	
 	// The scalex filter only allows 3x scale and crashes otherwise
-	if (conf->video_filter == 2 && conf->video_scale_factor == 4) {
+	if (conf->video_filter == 5 && conf->video_scale_factor == 4) {
 		conf->video_scale_factor = 3;
 	}
 	
@@ -162,7 +164,7 @@ void video_toggle_scalefactor() {
 	if (conf->video_scale_factor > 4) { conf->video_scale_factor = 1; }
 	
 	// The scalex filter only allows 3x scale and crashes otherwise
-	if (conf->video_filter == 2 && conf->video_scale_factor == 4) {
+	if (conf->video_filter == 5 && conf->video_scale_factor == 4) {
 		conf->video_scale_factor = 1;
 	}
 	
@@ -191,7 +193,7 @@ void video_create() {
 	"Nestopia",							//    window title
 	SDL_WINDOWPOS_UNDEFINED,			//    initial x position
 	SDL_WINDOWPOS_UNDEFINED,			//    initial y position
-	rendersize.w,							//    width, in pixels
+	rendersize.w,						//    width, in pixels
 	rendersize.h,						//    height, in pixels
 	windowflags);
 	
@@ -202,7 +204,6 @@ void video_create() {
 	displayindex = SDL_GetWindowDisplayIndex(sdlwindow);
 	SDL_GetDesktopDisplayMode(displayindex, &displaymode);
 	//printf("w: %d\th: %d\n", displaymode.w, displaymode.h);
-	//video_resize();
 	
 	//printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
 	
@@ -257,21 +258,24 @@ void video_set_filter() {
 			filter = Video::RenderState::FILTER_NTSC;
 			break;
 
-		case 2: // scale x
+		case 2: // xBR
 			switch (scalefactor) {
 				case 2:
-					filter = Video::RenderState::FILTER_SCALE2X;
+					filter = Video::RenderState::FILTER_2XBR;
 					break;
 
 				case 3:
-					filter = Video::RenderState::FILTER_SCALE3X;
+					filter = Video::RenderState::FILTER_3XBR;
+					break;
+
+				case 4:
+					filter = Video::RenderState::FILTER_4XBR;
 					break;
 
 				default:
 					filter = Video::RenderState::FILTER_NONE;
 					break;
 			}
-			break;
 
 		case 3: // scale HQx
 			switch (scalefactor) {
@@ -297,24 +301,21 @@ void video_set_filter() {
 			filter = Video::RenderState::FILTER_2XSAI;
 			break;
 
-		case 5: // xBR
+		case 5: // scale x
 			switch (scalefactor) {
 				case 2:
-					filter = Video::RenderState::FILTER_2XBR;
+					filter = Video::RenderState::FILTER_SCALE2X;
 					break;
 
 				case 3:
-					filter = Video::RenderState::FILTER_3XBR;
-					break;
-
-				case 4:
-					filter = Video::RenderState::FILTER_4XBR;
+					filter = Video::RenderState::FILTER_SCALE3X;
 					break;
 
 				default:
 					filter = Video::RenderState::FILTER_NONE;
 					break;
 			}
+			break;
 		break;
 	}
 }
@@ -372,13 +373,7 @@ void video_set_params() {
 			}
 			break;
 
-		case 2: // scale x
-			if (scalefactor == 4) {
-				fprintf(stderr, "error: ScaleX filter cannot scale to 4x\n");
-				scalefactor = 3;
-				conf->video_scale_factor = 3;
-			}
-
+		case 2: // scale xBR
 			basesize.w = Video::Output::WIDTH * scalefactor;
 			basesize.h = Video::Output::HEIGHT * scalefactor;
 			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
@@ -414,7 +409,13 @@ void video_set_params() {
 			}
 			break;
 
-		case 5: // scale xBR
+		case 5: // scale x
+			if (scalefactor == 4) {
+				fprintf(stderr, "error: ScaleX filter cannot scale to 4x\n");
+				scalefactor = 3;
+				conf->video_scale_factor = 3;
+			}
+
 			basesize.w = Video::Output::WIDTH * scalefactor;
 			basesize.h = Video::Output::HEIGHT * scalefactor;
 			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;

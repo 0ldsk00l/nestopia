@@ -43,7 +43,7 @@ void cli_show_usage() {
 	printf("  -e, --enablegui         Enable GTK+ GUI\n\n");
 	printf("  -f, --fullscreen        Fullscreen mode (-f 0 for windowed mode)\n\n");
 	printf("  -l, --filter            Video Filter\n");
-	printf("                          (0=none, 1=ntsc, 2=scalex, 3=hqx, 4=2xsai, 5=xbr)\n\n");
+	printf("                          (0=none, 1=ntsc, 2=xbr, 3=hqx, 4=2xsai, 5=scalex)\n\n");
 	printf("  -m, --maskoverscan      Mask Overscan areas (-m 0 to show overscan)\n\n");
 	printf("  -s, --scalefactor       Video scale factor (1-4)\n\n");
 	printf("  -t, --tvaspect          TV aspect ratio (-t 0 for normal aspect)\n\n");
