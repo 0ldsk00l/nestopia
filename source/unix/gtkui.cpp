@@ -846,10 +846,10 @@ GtkWidget* create_config(void) {
 	GtkWidget *scalecombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "None");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "NTSC");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "Scale?x");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "hq?x");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "2xSaI");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "xBR");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "HqX");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "2xSaI");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scalecombo), "ScaleX");
 	GtkWidget *scaleamtcombo = gtk_widget_new(GTK_TYPE_COMBO_BOX_TEXT, "halign", GTK_ALIGN_START, "margin-bottom", 5, "margin-left", 10, NULL);
 	gtk_combo_box_set_active(GTK_COMBO_BOX(scalecombo), conf->video_filter);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(scaleamtcombo), "1x");
