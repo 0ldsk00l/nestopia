@@ -57,11 +57,14 @@ void opengl_init_structures() {
 	// init OpenGL and set up for blitting
 	int scalefactor = conf->video_scale_factor;
 
+	// Fix the fencepost issue when masking overscan
+	float fencepost = scalefactor / 2.0;
+	
 	glEnable( GL_TEXTURE_2D );
-
+	
 	gl_w = basesize.w;
 	gl_h = basesize.h;
-
+	
 	glGenTextures( 1, &screenTexID ) ;
 	glBindTexture( GL_TEXTURE_2D, screenTexID ) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear_filter ? GL_LINEAR : GL_NEAREST) ;
@@ -78,10 +81,10 @@ void opengl_init_structures() {
 	
 	if (conf->video_mask_overscan) {
 		glOrtho(
-			0.0,													// Left
-			(GLdouble)rendersize.w,									// Right
-			(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor),	// Bottom
-			(GLdouble)(OVERSCAN_TOP * scalefactor),					// Top
+/*Left*/	0.0,
+/*Right*/   (GLdouble)rendersize.w,
+/*Bottom*/	(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor) + fencepost,
+/*Top*/		(GLdouble)(OVERSCAN_TOP * scalefactor) - fencepost,
 			-1.0, 1.0
 		);
 	}
@@ -357,84 +360,44 @@ void video_set_params() {
 	
 	switch(conf->video_filter)
 	{
-		case 0:	// None (no scaling unless OpenGL)
+		case 0:	// None
 			basesize.w = Video::Output::WIDTH;
 			basesize.h = Video::Output::HEIGHT;
 			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
-			if (conf->video_mask_overscan) {
-				rendersize.h = (basesize.h * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				rendersize.h = basesize.h * scalefactor;
-			}
-			
+			rendersize.h = basesize.h * scalefactor;
 			break;
 
 		case 1: // NTSC
 			basesize.w = Video::Output::NTSC_WIDTH;
 			rendersize.w = (basesize.w / 2) * scalefactor;
 			basesize.h = Video::Output::HEIGHT;
-			if (conf->video_mask_overscan) {
-					rendersize.h = (basesize.h * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				rendersize.h = basesize.h * scalefactor;
-			}
+			rendersize.h = basesize.h * scalefactor;
 			break;
 
-		case 2: // scale xBR
+		case 2: // xBR
+		case 3: // HqX
+		case 5: // ScaleX
+			if (conf->video_filter == 5 && scalefactor == 4) {
+				fprintf(stderr, "error: ScaleX filter cannot scale to 4x\n");
+				conf->video_scale_factor = scalefactor = 3;
+			}
+			
 			basesize.w = Video::Output::WIDTH * scalefactor;
 			basesize.h = Video::Output::HEIGHT * scalefactor;
 			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
-			if (conf->video_mask_overscan) {
-				rendersize.h = basesize.h - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				rendersize.h = basesize.h;
-			}
+			rendersize.h = basesize.h;
 			break;
-
-		case 3: // scale HQx
-			basesize.w = Video::Output::WIDTH * scalefactor;
-			basesize.h = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
-			if (conf->video_mask_overscan) {
-				rendersize.h = basesize.h - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				rendersize.h = basesize.h;
-			}
-			break;
-
+		
 		case 4: // 2xSaI
 			basesize.w = Video::Output::WIDTH * 2;
 			basesize.h = Video::Output::HEIGHT * 2;
 			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
-			if (conf->video_mask_overscan) {
-				rendersize.h = Video::Output::HEIGHT * scalefactor - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				rendersize.h = Video::Output::HEIGHT * scalefactor;
-			}
+			rendersize.h = Video::Output::HEIGHT * scalefactor;
 			break;
+	}
 
-		case 5: // scale x
-			if (scalefactor == 4) {
-				fprintf(stderr, "error: ScaleX filter cannot scale to 4x\n");
-				scalefactor = 3;
-				conf->video_scale_factor = 3;
-			}
-
-			basesize.w = Video::Output::WIDTH * scalefactor;
-			basesize.h = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
-			if (conf->video_mask_overscan) {
-				rendersize.h = basesize.h - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-			}
-			else {
-				rendersize.h = basesize.h;
-			}
-			break;
+	if (conf->video_mask_overscan) {
+		rendersize.h -= (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
 	}
 
 	if (conf->video_fullscreen && sdlwindow) {
