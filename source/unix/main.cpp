@@ -718,8 +718,10 @@ int main(int argc, char *argv[])
 			if (updateok)
 			{
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
+				//emulator.Execute(cNstVideo, NULL, cNstPads);
 				updateok = 0;
 			}
+			
 
 			if (state_save)
 			{
@@ -813,6 +815,10 @@ void SetupSound()
 	// acquire interface
 	Sound sound( emulator );
 
+	/*printf("Sample Bits:\t%d\n", sound.GetSampleBits());
+	printf("Sample Rate:\t%d\n", sound.GetSampleRate());
+	printf("Speed:\t%d\n", sound.GetSpeed());*/
+	
 	m1sdr_Init(conf->audio_sample_rate);
 	m1sdr_SetCallback((void *)nst_do_frame);
 	m1sdr_PlayStart();

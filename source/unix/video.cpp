@@ -35,14 +35,12 @@
 
 using namespace Nes::Api;
 
-bool	using_opengl = false;
 bool	linear_filter = false;
 GLuint	screenTexID = 0;
 int		gl_w, gl_h;
 void	*intbuffer;
 
 SDL_Window *sdlwindow;
-SDL_Renderer *renderer;
 SDL_GLContext glcontext;
 SDL_DisplayMode displaymode;
 
@@ -96,13 +94,11 @@ void opengl_init_structures() {
 
 void opengl_cleanup() {
 	// tears down OpenGL when it's no longer needed
-	if (using_opengl) {
-		glDeleteTextures( 1, &screenTexID );
-		
-		if (intbuffer) {
-			free(intbuffer);
-			intbuffer = NULL;
-		}
+	glDeleteTextures( 1, &screenTexID );
+	
+	if (intbuffer) {
+		free(intbuffer);
+		intbuffer = NULL;
 	}
 }
 
@@ -141,7 +137,6 @@ void video_init() {
 	video_set_params();
 	video_set_filter();
 	
-	using_opengl = (conf->video_renderer > 0);
 	linear_filter = (conf->video_renderer == 2);
 	
 	opengl_init_structures();
@@ -246,7 +241,6 @@ void video_create() {
 	int displayindex;
 	
 	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
-	Uint32 renderflags = SDL_RENDERER_ACCELERATED;//|SDL_RENDERER_PRESENTVSYNC;
 	
 	if(conf->video_fullscreen) {
 		SDL_ShowCursor(0);
@@ -279,12 +273,6 @@ void video_create() {
 	
 	SDL_GL_MakeCurrent(sdlwindow, glcontext);
 	
-	renderer = SDL_CreateRenderer(sdlwindow, -1, renderflags);
-	
-	if(renderer == NULL) {
-		fprintf(stderr, "Could not create renderer: %s\n", SDL_GetError());
-	}
-	
 	SDL_GL_SetSwapInterval(1);
 }
 
@@ -293,7 +281,7 @@ void video_set_filter() {
 	int scalefactor = conf->video_scale_factor;
 	
 	switch(conf->video_filter) {
-		case 0:	// None (no scaling unless OpenGL)
+		case 0:	// None
 			filter = Video::RenderState::FILTER_NONE;
 			break;
 
@@ -370,41 +358,19 @@ void video_set_params() {
 	switch(conf->video_filter)
 	{
 		case 0:	// None (no scaling unless OpenGL)
-			if (conf->video_renderer == 0)
-			{
-				if (scalefactor > 1)
-				{
-					//std::cout << "Warning: raw scale factors > 1 not allowed with pure software, use OpenGL\n";
-				}
-				basesize.w = rendersize.w = Video::Output::WIDTH;
-				basesize.h = rendersize.h = Video::Output::HEIGHT;
+			basesize.w = Video::Output::WIDTH;
+			basesize.h = Video::Output::HEIGHT;
+			conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
+			if (conf->video_mask_overscan) {
+				rendersize.h = (basesize.h * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
 			}
-			else
-			{
-				basesize.w = Video::Output::WIDTH;
-				basesize.h = Video::Output::HEIGHT;
-				conf->video_tv_aspect == TRUE ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
-				if (conf->video_mask_overscan) {
-					rendersize.h = (basesize.h * scalefactor) - ((OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor);
-				}
-				else {
-					rendersize.h = basesize.h * scalefactor;
-				}
+			else {
+				rendersize.h = basesize.h * scalefactor;
 			}
-
+			
 			break;
 
 		case 1: // NTSC
-			if (conf->video_renderer == 0)
-			{
-				if (scalefactor != 2)
-				{
-					//std::cout << "Warning: NTSC only runs at 2x scale in Software mode.\n";
-				}
-
-				scalefactor = 2;
-			}
-
 			basesize.w = Video::Output::NTSC_WIDTH;
 			rendersize.w = (basesize.w / 2) * scalefactor;
 			basesize.h = Video::Output::HEIGHT;
@@ -476,24 +442,17 @@ void video_set_params() {
 		rendersize.w = displaymode.w;
 	}
 	
-	//opengl_cleanup();
 	if (intbuffer) {
 		free(intbuffer);
 		intbuffer = NULL;
 	}
-	//intbuffer = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
 }
 
 long Linux_LockScreen(void*& ptr) {
-	//if (using_opengl) { // have the engine blit directly to our memory buffer
-		ptr = intbuffer;
-		return gl_w*4;
-	//}
+	ptr = intbuffer;
+	return gl_w*4;
 }
 
 void Linux_UnlockScreen(void*) {
-	
-	if (using_opengl) {
-		opengl_blit();
-	}
+	opengl_blit();
 }
