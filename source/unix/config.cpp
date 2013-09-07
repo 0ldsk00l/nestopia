@@ -58,7 +58,7 @@ void read_config_file() {
 		conf->video_tv_aspect = g_key_file_get_boolean(keyfile, "video", "tv_aspect", NULL);
 		conf->video_mask_overscan = g_key_file_get_boolean(keyfile, "video", "mask_overscan", NULL);
 		conf->video_fullscreen = g_key_file_get_boolean(keyfile, "video", "fullscreen", NULL);
-		conf->video_stretch_fullscreen = g_key_file_get_boolean(keyfile, "video", "stretch_fullscreen", NULL);
+		conf->video_preserve_aspect = g_key_file_get_boolean(keyfile, "video", "preserve_aspect", NULL);
 		conf->video_unlimited_sprites = g_key_file_get_boolean(keyfile, "video", "unlimited_sprites", NULL);
 	
 		// Audio
@@ -102,7 +102,7 @@ void write_config_file() {
 	g_key_file_set_boolean(keyfile, "video", "tv_aspect", conf->video_tv_aspect);
 	g_key_file_set_boolean(keyfile, "video", "mask_overscan", conf->video_mask_overscan);
 	g_key_file_set_boolean(keyfile, "video", "fullscreen", conf->video_fullscreen);
-	g_key_file_set_boolean(keyfile, "video", "stretch_fullscreen", conf->video_stretch_fullscreen);
+	g_key_file_set_boolean(keyfile, "video", "preserve_aspect", conf->video_preserve_aspect);
 	g_key_file_set_boolean(keyfile, "video", "unlimited_sprites", conf->video_unlimited_sprites);
 	
 	// Audio
@@ -144,7 +144,7 @@ void set_default_config() {
 	conf->video_tv_aspect = false;
 	conf->video_mask_overscan = false;
 	conf->video_fullscreen = false;
-	conf->video_stretch_fullscreen = true;
+	conf->video_preserve_aspect = false;
 	conf->video_unlimited_sprites = true;
 	
 	// Audio
