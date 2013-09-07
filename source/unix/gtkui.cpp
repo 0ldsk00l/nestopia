@@ -70,6 +70,7 @@ using namespace LinuxNst;
 
 extern Emulator emulator;
 extern settings *conf;
+extern SDL_Window *sdlwindow;
 
 static CheatMgr *sCheatMgr;
 
@@ -202,6 +203,7 @@ void configwindow_destroyed() {
 	}
 
 	redraw_drawingarea(rendersize.w, rendersize.h);
+	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
 void on_check_blendpix_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
