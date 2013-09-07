@@ -37,7 +37,7 @@
 
 #include <gtk/gtk.h>
 #include <gdk/gdkkeysyms.h>
-#include <gdk/gdkx.h>
+//#include <gdk/gdkx.h>
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -791,9 +791,9 @@ GtkWidget* create_mainwindow (int xres, int yres) {
 
 	gtk_widget_show_all(window);
 
-	char SDL_windowhack[24];
+	/*char SDL_windowhack[24];
 	snprintf(SDL_windowhack, sizeof(SDL_windowhack), "SDL_WINDOWID=%ld", GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
-	set_window_id(SDL_windowhack);
+	set_window_id(SDL_windowhack);*/
 	
 	gtk_widget_modify_bg(drawingarea, GTK_STATE_NORMAL, &bg);
 
