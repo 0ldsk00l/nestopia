@@ -41,13 +41,17 @@ void cli_show_usage() {
 	printf("\nOptions:\n");
 	printf("  -d, --disablegui        Disable GTK+ GUI\n");
 	printf("  -e, --enablegui         Enable GTK+ GUI\n\n");
-	printf("  -f, --fullscreen        Fullscreen mode (-f 0 for windowed mode)\n\n");
+	printf("  -f, --fullscreen        Fullscreen mode\n");
+	printf("  -w, --window            Window mode\n\n");
 	printf("  -l, --filter            Video Filter\n");
-	printf("                          (0=none, 1=ntsc, 2=xbr, 3=hqx, 4=2xsai, 5=scalex)\n\n");
-	printf("  -m, --maskoverscan      Mask Overscan areas (-m 0 to show overscan)\n\n");
+	printf("                          (0=None, 1=NTSC, 2=xBR, 3=HqX, 4=2xSaI, 5=ScaleX)\n\n");
+	printf("  -m, --maskoverscan      Mask overscan areas\n");
+	printf("  -n, --no-maskoverscan   Disable overscan masking\n\n");
 	printf("  -s, --scalefactor       Video scale factor (1-4)\n\n");
-	printf("  -t, --tvaspect          TV aspect ratio (-t 0 for normal aspect)\n\n");
-	printf("  -u, --unlimitedsprites  Remove sprite limit (-u 0 to limit sprites)\n\n");
+	printf("  -t, --tvaspect          TV aspect ratio\n");
+	printf("  -r, --no-tvaspect       Regular aspect ratio\n\n");
+	printf("  -u, --unlimitedsprites  Remove sprite limit\n");
+	printf("  -q, --limitedsprites    Enable sprite limit\n\n");
 	printf("  -v, --version           Show version information\n\n");
 	printf("More options can be set in the configuration file.\n");
 	printf("Options are saved, and do not need to be set on future invocations.\n\n");
@@ -65,20 +69,24 @@ void cli_handle_command(int argc, char *argv[]) {
 		static struct option long_options[] = {
 			{"disablegui", no_argument, 0, 'd'},
 			{"enablegui", no_argument, 0, 'e'},
-			{"fullscreen", optional_argument, 0, 'f'},
+			{"fullscreen", no_argument, 0, 'f'},
+			{"window", no_argument, 0, 'w'},
 			{"help", no_argument, 0, 'h'},
 			{"filter", required_argument, 0, 'l'},
-			{"maskoverscan", optional_argument, 0, 'm'},
+			{"maskoverscan", no_argument, 0, 'm'},
+			{"no-maskoverscan", no_argument, 0, 'n'},
 			{"scalefactor", required_argument, 0, 's'},
-			{"tvaspect", optional_argument, 0, 't'},
-			{"unlimitedsprites", optional_argument, 0, 'u'},
+			{"tvaspect", no_argument, 0, 't'},
+			{"no-tvaspect", no_argument, 0, 'r'},
+			{"unlimitedsprites", no_argument, 0, 'u'},
+			{"limitedsprites", no_argument, 0, 'q'},
 			{"version", no_argument, 0, 'v'},
 			{0, 0, 0, 0}
 		};
 		
 		int option_index = 0;
 		
-		c = getopt_long(argc, argv, "defhl:m:s:t:u:v",
+		c = getopt_long(argc, argv, "defhl:mnqrs:tuvw",
 			long_options, &option_index);
 		
 		if (c == -1) { break; }
@@ -93,12 +101,11 @@ void cli_handle_command(int argc, char *argv[]) {
 				break;
 			
 			case 'f':
-				if (optarg && atoi(optarg) == 0) {
-					conf->video_fullscreen = false;
-				}
-				else {
-					conf->video_fullscreen = true;
-				}
+				conf->video_fullscreen = true;
+				break;
+			
+			case 'w':
+				conf->video_fullscreen = false;
 				break;
 			
 			case 'h':
@@ -117,12 +124,11 @@ void cli_handle_command(int argc, char *argv[]) {
 				break;
 			
 			case 'm':
-				if (optarg && atoi(optarg) == 0) {
-					conf->video_mask_overscan = false;
-				}
-				else {
-					conf->video_mask_overscan = true;
-				}
+				conf->video_mask_overscan = true;
+				break;
+			
+			case 'n':
+				conf->video_mask_overscan = false;
 				break;
 			
 			case 's':
@@ -136,21 +142,19 @@ void cli_handle_command(int argc, char *argv[]) {
 				break;
 			
 			case 't':
-				if (optarg && atoi(optarg) == 0) {
-					conf->video_tv_aspect = false;
-				}
-				else {
-					conf->video_tv_aspect = true;
-				}
+				conf->video_tv_aspect = true;
+				break;
+			
+			case 'r':
+				conf->video_tv_aspect = false;
 				break;
 			
 			case 'u':
-				if (optarg && atoi(optarg) == 0) {
-					conf->video_unlimited_sprites = false;
-				}
-				else {
-					conf->video_unlimited_sprites = true;
-				}
+				conf->video_unlimited_sprites = true;
+				break;
+			
+			case 'q':
+				conf->video_unlimited_sprites = false;
 				break;
 			
 			case 'v':
