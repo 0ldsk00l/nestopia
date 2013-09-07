@@ -47,6 +47,8 @@ void cli_show_usage() {
 	printf("                          (0=None, 1=NTSC, 2=xBR, 3=HqX, 4=2xSaI, 5=ScaleX)\n\n");
 	printf("  -m, --maskoverscan      Mask overscan areas\n");
 	printf("  -n, --no-maskoverscan   Disable overscan masking\n\n");
+	printf("  -o, --stretchfs         Stretch to native resolution in fullscreen mode\n");
+	printf("  -p, --preserveaspect    Preserve aspect ratio in fullscreen mode\n\n");
 	printf("  -s, --scalefactor       Video scale factor (1-4)\n\n");
 	printf("  -t, --tvaspect          TV aspect ratio\n");
 	printf("  -r, --no-tvaspect       Regular aspect ratio\n\n");
@@ -75,6 +77,8 @@ void cli_handle_command(int argc, char *argv[]) {
 			{"filter", required_argument, 0, 'l'},
 			{"maskoverscan", no_argument, 0, 'm'},
 			{"no-maskoverscan", no_argument, 0, 'n'},
+			{"stretchfs", no_argument, 0, 'o'},
+			{"preserveaspect", no_argument, 0, 'p'},
 			{"scalefactor", required_argument, 0, 's'},
 			{"tvaspect", no_argument, 0, 't'},
 			{"no-tvaspect", no_argument, 0, 'r'},
@@ -86,7 +90,7 @@ void cli_handle_command(int argc, char *argv[]) {
 		
 		int option_index = 0;
 		
-		c = getopt_long(argc, argv, "defhl:mnqrs:tuvw",
+		c = getopt_long(argc, argv, "defhl:mnopqrs:tuvw",
 			long_options, &option_index);
 		
 		if (c == -1) { break; }
@@ -129,6 +133,14 @@ void cli_handle_command(int argc, char *argv[]) {
 			
 			case 'n':
 				conf->video_mask_overscan = false;
+				break;
+			
+			case 'o':
+				conf->video_preserve_aspect = false;
+				break;
+			
+			case 'p':
+				conf->video_preserve_aspect = true;
 				break;
 			
 			case 's':

@@ -14,7 +14,7 @@ typedef struct {
 	gboolean video_tv_aspect;
 	gboolean video_mask_overscan;
 	gboolean video_fullscreen;
-	gboolean video_stretch_fullscreen;
+	gboolean video_preserve_aspect;
 	gboolean video_unlimited_sprites;
 	
 	// Audio

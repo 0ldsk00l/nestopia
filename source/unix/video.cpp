@@ -399,8 +399,15 @@ void video_set_params() {
 	if (conf->video_mask_overscan) {
 		rendersize.h -= (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
 	}
-
-	if (conf->video_fullscreen && sdlwindow) {
+	
+	// Calculate the aspect from the height because it's smaller
+	float aspect = (float)displaymode.h / (float)rendersize.h;
+	
+	if (conf->video_preserve_aspect && conf->video_fullscreen && sdlwindow) {
+		rendersize.h *= aspect;
+		rendersize.w *= aspect;
+	}
+	else if (conf->video_fullscreen && sdlwindow) {
 		rendersize.h = displaymode.h;
 		rendersize.w = displaymode.w;
 	}
