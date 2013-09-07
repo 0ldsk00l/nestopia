@@ -215,7 +215,7 @@ void on_check_fullscreen_toggled(GtkToggleButton *togglebutton, gpointer user_da
 }
 
 void on_check_fsnativeres_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
-	conf->video_stretch_fullscreen = gtk_toggle_button_get_active(togglebutton);
+	conf->video_preserve_aspect = gtk_toggle_button_get_active(togglebutton);
 }
 
 void on_check_tvaspect_toggled(GtkToggleButton *togglebutton, gpointer user_data) {
@@ -899,7 +899,7 @@ GtkWidget* create_config(void) {
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_fullscreen), conf->video_fullscreen);
 	
 	GtkWidget *check_stretchfullscreen = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Stretch when Fullscreen", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_stretchfullscreen), conf->video_stretch_fullscreen);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_stretchfullscreen), conf->video_preserve_aspect);
 
 	GtkWidget *unlimitsprcheck = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Unlimited Sprites", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(unlimitsprcheck), conf->video_unlimited_sprites);
