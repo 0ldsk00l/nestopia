@@ -168,6 +168,40 @@ void video_init() {
 	
 	// set the sprite limit
 	video.EnableUnlimSprites(conf->video_unlimited_sprites ? false : true);
+	
+	// Set NTSC options
+	switch (conf->video_ntsc_mode) {
+		case 0:	// Composite
+			video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
+			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_COMP);
+			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_COMP);
+			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_COMP);
+			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_COMP);
+			break;
+
+		case 1:	// S-Video
+			video.SetSharpness(Video::DEFAULT_SHARPNESS_SVIDEO);
+			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
+			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_SVIDEO);
+			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
+			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_SVIDEO);
+			break;
+
+		case 2:	// RGB
+			video.SetSharpness(Video::DEFAULT_SHARPNESS_RGB);
+			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_RGB);
+			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_RGB);
+			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_RGB);
+			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
+			break;
+	}
+	
+	// Set xBR options
+	if (conf->video_filter == 2) {
+		video.SetCornerRounding(conf->video_xbr_corner_rounding);
+		video.SetBlend(conf->video_xbr_pixel_blending);
+	}
+	
 	video.ClearFilterUpdateFlag();
 	
 	// set the render state
@@ -310,6 +344,7 @@ void video_set_filter() {
 					filter = Video::RenderState::FILTER_NONE;
 					break;
 			}
+			break;
 
 		case 3: // scale HQx
 			switch (scalefactor) {
