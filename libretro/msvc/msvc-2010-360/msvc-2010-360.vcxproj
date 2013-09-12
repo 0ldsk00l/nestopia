@@ -298,7 +298,7 @@
     <ClCompile Include="..\..\..\source\core\NstVector.cpp" />
     <ClCompile Include="..\..\..\source\core\NstVideoFilterNone.cpp" />
     <ClCompile Include="..\..\..\source\core\NstVideoFilterNtsc.cpp" />
-    <ClCompile Include="..\..\..\source\core\NstVideoFilterNtscCfg.c" />
+    <ClCompile Include="..\..\..\source\core\NstVideoFilterNtscCfg.cpp" />
     <ClCompile Include="..\..\..\source\core\NstVideoRenderer.cpp" />
     <ClCompile Include="..\..\..\source\core\NstVideoScreen.cpp" />
     <ClCompile Include="..\..\..\source\core\NstXml.cpp" />

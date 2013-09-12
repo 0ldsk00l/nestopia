@@ -974,7 +974,7 @@
     <ClCompile Include="..\source\core\NstVideoFilterNtsc.cpp">
       <Filter>VideoFilters</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\core\NstVideoFilterNtscCfg.c">
+    <ClCompile Include="..\source\core\NstVideoFilterNtscCfg.cpp">
       <Filter>VideoFilters</Filter>
     </ClCompile>
     <ClCompile Include="..\source\core\NstVideoFilterScaleX.cpp">
