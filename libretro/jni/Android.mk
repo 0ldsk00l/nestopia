@@ -35,7 +35,7 @@ OBJS += $(NST_DIR)/source/core/NstChips.cpp            $(NST_DIR)/source/core/Ns
 OBJS += $(NST_DIR)/source/core/NstCore.cpp             $(NST_DIR)/source/core/NstPatcherIps.cpp     $(NST_DIR)/source/core/NstTracker.cpp          
 OBJS += $(NST_DIR)/source/core/NstCpu.cpp              $(NST_DIR)/source/core/NstPatcherUps.cpp     $(NST_DIR)/source/core/NstTrackerMovie.cpp
 OBJS += $(NST_DIR)/source/core/NstCrc32.cpp            $(NST_DIR)/source/core/NstPins.cpp           $(NST_DIR)/source/core/NstTrackerRewinder.cpp
-OBJS += $(NST_DIR)/source/core/NstVideoFilterNtscCfg.c					$(NST_DIR)/source/core/NstVideoFilterNtsc.cpp
+OBJS += $(NST_DIR)/source/core/NstVideoFilterNtscCfg.cpp				$(NST_DIR)/source/core/NstVideoFilterNtsc.cpp
 
 # core/api
 OBJS += $(NST_DIR)/source/core/api/NstApiBarcodeReader.cpp  $(NST_DIR)/source/core/api/NstApiEmulator.cpp  $(NST_DIR)/source/core/api/NstApiMovie.cpp     $(NST_DIR)/source/core/api/NstApiTapeRecorder.cpp

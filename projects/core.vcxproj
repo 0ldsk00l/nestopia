@@ -464,7 +464,7 @@
     <ClCompile Include="..\source\core\NstVideoFilterHqX.cpp" />
     <ClCompile Include="..\source\core\NstVideoFilterNone.cpp" />
     <ClCompile Include="..\source\core\NstVideoFilterNtsc.cpp" />
-    <ClCompile Include="..\source\core\NstVideoFilterNtscCfg.c" />
+    <ClCompile Include="..\source\core\NstVideoFilterNtscCfg.cpp" />
     <ClCompile Include="..\source\core\NstVideoFilterScaleX.cpp" />
     <ClCompile Include="..\source\core\input\NstInpAdapter.cpp" />
     <ClCompile Include="..\source\core\input\NstInpBandaiHyperShot.cpp" />

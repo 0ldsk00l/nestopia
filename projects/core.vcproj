@@ -398,7 +398,7 @@
 				>
 			</File>
 			<File
-				RelativePath="..\source\core\NstVideoFilterNtscCfg.c"
+				RelativePath="..\source\core\NstVideoFilterNtscCfg.cpp"
 				>
 			</File>
 			<File
