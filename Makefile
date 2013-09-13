@@ -1,16 +1,19 @@
-CC   = gcc
-CXX  = g++
+CC = gcc
+CXX = g++
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
 CPPFLAGS += -Isource -Isource/core -Isource/core/api -Isource/core/board -Isource/core/input
 CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc
 SDL_CFLAGS = $(shell sdl2-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
-CXXFLAGS += $(SDL_CFLAGS) $(GTK_CFLAGS)
 CXXFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
+CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
 UNAME := $(shell uname)
 
 LDFLAGS += -Wl,--as-needed
+LIBS = -lstdc++ -lm -lz -larchive
+LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
+LIBS += -lGL -lGLU -lX11
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
@@ -18,38 +21,15 @@ DATADIR = $(PREFIX)/share/nestopia
 BIN = nestopia
 
 ifeq ($(UNAME), Linux)
-	CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
-	CXXFLAGS += -Wno-switch -Wno-sign-compare -Wno-unused-function -Wno-parentheses -Wno-narrowing -Wno-unused-variable
-	CXXFLAGS += -Wno-delete-non-virtual-dtor -Wno-unused-local-typedefs -Wno-unknown-pragmas -Wno-reorder -Wno-array-bounds
-	LIBS = -lstdc++ -lm -lz -larchive -lasound $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
+	LIBS += -lasound
+	CPPFLAGS += -DOSS_ALSA
 endif
-ifneq ($(UNAME), Linux)
-	CXXFLAGS += -Wno-deprecated -Wno-write-strings -fno-rtti
-	LIBS = -lstdc++ -lm -lz -larchive $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
-	CPPFLAGS += -DBSD
-endif
-
-# OpenGL Support
-CPPFLAGS += -DINCLUDE_OPENGL
-LIBS   += -lGL -lGLU -lX11
 
 # Allow files to go into a data directory
 CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
-# Unix objs
-OBJS = objs/unix/main.o
-OBJS += objs/unix/cli.o
-OBJS += objs/unix/gtkui.o
-OBJS += objs/unix/audio.o
-OBJS += objs/unix/video.o
-OBJS += objs/unix/input.o
-OBJS += objs/unix/fileio.o
-OBJS += objs/unix/cheats.o
-OBJS += objs/unix/config.o
-OBJS += objs/unix/seffect.o
-
 # Core
-OBJS += objs/core/NstApu.o
+OBJS = objs/core/NstApu.o
 OBJS += objs/core/NstAssert.o
 OBJS += objs/core/NstCartridge.o
 OBJS += objs/core/NstCartridgeInes.o
@@ -342,26 +322,42 @@ OBJS += objs/core/vssystem/NstVsSuperXevious.o
 OBJS += objs/core/vssystem/NstVsSystem.o
 OBJS += objs/core/vssystem/NstVsTkoBoxing.o
 
+# Interface
+IOBJS = objs/unix/main.o
+IOBJS += objs/unix/cli.o
+IOBJS += objs/unix/gtkui.o
+IOBJS += objs/unix/audio.o
+IOBJS += objs/unix/video.o
+IOBJS += objs/unix/input.o
+IOBJS += objs/unix/fileio.o
+IOBJS += objs/unix/cheats.o
+IOBJS += objs/unix/config.o
+IOBJS += objs/unix/seffect.o
+
 # object dirs
 OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc objs/unix
 
-# build rules
-objs/%.o: source/%.cpp
-	@echo Compiling $<...
+# Core rules
+objs/core/%.o: source/core/%.cpp
 	$(CXX) $(CPPFLAGS) $(CXXFLAGS) -c $< -o $@
 
+# Interface rules
+objs/unix/%.o: source/unix/%.cpp
+	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(SDL_CFLAGS) $(GTK_CFLAGS) -c $< -o $@
+
 all: maketree $(BIN)
+
+core: maketree $(OBJS)
+
+interface: maketree $(IOBJS)
 
 maketree: $(sort $(OBJDIRS))
 
 $(sort $(OBJDIRS)):
-	@echo Creating output directory $@
 	@mkdir $@
 
-# link the commandline binary
-$(BIN): $(OBJS)
-	@echo Linking $@...
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $(BIN) $^ $(LIBS)
+$(BIN): $(OBJS) $(IOBJS)
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $(BIN)
 
 install:
 	mkdir -p $(DATADIR)/icons
@@ -381,4 +377,4 @@ uninstall:
 	rm -rf $(DATADIR)
 
 clean:
-	-@rm -f $(OBJS) $(BIN)
+	rm -f $(OBJS) $(IOBJS) $(BIN)

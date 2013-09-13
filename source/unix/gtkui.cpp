@@ -922,7 +922,7 @@ GtkWidget* create_config(void) {
     // The Audio stuff
     GtkWidget *audiobox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
     
-    #ifndef BSD    
+    #ifdef OSS_ALSA    
     GtkWidget *sndapilabel = gtk_widget_new(GTK_TYPE_LABEL, "xalign", 0.0, "margin-top", 10, "margin-bottom", 5, "margin-left", 10, NULL);
 	gtk_label_set_markup(GTK_LABEL(sndapilabel), "<b>Sound API</b>");
 	
@@ -984,7 +984,7 @@ GtkWidget* create_config(void) {
 	GtkWidget *excitecheck = gtk_widget_new(GTK_TYPE_CHECK_BUTTON, "label", "Stereo Exciter", "halign", GTK_ALIGN_START, "margin-left", 10, NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(excitecheck), conf->audio_stereo_exciter);
 	
-	#ifndef BSD
+	#ifdef OSS_ALSA
 	gtk_box_pack_start(GTK_BOX(audiobox), sndapilabel, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(audiobox), sndapicombo, FALSE, FALSE, 0);
 	#endif
@@ -1180,7 +1180,7 @@ GtkWidget* create_config(void) {
 
 	g_signal_connect(G_OBJECT(ratecombo), "configure_event",
 		G_CALLBACK(on_ratecombo_configure_event), NULL);
-	#ifndef BSD
+	#ifdef OSS_ALSA
 	g_signal_connect(G_OBJECT(sndapicombo), "changed",
 		G_CALLBACK(on_sndapicombo_changed), NULL);
 	#endif
