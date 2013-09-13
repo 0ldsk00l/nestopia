@@ -1,32 +1,31 @@
 CC = gcc
 CXX = g++
 CXXFLAGS ?= -O3 -g3
-CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -D_SZ_ONE_DIRECTORY
-CPPFLAGS += -Isource -Isource/core -Isource/core/api -Isource/core/board -Isource/core/input
-CPPFLAGS += -Isource/core/vssystem -Isource/unix -Isource/nes_ntsc -I.. -I../nes_ntsc
+CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -DNST_NO_ZLIB -D_SZ_ONE_DIRECTORY
 SDL_CFLAGS = $(shell sdl2-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
-CXXFLAGS += -finline-limit=2000 --param inline-unit-growth=1000 --param large-function-growth=1000 -finline-functions-called-once
-CXXFLAGS += -Wno-deprecated -Wno-unused-result -Wno-write-strings -fno-rtti
-UNAME := $(shell uname)
+
+INCLUDES += -Isource
+WARNINGS += -Wno-deprecated -Wno-write-strings
 
 LDFLAGS += -Wl,--as-needed
 LIBS = -lstdc++ -lm -lz -larchive
 LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
-LIBS += -lGL -lGLU -lX11
+LIBS += -lGL -lGLU
+
+UNAME := $(shell uname)
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share/nestopia
 BIN = nestopia
 
+DEFINES = -DDATADIR=\"$(DATADIR)\"
+
 ifeq ($(UNAME), Linux)
 	LIBS += -lasound
-	CPPFLAGS += -DOSS_ALSA
+	DEFINES += -DOSS_ALSA
 endif
-
-# Allow files to go into a data directory
-CPPFLAGS += -DDATADIR=\"$(DATADIR)\"
 
 # Core
 OBJS = objs/core/NstApu.o
@@ -343,7 +342,7 @@ objs/core/%.o: source/core/%.cpp
 
 # Interface rules
 objs/unix/%.o: source/unix/%.cpp
-	$(CXX) $(CPPFLAGS) $(CXXFLAGS) $(SDL_CFLAGS) $(GTK_CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(SDL_CFLAGS) $(GTK_CFLAGS) -c $< -o $@
 
 all: maketree $(BIN)
 
