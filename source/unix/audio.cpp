@@ -38,7 +38,7 @@
 static INT32 num_frags;
 #define OSS_FRAGMENT (0x000D | (num_frags<<16));  // 16k fragments (2 * 2^14).
 
-#ifndef BSD // Don't include ALSA if the OS is BSD
+#ifdef OSS_ALSA // Only include OSS and ALSA if the OS is Linux
 #include <sys/soundcard.h>
 #define ALSA_PCM_NEW_HW_PARAMS_API
 #define ALSA_PCM_NEW_SW_PARAMS_API
@@ -59,7 +59,7 @@ int audiofd;
 
 extern settings *conf;
 
-#ifndef BSD
+#ifdef OSS_ALSA
 static snd_pcm_t *pHandle = NULL;
 #endif
 
@@ -209,7 +209,7 @@ void m1sdr_Update(void)
 void m1sdr_TimeCheck(void)
 {
 	int timeout;
-#ifndef BSD
+#ifdef OSS_ALSA
 	snd_pcm_sframes_t delay = 0;
 #endif
 
@@ -225,7 +225,7 @@ void m1sdr_TimeCheck(void)
 
 		SDL_UnlockAudio();
 		break;  
-#ifndef BSD
+#ifdef OSS_ALSA
 	case 1:	// ALSA
 		if ((!pHandle) || (!oss_playing))
 		{
@@ -307,7 +307,7 @@ INT16 m1sdr_Init(int sample_rate)
 {	
 	int format, stereo, rate, fsize, err;
 	unsigned int nfreq, periodtime;
-#ifndef BSD
+#ifdef OSS_ALSA
 	snd_pcm_hw_params_t *hwparams;
 #endif
 
@@ -343,7 +343,7 @@ INT16 m1sdr_Init(int sample_rate)
 		// make sure we don't start yet
 		SDL_PauseAudio(1);
 		break;
-#ifndef BSD				
+#ifdef OSS_ALSA				
 	case 1:	// ALSA
 
 		// Try to open audio device
@@ -491,7 +491,7 @@ void m1sdr_Exit(void)
 			}
 		}
 		break;	
-#ifndef BSD
+#ifdef OSS_ALSA
 	case 1:	// ALSA
 		snd_pcm_close(pHandle);
 		break;
