@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 CXXFLAGS ?= -O3 -g3
-CPPFLAGS += -DNST_PRAGMA_ONCE_SUPPORT -DNST_NO_ZLIB -D_SZ_ONE_DIRECTORY
+CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
 SDL_CFLAGS = $(shell sdl2-config --cflags)
 GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
 
@@ -356,7 +356,7 @@ $(sort $(OBJDIRS)):
 	@mkdir $@
 
 $(BIN): $(OBJS) $(IOBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ $(LIBS) -o $(BIN)
+	$(CC) $(LDFLAGS) $^ $(LIBS) -o $(BIN)
 
 install:
 	mkdir -p $(DATADIR)/icons
