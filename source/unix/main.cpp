@@ -278,27 +278,29 @@ void NstStopPlaying()
 std::string svst[2];
 
 // generate the filename for quicksave files
-std::string StrQuickSaveFile(int isvst)
-{
+std::string StrQuickSaveFile(int isvst) {
+	
+	std::ostringstream ossFile;
+#ifndef MINGW
 	const char *home = getenv("HOME");
-	if (!home)
-		{
+	
+	if (!home) {
 		std::cout << "couldn't get home directory\n";
 		return "";
-		}
-	std::ostringstream ossFile;
+	}
+	
 	ossFile << home;
-	ossFile << "/.nestopia/qsave";
-
-	if (mkdir(ossFile.str().c_str(), 0777) && errno != EEXIST)
-		{
+#endif
+	ossFile << "qsave";
+#ifndef MINGW
+	if (mkdir(ossFile.str().c_str(), 0777) && errno != EEXIST) {
 		std::cout << "couldn't make qsave directory: " << errno << "\n";
 		return "";
-		}
-      	
+	}
+#endif
 	ossFile << "/" << std::setbase(16) << std::setfill('0') << std::setw(8)
 		<< basename(gamebasename) << std::string("_") << isvst << ".nst";
-
+	
 	return ossFile.str();
 }
 

@@ -33,11 +33,13 @@ static gsize length;
 char confpath[256];
 	
 void read_config_file() {
-	
+#ifdef MINGW
+	snprintf(confpath, sizeof(confpath), "nestopia.conf");
+#else	
 	char *homedir;
-
 	homedir = getenv("HOME");
 	snprintf(confpath, sizeof(confpath), "%s/.nestopia/nestopia.conf", homedir);
+#endif
 	
 	keyfile = g_key_file_new();
 	
