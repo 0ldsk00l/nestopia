@@ -142,7 +142,7 @@ void set_default_config() {
 	
 	conf->video_xbr_pixel_blending = true;
 	conf->video_tv_aspect = false;
-	conf->video_mask_overscan = false;
+	conf->video_mask_overscan = true;
 	conf->video_fullscreen = false;
 	conf->video_preserve_aspect = false;
 	conf->video_unlimited_sprites = true;

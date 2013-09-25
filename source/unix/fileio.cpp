@@ -42,10 +42,8 @@
 #include "audio.h"
 #include "main.h"
 
-extern "C" {
 #include <archive.h>
 #include <archive_entry.h>
-}
 
 #define MAX_ITEMS	(512)
 
