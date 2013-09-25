@@ -22,6 +22,7 @@
  */
 
 #include <stdlib.h>
+#include <unistd.h>
 #include <SDL.h>
 #include <iostream>
 #include <fstream>

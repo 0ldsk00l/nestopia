@@ -20,7 +20,10 @@
  * MA 02110-1301, USA.
  * 
  */
- 
+
+#include <stdio.h>
+#include <stdlib.h>
+
 #include <SDL.h>
 #include <SDL_endian.h>
 #include "GL/glu.h"

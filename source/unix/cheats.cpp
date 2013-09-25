@@ -493,7 +493,7 @@ void on_cheatopen_clicked(GtkButton *button, gpointer user_data)
 
 					if (const Xml::Node address=node.GetChild( L"address" ))
 					{
-						uint v;
+						unsigned int v;
 
 						if (0xFFFF < (v=address.GetUnsignedValue()))
 							continue;

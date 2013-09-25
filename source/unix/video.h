@@ -1,6 +1,7 @@
 #ifndef _VIDEO_H_
 #define _VIDEO_H_
 
+#define TV_WIDTH 292
 #define OVERSCAN_LEFT 0
 #define OVERSCAN_RIGHT 0
 #define OVERSCAN_BOTTOM 8

@@ -3,8 +3,6 @@
 
 #define VERSION "1.46-WIP"
 
-#define TV_WIDTH 292
-
 void NstPlayGame();
 void NstScheduleQuit();
 void NstStopPlaying();
