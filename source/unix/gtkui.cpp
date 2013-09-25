@@ -531,8 +531,11 @@ void gtkui_init(int argc, char *argv[], int xres, int yres)
 
 	// set up the icon
 	char iconpath[1024];
+#ifdef MINGW
+	snprintf(iconpath, sizeof(iconpath), "nestopia.svg");
+#else
 	snprintf(iconpath, sizeof(iconpath), "%s/icons/nestopia.svg", DATADIR);
-	
+#endif
 	// Load the icon from local source dir if make install hasn't been done
 	struct stat iconstat;
 	if (stat(iconpath, &iconstat) == -1) {
@@ -1002,7 +1005,11 @@ GtkWidget* create_config(void) {
 	GtkWidget *inputbox = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 
 	char svgpath[1024];
+#ifdef MINGW
+	snprintf(svgpath, sizeof(svgpath), "nespad.svg");
+#else
 	snprintf(svgpath, sizeof(svgpath), "%s/icons/nespad.svg", DATADIR);
+#endif
 	
 	// Load the NES pad svg from local source dir if make install hasn't been done
 	struct stat svgstat;
@@ -1311,7 +1318,11 @@ GtkWidget* create_config(void) {
 GtkWidget* create_about (void) {
 
 	char svgpath[1024];
-	snprintf(svgpath, sizeof(svgpath), "%s/icons/nestopia.svg", DATADIR);
+#ifdef MINGW
+	snprintf(svgpath, sizeof(svgpath), "nespad.svg");
+#else
+	snprintf(svgpath, sizeof(svgpath), "%s/icons/nespad.svg", DATADIR);
+#endif
 	
 	// Load the SVG from local source dir if make install hasn't been done
 	struct stat svgstat;

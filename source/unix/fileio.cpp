@@ -42,8 +42,10 @@
 #include "audio.h"
 #include "main.h"
 
+#ifndef MINGW
 #include <archive.h>
 #include <archive_entry.h>
+#endif
 
 #define MAX_ITEMS	(512)
 
@@ -398,6 +400,7 @@ int fileio_load_archive(const char *filename, unsigned char **dataout, int *data
 		((idbuf[0] == 0x1f) && (idbuf[1] == 0x8b) && (idbuf[2] == 0x08) && (idbuf[3] == 0x00)) || // tgz
 		((idbuf[0] == 0x42) && (idbuf[1] == 0x5a) && (idbuf[2] == 0x68) && (idbuf[3] == 0x39)) // tbz
 	) {
+	#ifndef MINGW
 		a = archive_read_new();
 		archive_read_support_filter_all(a);
 		archive_read_support_format_all(a);
@@ -442,7 +445,7 @@ int fileio_load_archive(const char *filename, unsigned char **dataout, int *data
 				}
 			}
 		}
-
+	#endif
 	}
 	
 	else if ((idbuf[0] == 'R') && (idbuf[1] == 'a') && (idbuf[2] == 'r') && (idbuf[3] == '!')) 
@@ -594,11 +597,13 @@ void fileio_load_db(void)
 	{
 		return;
 	}
-
+#ifdef MINGW
+	snprintf(datadirname, sizeof(datadirname), "NstDatabase.xml");
+#else
 	pwd = getenv("PWD");
 	snprintf(dirname, sizeof(dirname), "%s/NstDatabase.xml", pwd);
 	snprintf(datadirname, sizeof(datadirname), "%s/NstDatabase.xml", DATADIR);
-
+#endif
 	nstDBFile = new std::ifstream(datadirname, std::ifstream::in|std::ifstream::binary);
 
 	if (nstDBFile->is_open())

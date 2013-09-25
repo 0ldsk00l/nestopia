@@ -8,19 +8,27 @@ GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
 INCLUDES += -Isource
 WARNINGS += -Wno-deprecated -Wno-write-strings
 
-LDFLAGS += -Wl,--as-needed
-LIBS = -lstdc++ -lm -lz -larchive
+LDFLAGS = -Wl,--as-needed
+LIBS = -lstdc++ -lm -lz
 LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
-LIBS += -lGL -lGLU
 
 UNAME := $(shell uname)
+
+BIN = nestopia
 
 PREFIX = /usr/local
 BINDIR = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share/nestopia
-BIN = nestopia
 
-DEFINES = -DDATADIR=\"$(DATADIR)\"
+ifneq ($(findstring MINGW,$(UNAME)),)
+	DEFINES = -DMINGW
+	LDFLAGS += -mconsole
+	LIBS += -lopengl32
+else
+	DEFINES = -DDATADIR=\"$(DATADIR)\"
+	LIBS += -larchive
+	LIBS += -lGL -lGLU
+endif
 
 ifeq ($(UNAME), Linux)
 	LIBS += -lasound

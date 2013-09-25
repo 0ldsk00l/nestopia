@@ -387,12 +387,13 @@ int input_checksign(int axisvalue) {
 }
 
 void input_read_config() {
-	
+#ifdef MINGW
+	snprintf(inputconfpath, sizeof(inputconfpath), "input.conf");
+#else	
 	char *homedir;
-
 	homedir = getenv("HOME");
 	snprintf(inputconfpath, sizeof(inputconfpath), "%s/.nestopia/input.conf", homedir);
-	
+#endif
 	inputfile = g_key_file_new();
 	
 	flags = G_KEY_FILE_KEEP_COMMENTS;

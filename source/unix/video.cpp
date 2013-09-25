@@ -25,6 +25,7 @@
 #include <stdlib.h>
 
 #include <SDL.h>
+#include <SDL_opengl.h>
 #include <SDL_endian.h>
 #include "GL/glu.h"
 
