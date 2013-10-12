@@ -62,6 +62,9 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	
 	const Uint8 *keybuffer = SDL_GetKeyboardState(NULL);
 	Uint8 *keys = (Uint8*)keybuffer;
+
+	int x, y;
+	SDL_GetMouseState(&x, &y);
 	
 	// Process non-game events
 	if (keys[SDL_SCANCODE_F1]) { FlipFDSDisk(); }
@@ -99,6 +102,26 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 		case SDL_JOYAXISMOTION:
 		case SDL_JOYHATMOTION:
 			input_match_joystick(controllers, event);
+			break;
+
+		case SDL_MOUSEBUTTONUP:
+			controllers->zapper.fire = false;
+			break;
+			
+		case SDL_MOUSEBUTTONDOWN:
+			if (conf->video_mask_overscan) {
+				controllers->zapper.y = (y + OVERSCAN_TOP * conf->video_scale_factor) / conf->video_scale_factor;
+			}
+			else {
+				controllers->zapper.y = y / conf->video_scale_factor;
+			}
+
+			controllers->zapper.x = x / conf->video_scale_factor;
+
+			// Offscreen
+			if(event.button.button != SDL_BUTTON_LEFT) { controllers->zapper.x = ~1U; }
+			
+			controllers->zapper.fire = true;
 			break;
 			
 		default: break;

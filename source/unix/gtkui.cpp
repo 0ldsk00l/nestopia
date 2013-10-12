@@ -1319,9 +1319,9 @@ GtkWidget* create_about (void) {
 
 	char svgpath[1024];
 #ifdef MINGW
-	snprintf(svgpath, sizeof(svgpath), "nespad.svg");
+	snprintf(svgpath, sizeof(svgpath), "nestopia.svg");
 #else
-	snprintf(svgpath, sizeof(svgpath), "%s/icons/nespad.svg", DATADIR);
+	snprintf(svgpath, sizeof(svgpath), "%s/icons/nestopia.svg", DATADIR);
 #endif
 	
 	// Load the SVG from local source dir if make install hasn't been done
