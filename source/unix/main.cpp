@@ -63,6 +63,7 @@
 #include "cheats.h"
 #include "config.h"
 #include "seffect.h"
+#include "cursor.h"
 
 using namespace Nes::Api;
 using namespace LinuxNst;
@@ -856,6 +857,9 @@ void SetupInput()
 
 	// connect the Zapper to port 2
 	Input(emulator).ConnectController( 1, Input::ZAPPER );
+
+	// Set the crosshair
+	cursor_set_crosshair();
 }
 
 void configure_savename( const char* filename )
