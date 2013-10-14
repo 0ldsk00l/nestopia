@@ -8,6 +8,7 @@ Unix Shell:
   - Disable GUI option
   - Command line interface
   - Scale Factor and Filters can be changed while playing
+  - Zapper support
 
  Changes:
   - Ported to SDL 2.0

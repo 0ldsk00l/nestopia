@@ -340,6 +340,7 @@ IOBJS += objs/unix/fileio.o
 IOBJS += objs/unix/cheats.o
 IOBJS += objs/unix/config.o
 IOBJS += objs/unix/seffect.o
+IOBJS += objs/unix/cursor.o
 
 # object dirs
 OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc objs/unix
