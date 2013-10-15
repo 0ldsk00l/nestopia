@@ -29,4 +29,6 @@ void QuickLoad(int isvst);
 void QuickSave(int isvst);
 void NstScheduleQuit();
 
+void set_rewinder_direction(int direction);
+
 #endif

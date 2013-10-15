@@ -816,6 +816,21 @@ void main_set_framerate() {
 	}
 }
 
+void set_rewinder_direction(int direction) {
+	// Set the rewinder backward or forward
+	switch (direction) {
+		case 0:
+			Rewinder(emulator).SetDirection(Rewinder::BACKWARD);
+			break;
+			
+		case 1:
+			Rewinder(emulator).SetDirection(Rewinder::FORWARD);
+			break;
+			
+		default: break;
+	}
+}
+
 // initialize sound going into the game
 void SetupSound()
 {
