@@ -273,6 +273,8 @@ void NstStopPlaying()
 	}
 
 	playing = 0;
+
+	cursor_set_default();
 }
 
 #define CRg(rg) (sizeof(rg) / sizeof(rg[0]))
@@ -850,16 +852,22 @@ void SetupSound()
 void SetupInput()
 {
 	// connect a standard NES pad onto the first port
-	Input(emulator).ConnectController( 0, Input::PAD1 );
-
+	//Input(emulator).ConnectController( 0, Input::PAD1 );
+	
 	// connect a standard NES pad onto the second port too
 	//Input(emulator).ConnectController( 1, Input::PAD2 );
-
+	
 	// connect the Zapper to port 2
-	Input(emulator).ConnectController( 1, Input::ZAPPER );
-
-	// Set the crosshair
-	cursor_set_crosshair();
+	//Input(emulator).ConnectController( 1, Input::ZAPPER );
+	
+	Input(emulator).AutoSelectController(0);
+	Input(emulator).AutoSelectController(1);
+	
+	// Use the crosshair if a Zapper is present
+	if (Input(emulator).GetConnectedController(0) == 5 ||
+		Input(emulator).GetConnectedController(1) == 5) {
+		cursor_set_crosshair();
+	}
 }
 
 void configure_savename( const char* filename )
