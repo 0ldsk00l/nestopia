@@ -80,6 +80,15 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	//if (keys[SDL_SCANCODE_F11]) {  }
 	//if (keys[SDL_SCANCODE_F12]) {  }
 	
+	// Insert Coins
+	controllers->vsSystem.insertCoin = 0;
+	if (keys[SDL_SCANCODE_1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
+	if (keys[SDL_SCANCODE_2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
+	
+	// Rewinder
+	if (keys[SDL_SCANCODE_BACKSPACE]) { set_rewinder_direction(0); }
+	if (keys[SDL_SCANCODE_BACKSLASH]) { set_rewinder_direction(1); }
+	
 	// Escape exits when not in GUI mode
 	if (keys[SDL_SCANCODE_ESCAPE]) {
 		if (conf->misc_disable_gui) { NstScheduleQuit(); }
