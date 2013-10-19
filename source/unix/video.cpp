@@ -173,11 +173,23 @@ void video_init() {
 	// set the sprite limit
 	video.EnableUnlimSprites(conf->video_unlimited_sprites ? false : true);
 	
+	// Set Palette options
+	switch (conf->video_palette_mode) {
+		case 0: // YUV
+			video.GetPalette().SetMode(Video::Palette::MODE_YUV);
+			break;
+		
+		case 1: // RGB
+			video.GetPalette().SetMode(Video::Palette::MODE_RGB);
+	}
+	
 	// Set Picture options
-	video.SetBrightness(conf->video_brightness);
-	video.SetSaturation(conf->video_saturation);
-	video.SetContrast(conf->video_contrast);
-	video.SetHue(conf->video_hue);
+	if (video.GetPalette().GetMode() != Video::Palette::MODE_RGB) {
+		video.SetBrightness(conf->video_brightness);
+		video.SetSaturation(conf->video_saturation);
+		video.SetContrast(conf->video_contrast);
+		video.SetHue(conf->video_hue);
+	}
 	
 	// Set NTSC options
 	switch (conf->video_ntsc_mode) {
