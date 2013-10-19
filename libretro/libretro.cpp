@@ -180,6 +180,7 @@ void retro_set_environment(retro_environment_t cb)
 
    static const struct retro_variable vars[] = {
       { "blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
+      { "palette", "Palette; canonical|consumer|alternative|rgb" },
       { "nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { NULL, NULL },
    };
@@ -294,7 +295,6 @@ static void check_variables(void)
    }
    
    var.key = "blargg_ntsc_filter";
-
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
@@ -307,7 +307,7 @@ static void check_variables(void)
       else if (strcmp(var.value, "rgb") == 0)
          blargg_ntsc = 4;
    }
-
+   
    switch(blargg_ntsc)
    {
       case 0:
@@ -345,6 +345,27 @@ static void check_variables(void)
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_RGB);
          video_width = Api::Video::Output::NTSC_WIDTH;
          break;
+   }
+   
+   var.key = "palette";
+   
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+   {
+      if (strcmp(var.value, "canonical") == 0) {
+         video.GetPalette().SetMode(Api::Video::Palette::MODE_YUV);
+         video.SetDecoder(Api::Video::DECODER_CANONICAL);
+      }
+      else if (strcmp(var.value, "consumer") == 0) {
+         video.GetPalette().SetMode(Api::Video::Palette::MODE_YUV);
+         video.SetDecoder(Api::Video::DECODER_CONSUMER);
+      }
+      else if (strcmp(var.value, "alternative") == 0) {
+         video.GetPalette().SetMode(Api::Video::Palette::MODE_YUV);
+         video.SetDecoder(Api::Video::DECODER_ALTERNATIVE);
+      }
+      else if (strcmp(var.value, "rgb") == 0) {
+         video.GetPalette().SetMode(Api::Video::Palette::MODE_RGB);
+      }
    }
    
    pitch = video_width * 4;
