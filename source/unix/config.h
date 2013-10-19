@@ -8,6 +8,7 @@ typedef struct {
 	gint video_renderer;
 	gint video_filter;
 	gint video_scale_factor;
+	gint video_palette_mode;
 	gint video_brightness;
 	gint video_saturation;
 	gint video_contrast;

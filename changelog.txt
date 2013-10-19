@@ -9,6 +9,7 @@ Unix Shell:
   - Command line interface
   - Scale Factor and Filters can be changed while playing
   - Zapper support
+  - Palette and Picture options
 
  Changes:
   - Ported to SDL 2.0
