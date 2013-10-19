@@ -183,8 +183,22 @@ void video_init() {
 			video.GetPalette().SetMode(Video::Palette::MODE_RGB);
 	}
 	
-	// Set Picture options
+	// Set YUV Decoder/Picture options
 	if (video.GetPalette().GetMode() != Video::Palette::MODE_RGB) {
+		switch (conf->video_decoder) {
+			case 0: // Canonical
+				video.SetDecoder(Video::DECODER_CANONICAL);
+				break;
+			
+			case 1: // Consumer
+				video.SetDecoder(Video::DECODER_CONSUMER);
+				break;
+			
+			case 2: // Alternative (Canonical with yellow boost)
+				video.SetDecoder(Video::DECODER_ALTERNATIVE);
+				break;
+		}
+		
 		video.SetBrightness(conf->video_brightness);
 		video.SetSaturation(conf->video_saturation);
 		video.SetContrast(conf->video_contrast);
