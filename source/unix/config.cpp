@@ -53,6 +53,10 @@ void read_config_file() {
 		conf->video_renderer = g_key_file_get_integer(keyfile, "video", "renderer", NULL);
 		conf->video_filter = g_key_file_get_integer(keyfile, "video", "filter", NULL);
 		conf->video_scale_factor = g_key_file_get_integer(keyfile, "video", "scale_factor", NULL);
+		conf->video_brightness = g_key_file_get_integer(keyfile, "video", "brightness", NULL);
+		conf->video_saturation = g_key_file_get_integer(keyfile, "video", "saturation", NULL);
+		conf->video_contrast = g_key_file_get_integer(keyfile, "video", "contrast", NULL);
+		conf->video_hue = g_key_file_get_integer(keyfile, "video", "hue", NULL);
 		conf->video_ntsc_mode = g_key_file_get_integer(keyfile, "video", "ntsc_mode", NULL);
 		conf->video_xbr_corner_rounding = g_key_file_get_integer(keyfile, "video", "xbr_corner_rounding", NULL);
 		
@@ -97,6 +101,10 @@ void write_config_file() {
 	g_key_file_set_integer(keyfile, "video", "renderer", conf->video_renderer);
 	g_key_file_set_integer(keyfile, "video", "filter", conf->video_filter);
 	g_key_file_set_integer(keyfile, "video", "scale_factor", conf->video_scale_factor);
+	g_key_file_set_integer(keyfile, "video", "brightness", conf->video_brightness);
+	g_key_file_set_integer(keyfile, "video", "saturation", conf->video_saturation);
+	g_key_file_set_integer(keyfile, "video", "contrast", conf->video_contrast);
+	g_key_file_set_integer(keyfile, "video", "hue", conf->video_hue);
 	g_key_file_set_integer(keyfile, "video", "ntsc_mode", conf->video_ntsc_mode);
 	g_key_file_set_integer(keyfile, "video", "xbr_corner_rounding", conf->video_xbr_corner_rounding);
 	
@@ -139,6 +147,10 @@ void set_default_config() {
 	conf->video_renderer = 1;
 	conf->video_filter = 0;
 	conf->video_scale_factor = 2;
+	conf->video_brightness = 0; // -100 to 100
+	conf->video_saturation = 0; // -100 to 100
+	conf->video_contrast = 0; // -100 to 100
+	conf->video_hue = 0; // -45 to 45
 	conf->video_ntsc_mode = 0;
 	conf->video_xbr_corner_rounding = 0;
 	
