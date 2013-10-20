@@ -46,7 +46,7 @@ static const char *crosshair[] = {
 	"            XX.XX               ",
 	"           X.XXX.X              ",
 	" XXXXXXXXXXXX   XXXXXXXXXXXX    ",
-	"X.X.X.X.X.X.X   X.X.X.X.X.X.X   ",
+	"X.X.X.X.X.X.X . X.X.X.X.X.X.X   ",
 	" XXXXXXXXXXXX   XXXXXXXXXXXX    ",
 	"           X.XXX.X              ",
 	"            XX.XX               ",
