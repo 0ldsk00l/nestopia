@@ -53,6 +53,7 @@ extern Nes::Api::Emulator emulator;
 extern GtkWidget *mainwindow;
 extern char rootname[512];
 extern char msgbuf[512];
+extern char nstdir[256];
 
 static std::ifstream *moviePlayFile, *fdsBiosFile, *nstDBFile;
 static std::fstream *movieRecFile;
@@ -306,20 +307,16 @@ void fileio_do_movie_stop(void)
 	}
 }
 
-void fileio_set_fds_bios(void)
-{
-	Nes::Api::Fds fds( emulator );
-	char dirname[1024], *home;
+void fileio_set_fds_bios(void) {
+	
+	Nes::Api::Fds fds(emulator);
+	char biospath[512];
+	
+	if (fdsBiosFile) { return; }
 
-	if (fdsBiosFile)
-	{
-		return;
-	}
+	snprintf(biospath, sizeof(biospath), "%sdisksys.rom", nstdir);
 
-	home = getenv("HOME");
-	snprintf(dirname, sizeof(dirname), "%s/.nestopia/disksys.rom", home);
-
-	fdsBiosFile = new std::ifstream(dirname, std::ifstream::in|std::ifstream::binary);
+	fdsBiosFile = new std::ifstream(biospath, std::ifstream::in|std::ifstream::binary);
 
 	if (fdsBiosFile->is_open())
 	{
@@ -327,7 +324,7 @@ void fileio_set_fds_bios(void)
 	}
 	else
 	{
-		snprintf(msgbuf, sizeof(msgbuf), "~/.nestopia/disksys.rom not found, Disk System games will not work.");
+		snprintf(msgbuf, sizeof(msgbuf), "%s not found, Disk System games will not work.", biospath);
 		print_message(msgbuf);
 		delete fdsBiosFile;
 		fdsBiosFile = NULL;
@@ -588,45 +585,48 @@ int fileio_load_archive(const char *filename, unsigned char **dataout, int *data
 	return 0;
 }
 
-void fileio_load_db(void)
-{
-	Nes::Api::Cartridge::Database database( emulator );
-	char dirname[1024], datadirname[1024], *pwd;
+void fileio_load_db(void) {
+	
+	Nes::Api::Cartridge::Database database(emulator);
+	char dbpath[512];
 
-	if (nstDBFile)
-	{
-		return;
-	}
-#ifdef MINGW
-	snprintf(datadirname, sizeof(datadirname), "NstDatabase.xml");
-#else
-	pwd = getenv("PWD");
-	snprintf(dirname, sizeof(dirname), "%s/NstDatabase.xml", pwd);
-	snprintf(datadirname, sizeof(datadirname), "%s/NstDatabase.xml", DATADIR);
-#endif
-	nstDBFile = new std::ifstream(datadirname, std::ifstream::in|std::ifstream::binary);
+	if (nstDBFile) { return; }
 
-	if (nstDBFile->is_open())
-	{
+	// Try to open the database file
+	snprintf(dbpath, sizeof(dbpath), "%sNstDatabase.xml", nstdir);
+	nstDBFile = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
+	
+	if (nstDBFile->is_open()) {
 		database.Load(*nstDBFile);
 		database.Enable(true);
+		return;
 	}
-	else
-	{
+#ifndef MINGW
+	// If it fails, try looking in the data directory
+	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", DATADIR);
+	nstDBFile = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
+	
+	if (nstDBFile->is_open()) {
+		database.Load(*nstDBFile);
+		database.Enable(true);
+		return;
+	}
+	
+	// If that fails, try looking in the working directory
+	char *pwd = getenv("PWD");
+	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", pwd);
+	nstDBFile = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
+	
+	if (nstDBFile->is_open()) {
+		database.Load(*nstDBFile);
+		database.Enable(true);
+		return;
+	}
+#endif
+	else {
 		print_message("NstDatabase.xml not found!");
-		nstDBFile = new std::ifstream(dirname, std::ifstream::in|std::ifstream::binary);
-
-		if (nstDBFile->is_open())
-		{
-			database.Load(*nstDBFile);
-			database.Enable(true);
-		}
-		else
-		{
-			print_message("NstDatabase.xml not found!");
-			delete nstDBFile;
-			nstDBFile = NULL;
-		}
+		delete nstDBFile;
+		nstDBFile = NULL;
 	}
 }
 

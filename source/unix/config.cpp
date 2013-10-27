@@ -31,15 +31,11 @@ static GKeyFileFlags flags;
 static gsize length;
 
 char confpath[256];
+extern char nstdir[256];
 	
-void read_config_file() {
-#ifdef MINGW
-	snprintf(confpath, sizeof(confpath), "nestopia.conf");
-#else	
-	char *homedir;
-	homedir = getenv("HOME");
-	snprintf(confpath, sizeof(confpath), "%s/.nestopia/nestopia.conf", homedir);
-#endif
+void config_file_read() {
+	// Read the config file
+	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstdir);
 	
 	keyfile = g_key_file_new();
 	
@@ -97,7 +93,7 @@ void config_file_free() {
 	g_key_file_free(keyfile);
 }
 
-void write_config_file() {
+void config_file_write() {
 	
 	// Video
 	g_key_file_set_integer(keyfile, "video", "renderer", conf->video_renderer);
