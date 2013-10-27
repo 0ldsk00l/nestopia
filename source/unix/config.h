@@ -40,8 +40,8 @@ typedef struct {
 	gboolean misc_disable_gui;
 } settings;
 
-void read_config_file();
+void config_file_read();
 void config_file_free();
-void write_config_file();
+void config_file_write();
 void set_default_config();
 #endif

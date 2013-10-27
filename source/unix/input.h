@@ -88,8 +88,8 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event);
 char* input_translate_event(SDL_Event event);
 SDL_Event input_translate_string(char *string);
 int input_checksign(int axisvalue);
-void input_read_config();
-void input_write_config();
+void input_config_read();
+void input_config_write();
 void input_set_default();
 
 #endif

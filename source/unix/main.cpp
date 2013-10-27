@@ -81,6 +81,7 @@ int schedule_stop = 0;
 static char savename[512], capname[512], gamebasename[512];
 char rootname[512], lastarchname[512];
 char msgbuf[512];
+char nstdir[256];
 
 static CheatMgr *sCheatMgr;
 
@@ -277,30 +278,13 @@ void NstStopPlaying()
 	cursor_set_default();
 }
 
-#define CRg(rg) (sizeof(rg) / sizeof(rg[0]))
-std::string svst[2];
-
 // generate the filename for quicksave files
 std::string StrQuickSaveFile(int isvst) {
 	
 	std::ostringstream ossFile;
-#ifndef MINGW
-	const char *home = getenv("HOME");
+	ossFile << nstdir;
+	ossFile << "state";
 	
-	if (!home) {
-		std::cout << "couldn't get home directory\n";
-		return "";
-	}
-	
-	ossFile << home;
-#endif
-	ossFile << "qsave";
-#ifndef MINGW
-	if (mkdir(ossFile.str().c_str(), 0777) && errno != EEXIST) {
-		std::cout << "couldn't make qsave directory: " << errno << "\n";
-		return "";
-	}
-#endif
 	ossFile << "/" << std::setbase(16) << std::setfill('0') << std::setw(8)
 		<< basename(gamebasename) << std::string("_") << isvst << ".nst";
 	
@@ -399,7 +383,7 @@ void NstPlayGame(void)
 	video_init();
 	SetupSound();
 	SetupInput();
-	main_set_framerate();
+	nst_set_framerate();
 
 	// apply any cheats into the engine
 	sCheatMgr->Enable();
@@ -593,28 +577,57 @@ static void cleanup_after_io(void) {
 	gtk_main_iteration_do(FALSE);
 }
 
-int main(int argc, char *argv[])
-{
+void nst_set_dirs() {
+	// Set up system directories
+#ifdef MINGW
+	snprintf(nstdir, sizeof(nstdir), "");
+#else
+	snprintf(nstdir, sizeof(nstdir), "%s/.nestopia/", getenv("HOME"));
+	
+	// create system directory if it doesn't exist
+	if (mkdir(nstdir, 0755) && errno != EEXIST) {
+		fprintf(stderr, "Failed to create %s: %d\n", nstdir, errno);
+	}
+#endif
+	// create save and state directories if they don't exist
+	char dirstr[256];
+	snprintf(dirstr, sizeof(dirstr), "%ssave", nstdir);
+	
+	if (mkdir(dirstr, 0755) && errno != EEXIST) {
+		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
+	}
+
+	snprintf(dirstr, sizeof(dirstr), "%sstate", nstdir);
+
+	if (mkdir(dirstr, 0755) && errno != EEXIST) {
+		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
+	}
+}
+
+int main(int argc, char *argv[]) {
+	
 	static SDL_Event event;
 	int i;
 	void* userData = (void*) 0xDEADC0DE;
-	char dirname[1024], savedirname[1024], *home;
+
+	// Set up directories
+	nst_set_dirs();
 	
 	// read the config file
-	read_config_file();
-
+	config_file_read();
+	
 	if (argc == 1 && conf->misc_disable_gui) {
 		// Show usage and free config 
 		cli_show_usage();
 		config_file_free();
 		return 0;
 	}
-
+	
 	cli_handle_command(argc, argv);
 	
 	playing = 0;
 	intbuffer = NULL;
-
+	
 	// Initialize File input/output routines
 	fileio_init();
 	
@@ -626,7 +639,7 @@ int main(int argc, char *argv[])
 	
 	// Initialize input and read input config
 	input_init();
-	input_read_config();
+	input_config_read();
 	
 	// Set up the video parameters
 	video_set_params();
@@ -781,13 +794,13 @@ int main(int argc, char *argv[])
 	
 	input_deinit();
 	
-	write_config_file();
-	input_write_config();
+	config_file_write();
+	input_config_write();
 
 	return 0;
 }
 
-void main_set_framerate() {
+void nst_set_framerate() {
 	// Set the framerate based on region
 	Machine machine(emulator);
 	Cartridge::Database database(emulator);

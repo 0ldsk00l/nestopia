@@ -39,6 +39,7 @@ static GKeyFileFlags flags;
 static gsize length;
 
 char inputconfpath[256];
+extern char nstdir[256];
 
 void input_init() {
 	
@@ -418,14 +419,9 @@ int input_checksign(int axisvalue) {
 	else { return 1; }
 }
 
-void input_read_config() {
-#ifdef MINGW
-	snprintf(inputconfpath, sizeof(inputconfpath), "input.conf");
-#else	
-	char *homedir;
-	homedir = getenv("HOME");
-	snprintf(inputconfpath, sizeof(inputconfpath), "%s/.nestopia/input.conf", homedir);
-#endif
+void input_config_read() {
+	// Read the input config file
+	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstdir);
 	inputfile = g_key_file_new();
 	
 	flags = G_KEY_FILE_KEEP_COMMENTS;
@@ -519,7 +515,7 @@ void input_read_config() {
 	}
 }
 
-void input_write_config() {
+void input_config_write() {
 	// Write out the input configuration file
 	g_key_file_set_string(inputfile, "gamepad1", "kb_u", SDL_GetScancodeName(player[0].u));
 	g_key_file_set_string(inputfile, "gamepad1", "kb_d", SDL_GetScancodeName(player[0].d));
