@@ -33,6 +33,9 @@
 #include <errno.h>
 #include <vector>
 #include <libgen.h>
+#ifdef MINGW
+#include <io.h>
+#endif
 
 #include <SDL.h>
 #include <SDL_endian.h>
@@ -582,24 +585,29 @@ void nst_set_dirs() {
 #ifdef MINGW
 	snprintf(nstdir, sizeof(nstdir), "");
 #else
-	snprintf(nstdir, sizeof(nstdir), "%s/.nestopia/", getenv("HOME"));
-	
 	// create system directory if it doesn't exist
-	if (mkdir(nstdir, 0755) && errno != EEXIST) {
+	snprintf(nstdir, sizeof(nstdir), "%s/.nestopia/", getenv("HOME"));
+	if (mkdir(nstdir, 0755) && errno != EEXIST) {	
 		fprintf(stderr, "Failed to create %s: %d\n", nstdir, errno);
 	}
 #endif
 	// create save and state directories if they don't exist
 	char dirstr[256];
 	snprintf(dirstr, sizeof(dirstr), "%ssave", nstdir);
-	
+#ifdef MINGW	
+	if (mkdir(dirstr) && errno != EEXIST) {
+#else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
+#endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 
 	snprintf(dirstr, sizeof(dirstr), "%sstate", nstdir);
-
+#ifdef MINGW	
+	if (mkdir(dirstr) && errno != EEXIST) {
+#else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
+#endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 }
