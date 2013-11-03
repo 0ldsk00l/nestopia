@@ -81,10 +81,10 @@ int updateok, playing = 0, loaded = 0, framerate;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
 
-static char savename[512], capname[512], gamebasename[512];
+char nstdir[256], savedir[512];
+static char savename[512], gamebasename[512];
 char rootname[512], lastarchname[512];
 char msgbuf[512];
-char nstdir[256];
 
 static CheatMgr *sCheatMgr;
 
@@ -641,6 +641,7 @@ int main(int argc, char *argv[]) {
 	
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
+	//if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
@@ -906,45 +907,32 @@ void SetupInput()
 	}
 }
 
-void configure_savename( const char* filename )
-{
+void configure_savename(const char* filename) {
+	
 	int i = 0;
-	char savedir[1024], *homedir;
-
-	homedir = getenv("HOME");
-	snprintf(savedir, sizeof(savedir), "%s/.nestopia/save/", homedir);
-
-	strcpy(savename, filename);
-
+	
+	// Set up the save directory
+	snprintf(savedir, sizeof(savedir), "%ssave/", nstdir);
+	
+	// Copy the full file path to the savename variable
+	snprintf(savename, sizeof(savename), "%s", filename);
+	
 	// strip the . and extention off the filename for saving
-	for (i = strlen(savename)-1; i > 0; i--)
-	{
-		if (savename[i] == '.')
-		{
+	for (i = strlen(savename)-1; i > 0; i--) {
+		if (savename[i] == '.') {
 			savename[i] = '\0';
 			break;
 		}
 	}
-
-	strcpy(capname, savename);
-	strcpy(gamebasename, savename);
-
-	// strip the path off the savename to get the filename only
-	for (i = strlen(capname)-1; i > 0; i--)
-	{
-		if (capname[i] == '/')
-		{
-			strcpy(capname, &capname[i+1]);
-			break;
-		}
-	}
 	
-	//Save to the home directory instead of the location of the rom
-	strcat(savedir, capname);
-	strcpy(savename, savedir);
+	// Get the name of the game minus file path and extension
+	snprintf(gamebasename, sizeof(gamebasename), "%s", basename(savename));
 	
-	strcpy(rootname, savename);
-	strcat(savename, ".sav");
+	// Construct save path
+	snprintf(savename, sizeof(savename), "%s%s%s", savedir, gamebasename, ".sav");
+
+	// Construct root path for FDS save patches
+	snprintf(rootname, sizeof(rootname), "%s%s", savedir, gamebasename);
 }
 
 // try and find a patch for the game being loaded
@@ -1014,7 +1002,7 @@ void NstLoadGame(const char* filename)
 		std::istrstream file((char *)compbuffer+compoffset, compsize);
 		wascomp = 1;
 
-		strncpy(lastarchname, filename, 511);
+		strncpy(lastarchname, filename, sizeof(lastarchname));
 	
 		configure_savename(gamename);
 
