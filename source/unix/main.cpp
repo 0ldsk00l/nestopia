@@ -744,8 +744,7 @@ int main(int argc, char *argv[]) {
 				}
 
 			m1sdr_TimeCheck();
-			if (updateok)
-			{
+			if (updateok) {
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
 				updateok = 0;

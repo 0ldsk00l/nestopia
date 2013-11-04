@@ -216,14 +216,13 @@ void m1sdr_TimeCheck(void)
 	switch (conf->audio_api)
 	{
 	case 0:	// SDL
-		SDL_LockAudio();
+		//SDL_LockAudio();
 
-		while ((bufstat[writebuf] == 0) && (writebuf != playbuf))
-		{
+		//while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
 			m1sdr_Update();
-		}
+		//}
 
-		SDL_UnlockAudio();
+		//SDL_UnlockAudio();
 		break;  
 #ifdef OSS_ALSA
 	case 1:	// ALSA
