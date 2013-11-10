@@ -6,7 +6,6 @@
 #define TOTALBUTTONS (NUMGAMEPADS*NUMBUTTONS)
 #define DEADZONE (32768/3)
 
-#include <glib.h>
 #include <SDL.h>
 #include "core/api/NstApiInput.hpp"
 
@@ -33,44 +32,43 @@ typedef struct {
 } gamepad;
 
 typedef struct {
-	
 	// Player 1
-	gchar *kb_p1u;
-	gchar *kb_p1d;
-	gchar *kb_p1l;
-	gchar *kb_p1r;
-	gchar *kb_p1select;
-	gchar *kb_p1start;
-	gchar *kb_p1a;
-	gchar *kb_p1b;
+	char *kb_p1u;
+	char *kb_p1d;
+	char *kb_p1l;
+	char *kb_p1r;
+	char *kb_p1select;
+	char *kb_p1start;
+	char *kb_p1a;
+	char *kb_p1b;
 	
-	gchar *js_p1u;
-	gchar *js_p1d;
-	gchar *js_p1l;
-	gchar *js_p1r;
-	gchar *js_p1select;
-	gchar *js_p1start;
-	gchar *js_p1a;
-	gchar *js_p1b;
+	char *js_p1u;
+	char *js_p1d;
+	char *js_p1l;
+	char *js_p1r;
+	char *js_p1select;
+	char *js_p1start;
+	char *js_p1a;
+	char *js_p1b;
 	
 	// Player 2
-	gchar *kb_p2u;
-	gchar *kb_p2d;
-	gchar *kb_p2l;
-	gchar *kb_p2r;
-	gchar *kb_p2select;
-	gchar *kb_p2start;
-	gchar *kb_p2a;
-	gchar *kb_p2b;
+	char *kb_p2u;
+	char *kb_p2d;
+	char *kb_p2l;
+	char *kb_p2r;
+	char *kb_p2select;
+	char *kb_p2start;
+	char *kb_p2a;
+	char *kb_p2b;
 	
-	gchar *js_p2u;
-	gchar *js_p2d;
-	gchar *js_p2l;
-	gchar *js_p2r;
-	gchar *js_p2select;
-	gchar *js_p2start;
-	gchar *js_p2a;
-	gchar *js_p2b;
+	char *js_p2u;
+	char *js_p2d;
+	char *js_p2l;
+	char *js_p2r;
+	char *js_p2select;
+	char *js_p2start;
+	char *js_p2a;
+	char *js_p2b;
 } inputsettings;
 
 typedef struct {

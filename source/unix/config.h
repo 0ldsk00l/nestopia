@@ -1,43 +1,42 @@
 #ifndef _CONFIG_H_
 #define _CONFIG_H_
-#include <glib.h>
 
 typedef struct {
 	
 	// Video
-	gint video_renderer;
-	gint video_filter;
-	gint video_scale_factor;
-	gint video_palette_mode;
-	gint video_decoder;
-	gint video_brightness;
-	gint video_saturation;
-	gint video_contrast;
-	gint video_hue;
-	gint video_ntsc_mode;
-	gint video_xbr_corner_rounding;
-	gboolean video_xbr_pixel_blending;
-	gboolean video_tv_aspect;
-	gboolean video_mask_overscan;
-	gboolean video_fullscreen;
-	gboolean video_preserve_aspect;
-	gboolean video_unlimited_sprites;
+	int video_renderer;
+	int video_filter;
+	int video_scale_factor;
+	int video_palette_mode;
+	int video_decoder;
+	int video_brightness;
+	int video_saturation;
+	int video_contrast;
+	int video_hue;
+	int video_ntsc_mode;
+	int video_xbr_corner_rounding;
+	bool video_xbr_pixel_blending;
+	bool video_tv_aspect;
+	bool video_mask_overscan;
+	bool video_fullscreen;
+	bool video_preserve_aspect;
+	bool video_unlimited_sprites;
 	
 	// Audio
-	gint audio_api;
-	gint audio_sample_rate;
-	gint audio_volume;
-	gint audio_surround_multiplier;
-	gboolean audio_surround;
-	gboolean audio_stereo;
-	gboolean audio_stereo_exciter;
+	int audio_api;
+	int audio_sample_rate;
+	int audio_volume;
+	int audio_surround_multiplier;
+	bool audio_surround;
+	bool audio_stereo;
+	bool audio_stereo_exciter;
 	
 	// Misc
-	gint misc_video_region;
-	gint misc_default_system;
-	gboolean misc_soft_patching;
-	gboolean misc_suppress_screensaver;
-	gboolean misc_disable_gui;
+	int misc_video_region;
+	int misc_default_system;
+	bool misc_soft_patching;
+	bool misc_suppress_screensaver;
+	bool misc_disable_gui;
 } settings;
 
 void config_file_read();
