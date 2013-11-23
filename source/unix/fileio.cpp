@@ -27,7 +27,7 @@
 #include <fstream>
 #include <vector>
 
-#include <gtk/gtk.h>
+//#include <gtk/gtk.h>
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -50,7 +50,7 @@
 #define MAX_ITEMS	(512)
 
 extern Nes::Api::Emulator emulator;
-extern GtkWidget *mainwindow;
+//extern GtkWidget *mainwindow;
 extern char rootname[512];
 extern char msgbuf[512];
 extern char nstdir[256];
@@ -62,14 +62,14 @@ struct archive *a;
 struct archive_entry *entry;
 int r;
 
-static bool run_picker, cancelled;
+/*static bool run_picker, cancelled;
 static GtkTreeStore *treestore;
 static GtkTreeIter treeiters[MAX_ITEMS];
 static GtkCellRenderer *renderer;
 static GtkTreeViewColumn *column;
-static GtkTreeSelection *selection;
+static GtkTreeSelection *selection;*/
 
-static int find_current_selection(void)
+/*static int find_current_selection(void)
 {
 	int i;
 
@@ -108,7 +108,7 @@ static gint check_list_double(GtkWidget *widget, GdkEventButton *event, gpointer
 	}
 
 	return FALSE;
-}
+}*/
 
 void fileio_init(void)
 {
@@ -119,7 +119,7 @@ void fileio_init(void)
 }
 
 void fileio_do_state_save(void)
-{
+{/*
 	Nes::Api::Machine machine( emulator );
 	GtkWidget *dialog;
 	char defname[512];
@@ -151,11 +151,11 @@ void fileio_do_state_save(void)
 		g_free (filename);
 	}
 
-	gtk_widget_destroy(dialog);
+	gtk_widget_destroy(dialog);*/
 }
 
 void fileio_do_state_load(void)
-{
+{/*
 	Nes::Api::Machine machine( emulator );
 	GtkWidget *dialog;
 	GtkFileFilter *filter;
@@ -186,11 +186,11 @@ void fileio_do_state_load(void)
 		g_free (filename);
 	}
 
-	gtk_widget_destroy(dialog);
+	gtk_widget_destroy(dialog);*/
 }
 
 void fileio_do_movie_save(void)
-{
+{/*
 	Nes::Api::Machine machine( emulator );
 	Nes::Api::Movie movie( emulator );
 	GtkWidget *dialog;
@@ -234,11 +234,11 @@ void fileio_do_movie_save(void)
 		g_free (filename);
 	}
 
-	gtk_widget_destroy(dialog);
+	gtk_widget_destroy(dialog);*/
 }
 
 void fileio_do_movie_load(void)
-{
+{/*
 	Nes::Api::Machine machine( emulator );
 	Nes::Api::Movie movie( emulator );
 	GtkWidget *dialog;
@@ -281,11 +281,11 @@ void fileio_do_movie_load(void)
 		g_free (filename);
 	}
 
-	gtk_widget_destroy(dialog);
+	gtk_widget_destroy(dialog);*/
 }
 
 void fileio_do_movie_stop(void)
-{
+{/*
 	Nes::Api::Movie movie( emulator );
 
 	if (movieRecFile || moviePlayFile)
@@ -304,7 +304,7 @@ void fileio_do_movie_stop(void)
 			delete moviePlayFile;
 			moviePlayFile = NULL;
 		}
-	}
+	}*/
 }
 
 void fileio_set_fds_bios(void) {
@@ -467,7 +467,7 @@ int fileio_load_archive(const char *filename, unsigned char **dataout, int *data
 
 			return fileio_load_archive(filename, dataout, datasize, dataoffset, fname, NULL); 
 		}
-		else	// multiple files we can handle found, give the user a choice
+		/*else	// multiple files we can handle found, give the user a choice
 		{
 			int sel;
 			char fname[512];
@@ -579,7 +579,7 @@ int fileio_load_archive(const char *filename, unsigned char **dataout, int *data
 
 				return fileio_load_archive(filename, dataout, datasize, dataoffset, fname, NULL); 
 			}
-		}
+		}*/
 	}
 
 	return 0;

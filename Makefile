@@ -3,14 +3,16 @@ CXX = g++
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
 SDL_CFLAGS = $(shell sdl2-config --cflags)
-GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
+#GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
+GTK_CFLAGS = $(shell pkg-config --cflags glib-2.0)
 
 INCLUDES += -Isource
 WARNINGS += -Wno-deprecated -Wno-write-strings
 
 LDFLAGS = -Wl,--as-needed
 LIBS = -lstdc++ -lm -lz
-LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
+#LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
+LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs glib-2.0)
 
 UNAME := $(shell uname)
 
@@ -332,12 +334,12 @@ OBJS += objs/core/vssystem/NstVsTkoBoxing.o
 # Interface
 IOBJS = objs/unix/main.o
 IOBJS += objs/unix/cli.o
-IOBJS += objs/unix/gtkui.o
+#IOBJS += objs/unix/gtkui.o
 IOBJS += objs/unix/audio.o
 IOBJS += objs/unix/video.o
 IOBJS += objs/unix/input.o
 IOBJS += objs/unix/fileio.o
-IOBJS += objs/unix/cheats.o
+#IOBJS += objs/unix/cheats.o
 IOBJS += objs/unix/config.o
 IOBJS += objs/unix/seffect.o
 IOBJS += objs/unix/cursor.o
