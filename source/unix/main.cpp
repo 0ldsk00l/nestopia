@@ -58,7 +58,7 @@
 
 #include "main.h"
 #include "cli.h"
-#include "gtkui.h"
+//#include "gtkui.h"
 #include "audio.h"
 #include "video.h"
 #include "input.h"
@@ -93,8 +93,8 @@ static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
-extern GtkWidget *mainwindow, *statusbar;
-extern char windowid[24];
+//extern GtkWidget *mainwindow, *statusbar;
+//extern char windowid[24];
 extern dimensions rendersize;
 extern dimensions basesize;
 extern void	*intbuffer;
@@ -243,7 +243,7 @@ static void nst_unload(void)
 	machine.Unload();
 
 	// erase any cheats
-	sCheatMgr->Unload();
+	//sCheatMgr->Unload();
 }
 
 // returns if we're currently playing a game or NSF
@@ -371,16 +371,7 @@ void QuickLoad(int isvst)
 // start playing
 void NstPlayGame(void)
 {
-	if (conf->video_fullscreen)
-	{
-		//unsetenv("SDL_WINDOWID");
-		NstStopPlaying();
-	}
-	else
-	{
-		//putenv(windowid);
-		NstStopPlaying();
-	}
+	//NstStopPlaying(); This only REALLY needs to be here if there's a GUI... and right now there's not
 	
 	// initialization
 	video_init();
@@ -389,7 +380,7 @@ void NstPlayGame(void)
 	nst_set_framerate();
 
 	// apply any cheats into the engine
-	sCheatMgr->Enable();
+	//sCheatMgr->Enable();
 
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
@@ -574,11 +565,11 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 	}
 }
 
-static void cleanup_after_io(void) {
+/*static void cleanup_after_io(void) {
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
 	gtk_main_iteration_do(FALSE);
-}
+}*/
 
 void nst_set_dirs() {
 	// Set up system directories
@@ -654,7 +645,7 @@ int main(int argc, char *argv[]) {
 	video_set_params();
 	
 	// Initialize GTK+
-	gtk_init(&argc, &argv);
+	/*gtk_init(&argc, &argv);
 	
 	if (conf->misc_disable_gui) {
 		// do nothing at this point
@@ -662,7 +653,7 @@ int main(int argc, char *argv[]) {
 	// Don't show a GUI if it has been disabled in the config
 	else {
 		gtkui_init(argc, argv, rendersize.w, rendersize.h);
-	}
+	}*/
 
 	// Create the game window
 	video_create();
@@ -682,34 +673,26 @@ int main(int argc, char *argv[]) {
 	fileio_load_db();
 
 	// attempt to load and autostart a file specified on the commandline
-	if (argc > 1)
-	{
+	if (argc > 1) {
 		NstLoadGame(argv[argc - 1]);
 
 		if (loaded)
 		{
-			if (nsf_mode)
-			{
-				on_nsfplay_clicked(NULL, NULL);
-			}
-			else
-			{
-				on_playbutton_clicked(NULL, NULL);
-			}
+			NstPlayGame();
 		}
 	}
 
 	nst_quit = 0;
 	while (!nst_quit)
 	{
-		while (gtk_events_pending())
+		/*while (gtk_events_pending())
 		{
 			gtk_main_iteration();
-		}
+		}*/
 		
 		if (playing)
 		{
-				gtk_main_iteration_do(FALSE);
+				//gtk_main_iteration_do(FALSE);
 
 			 	while (SDL_PollEvent(&event))
 				{
@@ -755,34 +738,34 @@ int main(int argc, char *argv[]) {
 			{
 				fileio_do_state_save();
 				state_save = 0;
-				cleanup_after_io();
+				//cleanup_after_io();
 			}
 
 			if (state_load)
 			{
 				fileio_do_state_load();
 				state_load = 0;
-				cleanup_after_io();
+				//cleanup_after_io();
 			}
 
 			if (movie_load)
 			{
 				fileio_do_movie_load();
 				movie_load = 0;
-				cleanup_after_io();
+				//cleanup_after_io();
 			}
 
 			if (movie_save)
 			{
 				fileio_do_movie_save();
 				movie_load = 0;
-				cleanup_after_io();
+				//cleanup_after_io();
 			}
 
 			if (movie_stop)
 			{
 				movie_stop = 0;
-				fileio_do_movie_stop();
+				//fileio_do_movie_stop();
 			}
 
 			if (schedule_stop)
@@ -792,7 +775,7 @@ int main(int argc, char *argv[]) {
 		}
 		else
 		{
-			gtk_main_iteration_do(TRUE);
+			//gtk_main_iteration_do(TRUE);
 		}
 	}
 
@@ -1098,7 +1081,7 @@ void NstLoadGame(const char* filename)
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
 				snprintf(msgbuf, sizeof(msgbuf), "FDS games require the FDS BIOS.\nIt should be located at ~/.nestopia/disksys.rom");
-				create_messagewindow(msgbuf);
+				//create_messagewindow(msgbuf);
 				break;
 
 			default:
