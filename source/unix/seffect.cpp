@@ -14,7 +14,7 @@
 #define EXCITER_SAFETHRESHOLD		(0x6000)
 #define EXCITER_COMPTHRESHOLD		(0x7f00)
 
-extern settings *conf;
+extern settings conf;
 
 static float	seffect_ex_nowgain;
 static float	seffect_ex_attgainunit;
@@ -29,7 +29,7 @@ int seffect_surround_lite_process(short *data, int length)
 	double avg, ldiff, rdiff, tmp;
 	double mul;
 
-	mul = (double)conf->audio_surround_multiplier / 10.0f;
+	mul = (double)conf.audio_surround_multiplier / 10.0f;
 
 	for (i = 0; i < length / 2; i += 2)
 	{
@@ -107,7 +107,7 @@ void seffect_init()
 	// sound exciter init
 	seffect_ex_wkcnt         = 0;
 	seffect_ex_nowgain       = 256;
-	seffect_ex_attgainunit   = (float)((44100.0/(double)conf->audio_sample_rate) * 0.2);
-	seffect_ex_boostgainunit = (float)((44100.0/(double)conf->audio_sample_rate) * (100.0 / (0.2 * 44100.0)));
-	seffect_ex_boostcnt      = conf->audio_sample_rate / 6;
+	seffect_ex_attgainunit   = (float)((44100.0/(double)conf.audio_sample_rate) * 0.2);
+	seffect_ex_boostgainunit = (float)((44100.0/(double)conf.audio_sample_rate) * (100.0 / (0.2 * 44100.0)));
+	seffect_ex_boostcnt      = conf.audio_sample_rate / 6;
 }

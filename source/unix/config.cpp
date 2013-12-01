@@ -22,163 +22,159 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <glib.h>
+#include <string.h>
 
 #include "config.h"
+#include "ini.h"
 
-settings *conf;
-GKeyFile *keyfile;
-static GKeyFileFlags flags;
-static gsize length;
+settings conf;
 
 char confpath[256];
 extern char nstdir[256];
-	
+
 void config_file_read() {
 	// Read the config file
-	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstdir);
-	
-	keyfile = g_key_file_new();
-	
-	flags = G_KEY_FILE_KEEP_COMMENTS;
-	
-	// Set aside memory for the settings
-	conf = g_slice_new(settings);
-	
-	if (g_key_file_load_from_file(keyfile, confpath, flags, NULL)) {
-		// Video
-		conf->video_renderer = g_key_file_get_integer(keyfile, "video", "renderer", NULL);
-		conf->video_filter = g_key_file_get_integer(keyfile, "video", "filter", NULL);
-		conf->video_scale_factor = g_key_file_get_integer(keyfile, "video", "scale_factor", NULL);
-		conf->video_palette_mode = g_key_file_get_integer(keyfile, "video", "palette_mode", NULL);
-		conf->video_decoder = g_key_file_get_integer(keyfile, "video", "decoder", NULL);
-		conf->video_brightness = g_key_file_get_integer(keyfile, "video", "brightness", NULL);
-		conf->video_saturation = g_key_file_get_integer(keyfile, "video", "saturation", NULL);
-		conf->video_contrast = g_key_file_get_integer(keyfile, "video", "contrast", NULL);
-		conf->video_hue = g_key_file_get_integer(keyfile, "video", "hue", NULL);
-		conf->video_ntsc_mode = g_key_file_get_integer(keyfile, "video", "ntsc_mode", NULL);
-		conf->video_xbr_corner_rounding = g_key_file_get_integer(keyfile, "video", "xbr_corner_rounding", NULL);
-		
-		conf->video_xbr_pixel_blending = g_key_file_get_boolean(keyfile, "video", "xbr_pixel_blending", NULL);
-		conf->video_tv_aspect = g_key_file_get_boolean(keyfile, "video", "tv_aspect", NULL);
-		conf->video_mask_overscan = g_key_file_get_boolean(keyfile, "video", "mask_overscan", NULL);
-		conf->video_fullscreen = g_key_file_get_boolean(keyfile, "video", "fullscreen", NULL);
-		conf->video_preserve_aspect = g_key_file_get_boolean(keyfile, "video", "preserve_aspect", NULL);
-		conf->video_unlimited_sprites = g_key_file_get_boolean(keyfile, "video", "unlimited_sprites", NULL);
-	
-		// Audio
-		conf->audio_api = g_key_file_get_integer(keyfile, "audio", "api", NULL);
-		conf->audio_sample_rate = g_key_file_get_integer(keyfile, "audio", "sample_rate", NULL);
-		conf->audio_volume = g_key_file_get_integer(keyfile, "audio", "volume", NULL);
-		conf->audio_surround_multiplier = g_key_file_get_integer(keyfile, "audio", "surround_multiplier", NULL);
-		
-		conf->audio_surround = g_key_file_get_boolean(keyfile, "audio", "surround", NULL);
-		conf->audio_stereo = g_key_file_get_boolean(keyfile, "audio", "stereo", NULL);
-		conf->audio_stereo_exciter = g_key_file_get_boolean(keyfile, "audio", "stereo_exciter", NULL);
-		
-		// Misc
-		conf->misc_video_region = g_key_file_get_integer(keyfile, "misc", "video_region", NULL);
-		conf->misc_default_system = g_key_file_get_integer(keyfile, "misc", "default_system", NULL);
-		conf->misc_soft_patching = g_key_file_get_boolean(keyfile, "misc", "soft_patching", NULL);
-		conf->misc_suppress_screensaver = g_key_file_get_boolean(keyfile, "misc", "suppress_screensaver", NULL);
-		conf->misc_disable_gui = g_key_file_get_boolean(keyfile, "misc", "disable_gui", NULL);
-	}
-	else {
-		fprintf(stderr, "Failed to read config file %s: Using defaults.\n", confpath);
-		set_default_config();
-	}
-}
 
-void config_file_free() {
-	g_slice_free(settings, conf);
-	g_key_file_free(keyfile);
+	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstdir);
+
+	if (ini_parse(confpath, config_match, &conf) < 0) {
+		fprintf(stderr, "Failed to read config file %s: Using defaults.\n", confpath);
+		config_set_default();
+	}
 }
 
 void config_file_write() {
-	
-	// Video
-	g_key_file_set_integer(keyfile, "video", "renderer", conf->video_renderer);
-	g_key_file_set_integer(keyfile, "video", "filter", conf->video_filter);
-	g_key_file_set_integer(keyfile, "video", "scale_factor", conf->video_scale_factor);
-	g_key_file_set_integer(keyfile, "video", "palette_mode", conf->video_palette_mode);
-	g_key_file_set_integer(keyfile, "video", "decoder", conf->video_decoder);
-	g_key_file_set_integer(keyfile, "video", "brightness", conf->video_brightness);
-	g_key_file_set_integer(keyfile, "video", "saturation", conf->video_saturation);
-	g_key_file_set_integer(keyfile, "video", "contrast", conf->video_contrast);
-	g_key_file_set_integer(keyfile, "video", "hue", conf->video_hue);
-	g_key_file_set_integer(keyfile, "video", "ntsc_mode", conf->video_ntsc_mode);
-	g_key_file_set_integer(keyfile, "video", "xbr_corner_rounding", conf->video_xbr_corner_rounding);
-	
-	g_key_file_set_boolean(keyfile, "video", "xbr_pixel_blending", conf->video_xbr_pixel_blending);
-	g_key_file_set_boolean(keyfile, "video", "tv_aspect", conf->video_tv_aspect);
-	g_key_file_set_boolean(keyfile, "video", "mask_overscan", conf->video_mask_overscan);
-	g_key_file_set_boolean(keyfile, "video", "fullscreen", conf->video_fullscreen);
-	g_key_file_set_boolean(keyfile, "video", "preserve_aspect", conf->video_preserve_aspect);
-	g_key_file_set_boolean(keyfile, "video", "unlimited_sprites", conf->video_unlimited_sprites);
-	
-	// Audio
-	g_key_file_set_integer(keyfile, "audio", "api", conf->audio_api);
-	g_key_file_set_integer(keyfile, "audio", "sample_rate", conf->audio_sample_rate);
-	g_key_file_set_integer(keyfile, "audio", "volume", conf->audio_volume);
-	g_key_file_set_integer(keyfile, "audio", "surround_multiplier", conf->audio_surround_multiplier);
-	
-	g_key_file_set_boolean(keyfile, "audio", "surround", conf->audio_surround);
-	g_key_file_set_boolean(keyfile, "audio", "stereo", conf->audio_stereo);
-	g_key_file_set_boolean(keyfile, "audio", "stereo_exciter", conf->audio_stereo_exciter);
-	
-	// Misc
-	g_key_file_set_integer(keyfile, "misc", "video_region", conf->misc_video_region);
-	g_key_file_set_integer(keyfile, "misc", "default_system", conf->misc_default_system);
-	g_key_file_set_boolean(keyfile, "misc", "soft_patching", conf->misc_soft_patching);
-	g_key_file_set_boolean(keyfile, "misc", "suppress_screensaver", conf->misc_suppress_screensaver);
-	g_key_file_set_boolean(keyfile, "misc", "disable_gui", conf->misc_disable_gui);
+	// Write the config file
 	
 	FILE *fp = fopen(confpath, "w");
 	if (fp != NULL)	{
-		fputs(g_key_file_to_data(keyfile, &length, NULL), fp);
+		// Video
+		fprintf(fp, "[video]\n");
+		fprintf(fp, "renderer=%d\n", conf.video_renderer);
+		fprintf(fp, "filter=%d\n", conf.video_filter);
+		fprintf(fp, "scale_factor=%d\n", conf.video_scale_factor);
+		fprintf(fp, "palette_mode=%d\n", conf.video_palette_mode);
+		fprintf(fp, "decoder=%d\n", conf.video_decoder);
+		fprintf(fp, "brightness=%d\n", conf.video_brightness);
+		fprintf(fp, "saturation=%d\n", conf.video_saturation);
+		fprintf(fp, "contrast=%d\n", conf.video_contrast);
+		fprintf(fp, "hue=%d\n", conf.video_hue);
+		fprintf(fp, "ntsc_mode=%d\n", conf.video_ntsc_mode);
+		fprintf(fp, "xbr_corner_rounding=%d\n", conf.video_xbr_corner_rounding);
+		fprintf(fp, "xbr_pixel_blending=%d\n", conf.video_xbr_pixel_blending);
+		fprintf(fp, "tv_aspect=%d\n", conf.video_tv_aspect);
+		fprintf(fp, "mask_overscan=%d\n", conf.video_mask_overscan);
+		fprintf(fp, "fullscreen=%d\n", conf.video_fullscreen);
+		fprintf(fp, "preserve_aspect=%d\n", conf.video_preserve_aspect);
+		fprintf(fp, "unlimited_sprites=%d\n", conf.video_unlimited_sprites);
+		fprintf(fp, "\n"); // End of Section
+		
+		// Audio
+		fprintf(fp, "[audio]\n");
+		fprintf(fp, "api=%d\n", conf.audio_api);
+		fprintf(fp, "sample_rate=%d\n", conf.audio_sample_rate);
+		fprintf(fp, "volume=%d\n", conf.audio_volume);
+		fprintf(fp, "surround_multiplier=%d\n", conf.audio_surround_multiplier);
+		fprintf(fp, "surround=%d\n", conf.audio_surround);
+		fprintf(fp, "stereo=%d\n", conf.audio_stereo);
+		fprintf(fp, "stereo_exciter=%d\n", conf.audio_stereo_exciter);
+		fprintf(fp, "\n"); // End of Section
+		
+		// Misc
+		fprintf(fp, "[misc]\n");
+		fprintf(fp, "video_region=%d\n", conf.misc_video_region);
+		fprintf(fp, "default_system=%d\n", conf.misc_default_system);
+		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
+		fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
+		fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
+		fprintf(fp, "\n"); // End of Section
+		
 		fclose(fp);
 	}
-
-	config_file_free();
+	else {
+		fprintf(stderr, "Failed to write config file %s.\n", confpath);
+	}
 }
 
-void set_default_config() {
+void config_set_default() {
 	
 	// Video
-	conf->video_renderer = 1;
-	conf->video_filter = 0;
-	conf->video_scale_factor = 2;
-	conf->video_palette_mode = 0;
-	conf->video_decoder = 0;
-	conf->video_brightness = 0; // -100 to 100
-	conf->video_saturation = 0; // -100 to 100
-	conf->video_contrast = 0; // -100 to 100
-	conf->video_hue = 0; // -45 to 45
-	conf->video_ntsc_mode = 0;
-	conf->video_xbr_corner_rounding = 0;
+	conf.video_renderer = 1;
+	conf.video_filter = 0;
+	conf.video_scale_factor = 2;
+	conf.video_palette_mode = 0;
+	conf.video_decoder = 0;
+	conf.video_brightness = 0; // -100 to 100
+	conf.video_saturation = 0; // -100 to 100
+	conf.video_contrast = 0; // -100 to 100
+	conf.video_hue = 0; // -45 to 45
+	conf.video_ntsc_mode = 0;
+	conf.video_xbr_corner_rounding = 0;
 	
-	conf->video_xbr_pixel_blending = true;
-	conf->video_tv_aspect = false;
-	conf->video_mask_overscan = true;
-	conf->video_fullscreen = false;
-	conf->video_preserve_aspect = false;
-	conf->video_unlimited_sprites = true;
+	conf.video_xbr_pixel_blending = true;
+	conf.video_tv_aspect = false;
+	conf.video_mask_overscan = true;
+	conf.video_fullscreen = false;
+	conf.video_preserve_aspect = false;
+	conf.video_unlimited_sprites = true;
 	
 	// Audio
-	conf->audio_api = 0;
-	conf->audio_sample_rate = 48000;
-	conf->audio_volume = 85;
-	conf->audio_surround_multiplier = 50;
+	conf.audio_api = 0;
+	conf.audio_sample_rate = 48000;
+	conf.audio_volume = 85;
+	conf.audio_surround_multiplier = 50;
 	
-	conf->audio_surround = false;
-	conf->audio_stereo = false;
-	conf->audio_stereo_exciter = false;
+	conf.audio_surround = false;
+	conf.audio_stereo = false;
+	conf.audio_stereo_exciter = false;
 	
 	// Misc
-	conf->misc_video_region = 0;
-	conf->misc_default_system = 0;
-	conf->misc_soft_patching = true;
-	conf->misc_suppress_screensaver = true;
-	conf->misc_disable_gui = true;
+	conf.misc_video_region = 0;
+	conf.misc_default_system = 0;
+	conf.misc_soft_patching = true;
+	conf.misc_suppress_screensaver = true;
+	conf.misc_disable_gui = true;
+}
+
+static int config_match(void* user, const char* section, const char* name, const char* value) {
+	// Match values from config file and populate live config
+	settings* pconfig = (settings*)user;
+	
+	// Video
+	if (MATCH("video", "renderer")) { pconfig->video_renderer = atoi(value); }
+	else if (MATCH("video", "filter")) { pconfig->video_filter = atoi(value); }
+	else if (MATCH("video", "scale_factor")) { pconfig->video_scale_factor = atoi(value); }
+	else if (MATCH("video", "palette_mode")) { pconfig->video_palette_mode = atoi(value); }
+	else if (MATCH("video", "decoder")) { pconfig->video_decoder = atoi(value); }
+	else if (MATCH("video", "brightness")) { pconfig->video_brightness = atoi(value); }
+	else if (MATCH("video", "saturation")) { pconfig->video_saturation = atoi(value); }
+	else if (MATCH("video", "contrast")) { pconfig->video_contrast = atoi(value); }
+	else if (MATCH("video", "hue")) { pconfig->video_hue = atoi(value); }
+	else if (MATCH("video", "ntsc_mode")) { pconfig->video_ntsc_mode = atoi(value); }
+	else if (MATCH("video", "xbr_corner_rounding")) { pconfig->video_xbr_corner_rounding = atoi(value); }
+	else if (MATCH("video", "xbr_pixel_blending")) { pconfig->video_xbr_pixel_blending = atoi(value); }
+	else if (MATCH("video", "tv_aspect")) { pconfig->video_tv_aspect = atoi(value); }
+	else if (MATCH("video", "mask_overscan")) { pconfig->video_mask_overscan = atoi(value); }
+	else if (MATCH("video", "fullscreen")) { pconfig->video_fullscreen = atoi(value); }
+	else if (MATCH("video", "preserve_aspect")) { pconfig->video_preserve_aspect = atoi(value); }
+	else if (MATCH("video", "unlimited_sprites")) { pconfig->video_unlimited_sprites = atoi(value); }
+	
+	// Audio
+	else if (MATCH("audio", "api")) { pconfig->audio_api = atoi(value); }
+	else if (MATCH("audio", "sample_rate")) { pconfig->audio_sample_rate = atoi(value); }
+	else if (MATCH("audio", "volume")) { pconfig->audio_volume = atoi(value); }
+	else if (MATCH("audio", "surround")) { pconfig->audio_surround = atoi(value); }
+	else if (MATCH("audio", "surround_multiplier")) { pconfig->audio_surround_multiplier = atoi(value); }
+	else if (MATCH("audio", "stereo")) { pconfig->audio_stereo = atoi(value); }
+	else if (MATCH("audio", "stereo_exciter")) { pconfig->audio_stereo_exciter = atoi(value); }
+    
+    // Misc
+    else if (MATCH("misc", "video_region")) { pconfig->misc_video_region = atoi(value); }
+    else if (MATCH("misc", "default_system")) { pconfig->misc_default_system = atoi(value); }
+    else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
+    else if (MATCH("misc", "suppress_screensaver")) { pconfig->misc_suppress_screensaver = atoi(value); }
+    else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
+    
+    else { return 0; }
+    return 1;
 }

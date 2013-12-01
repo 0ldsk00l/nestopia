@@ -99,12 +99,12 @@ extern dimensions rendersize;
 extern dimensions basesize;
 extern void	*intbuffer;
 
-extern settings *conf;
+extern settings conf;
 
 // get the favored system selected by the user
 static Machine::FavoredSystem get_favored_system(void)
 {
-	switch (conf->misc_default_system) {
+	switch (conf.misc_default_system) {
 		case 0:
 			return Machine::FAVORED_NES_NTSC;
 			break;
@@ -156,11 +156,11 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 
 	outbuf = out;
 
-	if (conf->audio_stereo_exciter)
+	if (conf.audio_stereo_exciter)
 	{
 		int j = 0;
 
-		if (!conf->audio_stereo)
+		if (!conf.audio_stereo)
 		{
 			// exciter can't handle "hot" samples, so
 			// tone them down a bit
@@ -199,7 +199,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 	}
 	else
 	{
-		if (!conf->audio_stereo)
+		if (!conf.audio_stereo)
 		{
 			for (s = 0; s < dwSamples; s++)
 			{
@@ -217,7 +217,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 		}
 	}
 
-	if (conf->audio_surround)
+	if (conf.audio_surround)
 	{
 		seffect_surround_lite_process(outbuf, dwSamples*4);
 	}
@@ -387,7 +387,7 @@ void NstPlayGame(void)
 	cNstPads  = new Input::Controllers;
 
 	cNstSound->samples[0] = lbuf;
-	cNstSound->length[0] = conf->audio_sample_rate/framerate;
+	cNstSound->length[0] = conf.audio_sample_rate/framerate;
 	//printf("GetRate()/framerate: %d\n", cNstSound->length[0]);
 	cNstSound->samples[1] = NULL;
 	cNstSound->length[1] = 0;
@@ -615,10 +615,9 @@ int main(int argc, char *argv[]) {
 	// read the config file
 	config_file_read();
 	
-	if (argc == 1 && conf->misc_disable_gui) {
+	if (argc == 1 && conf.misc_disable_gui) {
 		// Show usage and free config 
 		cli_show_usage();
-		config_file_free();
 		return 0;
 	}
 	
@@ -647,7 +646,7 @@ int main(int argc, char *argv[]) {
 	// Initialize GTK+
 	/*gtk_init(&argc, &argv);
 	
-	if (conf->misc_disable_gui) {
+	if (conf.misc_disable_gui) {
 		// do nothing at this point
 	}
 	// Don't show a GUI if it has been disabled in the config
@@ -765,7 +764,7 @@ int main(int argc, char *argv[]) {
 			if (movie_stop)
 			{
 				movie_stop = 0;
-				//fileio_do_movie_stop();
+				fileio_do_movie_stop();
 			}
 
 			if (schedule_stop)
@@ -784,9 +783,9 @@ int main(int argc, char *argv[]) {
 	fileio_shutdown();
 	
 	input_deinit();
+	input_config_write();
 	
 	config_file_write();
-	input_config_write();
 
 	return 0;
 }
@@ -797,11 +796,11 @@ void nst_set_framerate() {
 	Cartridge::Database database(emulator);
 
 	framerate = 60;
-	if (conf->misc_video_region == 2) {
+	if (conf.misc_video_region == 2) {
 		machine.SetMode(Machine::PAL);
 		framerate = 50;
 	}
-	else if (conf->misc_video_region == 1) {
+	else if (conf.misc_video_region == 1) {
 		machine.SetMode(Machine::NTSC);
 	}
 	else {
@@ -845,7 +844,7 @@ void SetupSound()
 	printf("Sample Rate:\t%d\n", sound.GetSampleRate());
 	printf("Speed:\t%d\n", sound.GetSpeed());*/
 	
-	m1sdr_Init(conf->audio_sample_rate);
+	m1sdr_Init(conf.audio_sample_rate);
 	m1sdr_SetCallback((void *)nst_do_frame);
 	m1sdr_PlayStart();
 
@@ -854,10 +853,10 @@ void SetupSound()
 
 	// example configuration (these are the default values)
 	sound.SetSampleBits( 16 );
-	sound.SetSampleRate(conf->audio_sample_rate);
-	sound.SetVolume(Sound::ALL_CHANNELS, conf->audio_volume);
+	sound.SetSampleRate(conf.audio_sample_rate);
+	sound.SetVolume(Sound::ALL_CHANNELS, conf.audio_volume);
 
-	if (conf->audio_stereo)
+	if (conf.audio_stereo)
 	{
 		sound.SetSpeaker( Sound::SPEAKER_STEREO );
 	}
@@ -923,7 +922,7 @@ static int find_patch(char *patchname)
 	FILE *f;
 
 	// did the user turn off auto softpatching?
-	if (!conf->misc_soft_patching)
+	if (!conf.misc_soft_patching)
 	{
 		return 0;
 	}
