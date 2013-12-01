@@ -22,23 +22,19 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-
-#include <glib.h>
+#include <string.h>
 
 #include "main.h"
 #include "config.h"
 #include "video.h"
 #include "input.h"
+#include "ini.h"
 
-extern settings *conf;
-inputsettings *inputconf;
+extern settings conf;
+inputsettings inputconf;
 
 SDL_Joystick *joystick;
 gamepad player[NUMGAMEPADS];
-
-GKeyFile *inputfile;
-static GKeyFileFlags flags;
-static gsize length;
 
 char inputconfpath[256];
 extern char nstdir[256];
@@ -94,7 +90,7 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	
 	// Escape exits when not in GUI mode
 	if (keys[SDL_SCANCODE_ESCAPE]) {
-		if (conf->misc_disable_gui) { NstScheduleQuit(); }
+		if (conf.misc_disable_gui) { NstScheduleQuit(); }
 	}
 	
 	// F toggles fullscreen
@@ -121,14 +117,14 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 			break;
 			
 		case SDL_MOUSEBUTTONDOWN:
-			if (conf->video_mask_overscan) {
-				controllers->zapper.y = (y + OVERSCAN_TOP * conf->video_scale_factor) / conf->video_scale_factor;
+			if (conf.video_mask_overscan) {
+				controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
 			}
 			else {
-				controllers->zapper.y = y / conf->video_scale_factor;
+				controllers->zapper.y = y / conf.video_scale_factor;
 			}
 
-			controllers->zapper.x = x / conf->video_scale_factor;
+			controllers->zapper.x = x / conf.video_scale_factor;
 
 			// Offscreen
 			if(event.button.button != SDL_BUTTON_LEFT) { controllers->zapper.x = ~1U; }
@@ -424,145 +420,101 @@ int input_checksign(int axisvalue) {
 void input_config_read() {
 	// Read the input config file
 	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstdir);
-	inputfile = g_key_file_new();
 	
-	flags = G_KEY_FILE_KEEP_COMMENTS;
-	
-	// Set aside memory for the input settings
-	inputconf = g_slice_new(inputsettings);
-	
-	// Read the input configuration file
-	if (g_key_file_load_from_file(inputfile, inputconfpath, flags, NULL)) {
-		// Player 1
-		inputconf->kb_p1u = g_key_file_get_string(inputfile, "gamepad1", "kb_u", NULL);
-		inputconf->kb_p1d = g_key_file_get_string(inputfile, "gamepad1", "kb_d", NULL);
-		inputconf->kb_p1l = g_key_file_get_string(inputfile, "gamepad1", "kb_l", NULL);
-		inputconf->kb_p1r = g_key_file_get_string(inputfile, "gamepad1", "kb_r", NULL);
-		inputconf->kb_p1select = g_key_file_get_string(inputfile, "gamepad1", "kb_select", NULL);
-		inputconf->kb_p1start = g_key_file_get_string(inputfile, "gamepad1", "kb_start", NULL);
-		inputconf->kb_p1a = g_key_file_get_string(inputfile, "gamepad1", "kb_a", NULL);
-		inputconf->kb_p1b = g_key_file_get_string(inputfile, "gamepad1", "kb_b", NULL);
-		
-		inputconf->js_p1u = g_key_file_get_string(inputfile, "gamepad1", "js_u", NULL);
-		inputconf->js_p1d = g_key_file_get_string(inputfile, "gamepad1", "js_d", NULL);
-		inputconf->js_p1l = g_key_file_get_string(inputfile, "gamepad1", "js_l", NULL);
-		inputconf->js_p1r = g_key_file_get_string(inputfile, "gamepad1", "js_r", NULL);
-		inputconf->js_p1select = g_key_file_get_string(inputfile, "gamepad1", "js_select", NULL);
-		inputconf->js_p1start = g_key_file_get_string(inputfile, "gamepad1", "js_start", NULL);
-		inputconf->js_p1a = g_key_file_get_string(inputfile, "gamepad1", "js_a", NULL);
-		inputconf->js_p1b = g_key_file_get_string(inputfile, "gamepad1", "js_b", NULL);
-		
-		// Player 2
-		inputconf->kb_p2u = g_key_file_get_string(inputfile, "gamepad2", "kb_u", NULL);
-		inputconf->kb_p2d = g_key_file_get_string(inputfile, "gamepad2", "kb_d", NULL);
-		inputconf->kb_p2l = g_key_file_get_string(inputfile, "gamepad2", "kb_l", NULL);
-		inputconf->kb_p2r = g_key_file_get_string(inputfile, "gamepad2", "kb_r", NULL);
-		inputconf->kb_p2select = g_key_file_get_string(inputfile, "gamepad2", "kb_select", NULL);
-		inputconf->kb_p2start = g_key_file_get_string(inputfile, "gamepad2", "kb_start", NULL);
-		inputconf->kb_p2a = g_key_file_get_string(inputfile, "gamepad2", "kb_a", NULL);
-		inputconf->kb_p2b = g_key_file_get_string(inputfile, "gamepad2", "kb_b", NULL);
-
-		inputconf->js_p2u = g_key_file_get_string(inputfile, "gamepad2", "js_u", NULL);
-		inputconf->js_p2d = g_key_file_get_string(inputfile, "gamepad2", "js_d", NULL);
-		inputconf->js_p2l = g_key_file_get_string(inputfile, "gamepad2", "js_l", NULL);
-		inputconf->js_p2r = g_key_file_get_string(inputfile, "gamepad2", "js_r", NULL);
-		inputconf->js_p2select = g_key_file_get_string(inputfile, "gamepad2", "js_select", NULL);
-		inputconf->js_p2start = g_key_file_get_string(inputfile, "gamepad2", "js_start", NULL);
-		inputconf->js_p2a = g_key_file_get_string(inputfile, "gamepad2", "js_a", NULL);
-		inputconf->js_p2b = g_key_file_get_string(inputfile, "gamepad2", "js_b", NULL);
-		
+	if (ini_parse(inputconfpath, input_config_match, &inputconf) < 0) {
+		fprintf(stderr, "Failed to load input config file %s: Using defaults.\n", inputconfpath);
+		input_set_default();
+	}
+	else {
 		// Map the input settings from the config file
 		
 		// Player 1
-		player[0].u = SDL_GetScancodeFromName(inputconf->kb_p1u);
-		player[0].d = SDL_GetScancodeFromName(inputconf->kb_p1d);
-		player[0].l = SDL_GetScancodeFromName(inputconf->kb_p1l);
-		player[0].r = SDL_GetScancodeFromName(inputconf->kb_p1r);
-		player[0].select = SDL_GetScancodeFromName(inputconf->kb_p1select);
-		player[0].start = SDL_GetScancodeFromName(inputconf->kb_p1start);
-		player[0].a = SDL_GetScancodeFromName(inputconf->kb_p1a);
-		player[0].b = SDL_GetScancodeFromName(inputconf->kb_p1b);
+		player[0].u = SDL_GetScancodeFromName(inputconf.kb_p1u);
+		player[0].d = SDL_GetScancodeFromName(inputconf.kb_p1d);
+		player[0].l = SDL_GetScancodeFromName(inputconf.kb_p1l);
+		player[0].r = SDL_GetScancodeFromName(inputconf.kb_p1r);
+		player[0].select = SDL_GetScancodeFromName(inputconf.kb_p1select);
+		player[0].start = SDL_GetScancodeFromName(inputconf.kb_p1start);
+		player[0].a = SDL_GetScancodeFromName(inputconf.kb_p1a);
+		player[0].b = SDL_GetScancodeFromName(inputconf.kb_p1b);
 		
-		player[0].ju = input_translate_string(inputconf->js_p1u);
-		player[0].jd = input_translate_string(inputconf->js_p1d);
-		player[0].jl = input_translate_string(inputconf->js_p1l);
-		player[0].jr = input_translate_string(inputconf->js_p1r);
-		player[0].jselect = input_translate_string(inputconf->js_p1select);
-		player[0].jstart = input_translate_string(inputconf->js_p1start);
-		player[0].ja = input_translate_string(inputconf->js_p1a);
-		player[0].jb = input_translate_string(inputconf->js_p1b);
+		player[0].ju = input_translate_string(inputconf.js_p1u);
+		player[0].jd = input_translate_string(inputconf.js_p1d);
+		player[0].jl = input_translate_string(inputconf.js_p1l);
+		player[0].jr = input_translate_string(inputconf.js_p1r);
+		player[0].jselect = input_translate_string(inputconf.js_p1select);
+		player[0].jstart = input_translate_string(inputconf.js_p1start);
+		player[0].ja = input_translate_string(inputconf.js_p1a);
+		player[0].jb = input_translate_string(inputconf.js_p1b);
 		
 		// Player 2
-		player[1].u = SDL_GetScancodeFromName(inputconf->kb_p2u);
-		player[1].d = SDL_GetScancodeFromName(inputconf->kb_p2d);
-		player[1].l = SDL_GetScancodeFromName(inputconf->kb_p2l);
-		player[1].r = SDL_GetScancodeFromName(inputconf->kb_p2r);
-		player[1].select = SDL_GetScancodeFromName(inputconf->kb_p2select);
-		player[1].start = SDL_GetScancodeFromName(inputconf->kb_p2start);
-		player[1].a = SDL_GetScancodeFromName(inputconf->kb_p2a);
-		player[1].b = SDL_GetScancodeFromName(inputconf->kb_p2b);
+		player[1].u = SDL_GetScancodeFromName(inputconf.kb_p2u);
+		player[1].d = SDL_GetScancodeFromName(inputconf.kb_p2d);
+		player[1].l = SDL_GetScancodeFromName(inputconf.kb_p2l);
+		player[1].r = SDL_GetScancodeFromName(inputconf.kb_p2r);
+		player[1].select = SDL_GetScancodeFromName(inputconf.kb_p2select);
+		player[1].start = SDL_GetScancodeFromName(inputconf.kb_p2start);
+		player[1].a = SDL_GetScancodeFromName(inputconf.kb_p2a);
+		player[1].b = SDL_GetScancodeFromName(inputconf.kb_p2b);
 		
-		player[1].ju = input_translate_string(inputconf->js_p2u);
-		player[1].jd = input_translate_string(inputconf->js_p2d);
-		player[1].jl = input_translate_string(inputconf->js_p2l);
-		player[1].jr = input_translate_string(inputconf->js_p2r);
-		player[1].jselect = input_translate_string(inputconf->js_p2select);
-		player[1].jstart = input_translate_string(inputconf->js_p2start);
-		player[1].ja = input_translate_string(inputconf->js_p2a);
-		player[1].jb = input_translate_string(inputconf->js_p2b);
-	}
-	else {
-		printf("Failed to load input config file %s: Using defaults.\n", inputconfpath);
-		input_set_default();
+		player[1].ju = input_translate_string(inputconf.js_p2u);
+		player[1].jd = input_translate_string(inputconf.js_p2d);
+		player[1].jl = input_translate_string(inputconf.js_p2l);
+		player[1].jr = input_translate_string(inputconf.js_p2r);
+		player[1].jselect = input_translate_string(inputconf.js_p2select);
+		player[1].jstart = input_translate_string(inputconf.js_p2start);
+		player[1].ja = input_translate_string(inputconf.js_p2a);
+		player[1].jb = input_translate_string(inputconf.js_p2b);
 	}
 }
 
 void input_config_write() {
 	// Write out the input configuration file
-	g_key_file_set_string(inputfile, "gamepad1", "kb_u", SDL_GetScancodeName(player[0].u));
-	g_key_file_set_string(inputfile, "gamepad1", "kb_d", SDL_GetScancodeName(player[0].d));
-	g_key_file_set_string(inputfile, "gamepad1", "kb_l", SDL_GetScancodeName(player[0].l));
-	g_key_file_set_string(inputfile, "gamepad1", "kb_r", SDL_GetScancodeName(player[0].r));
-	g_key_file_set_string(inputfile, "gamepad1", "kb_select", SDL_GetScancodeName(player[0].select));
-	g_key_file_set_string(inputfile, "gamepad1", "kb_start", SDL_GetScancodeName(player[0].start));
-	g_key_file_set_string(inputfile, "gamepad1", "kb_a", SDL_GetScancodeName(player[0].a));
-	g_key_file_set_string(inputfile, "gamepad1", "kb_b", SDL_GetScancodeName(player[0].b));
-	
-	g_key_file_set_string(inputfile, "gamepad1", "js_u", input_translate_event(player[0].ju));
-	g_key_file_set_string(inputfile, "gamepad1", "js_d", input_translate_event(player[0].jd));
-	g_key_file_set_string(inputfile, "gamepad1", "js_l", input_translate_event(player[0].jl));
-	g_key_file_set_string(inputfile, "gamepad1", "js_r", input_translate_event(player[0].jr));
-	g_key_file_set_string(inputfile, "gamepad1", "js_select", input_translate_event(player[0].jselect));
-	g_key_file_set_string(inputfile, "gamepad1", "js_start", input_translate_event(player[0].jstart));
-	g_key_file_set_string(inputfile, "gamepad1", "js_a", input_translate_event(player[0].ja));
-	g_key_file_set_string(inputfile, "gamepad1", "js_b", input_translate_event(player[0].jb));
-	
-	g_key_file_set_string(inputfile, "gamepad2", "kb_u", SDL_GetScancodeName(player[1].u));
-	g_key_file_set_string(inputfile, "gamepad2", "kb_d", SDL_GetScancodeName(player[1].d));
-	g_key_file_set_string(inputfile, "gamepad2", "kb_l", SDL_GetScancodeName(player[1].l));
-	g_key_file_set_string(inputfile, "gamepad2", "kb_r", SDL_GetScancodeName(player[1].r));
-	g_key_file_set_string(inputfile, "gamepad2", "kb_select", SDL_GetScancodeName(player[1].select));
-	g_key_file_set_string(inputfile, "gamepad2", "kb_start", SDL_GetScancodeName(player[1].start));
-	g_key_file_set_string(inputfile, "gamepad2", "kb_a", SDL_GetScancodeName(player[1].a));
-	g_key_file_set_string(inputfile, "gamepad2", "kb_b", SDL_GetScancodeName(player[1].b));
-	
-	g_key_file_set_string(inputfile, "gamepad2", "js_u", input_translate_event(player[1].ju));
-	g_key_file_set_string(inputfile, "gamepad2", "js_d", input_translate_event(player[1].jd));
-	g_key_file_set_string(inputfile, "gamepad2", "js_l", input_translate_event(player[1].jl));
-	g_key_file_set_string(inputfile, "gamepad2", "js_r", input_translate_event(player[1].jr));
-	g_key_file_set_string(inputfile, "gamepad2", "js_select", input_translate_event(player[1].jselect));
-	g_key_file_set_string(inputfile, "gamepad2", "js_start", input_translate_event(player[1].jstart));
-	g_key_file_set_string(inputfile, "gamepad2", "js_a", input_translate_event(player[1].ja));
-	g_key_file_set_string(inputfile, "gamepad2", "js_b", input_translate_event(player[1].jb));
 	
 	FILE *fp = fopen(inputconfpath, "w");
 	if (fp != NULL)	{
-		fputs(g_key_file_to_data(inputfile, &length, NULL), fp);
+		fprintf(fp, "[gamepad1]\n");
+		fprintf(fp, "kb_u=%s\n", SDL_GetScancodeName(player[0].u));
+		fprintf(fp, "kb_d=%s\n", SDL_GetScancodeName(player[0].d));
+		fprintf(fp, "kb_l=%s\n", SDL_GetScancodeName(player[0].l));
+		fprintf(fp, "kb_r=%s\n", SDL_GetScancodeName(player[0].r));
+		fprintf(fp, "kb_select=%s\n", SDL_GetScancodeName(player[0].select));
+		fprintf(fp, "kb_start=%s\n", SDL_GetScancodeName(player[0].start));
+		fprintf(fp, "kb_a=%s\n", SDL_GetScancodeName(player[0].a));
+		fprintf(fp, "kb_b=%s\n", SDL_GetScancodeName(player[0].b));
+		
+		fprintf(fp, "js_u=%s\n", input_translate_event(player[0].ju));
+		fprintf(fp, "js_d=%s\n", input_translate_event(player[0].jd));
+		fprintf(fp, "js_l=%s\n", input_translate_event(player[0].jl));
+		fprintf(fp, "js_r=%s\n", input_translate_event(player[0].jr));
+		fprintf(fp, "js_select=%s\n", input_translate_event(player[0].jselect));
+		fprintf(fp, "js_start=%s\n", input_translate_event(player[0].jstart));
+		fprintf(fp, "js_a=%s\n", input_translate_event(player[0].ja));
+		fprintf(fp, "js_b=%s\n", input_translate_event(player[0].jb));
+		fprintf(fp, "\n"); // End of Section
+		
+		fprintf(fp, "[gamepad2]\n");
+		fprintf(fp, "kb_u=%s\n", SDL_GetScancodeName(player[1].u));
+		fprintf(fp, "kb_d=%s\n", SDL_GetScancodeName(player[1].d));
+		fprintf(fp, "kb_l=%s\n", SDL_GetScancodeName(player[1].l));
+		fprintf(fp, "kb_r=%s\n", SDL_GetScancodeName(player[1].r));
+		fprintf(fp, "kb_select=%s\n", SDL_GetScancodeName(player[1].select));
+		fprintf(fp, "kb_start=%s\n", SDL_GetScancodeName(player[1].start));
+		fprintf(fp, "kb_a=%s\n", SDL_GetScancodeName(player[1].a));
+		fprintf(fp, "kb_b=%s\n", SDL_GetScancodeName(player[1].b));
+		
+		fprintf(fp, "js_u=%s\n", input_translate_event(player[1].ju));
+		fprintf(fp, "js_d=%s\n", input_translate_event(player[1].jd));
+		fprintf(fp, "js_l=%s\n", input_translate_event(player[1].jl));
+		fprintf(fp, "js_r=%s\n", input_translate_event(player[1].jr));
+		fprintf(fp, "js_select=%s\n", input_translate_event(player[1].jselect));
+		fprintf(fp, "js_start=%s\n", input_translate_event(player[1].jstart));
+		fprintf(fp, "js_a=%s\n", input_translate_event(player[1].ja));
+		fprintf(fp, "js_b=%s\n", input_translate_event(player[1].jb));
+		fprintf(fp, "\n"); // End of Section
+		
 		fclose(fp);
 	}
-	
-	g_slice_free(inputsettings, inputconf);
-	g_key_file_free(inputfile);
 }
 
 void input_set_default() {
@@ -602,4 +554,50 @@ void input_set_default() {
 	player[1].jstart = input_translate_string("j1b9");
 	player[1].ja = input_translate_string("j1b1");
 	player[1].jb = input_translate_string("j1b0");
+}
+
+static int input_config_match(void* user, const char* section, const char* name, const char* value) {
+	// Match values from input config file and populate live config
+	inputsettings* pconfig = (inputsettings*)user;
+	
+	// Player 1
+	if (MATCH("gamepad1", "kb_u")) { pconfig->kb_p1u = strdup(value); }
+	else if (MATCH("gamepad1", "kb_d")) { pconfig->kb_p1d = strdup(value); }
+	else if (MATCH("gamepad1", "kb_l")) { pconfig->kb_p1l = strdup(value); }
+	else if (MATCH("gamepad1", "kb_r")) { pconfig->kb_p1r = strdup(value); }
+	else if (MATCH("gamepad1", "kb_select")) { pconfig->kb_p1select = strdup(value); }
+	else if (MATCH("gamepad1", "kb_start")) { pconfig->kb_p1start = strdup(value); }
+	else if (MATCH("gamepad1", "kb_a")) { pconfig->kb_p1a = strdup(value); }
+	else if (MATCH("gamepad1", "kb_b")) { pconfig->kb_p1b = strdup(value); }
+	
+	else if (MATCH("gamepad1", "js_u")) { pconfig->js_p1u = strdup(value); }
+	else if (MATCH("gamepad1", "js_d")) { pconfig->js_p1d = strdup(value); }
+	else if (MATCH("gamepad1", "js_l")) { pconfig->js_p1l = strdup(value); }
+	else if (MATCH("gamepad1", "js_r")) { pconfig->js_p1r = strdup(value); }
+	else if (MATCH("gamepad1", "js_select")) { pconfig->js_p1select = strdup(value); }
+	else if (MATCH("gamepad1", "js_start")) { pconfig->js_p1start = strdup(value); }
+	else if (MATCH("gamepad1", "js_a")) { pconfig->js_p1a = strdup(value); }
+	else if (MATCH("gamepad1", "js_b")) { pconfig->js_p1b = strdup(value); }
+	
+	// Player 2
+	else if (MATCH("gamepad2", "kb_u")) { pconfig->kb_p2u = strdup(value); }
+	else if (MATCH("gamepad2", "kb_d")) { pconfig->kb_p2d = strdup(value); }
+	else if (MATCH("gamepad2", "kb_l")) { pconfig->kb_p2l = strdup(value); }
+	else if (MATCH("gamepad2", "kb_r")) { pconfig->kb_p2r = strdup(value); }
+	else if (MATCH("gamepad2", "kb_select")) { pconfig->kb_p2select = strdup(value); }
+	else if (MATCH("gamepad2", "kb_start")) { pconfig->kb_p2start = strdup(value); }
+	else if (MATCH("gamepad2", "kb_a")) { pconfig->kb_p2a = strdup(value); }
+	else if (MATCH("gamepad2", "kb_b")) { pconfig->kb_p2b = strdup(value); }
+	
+	else if (MATCH("gamepad2", "js_u")) { pconfig->js_p2u = strdup(value); }
+	else if (MATCH("gamepad2", "js_d")) { pconfig->js_p2d = strdup(value); }
+	else if (MATCH("gamepad2", "js_l")) { pconfig->js_p2l = strdup(value); }
+	else if (MATCH("gamepad2", "js_r")) { pconfig->js_p2r = strdup(value); }
+	else if (MATCH("gamepad2", "js_select")) { pconfig->js_p2select = strdup(value); }
+	else if (MATCH("gamepad2", "js_start")) { pconfig->js_p2start = strdup(value); }
+	else if (MATCH("gamepad2", "js_a")) { pconfig->js_p2a = strdup(value); }
+	else if (MATCH("gamepad2", "js_b")) { pconfig->js_p2b = strdup(value); }
+	
+	else { return 0; }
+    return 1;
 }

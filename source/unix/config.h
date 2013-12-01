@@ -40,7 +40,7 @@ typedef struct {
 } settings;
 
 void config_file_read();
-void config_file_free();
 void config_file_write();
-void set_default_config();
+void config_set_default();
+static int config_match(void* user, const char* section, const char* name, const char* value);
 #endif

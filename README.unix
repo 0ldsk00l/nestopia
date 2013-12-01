@@ -1,5 +1,3 @@
-This program is licensed under the GNU GPLv2. For details, read COPYING.
-
 Nestopia is a portable open source NES/Famicom emulator written in C++.
 It is designed to be as accurate as possible and supports a large number
 of peripherals.
@@ -62,3 +60,11 @@ A = B
 
 Backspace = Rewind
 \ = Stop Rewinding
+
+Copyright
+=========
+
+This program is licensed under the GNU GPLv2. For details, read COPYING.
+
+inih -- simple .INI file parser Copyright (c) 2009, Brush Technology
+All rights reserved. For details, read source/unix/ini.h

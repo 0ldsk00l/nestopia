@@ -4,7 +4,6 @@ CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
 SDL_CFLAGS = $(shell sdl2-config --cflags)
 #GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
-GTK_CFLAGS = $(shell pkg-config --cflags glib-2.0)
 
 INCLUDES += -Isource
 WARNINGS += -Wno-deprecated -Wno-write-strings
@@ -12,7 +11,7 @@ WARNINGS += -Wno-deprecated -Wno-write-strings
 LDFLAGS = -Wl,--as-needed
 LIBS = -lstdc++ -lm -lz
 #LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
-LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs glib-2.0)
+LIBS += $(shell sdl2-config --libs) $(shell pkg-config)
 
 UNAME := $(shell uname)
 
@@ -343,6 +342,7 @@ IOBJS += objs/unix/fileio.o
 IOBJS += objs/unix/config.o
 IOBJS += objs/unix/seffect.o
 IOBJS += objs/unix/cursor.o
+IOBJS += objs/unix/ini.o
 
 # object dirs
 OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc objs/unix
@@ -353,7 +353,8 @@ objs/core/%.o: source/core/%.cpp
 
 # Interface rules
 objs/unix/%.o: source/unix/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(SDL_CFLAGS) $(GTK_CFLAGS) -c $< -o $@
+#	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(SDL_CFLAGS) $(GTK_CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(SDL_CFLAGS) -c $< -o $@
 
 all: maketree $(BIN)
 

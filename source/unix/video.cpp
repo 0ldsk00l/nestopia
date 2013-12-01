@@ -54,12 +54,12 @@ Video::RenderState renderstate;
 dimensions rendersize;
 dimensions basesize;
 
-extern settings *conf;
+extern settings conf;
 extern Emulator emulator;
 
 void opengl_init_structures() {
 	// init OpenGL and set up for blitting
-	int scalefactor = conf->video_scale_factor;
+	int scalefactor = conf.video_scale_factor;
 
 	// Fix the fencepost issue when masking overscan
 	float fencepost = scalefactor / 2.0;
@@ -83,7 +83,7 @@ void opengl_init_structures() {
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	
-	if (conf->video_mask_overscan) {
+	if (conf.video_mask_overscan) {
 		glOrtho(
 /*Left*/	0.0,
 /*Right*/   (GLdouble)rendersize.w,
@@ -139,12 +139,12 @@ void opengl_blit() {
 
 void video_init() {
 	// Initialize video structures	
-	int scalefactor = conf->video_scale_factor;
+	int scalefactor = conf.video_scale_factor;
 	
 	video_set_params();
 	video_set_filter();
 	
-	linear_filter = (conf->video_renderer == 2);
+	linear_filter = (conf.video_renderer == 2);
 	
 	opengl_init_structures();
 	
@@ -171,10 +171,10 @@ void video_init() {
 	Video video(emulator);
 	
 	// set the sprite limit
-	video.EnableUnlimSprites(conf->video_unlimited_sprites ? false : true);
+	video.EnableUnlimSprites(conf.video_unlimited_sprites ? false : true);
 	
 	// Set Palette options
-	switch (conf->video_palette_mode) {
+	switch (conf.video_palette_mode) {
 		case 0: // YUV
 			video.GetPalette().SetMode(Video::Palette::MODE_YUV);
 			break;
@@ -185,7 +185,7 @@ void video_init() {
 	
 	// Set YUV Decoder/Picture options
 	if (video.GetPalette().GetMode() != Video::Palette::MODE_RGB) {
-		switch (conf->video_decoder) {
+		switch (conf.video_decoder) {
 			case 0: // Canonical
 				video.SetDecoder(Video::DECODER_CANONICAL);
 				break;
@@ -199,14 +199,14 @@ void video_init() {
 				break;
 		}
 		
-		video.SetBrightness(conf->video_brightness);
-		video.SetSaturation(conf->video_saturation);
-		video.SetContrast(conf->video_contrast);
-		video.SetHue(conf->video_hue);
+		video.SetBrightness(conf.video_brightness);
+		video.SetSaturation(conf.video_saturation);
+		video.SetContrast(conf.video_contrast);
+		video.SetHue(conf.video_hue);
 	}
 	
 	// Set NTSC options
-	switch (conf->video_ntsc_mode) {
+	switch (conf.video_ntsc_mode) {
 		case 0:	// Composite
 			video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
 			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_COMP);
@@ -233,9 +233,9 @@ void video_init() {
 	}
 	
 	// Set xBR options
-	if (conf->video_filter == 2) {
-		video.SetCornerRounding(conf->video_xbr_corner_rounding);
-		video.SetBlend(conf->video_xbr_pixel_blending);
+	if (conf.video_filter == 2) {
+		video.SetCornerRounding(conf.video_xbr_corner_rounding);
+		video.SetBlend(conf.video_xbr_pixel_blending);
 	}
 	
 	video.ClearFilterUpdateFlag();
@@ -252,9 +252,9 @@ void video_toggle_fullscreen() {
 	Uint32 flags;
 	int cursor;
 	
-	conf->video_fullscreen ^= 1;
+	conf.video_fullscreen ^= 1;
 	
-	if(conf->video_fullscreen) {
+	if(conf.video_fullscreen) {
 		cursor = 0;
 		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
@@ -269,14 +269,14 @@ void video_toggle_fullscreen() {
 }
 
 void video_toggle_filter() {
-	conf->video_filter++;
+	conf.video_filter++;
 	
 	// Intentionally leaving out scalex
-	if (conf->video_filter > 4) { conf->video_filter = 0; }
+	if (conf.video_filter > 4) { conf.video_filter = 0; }
 	
 	// The scalex filter only allows 3x scale and crashes otherwise
-	if (conf->video_filter == 5 && conf->video_scale_factor == 4) {
-		conf->video_scale_factor = 3;
+	if (conf.video_filter == 5 && conf.video_scale_factor == 4) {
+		conf.video_scale_factor = 3;
 	}
 	
 	Video video(emulator);
@@ -292,12 +292,12 @@ void video_toggle_filter() {
 }
 
 void video_toggle_scalefactor() {
-	conf->video_scale_factor++;
-	if (conf->video_scale_factor > 4) { conf->video_scale_factor = 1; }
+	conf.video_scale_factor++;
+	if (conf.video_scale_factor > 4) { conf.video_scale_factor = 1; }
 	
 	// The scalex filter only allows 3x scale and crashes otherwise
-	if (conf->video_filter == 5 && conf->video_scale_factor == 4) {
-		conf->video_scale_factor = 1;
+	if (conf.video_filter == 5 && conf.video_scale_factor == 4) {
+		conf.video_scale_factor = 1;
 	}
 	
 	if (intbuffer) {
@@ -315,13 +315,13 @@ void video_create() {
 	
 	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
 	
-	if(conf->video_fullscreen) {
+	if(conf.video_fullscreen) {
 		SDL_ShowCursor(0);
 		windowflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 	
 	sdlwindow = SDL_CreateWindow(
-	"Nestopia",							//    window title
+	"Nestopia UE",						//    window title
 	SDL_WINDOWPOS_UNDEFINED,			//    initial x position
 	SDL_WINDOWPOS_UNDEFINED,			//    initial y position
 	rendersize.w,						//    width, in pixels
@@ -351,9 +351,9 @@ void video_create() {
 
 void video_set_filter() {
 	// Set the filter
-	int scalefactor = conf->video_scale_factor;
+	int scalefactor = conf.video_scale_factor;
 	
-	switch(conf->video_filter) {
+	switch(conf.video_filter) {
 		case 0:	// None
 			filter = Video::RenderState::FILTER_NONE;
 			break;
@@ -427,14 +427,14 @@ void video_set_filter() {
 
 void video_set_params() {
 
-	int scalefactor = conf->video_scale_factor;
+	int scalefactor = conf.video_scale_factor;
 	
-	switch(conf->video_filter)
+	switch(conf.video_filter)
 	{
 		case 0:	// None
 			basesize.w = Video::Output::WIDTH;
 			basesize.h = Video::Output::HEIGHT;
-			conf->video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
+			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
 			rendersize.h = basesize.h * scalefactor;
 			break;
 
@@ -448,37 +448,37 @@ void video_set_params() {
 		case 2: // xBR
 		case 3: // HqX
 		case 5: // ScaleX
-			if (conf->video_filter == 5 && scalefactor == 4) {
+			if (conf.video_filter == 5 && scalefactor == 4) {
 				fprintf(stderr, "error: ScaleX filter cannot scale to 4x\n");
-				conf->video_scale_factor = scalefactor = 3;
+				conf.video_scale_factor = scalefactor = 3;
 			}
 			
 			basesize.w = Video::Output::WIDTH * scalefactor;
 			basesize.h = Video::Output::HEIGHT * scalefactor;
-			conf->video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
+			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
 			rendersize.h = basesize.h;
 			break;
 		
 		case 4: // 2xSaI
 			basesize.w = Video::Output::WIDTH * 2;
 			basesize.h = Video::Output::HEIGHT * 2;
-			conf->video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
+			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
 			rendersize.h = Video::Output::HEIGHT * scalefactor;
 			break;
 	}
 
-	if (conf->video_mask_overscan) {
+	if (conf.video_mask_overscan) {
 		rendersize.h -= (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
 	}
 	
 	// Calculate the aspect from the height because it's smaller
 	float aspect = (float)displaymode.h / (float)rendersize.h;
 	
-	if (conf->video_preserve_aspect && conf->video_fullscreen && sdlwindow) {
+	if (conf.video_preserve_aspect && conf.video_fullscreen && sdlwindow) {
 		rendersize.h *= aspect;
 		rendersize.w *= aspect;
 	}
-	else if (conf->video_fullscreen && sdlwindow) {
+	else if (conf.video_fullscreen && sdlwindow) {
 		rendersize.h = displaymode.h;
 		rendersize.w = displaymode.w;
 	}
