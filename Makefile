@@ -11,7 +11,7 @@ WARNINGS += -Wno-deprecated -Wno-write-strings
 LDFLAGS = -Wl,--as-needed
 LIBS = -lstdc++ -lm -lz
 #LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
-LIBS += $(shell sdl2-config --libs) $(shell pkg-config)
+LIBS += $(shell sdl2-config --libs)
 
 UNAME := $(shell uname)
 
@@ -31,10 +31,10 @@ else
 	LIBS += -lGL -lGLU
 endif
 
-ifeq ($(UNAME), Linux)
-	LIBS += -lasound
-	DEFINES += -DOSS_ALSA
-endif
+#ifeq ($(UNAME), Linux)
+#	LIBS += -lasound
+#	DEFINES += -DOSS_ALSA
+#endif
 
 # Core
 OBJS = objs/core/NstApu.o
@@ -334,13 +334,14 @@ OBJS += objs/core/vssystem/NstVsTkoBoxing.o
 IOBJS = objs/unix/main.o
 IOBJS += objs/unix/cli.o
 #IOBJS += objs/unix/gtkui.o
-IOBJS += objs/unix/audio.o
+#IOBJS += objs/unix/audio.o
+IOBJS += objs/unix/newaudio.o
 IOBJS += objs/unix/video.o
 IOBJS += objs/unix/input.o
 IOBJS += objs/unix/fileio.o
 #IOBJS += objs/unix/cheats.o
 IOBJS += objs/unix/config.o
-IOBJS += objs/unix/seffect.o
+#IOBJS += objs/unix/seffect.o
 IOBJS += objs/unix/cursor.o
 IOBJS += objs/unix/ini.o
 
