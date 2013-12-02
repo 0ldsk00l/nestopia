@@ -59,13 +59,14 @@
 #include "main.h"
 #include "cli.h"
 //#include "gtkui.h"
-#include "audio.h"
+//#include "audio.h"
+#include "newaudio.h"
 #include "video.h"
 #include "input.h"
 #include "fileio.h"
 #include "cheats.h"
 #include "config.h"
-#include "seffect.h"
+//#include "seffect.h"
 #include "cursor.h"
 
 using namespace Nes::Api;
@@ -156,7 +157,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 
 	outbuf = out;
 
-	if (conf.audio_stereo_exciter)
+	/*if (conf.audio_stereo_exciter)
 	{
 		int j = 0;
 
@@ -178,7 +179,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 				exholding[j++] = (*pbufL++)/4;
 			}
 
-			seffect_ex_process((long *)exholding, dwSamples);
+			//seffect_ex_process((long *)exholding, dwSamples);
 
 			j = 0;
 			for (s = 0; s < dwSamples; s++)
@@ -220,7 +221,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 	if (conf.audio_surround)
 	{
 		seffect_surround_lite_process(outbuf, dwSamples*4);
-	}
+	}*/
 	updateok = 1;
 }
 
@@ -269,8 +270,8 @@ void NstStopPlaying()
 		Machine machine(emulator);
 
 		// shut down the sound system too
-		m1sdr_PlayStop();
-		m1sdr_Exit();
+		//m1sdr_PlayStop();
+		//m1sdr_Exit();
 
 		// flush the sound buffer
 		memset(lbuf, 0, sizeof(lbuf));
@@ -392,7 +393,7 @@ void NstPlayGame(void)
 	cNstSound->samples[1] = NULL;
 	cNstSound->length[1] = 0;
 
-	m1sdr_SetSamplesPerTick(cNstSound->length[0]);
+	//m1sdr_SetSamplesPerTick(cNstSound->length[0]);
 	//m1sdr_SetSamplesPerTick(800);
 
 	updateok = 0;
@@ -725,12 +726,12 @@ int main(int argc, char *argv[]) {
 					Rewinder(emulator).EnableSound(true);
 				}
 
-			m1sdr_TimeCheck();
-			if (updateok) {
-				emulator.Execute(cNstVideo, cNstSound, cNstPads);
-				//emulator.Execute(cNstVideo, NULL, cNstPads);
-				updateok = 0;
-			}
+			//m1sdr_TimeCheck();
+			//if (updateok) {
+				//emulator.Execute(cNstVideo, cNstSound, cNstPads);
+				emulator.Execute(cNstVideo, NULL, cNstPads);
+				//updateok = 0;
+			//}
 			
 
 			if (state_save)
@@ -844,12 +845,12 @@ void SetupSound()
 	printf("Sample Rate:\t%d\n", sound.GetSampleRate());
 	printf("Speed:\t%d\n", sound.GetSpeed());*/
 	
-	m1sdr_Init(conf.audio_sample_rate);
-	m1sdr_SetCallback((void *)nst_do_frame);
-	m1sdr_PlayStart();
+	//m1sdr_Init(conf.audio_sample_rate);
+	//m1sdr_SetCallback((void *)nst_do_frame);
+	//m1sdr_PlayStart();
 
 	// init DSP module
-	seffect_init();
+	//seffect_init();
 
 	// example configuration (these are the default values)
 	sound.SetSampleBits( 16 );
