@@ -246,7 +246,14 @@ static void update_input()
    input_poll_cb();
    input->pad[0].buttons = 0;
    input->pad[1].buttons = 0;
+   input->zapper.fire = 0;
    input->vsSystem.insertCoin = 0;
+   
+   static int zapx = use_overscan ? 0 : 8;
+   static int zapy = use_overscan ? 0 : 8;
+   
+   zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
+   zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
 
    for (unsigned p = 0; p < 2; p++)
       for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
@@ -257,7 +264,18 @@ static void update_input()
       
    if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R))
       input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_2;
-
+      
+   if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TRIGGER)) {
+      input->zapper.x = zapx;
+      input->zapper.y = zapy;
+      input->zapper.fire = 1;
+   }
+      
+   if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TURBO)) {
+      input->zapper.x = ~1U;
+      input->zapper.fire = 1;
+   }
+   
    if (machine->Is(Nes::Api::Machine::DISK))
    {
       if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y) &&
@@ -571,8 +589,11 @@ bool retro_load_game(const struct retro_game_info *info)
    isound.SetSampleRate(44100);
    isound.SetSpeaker(Api::Sound::SPEAKER_MONO);
 
-   Api::Input(emulator).ConnectController(0, Api::Input::PAD1);
-   Api::Input(emulator).ConnectController(1, Api::Input::PAD2);
+   //Api::Input(emulator).ConnectController(0, Api::Input::PAD1);
+   //Api::Input(emulator).ConnectController(1, Api::Input::PAD2);
+   Api::Input(emulator).AutoSelectController(0);
+   Api::Input(emulator).AutoSelectController(1);
+   //Api::Input(emulator).ConnectController(1, Api::Input::ZAPPER);
 
    machine->Power(true);
 
