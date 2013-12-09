@@ -22,6 +22,7 @@ libretro:
   - Ability to load NstDatabase.xml (needed for some games)
   - Overscan masking (themaister)
   - Palette options
+  - Zapper support
 
 ----------------------------------------------------------------
 1.45

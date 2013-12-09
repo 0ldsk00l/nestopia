@@ -46,6 +46,25 @@ static void *sram;
 static unsigned long sram_size;
 static bool is_pal;
 
+int crossx = 0;
+int crossy = 0;
+
+void draw_crosshair(int x, int y)
+{
+   uint32_t w = 0xFFFFFFFF;
+   uint32_t b = 0x00000000;
+   
+   for(int i = -3; i < 4; i++) {
+      video_buffer[256 * y + x + i] = b;
+      video_buffer[256 * (y + i) + x] = b;
+   }
+   
+   for(int i = -2; i < 3; i += 2) {
+      video_buffer[256 * y + x + i] = w;
+      video_buffer[256 * (y + i) + x] = w;
+   }
+}
+
 static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 {
    const void *addr;
@@ -249,12 +268,32 @@ static void update_input()
    input->zapper.fire = 0;
    input->vsSystem.insertCoin = 0;
    
-   static int zapx = use_overscan ? 0 : 8;
-   static int zapy = use_overscan ? 0 : 8;
+   if (Api::Input(emulator).GetConnectedController(1) == 5) {
+      static int zapx = use_overscan ? 0 : 8;
+      static int zapy = use_overscan ? 0 : 8;
+      zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
+      zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
    
-   zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
-   zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
-
+      if (zapx >= 256) { crossx = 255; }
+      else if (zapx <= 0) { crossx = 0; }
+      else {crossx = zapx; }
+      
+      if (zapy >= 240) { crossy = 239; }
+      else if (zapy <= 0) { crossy = 0; }
+      else {crossy = zapy; }
+      
+      if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TRIGGER)) {
+         input->zapper.x = zapx;
+         input->zapper.y = zapy;
+         input->zapper.fire = 1;
+      }
+      
+      if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TURBO)) {
+         input->zapper.x = ~1U;
+         input->zapper.fire = 1;
+      }
+   }
+   
    for (unsigned p = 0; p < 2; p++)
       for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
          input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
@@ -265,17 +304,6 @@ static void update_input()
    if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R))
       input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_2;
       
-   if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TRIGGER)) {
-      input->zapper.x = zapx;
-      input->zapper.y = zapy;
-      input->zapper.fire = 1;
-   }
-      
-   if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TURBO)) {
-      input->zapper.x = ~1U;
-      input->zapper.fire = 1;
-   }
-   
    if (machine->Is(Nes::Api::Machine::DISK))
    {
       if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y) &&
@@ -408,19 +436,23 @@ void retro_run(void)
    
    delete video;
    video = 0;
-
    video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
-
+   
+   if (Api::Input(emulator).GetConnectedController(1) == 5) {
+      draw_crosshair(crossx, crossy);
+   }
+   
    unsigned frames = is_pal ? 44100 / 50 : 44100 / 60;
    for (unsigned i = 0; i < frames; i++)
       audio_stereo_buffer[(i << 1) + 0] = audio_stereo_buffer[(i << 1) + 1] = audio_buffer[i];
    audio_batch_cb(audio_stereo_buffer, frames);
-
+   
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
       check_variables();
       
    bool overscan = blargg_ntsc || use_overscan;
+   
    video_cb(video_buffer + (overscan ? 0 : (8 + 256 * 8)),
          video_width - (overscan ? 0 : 16),
          Api::Video::Output::HEIGHT - (overscan ? 0 : 16),
