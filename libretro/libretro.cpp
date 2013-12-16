@@ -24,6 +24,14 @@
 
 using namespace Nes;
 
+static retro_log_printf_t log_cb;
+static retro_video_refresh_t video_cb;
+static retro_audio_sample_t audio_cb;
+static retro_audio_sample_batch_t audio_batch_cb;
+static retro_environment_t environ_cb;
+static retro_input_poll_t input_poll_cb;
+static retro_input_state_t input_state_cb;
+
 static uint32_t video_buffer[Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT];
 static int16_t audio_buffer[(44100 / 50)];
 static int16_t audio_stereo_buffer[2 * (44100 / 50)];
@@ -92,13 +100,15 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
       case Api::User::File::SAVE_TURBOFILE:
          file.GetContent(addr, addr_size);
          if (addr != sram || sram_size != addr_size)
-            fprintf(stderr, "[Nestopia]: SRAM changed place in RAM!\n");
+            if (log_cb)
+               log_cb(RETRO_LOG_INFO, "[Nestopia]: SRAM changed place in RAM!\n");
          break;
       case Api::User::File::LOAD_FDS:
          {
             char base[256];
             snprintf(base, sizeof(base), "%s%c%s.sav", g_rom_dir, slash, g_basename);
-            fprintf(stderr, "Want to load FDS sav from: %s\n", base);
+            if (log_cb)
+               log_cb(RETRO_LOG_INFO, "Want to load FDS sav from: %s\n", base);
             std::ifstream in_tmp(base,std::ifstream::in|std::ifstream::binary);
 
             if (!in_tmp.is_open())
@@ -111,7 +121,8 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
          {
             char base[256];
             snprintf(base, sizeof(base), "%s%c%s.sav", g_rom_dir, slash, g_basename);
-            fprintf(stderr, "Want to save FDS sav to: %s\n", base);
+            if (log_cb)
+               log_cb(RETRO_LOG_INFO, "Want to save FDS sav to: %s\n", base);
             std::ofstream out_tmp(base,std::ifstream::out|std::ifstream::binary);
 
             if (out_tmp.is_open())
@@ -125,11 +136,15 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 
 void retro_init(void)
 {
+   struct retro_log_callback log;
+
    machine = new Api::Machine(emulator);
-
    input = new Api::Input::Controllers;
-
    Api::User::fileIoCallback.Set(file_io_callback, 0);
+
+   environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log);
+   if (log.log)
+      log_cb = log.log;
 }
 
 void retro_deinit(void)
@@ -186,12 +201,6 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    info->geometry = geom;
 }
 
-static retro_video_refresh_t video_cb;
-static retro_audio_sample_t audio_cb;
-static retro_audio_sample_batch_t audio_batch_cb;
-static retro_environment_t environ_cb;
-static retro_input_poll_t input_poll_cb;
-static retro_input_state_t input_state_cb;
 
 void retro_set_environment(retro_environment_t cb)
 {
@@ -423,10 +432,8 @@ static void check_variables(void)
    renderState.bits.mask.r = 0x00ff0000;
    renderState.bits.mask.g = 0x0000ff00;
    renderState.bits.mask.b = 0x000000ff;
-   if (NES_FAILED(video.SetRenderState( renderState )))
-   {
-      fprintf(stderr, "Nestopia core rejected render state\n");;
-   }
+   if (NES_FAILED(video.SetRenderState( renderState )) && log_cb)
+      log_cb(RETRO_LOG_INFO, "Nestopia core rejected render state\n");;
 }
 
 void retro_run(void)
@@ -438,9 +445,8 @@ void retro_run(void)
    video = 0;
    video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
    
-   if (Api::Input(emulator).GetConnectedController(1) == 5) {
+   if (Api::Input(emulator).GetConnectedController(1) == 5)
       draw_crosshair(crossx, crossy);
-   }
    
    unsigned frames = is_pal ? 44100 / 50 : 44100 / 60;
    for (unsigned i = 0; i < frames; i++)
@@ -513,7 +519,9 @@ bool retro_load_game(const struct retro_game_info *info)
       use_overscan = true;
 
    snprintf(db_path, sizeof(db_path), "%s%cNstDatabase.xml", dir, slash);
-   fprintf(stderr, "NstDatabase.xml path: %s\n", db_path);
+
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "NstDatabase.xml path: %s\n", db_path);
    
    Api::Cartridge::Database database(emulator);
    std::ifstream *db_file = new std::ifstream(db_path, std::ifstream::in|std::ifstream::binary);
@@ -525,7 +533,8 @@ bool retro_load_game(const struct retro_game_info *info)
    }
    else
    {
-      fprintf(stderr, "NstDatabase.xml required to accurately detect some mappers.\n");
+      if (log_cb)
+         log_cb(RETRO_LOG_WARN, "NstDatabase.xml required to accurately detect some mappers.\n");
       delete db_file;
    }
 
@@ -535,7 +544,8 @@ bool retro_load_game(const struct retro_game_info *info)
    enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
    if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
    {
-      fprintf(stderr, "XRGB8888 is not supported.\n");
+      if (log_cb)
+         log_cb(RETRO_LOG_ERROR, "XRGB8888 is not supported.\n");
       return false;
    }
    
@@ -547,13 +557,15 @@ bool retro_load_game(const struct retro_game_info *info)
    is_pal = false;
    if (info->path && (strstr(info->path, "(E)") || strstr(info->path, "(Europe)")))
    {
-      fprintf(stderr, "[Nestopia]: Favoring PAL.\n");
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "[Nestopia]: Favoring PAL.\n");
       system = Api::Machine::FAVORED_NES_PAL;
       is_pal = true;
    }
    else if (info->path && (strstr(info->path, "(J)") || strstr(info->path, "(Japan)")))
    {
-      fprintf(stderr, "[Nestopia]: Favoring Famicom.\n");
+      if (log_cb)
+         log_cb(RETRO_LOG_INFO, "[Nestopia]: Favoring Famicom.\n");
       system = Api::Machine::FAVORED_FAMICOM;
    }
 
@@ -568,14 +580,13 @@ bool retro_load_game(const struct retro_game_info *info)
          bool found = false;
 
          snprintf(fds_bios_path, sizeof(fds_bios_path), "%s%cdisksys.rom", dir, slash);
-         fprintf(stderr, "FDS BIOS path: %s\n", fds_bios_path);
+         if (log_cb)
+            log_cb(RETRO_LOG_INFO, "FDS BIOS path: %s\n", fds_bios_path);
 
          std::ifstream *fds_bios_file = new std::ifstream(fds_bios_path, std::ifstream::in|std::ifstream::binary);
 
          if (fds_bios_file->is_open())
-         {
             fds->SetBIOS(fds_bios_file);
-         }
          else
          {
             delete fds_bios_file;
@@ -595,7 +606,8 @@ bool retro_load_game(const struct retro_game_info *info)
       fds->InsertDisk(0, 0);
 
    machine->SetMode(is_pal ? Api::Machine::PAL : Api::Machine::NTSC);
-   fprintf(stderr, "[Nestopia]: Machine is %s.\n", is_pal ? "PAL" : "NTSC");
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "[Nestopia]: Machine is %s.\n", is_pal ? "PAL" : "NTSC");
 
    audio = new Api::Sound::Output(audio_buffer, is_pal ? 44100 / 50 : 44100 / 60);
 
