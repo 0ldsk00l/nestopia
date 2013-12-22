@@ -24,25 +24,45 @@
 
 #include <SDL.h>
 
-#include "core/api/NstApiEmulator.hpp"
-#include "core/api/NstApiSound.hpp"
-
 #include "config.h"
-#include "newaudio.h"
-
-using namespace Nes::Api;
 
 extern settings conf;
-extern Emulator emulator;
 
-void audio_init() {
-	printf("Init audio\n");
-	Sound sound(emulator);
+int framerate;
+
+int currtick = 0;
+int lasttick = 0;
+
+void timing_init() {
+	// Initialize timing-related variables
+	framerate = conf.timing_speed;
+}
+
+bool timing_check() {
+	// Check if it's time to execute the next frame
 	
-	sound.SetSampleBits(16);
-	sound.SetSampleRate(conf.audio_sample_rate);
-	sound.SetVolume(Sound::ALL_CHANNELS, conf.audio_volume);
+	if (conf.timing_vsync && (framerate != conf.timing_altspeed)) {
+		return true;
+	}
 	
-	sound.SetSpeaker(Sound::SPEAKER_MONO);
-	//sound.SetSpeed(60);
+	currtick = SDL_GetTicks();
+	
+	if (currtick > (lasttick + (1000 / framerate))) {
+		lasttick = currtick;
+		return true;
+	}
+	
+	return false;
+}
+
+void timing_set_default() {
+	// Set the framerate to the default
+	framerate = conf.timing_speed;
+	SDL_GL_SetSwapInterval(conf.timing_vsync);
+}
+
+void timing_set_altspeed() {
+	// Set the framerate to the alternate speed
+	framerate = conf.timing_altspeed;
+	SDL_GL_SetSwapInterval(0);
 }

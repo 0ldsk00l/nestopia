@@ -25,6 +25,7 @@
 #include <string.h>
 
 #include "main.h"
+#include "timing.h"
 #include "config.h"
 #include "video.h"
 #include "input.h"
@@ -78,6 +79,9 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	//if (keys[SDL_SCANCODE_F10]) {  }
 	//if (keys[SDL_SCANCODE_F11]) {  }
 	//if (keys[SDL_SCANCODE_F12]) {  }
+	
+	if (keys[SDL_SCANCODE_GRAVE]) { timing_set_altspeed(); }
+	if (!keys[SDL_SCANCODE_GRAVE]) { timing_set_default(); }
 	
 	// Insert Coins
 	controllers->vsSystem.insertCoin = 0;

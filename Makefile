@@ -333,6 +333,7 @@ OBJS += objs/core/vssystem/NstVsTkoBoxing.o
 # Interface
 IOBJS = objs/unix/main.o
 IOBJS += objs/unix/cli.o
+IOBJS += objs/unix/timing.o
 #IOBJS += objs/unix/gtkui.o
 #IOBJS += objs/unix/audio.o
 IOBJS += objs/unix/newaudio.o

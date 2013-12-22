@@ -10,6 +10,8 @@ Unix Shell:
   - Scale Factor and Filters can be changed while playing
   - Zapper support
   - Palette and Picture options
+  - Ability to turn Vsync on/off
+  - Alternate emulation speed
 
  Changes:
   - Ported to SDL 2.0

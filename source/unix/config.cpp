@@ -80,6 +80,13 @@ void config_file_write() {
 		fprintf(fp, "stereo_exciter=%d\n", conf.audio_stereo_exciter);
 		fprintf(fp, "\n"); // End of Section
 		
+		// Timing
+		fprintf(fp, "[timing]\n");
+		fprintf(fp, "speed=%d\n", conf.timing_speed);
+		fprintf(fp, "altspeed=%d\n", conf.timing_altspeed);
+		fprintf(fp, "vsync=%d\n", conf.timing_vsync);
+		fprintf(fp, "\n"); // End of Section
+		
 		// Misc
 		fprintf(fp, "[misc]\n");
 		fprintf(fp, "video_region=%d\n", conf.misc_video_region);
@@ -87,7 +94,6 @@ void config_file_write() {
 		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
 		fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
 		fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
-		fprintf(fp, "\n"); // End of Section
 		
 		fclose(fp);
 	}
@@ -128,6 +134,11 @@ void config_set_default() {
 	conf.audio_stereo = false;
 	conf.audio_stereo_exciter = false;
 	
+	// Timing
+	conf.timing_speed = 60;
+	conf.timing_altspeed = 240;
+	conf.timing_vsync = true;
+	
 	// Misc
 	conf.misc_video_region = 0;
 	conf.misc_default_system = 0;
@@ -167,6 +178,11 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("audio", "surround_multiplier")) { pconfig->audio_surround_multiplier = atoi(value); }
 	else if (MATCH("audio", "stereo")) { pconfig->audio_stereo = atoi(value); }
 	else if (MATCH("audio", "stereo_exciter")) { pconfig->audio_stereo_exciter = atoi(value); }
+	
+	// Timing
+	else if (MATCH("timing", "speed")) { pconfig->timing_speed = atoi(value); }
+	else if (MATCH("timing", "altspeed")) { pconfig->timing_altspeed = atoi(value); }
+	else if (MATCH("timing", "vsync")) { pconfig->timing_vsync = atoi(value); }
     
     // Misc
     else if (MATCH("misc", "video_region")) { pconfig->misc_video_region = atoi(value); }

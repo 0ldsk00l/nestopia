@@ -58,6 +58,7 @@
 
 #include "main.h"
 #include "cli.h"
+#include "timing.h"
 //#include "gtkui.h"
 //#include "audio.h"
 #include "newaudio.h"
@@ -78,7 +79,7 @@ Emulator emulator;
 static short lbuf[48000];
 static long exholding[48000*2];
 
-int updateok, playing = 0, loaded = 0, framerate;
+int playing = 0, loaded = 0;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
 
@@ -221,8 +222,8 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 	if (conf.audio_surround)
 	{
 		seffect_surround_lite_process(outbuf, dwSamples*4);
-	}*/
-	updateok = 1;
+	}
+	updateok = 1;*/
 }
 
 // do a "partial" shutdown
@@ -376,9 +377,11 @@ void NstPlayGame(void)
 	
 	// initialization
 	video_init();
-	SetupSound();
+	audio_init();
+	//SetupSound();
 	SetupInput();
-	nst_set_framerate();
+	timing_init();
+	//nst_set_framerate();
 
 	// apply any cheats into the engine
 	//sCheatMgr->Enable();
@@ -387,16 +390,15 @@ void NstPlayGame(void)
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
 
-	cNstSound->samples[0] = lbuf;
-	cNstSound->length[0] = conf.audio_sample_rate/framerate;
+	//cNstSound->samples[0] = lbuf;
+	//cNstSound->length[0] = conf.audio_sample_rate/framerate;
 	//printf("GetRate()/framerate: %d\n", cNstSound->length[0]);
-	cNstSound->samples[1] = NULL;
-	cNstSound->length[1] = 0;
+	//cNstSound->samples[1] = NULL;
+	//cNstSound->length[1] = 0;
 
 	//m1sdr_SetSamplesPerTick(cNstSound->length[0]);
 	//m1sdr_SetSamplesPerTick(800);
 
-	updateok = 0;
 	schedule_stop = 0;
 	playing = 1;
 }
@@ -726,12 +728,10 @@ int main(int argc, char *argv[]) {
 					Rewinder(emulator).EnableSound(true);
 				}
 
-			//m1sdr_TimeCheck();
-			//if (updateok) {
+			if (timing_check()) {
 				//emulator.Execute(cNstVideo, cNstSound, cNstPads);
 				emulator.Execute(cNstVideo, NULL, cNstPads);
-				//updateok = 0;
-			//}
+			}
 			
 
 			if (state_save)
@@ -796,10 +796,10 @@ void nst_set_framerate() {
 	Machine machine(emulator);
 	Cartridge::Database database(emulator);
 
-	framerate = 60;
+	//framerate = 60;
 	if (conf.misc_video_region == 2) {
 		machine.SetMode(Machine::PAL);
-		framerate = 50;
+		//framerate = 50;
 	}
 	else if (conf.misc_video_region == 1) {
 		machine.SetMode(Machine::NTSC);
@@ -808,7 +808,7 @@ void nst_set_framerate() {
 		if (database.IsLoaded()) {
 			if (dbentry.GetSystem() == Cartridge::Profile::System::NES_PAL) {
 				machine.SetMode(Machine::PAL);
-				framerate = 50;
+				//framerate = 50;
 			}
 			else {
 				machine.SetMode(Machine::NTSC);
