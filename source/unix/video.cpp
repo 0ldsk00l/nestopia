@@ -346,7 +346,7 @@ void video_create() {
 	
 	SDL_GL_MakeCurrent(sdlwindow, glcontext);
 	
-	SDL_GL_SetSwapInterval(1);
+	SDL_GL_SetSwapInterval(conf.timing_vsync);
 }
 
 void video_set_filter() {

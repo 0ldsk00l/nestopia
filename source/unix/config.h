@@ -31,6 +31,11 @@ typedef struct {
 	bool audio_stereo;
 	bool audio_stereo_exciter;
 	
+	// Timing
+	int timing_speed;
+	int timing_altspeed;
+	bool timing_vsync;
+	
 	// Misc
 	int misc_video_region;
 	int misc_default_system;
