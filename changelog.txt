@@ -18,6 +18,11 @@ Unix Shell:
   - Completely rewrote config file handling
   - Completely rewrote input config and input handling
 
+Windows Shell:
+
+ Fixes:
+  - xBR dialog now updates video output when options change
+
 libretro:
 
  Additions:

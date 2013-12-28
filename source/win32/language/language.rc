@@ -372,11 +372,11 @@ CAPTION "About Nestopia"
 FONT 8, "MS Shell Dlg", 400, 0, 1
 {
     GROUPBOX        "", IDC_STATIC, 7, 7, 147, 141
-    LTEXT           "Nestopia - Undead Edition vx.xx", IDC_ABOUT_NAMEVERSION, 28, 14, 109, 8, SS_LEFT
+    LTEXT           "Nestopia UE vx.xx", IDC_ABOUT_NAMEVERSION, 52, 14, 59, 8, SS_LEFT
     ICON            "", IDC_ABOUT_ICON, 70, 36, 21, 20, SS_ICON
-    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2013 R. Danbrook", IDC_STATIC, 15, 69, 126, 18, SS_CENTER
+    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2014 R. Danbrook", IDC_STATIC, 15, 69, 122, 16, SS_CENTER
     LTEXT           "Homepage", IDC_STATIC, 13, 124, 8, 1, SS_LEFT
-    CTEXT           "0ldsk00l.ca/nestopia.html", IDC_ABOUT_URL, 39, 102, 82, 8, SS_CENTER | SS_NOTIFY
+    CTEXT           "0ldsk00l.ca/nestopia", IDC_ABOUT_URL, 46, 102, 67, 8, SS_CENTER | SS_NOTIFY
     DEFPUSHBUTTON   "OK", IDOK, 62, 125, 37, 13
     LTEXT           "Contact", IDC_STATIC, 148, 123, 8, 1, SS_LEFT
     CTEXT           "martin-freij@home.se", IDC_ABOUT_MAIL, 149, 15, 8, 1, SS_CENTER | SS_NOTIFY
@@ -1419,7 +1419,7 @@ FONT 8, "Ms Shell Dlg"
     PUSHBUTTON      "Default", IDC_VIDEO_FILTER_DEFAULT, 7, 109, 50, 14
     GROUPBOX        "", IDC_STATIC, 7, 76, 163, 27
     GROUPBOX        "Blend mode", IDC_STATIC, 7, 41, 163, 34
-    GROUPBOX        "Static", IDC_STATIC, 7, 4, 163, 34
+    GROUPBOX        "Scaling", IDC_STATIC, 7, 4, 163, 34
     GROUPBOX        "Corner rounding", IDC_STATIC, 177, 4, 159, 71
     AUTOCHECKBOX    "Bilinear interpolation", IDC_VIDEO_FILTER_BILINEAR, 14, 87, 81, 9, WS_GROUP
     AUTOCHECKBOX    "Blend pixels", IDC_VIDEO_FILTER_BLEND, 14, 56, 81, 10, WS_GROUP
@@ -1918,7 +1918,7 @@ STRINGTABLE
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 VS_VERSION_INFO VERSIONINFO
     FILEVERSION     0,0,0,1
-    PRODUCTVERSION  0,1,45,0
+    PRODUCTVERSION  0,0,0,0
     FILEOS          VOS__WINDOWS32
     FILETYPE        VFT_DLL
     FILESUBTYPE     VFT2_UNKNOWN
@@ -1935,7 +1935,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
             VALUE "OriginalFilename", "English.nlg"
             VALUE "ProductName", "Nestopia Language Plugin - English (US)"
-            VALUE "ProductVersion", "1.45"
+            VALUE "ProductVersion", "x.xx"
         }
     }
     BLOCK "VarFileInfo"
