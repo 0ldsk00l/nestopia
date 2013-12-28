@@ -746,6 +746,7 @@ namespace Nestopia
 			if (param.Button().Clicked())
 			{
 				nes.SetBlend(dialog.RadioButton( IDC_VIDEO_FILTER_BLEND ).Checked());
+				nes.ClearFilterUpdateFlag();
 				Application::Instance::GetMainWindow().Redraw();
 			}
 
@@ -789,6 +790,7 @@ namespace Nestopia
 					id == IDC_VIDEO_FILTER_XBR_ROUNDING_ALL  ? ATR_ALL  :
 															   ATR_SOME
 				);
+				nes.ClearFilterUpdateFlag();
 
 				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_ROUNDING_NONE ).Check( id == IDC_VIDEO_FILTER_XBR_ROUNDING_NONE );
 				dialog.RadioButton( IDC_VIDEO_FILTER_XBR_ROUNDING_ALL   ).Check( id == IDC_VIDEO_FILTER_XBR_ROUNDING_ALL   );
