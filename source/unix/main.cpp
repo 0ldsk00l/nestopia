@@ -76,6 +76,7 @@ using namespace LinuxNst;
 // base class, all interfaces derives from this
 Emulator emulator;
 
+bool updateok;
 static short lbuf[48000];
 static long exholding[48000*2];
 
@@ -373,15 +374,11 @@ void QuickLoad(int isvst)
 // start playing
 void NstPlayGame(void)
 {
-	//NstStopPlaying(); This only REALLY needs to be here if there's a GUI... and right now there's not
-	
 	// initialization
 	video_init();
 	audio_init();
-	//SetupSound();
 	SetupInput();
 	timing_init();
-	//nst_set_framerate();
 
 	// apply any cheats into the engine
 	//sCheatMgr->Enable();
@@ -389,12 +386,9 @@ void NstPlayGame(void)
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
-
-	//cNstSound->samples[0] = lbuf;
-	//cNstSound->length[0] = conf.audio_sample_rate/framerate;
-	//printf("GetRate()/framerate: %d\n", cNstSound->length[0]);
-	//cNstSound->samples[1] = NULL;
-	//cNstSound->length[1] = 0;
+	
+	audio_set_params(cNstSound);
+	audio_play();
 
 	//m1sdr_SetSamplesPerTick(cNstSound->length[0]);
 	//m1sdr_SetSamplesPerTick(800);
@@ -633,8 +627,7 @@ int main(int argc, char *argv[]) {
 	fileio_init();
 	
 	// Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_JOYSTICK) < 0) {
-	//if (SDL_Init(SDL_INIT_VIDEO) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
@@ -729,8 +722,8 @@ int main(int argc, char *argv[]) {
 				}
 
 			if (timing_check()) {
-				//emulator.Execute(cNstVideo, cNstSound, cNstPads);
-				emulator.Execute(cNstVideo, NULL, cNstPads);
+				emulator.Execute(cNstVideo, cNstSound, cNstPads);
+				//emulator.Execute(cNstVideo, NULL, cNstPads);
 			}
 			
 
@@ -782,6 +775,8 @@ int main(int argc, char *argv[]) {
 	nst_unload();
 
 	fileio_shutdown();
+	
+	audio_deinit();
 	
 	input_deinit();
 	input_config_write();
