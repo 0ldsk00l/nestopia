@@ -142,9 +142,10 @@ void retro_init(void)
    input = new Api::Input::Controllers;
    Api::User::fileIoCallback.Set(file_io_callback, 0);
 
-   environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log);
-   if (log.log)
+   if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
       log_cb = log.log;
+   else
+      log_cb = NULL;
 }
 
 void retro_deinit(void)
