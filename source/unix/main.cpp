@@ -95,7 +95,7 @@ static Cartridge::Database::Entry dbentry;
 //extern char windowid[24];
 extern dimensions rendersize;
 extern dimensions basesize;
-extern void	*intbuffer;
+extern void	*videobuf;
 
 extern settings conf;
 
@@ -132,7 +132,7 @@ static bool NST_CALLBACK VideoLock(void* userData, Video::Output& video)
 {
 	if (nsf_mode) return false;
 
-	video.pitch = Linux_LockScreen( video.pixels );
+	video.pitch = video_lock_screen(video.pixels);
 	return true; // true=lock success, false=lock failed (Nestopia will carry on but skip video)
 }
 
@@ -141,7 +141,7 @@ static void NST_CALLBACK VideoUnlock(void* userData, Video::Output& video)
 {
 	if (nsf_mode) return;
 
-	Linux_UnlockScreen( video.pixels );
+	video_unlock_screen(video.pixels);
 }
 
 // do a "partial" shutdown
@@ -530,7 +530,7 @@ int main(int argc, char *argv[]) {
 	cli_handle_command(argc, argv);
 	
 	playing = 0;
-	intbuffer = NULL;
+	videobuf = NULL;
 	
 	// Initialize File input/output routines
 	fileio_init();

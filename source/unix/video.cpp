@@ -39,10 +39,8 @@
 
 using namespace Nes::Api;
 
-bool	linear_filter = false;
-GLuint	screenTexID = 0;
-int		gl_w, gl_h;
-void	*intbuffer;
+GLuint screenTexID = 0;
+void *videobuf;
 
 SDL_Window *sdlwindow;
 SDL_GLContext glcontext;
@@ -51,8 +49,7 @@ SDL_DisplayMode displaymode;
 Video::RenderState::Filter filter;
 Video::RenderState renderstate;
 
-dimensions rendersize;
-dimensions basesize;
+dimensions basesize, rendersize;
 
 extern settings conf;
 extern Emulator emulator;
@@ -66,12 +63,9 @@ void opengl_init_structures() {
 	
 	glEnable( GL_TEXTURE_2D );
 	
-	gl_w = basesize.w;
-	gl_h = basesize.h;
-	
 	glGenTextures( 1, &screenTexID ) ;
 	glBindTexture( GL_TEXTURE_2D, screenTexID ) ;
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, linear_filter ? GL_LINEAR : GL_NEAREST) ;
+	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, conf.video_linear_filter ? GL_LINEAR : GL_NEAREST) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) ;
 	
 	glViewport( 0, 0, rendersize.w, rendersize.h);
@@ -85,10 +79,10 @@ void opengl_init_structures() {
 	
 	if (conf.video_mask_overscan) {
 		glOrtho(
-/*Left*/	0.0,
-/*Right*/   (GLdouble)rendersize.w,
-/*Bottom*/	(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor) + fencepost,
-/*Top*/		(GLdouble)(OVERSCAN_TOP * scalefactor) - fencepost,
+			0.0,
+			(GLdouble)rendersize.w,
+			(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor) + fencepost,
+			(GLdouble)(OVERSCAN_TOP * scalefactor) - fencepost,
 			-1.0, 1.0
 		);
 	}
@@ -103,9 +97,9 @@ void opengl_cleanup() {
 	// tears down OpenGL when it's no longer needed
 	glDeleteTextures( 1, &screenTexID );
 	
-	if (intbuffer) {
-		free(intbuffer);
-		intbuffer = NULL;
+	if (videobuf) {
+		free(videobuf);
+		videobuf = NULL;
 	}
 }
 
@@ -114,11 +108,11 @@ void opengl_blit() {
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
 				GL_RGBA,
-				gl_w, gl_h,
+				basesize.w, basesize.h,
 				0,
 				GL_BGRA,
 				GL_UNSIGNED_BYTE,
-		intbuffer);
+		videobuf);
 
 	glBegin( GL_QUADS ) ;
 		glTexCoord2f(1.0f, 1.0f);
@@ -144,8 +138,6 @@ void video_init() {
 	video_set_params();
 	video_set_filter();
 	
-	linear_filter = (conf.video_renderer == 2);
-	
 	opengl_init_structures();
 	
 	// Set up the render state parameters
@@ -165,7 +157,7 @@ void video_init() {
 #endif
 	
 	// allocate the intermediate render buffer
-	intbuffer = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
+	videobuf = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
 	
 	// acquire the video interface
 	Video video(emulator);
@@ -197,6 +189,8 @@ void video_init() {
 			case 2: // Alternative (Canonical with yellow boost)
 				video.SetDecoder(Video::DECODER_ALTERNATIVE);
 				break;
+			
+			default: break;
 		}
 		
 		video.SetBrightness(conf.video_brightness);
@@ -214,7 +208,7 @@ void video_init() {
 			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_COMP);
 			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_COMP);
 			break;
-
+		
 		case 1:	// S-Video
 			video.SetSharpness(Video::DEFAULT_SHARPNESS_SVIDEO);
 			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
@@ -222,7 +216,7 @@ void video_init() {
 			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
 			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_SVIDEO);
 			break;
-
+		
 		case 2:	// RGB
 			video.SetSharpness(Video::DEFAULT_SHARPNESS_RGB);
 			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_RGB);
@@ -230,6 +224,8 @@ void video_init() {
 			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_RGB);
 			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
 			break;
+		
+		default: break;
 	}
 	
 	// Set xBR options
@@ -282,10 +278,7 @@ void video_toggle_filter() {
 	Video video(emulator);
 	video.ClearFilterUpdateFlag();
 	
-	if (intbuffer) {
-		free(intbuffer);
-		intbuffer = NULL;
-	}
+	opengl_cleanup();
 	
 	video_init();
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
@@ -300,10 +293,7 @@ void video_toggle_scalefactor() {
 		conf.video_scale_factor = 1;
 	}
 	
-	if (intbuffer) {
-		free(intbuffer);
-		intbuffer = NULL;
-	}
+	opengl_cleanup();
 	
 	video_init();
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
@@ -483,17 +473,14 @@ void video_set_params() {
 		rendersize.w = displaymode.w;
 	}
 	
-	if (intbuffer) {
-		free(intbuffer);
-		intbuffer = NULL;
-	}
+	opengl_cleanup();
 }
 
-long Linux_LockScreen(void*& ptr) {
-	ptr = intbuffer;
-	return gl_w*4;
+long video_lock_screen(void*& ptr) {
+	ptr = videobuf;
+	return basesize.w * 4;
 }
 
-void Linux_UnlockScreen(void*) {
+void video_unlock_screen(void*) {
 	opengl_blit();
 }
