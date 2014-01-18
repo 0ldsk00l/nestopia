@@ -1,31 +1,16 @@
-#ifndef _OSS_H_
-#define _OSS_H_
+#ifndef _AUDIO_H_
+#define _AUDIO_H_
 
-typedef signed   char      INT8;
-typedef signed   short     INT16;
-typedef signed   int       INT32;
-typedef signed   long long INT64;
-typedef unsigned char      UINT8;
-typedef unsigned short     UINT16;
-typedef unsigned int       UINT32;
-typedef unsigned long long UINT64;
+#include <SDL.h>
+#include "core/api/NstApiEmulator.hpp"
+#include "core/api/NstApiSound.hpp"
 
-extern int audiofd;
-extern void (*m1sdr_Callback)(unsigned long dwUser, signed short *smp);
-extern unsigned long cbUserData;
+using namespace Nes::Api;
 
-// function protos
+void audio_init();
+void audio_set_params(Sound::Output *soundoutput);
+void audio_play();
+void audio_callback(void *userdata, Uint8 *stream, int len);
+void audio_deinit();
 
-void m1sdr_Update(void);
-INT16 m1sdr_Init(int sample_rate);
-void m1sdr_Exit(void);
-void m1sdr_PlayStart(void);
-void m1sdr_PlayStop(void);
-void m1sdr_TimeCheck(void);
-void m1sdr_SetSamplesPerTick(UINT32 spf);
-void m1sdr_SetHz(UINT32 hz);
-void m1sdr_SetCallback(void *fn);
-void m1sdr_FlushAudio(void);
-void m1sdr_Pause(int); 
-void m1sdr_SetNoWait(int nw);
 #endif
