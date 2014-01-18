@@ -60,8 +60,7 @@
 #include "cli.h"
 #include "timing.h"
 //#include "gtkui.h"
-//#include "audio.h"
-#include "newaudio.h"
+#include "audio.h"
 #include "video.h"
 #include "input.h"
 #include "fileio.h"
@@ -145,84 +144,6 @@ static void NST_CALLBACK VideoUnlock(void* userData, Video::Output& video)
 	Linux_UnlockScreen( video.pixels );
 }
 
-// callback to feed a frame of audio to the output driver
-/*void nst_do_frame(unsigned long dwSamples, signed short *out)
-{
-	int s;
-	short *pbufL = (short *)lbuf;
-	short *outbuf;
-	long dtl, dtr;
-
-	outbuf = out;
-
-	/*if (conf.audio_stereo_exciter)
-	{
-		int j = 0;
-
-		if (!conf.audio_stereo)
-		{
-			// exciter can't handle "hot" samples, so
-			// tone them down a bit
-			for (s = 0; s < dwSamples; s++)
-			{
-				exholding[j++] = (*pbufL)/4;
-				exholding[j++] = (*pbufL++)/4;
-			}
-		}
-		else	// stereo
-		{
-			for (s = 0; s < dwSamples; s++)
-			{
-				exholding[j++] = (*pbufL++)/4;
-				exholding[j++] = (*pbufL++)/4;
-			}
-
-			//seffect_ex_process((long *)exholding, dwSamples);
-
-			j = 0;
-			for (s = 0; s < dwSamples; s++)
-			{
-				dtr = exholding[j++];
-				dtl = exholding[j++];
-
-				if(dtl>0x7fffL)	dtl=0x7fffL;
-				else if(dtl<-0x7fffL) dtl=-0x7fffL;
-				if(dtr>0x7fffL)	dtr=0x7fffL;
-				else if(dtr<-0x7fffL) dtr=-0x7fffL;
-				
-				*out++ = (dtr & 0xffff);
-				*out++ = (dtl & 0xffff);
-			}
-		}
-
-	}
-	else
-	{
-		if (!conf.audio_stereo)
-		{
-			for (s = 0; s < dwSamples; s++)
-			{
-				*out++ = *pbufL;
-				*out++ = *pbufL++;
-			}
-		}
-		else	// stereo
-		{
-			for (s = 0; s < dwSamples; s++)
-			{
-				*out++ = *pbufL++;
-				*out++ = *pbufL++;
-			}
-		}
-	}
-
-	if (conf.audio_surround)
-	{
-		seffect_surround_lite_process(outbuf, dwSamples*4);
-	}
-	updateok = 1;*/
-//}
-
 // do a "partial" shutdown
 static void nst_unload(void)
 {
@@ -266,13 +187,8 @@ void NstStopPlaying()
 
 		// get machine interface...
 		Machine machine(emulator);
-
-		// shut down the sound system too
-		//m1sdr_PlayStop();
-		//m1sdr_Exit();
-
-		// flush the sound buffer
-		//memset(lbuf, 0, sizeof(lbuf));
+		
+		audio_deinit();
 	}
 
 	playing = 0;
@@ -385,9 +301,6 @@ void NstPlayGame(void)
 	
 	audio_set_params(cNstSound);
 	audio_play();
-
-	//m1sdr_SetSamplesPerTick(cNstSound->length[0]);
-	//m1sdr_SetSamplesPerTick(800);
 
 	schedule_stop = 0;
 	playing = 1;
@@ -826,38 +739,6 @@ void set_rewinder_direction(int direction) {
 	}
 }
 
-// initialize sound going into the game
-void SetupSound()
-{
-	// acquire interface
-	Sound sound( emulator );
-
-	/*printf("Sample Bits:\t%d\n", sound.GetSampleBits());
-	printf("Sample Rate:\t%d\n", sound.GetSampleRate());
-	printf("Speed:\t%d\n", sound.GetSpeed());*/
-	
-	//m1sdr_Init(conf.audio_sample_rate);
-	//m1sdr_SetCallback((void *)nst_do_frame);
-	//m1sdr_PlayStart();
-
-	// init DSP module
-	//seffect_init();
-
-	// example configuration (these are the default values)
-	sound.SetSampleBits( 16 );
-	sound.SetSampleRate(conf.audio_sample_rate);
-	sound.SetVolume(Sound::ALL_CHANNELS, conf.audio_volume);
-
-	if (conf.audio_stereo)
-	{
-		sound.SetSpeaker( Sound::SPEAKER_STEREO );
-	}
-	else
-	{
-		sound.SetSpeaker( Sound::SPEAKER_MONO );
-	}
-}
-
 // initialize input going into the game
 void SetupInput()
 {
@@ -955,9 +836,6 @@ void NstLoadGame(const char* filename)
 		Nsf nsf( emulator );
 
 		nsf.StopSong();
-
-		// clear the audio buffer
-		//memset(lbuf, 0, sizeof(lbuf));
 
 		playing = 0;
 	}
