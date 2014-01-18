@@ -76,10 +76,6 @@ using namespace LinuxNst;
 // base class, all interfaces derives from this
 Emulator emulator;
 
-bool updateok;
-static short lbuf[48000];
-static long exholding[48000*2];
-
 int playing = 0, loaded = 0;
 static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
@@ -150,7 +146,7 @@ static void NST_CALLBACK VideoUnlock(void* userData, Video::Output& video)
 }
 
 // callback to feed a frame of audio to the output driver
-void nst_do_frame(unsigned long dwSamples, signed short *out)
+/*void nst_do_frame(unsigned long dwSamples, signed short *out)
 {
 	int s;
 	short *pbufL = (short *)lbuf;
@@ -225,7 +221,7 @@ void nst_do_frame(unsigned long dwSamples, signed short *out)
 		seffect_surround_lite_process(outbuf, dwSamples*4);
 	}
 	updateok = 1;*/
-}
+//}
 
 // do a "partial" shutdown
 static void nst_unload(void)
@@ -276,7 +272,7 @@ void NstStopPlaying()
 		//m1sdr_Exit();
 
 		// flush the sound buffer
-		memset(lbuf, 0, sizeof(lbuf));
+		//memset(lbuf, 0, sizeof(lbuf));
 	}
 
 	playing = 0;
@@ -961,7 +957,7 @@ void NstLoadGame(const char* filename)
 		nsf.StopSong();
 
 		// clear the audio buffer
-		memset(lbuf, 0, sizeof(lbuf));
+		//memset(lbuf, 0, sizeof(lbuf));
 
 		playing = 0;
 	}

@@ -23,17 +23,16 @@
 #include <stdio.h>
 
 #include "config.h"
+#include "timing.h"
 #include "newaudio.h"
 
 extern settings conf;
 extern Emulator emulator;
 
-SDL_AudioSpec spec;
+SDL_AudioSpec spec, obtained;
 SDL_AudioDeviceID dev;
 
 static int16_t *audiobuf;
-static volatile uint32_t audiopos;
-static uint32_t audiolength;
 static uint32_t outputbufsize;
 
 void audio_init() {
@@ -43,22 +42,17 @@ void audio_init() {
 	spec.format = AUDIO_S16SYS;
 	spec.channels = 2;
 	spec.silence = 0;
-	spec.samples = 512;
-	//spec.padding = 0;
-	//spec.size = 0;
+	spec.samples = conf.audio_sample_rate / 60;
 	spec.userdata = 0;
 	spec.callback = audio_callback;
 	
-	outputbufsize = 12800; // This is a magic number
-	
-	audiolength = conf.audio_sample_rate / 60;
-	audiopos = 0;
+	outputbufsize = 96000; // This is a magic number
 	
 	audiobuf = (int16_t *)malloc(outputbufsize);
 	
 	memset(audiobuf, 0, outputbufsize);
 	
-	dev = SDL_OpenAudioDevice(NULL, 0, &spec, NULL, SDL_AUDIO_ALLOW_ANY_CHANGE);
+	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 	
 	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
 }
@@ -77,7 +71,6 @@ void audio_set_params(Sound::Output *soundoutput) {
 	
 	soundoutput->samples[0] = audiobuf;
 	soundoutput->length[0] = conf.audio_sample_rate/60;
-	//soundoutput->length[0] = 735;
 	soundoutput->samples[1] = NULL;
 	soundoutput->length[1] = 0;
 }
@@ -85,16 +78,13 @@ void audio_set_params(Sound::Output *soundoutput) {
 void audio_callback(void *userdata, Uint8 *stream, int len) {
 	
 	int i;
-	Uint8 *outputbuf = (Uint8*)audiobuf; // Is this why it's scratchy?
+	Uint8 *outputbuf = (Uint8*)audiobuf;
 	
 	SDL_memset(stream, 0, len);
-
-	for (i = 0; i < len; i++) {
-		if (audiopos >= (outputbufsize / 2)) { audiopos = 0; }
-		stream[i] = outputbuf[audiopos++];
-	}
 	
-	//SDL_MixAudioFormat(stream, outputbuf, AUDIO_S16SYS, len, SDL_MIX_MAXVOLUME);
+	for (i = 0; i < len; i++) {
+		stream[i] = outputbuf[i];
+	}
 }
 
 void audio_play() {
