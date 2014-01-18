@@ -50,7 +50,6 @@ void config_file_write() {
 	if (fp != NULL)	{
 		// Video
 		fprintf(fp, "[video]\n");
-		fprintf(fp, "renderer=%d\n", conf.video_renderer);
 		fprintf(fp, "filter=%d\n", conf.video_filter);
 		fprintf(fp, "scale_factor=%d\n", conf.video_scale_factor);
 		fprintf(fp, "palette_mode=%d\n", conf.video_palette_mode);
@@ -61,12 +60,13 @@ void config_file_write() {
 		fprintf(fp, "hue=%d\n", conf.video_hue);
 		fprintf(fp, "ntsc_mode=%d\n", conf.video_ntsc_mode);
 		fprintf(fp, "xbr_corner_rounding=%d\n", conf.video_xbr_corner_rounding);
-		fprintf(fp, "xbr_pixel_blending=%d\n", conf.video_xbr_pixel_blending);
+		fprintf(fp, "linear_filter=%d\n", conf.video_linear_filter);
 		fprintf(fp, "tv_aspect=%d\n", conf.video_tv_aspect);
 		fprintf(fp, "mask_overscan=%d\n", conf.video_mask_overscan);
 		fprintf(fp, "fullscreen=%d\n", conf.video_fullscreen);
 		fprintf(fp, "preserve_aspect=%d\n", conf.video_preserve_aspect);
 		fprintf(fp, "unlimited_sprites=%d\n", conf.video_unlimited_sprites);
+		fprintf(fp, "xbr_pixel_blending=%d\n", conf.video_xbr_pixel_blending);
 		fprintf(fp, "\n"); // End of Section
 		
 		// Audio
@@ -74,10 +74,7 @@ void config_file_write() {
 		fprintf(fp, "api=%d\n", conf.audio_api);
 		fprintf(fp, "sample_rate=%d\n", conf.audio_sample_rate);
 		fprintf(fp, "volume=%d\n", conf.audio_volume);
-		fprintf(fp, "surround_multiplier=%d\n", conf.audio_surround_multiplier);
-		fprintf(fp, "surround=%d\n", conf.audio_surround);
 		fprintf(fp, "stereo=%d\n", conf.audio_stereo);
-		fprintf(fp, "stereo_exciter=%d\n", conf.audio_stereo_exciter);
 		fprintf(fp, "\n"); // End of Section
 		
 		// Timing
@@ -105,7 +102,6 @@ void config_file_write() {
 void config_set_default() {
 	
 	// Video
-	conf.video_renderer = 1;
 	conf.video_filter = 0;
 	conf.video_scale_factor = 2;
 	conf.video_palette_mode = 0;
@@ -116,23 +112,19 @@ void config_set_default() {
 	conf.video_hue = 0; // -45 to 45
 	conf.video_ntsc_mode = 0;
 	conf.video_xbr_corner_rounding = 0;
-	
-	conf.video_xbr_pixel_blending = true;
+	conf.video_linear_filter = false;
 	conf.video_tv_aspect = false;
 	conf.video_mask_overscan = true;
 	conf.video_fullscreen = false;
 	conf.video_preserve_aspect = false;
 	conf.video_unlimited_sprites = true;
+	conf.video_xbr_pixel_blending = true;
 	
 	// Audio
 	conf.audio_api = 0;
 	conf.audio_sample_rate = 48000;
 	conf.audio_volume = 85;
-	conf.audio_surround_multiplier = 50;
-	
-	conf.audio_surround = false;
 	conf.audio_stereo = false;
-	conf.audio_stereo_exciter = false;
 	
 	// Timing
 	conf.timing_speed = 60;
@@ -152,8 +144,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	settings* pconfig = (settings*)user;
 	
 	// Video
-	if (MATCH("video", "renderer")) { pconfig->video_renderer = atoi(value); }
-	else if (MATCH("video", "filter")) { pconfig->video_filter = atoi(value); }
+	if (MATCH("video", "filter")) { pconfig->video_filter = atoi(value); }
 	else if (MATCH("video", "scale_factor")) { pconfig->video_scale_factor = atoi(value); }
 	else if (MATCH("video", "palette_mode")) { pconfig->video_palette_mode = atoi(value); }
 	else if (MATCH("video", "decoder")) { pconfig->video_decoder = atoi(value); }
@@ -163,21 +154,19 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("video", "hue")) { pconfig->video_hue = atoi(value); }
 	else if (MATCH("video", "ntsc_mode")) { pconfig->video_ntsc_mode = atoi(value); }
 	else if (MATCH("video", "xbr_corner_rounding")) { pconfig->video_xbr_corner_rounding = atoi(value); }
-	else if (MATCH("video", "xbr_pixel_blending")) { pconfig->video_xbr_pixel_blending = atoi(value); }
+	else if (MATCH("video", "linear_filter")) { pconfig->video_linear_filter = atoi(value); }
 	else if (MATCH("video", "tv_aspect")) { pconfig->video_tv_aspect = atoi(value); }
 	else if (MATCH("video", "mask_overscan")) { pconfig->video_mask_overscan = atoi(value); }
 	else if (MATCH("video", "fullscreen")) { pconfig->video_fullscreen = atoi(value); }
 	else if (MATCH("video", "preserve_aspect")) { pconfig->video_preserve_aspect = atoi(value); }
 	else if (MATCH("video", "unlimited_sprites")) { pconfig->video_unlimited_sprites = atoi(value); }
+	else if (MATCH("video", "xbr_pixel_blending")) { pconfig->video_xbr_pixel_blending = atoi(value); }
 	
 	// Audio
 	else if (MATCH("audio", "api")) { pconfig->audio_api = atoi(value); }
 	else if (MATCH("audio", "sample_rate")) { pconfig->audio_sample_rate = atoi(value); }
 	else if (MATCH("audio", "volume")) { pconfig->audio_volume = atoi(value); }
-	else if (MATCH("audio", "surround")) { pconfig->audio_surround = atoi(value); }
-	else if (MATCH("audio", "surround_multiplier")) { pconfig->audio_surround_multiplier = atoi(value); }
 	else if (MATCH("audio", "stereo")) { pconfig->audio_stereo = atoi(value); }
-	else if (MATCH("audio", "stereo_exciter")) { pconfig->audio_stereo_exciter = atoi(value); }
 	
 	// Timing
 	else if (MATCH("timing", "speed")) { pconfig->timing_speed = atoi(value); }

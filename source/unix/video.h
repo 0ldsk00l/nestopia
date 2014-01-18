@@ -24,7 +24,7 @@ void video_toggle_scalefactor();
 void video_set_filter();
 void video_set_params();
 
-long Linux_LockScreen(void*& ptr);
-void Linux_UnlockScreen(void*);
+long video_lock_screen(void*& ptr);
+void video_unlock_screen(void*);
 
 #endif
