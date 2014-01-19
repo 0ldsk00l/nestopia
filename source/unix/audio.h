@@ -14,4 +14,7 @@ void audio_play();
 void audio_callback(void *userdata, Uint8 *stream, int len);
 void audio_deinit();
 
+void timing_set_default();
+void timing_set_altspeed();
+
 #endif

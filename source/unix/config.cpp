@@ -128,7 +128,7 @@ void config_set_default() {
 	
 	// Timing
 	conf.timing_speed = 60;
-	conf.timing_altspeed = 240;
+	conf.timing_altspeed = 180;
 	conf.timing_vsync = true;
 	
 	// Misc
