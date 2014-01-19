@@ -28,7 +28,7 @@ ifneq ($(findstring MINGW,$(UNAME)),)
 else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
 	LIBS += -larchive
-	LIBS += -lGL -lGLU
+	LIBS += -lGL -lGLU -lao
 endif
 
 #ifeq ($(UNAME), Linux)
