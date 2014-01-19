@@ -66,7 +66,6 @@
 #include "fileio.h"
 #include "cheats.h"
 #include "config.h"
-//#include "seffect.h"
 #include "cursor.h"
 
 using namespace Nes::Api;
@@ -93,8 +92,7 @@ static Cartridge::Database::Entry dbentry;
 
 //extern GtkWidget *mainwindow, *statusbar;
 //extern char windowid[24];
-extern dimensions rendersize;
-extern dimensions basesize;
+extern dimensions basesize, rendersize;
 extern void	*videobuf;
 
 extern settings conf;
@@ -142,6 +140,16 @@ static void NST_CALLBACK VideoUnlock(void* userData, Video::Output& video)
 	if (nsf_mode) return;
 
 	video_unlock_screen(video.pixels);
+}
+
+static bool NST_CALLBACK SoundLock(void* userData, Sound::Output& sound) {
+	//printf("SoundLock\n");
+	return true;
+}
+
+static void NST_CALLBACK SoundUnlock(void* userData, Sound::Output& sound) {
+	//printf("SoundUnlock\n");
+	audio_play();
 }
 
 // do a "partial" shutdown
@@ -300,7 +308,7 @@ void NstPlayGame(void)
 	cNstPads  = new Input::Controllers;
 	
 	audio_set_params(cNstSound);
-	audio_play();
+	audio_unpause();
 
 	schedule_stop = 0;
 	playing = 1;
@@ -565,6 +573,10 @@ int main(int argc, char *argv[]) {
 	// setup video lock/unlock callbacks
 	Video::Output::lockCallback.Set( VideoLock, userData );
 	Video::Output::unlockCallback.Set( VideoUnlock, userData );
+	
+	// set up audio lock/unlock callbacks
+	Sound::Output::lockCallback.Set(SoundLock, userData);
+	Sound::Output::unlockCallback.Set(SoundUnlock, userData);
 
 	// misc callbacks (for others, see NstApuUser.hpp)
 	User::fileIoCallback.Set( DoFileIO, userData );
@@ -630,10 +642,10 @@ int main(int argc, char *argv[]) {
 					Rewinder(emulator).EnableSound(true);
 				}
 
-			if (timing_check()) {
+			//if (timing_check()) {
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
-			}
+			//}
 			
 
 			if (state_save)
