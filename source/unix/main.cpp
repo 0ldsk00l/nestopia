@@ -58,7 +58,6 @@
 
 #include "main.h"
 #include "cli.h"
-#include "timing.h"
 //#include "gtkui.h"
 #include "audio.h"
 #include "video.h"
@@ -143,12 +142,10 @@ static void NST_CALLBACK VideoUnlock(void* userData, Video::Output& video)
 }
 
 static bool NST_CALLBACK SoundLock(void* userData, Sound::Output& sound) {
-	//printf("SoundLock\n");
 	return true;
 }
 
 static void NST_CALLBACK SoundUnlock(void* userData, Sound::Output& sound) {
-	//printf("SoundUnlock\n");
 	audio_play();
 }
 
@@ -298,7 +295,6 @@ void NstPlayGame(void)
 	video_init();
 	audio_init();
 	SetupInput();
-	timing_init();
 
 	// apply any cheats into the engine
 	//sCheatMgr->Enable();

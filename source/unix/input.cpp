@@ -25,8 +25,8 @@
 #include <string.h>
 
 #include "main.h"
-#include "timing.h"
 #include "config.h"
+#include "audio.h"
 #include "video.h"
 #include "input.h"
 #include "ini.h"

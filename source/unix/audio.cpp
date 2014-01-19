@@ -25,7 +25,6 @@
 #include <ao/ao.h>
 
 #include "config.h"
-#include "timing.h"
 #include "audio.h"
 
 extern settings conf;
@@ -41,51 +40,51 @@ char *outputbuf;
 static int16_t *audiobuf;
 static uint32_t outputbufsize;
 
+int framerate;
+
 void audio_init() {
 	// Initialize audio device
 	
-	/*spec.freq = conf.audio_sample_rate;
-	spec.format = AUDIO_S16SYS;
-	spec.channels = 2;
-	spec.silence = 0;
-	spec.samples = conf.audio_sample_rate / 60;
-	spec.userdata = 0;
-	spec.callback = audio_callback;
+	framerate = conf.timing_speed;
 	
-	outputbufsize = 96000; // This is a magic number
-	
-	audiobuf = (int16_t *)malloc(outputbufsize);
-	
-	memset(audiobuf, 0, outputbufsize);
-	
-	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
-	
-	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses*/
-	
-	outputbufsize = 3200; // This is a magic number
-	//outputbufsize = 192000; // This is a magic number
+	outputbufsize = 4800; // This is a magic number
 	audiobuf = (int16_t *)malloc(outputbufsize);
 	memset(audiobuf, 0, outputbufsize);
 	
-	ao_initialize();
+	if (conf.audio_api == 0) { // SDL
+		spec.freq = conf.audio_sample_rate;
+		spec.format = AUDIO_S16SYS;
+		spec.channels = 1;
+		spec.silence = 0;
+		spec.samples = conf.audio_sample_rate / 60;
+		spec.userdata = 0;
+		spec.callback = audio_callback;
+		
+		dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
+		
+		SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
+	}
 	
-	int default_driver = ao_default_driver_id();
-	
-	memset(&format, 0, sizeof(format));
-	format.bits = 16;
-	format.channels = 1;
-	format.rate = conf.audio_sample_rate;
-	format.byte_format = AO_FMT_NATIVE;
-	
-	device = ao_open_live(default_driver, &format, NULL);
-	if (device == NULL) {
-		fprintf(stderr, "Error opening device.\n");
-		exit(1);
+	else if (conf.audio_api == 1) { // libao
+		ao_initialize();
+		
+		int default_driver = ao_default_driver_id();
+		
+		memset(&format, 0, sizeof(format));
+		format.bits = 16;
+		format.channels = 1;
+		format.rate = conf.audio_sample_rate;
+		format.byte_format = AO_FMT_NATIVE;
+		
+		device = ao_open_live(default_driver, &format, NULL);
+		if (device == NULL) {
+			fprintf(stderr, "Error opening audio device.\n");
+		}
 	}
 }
 
 void audio_set_params(Sound::Output *soundoutput) {
-	
+	// Set audio parameters
 	Sound sound(emulator);
 	
 	sound.SetSampleBits(16);
@@ -103,7 +102,7 @@ void audio_set_params(Sound::Output *soundoutput) {
 }
 
 void audio_callback(void *userdata, Uint8 *stream, int len) {
-	
+	// Audio callback for SDL
 	int i;
 	Uint8 *outputbuf = (Uint8*)audiobuf;
 	
@@ -115,16 +114,41 @@ void audio_callback(void *userdata, Uint8 *stream, int len) {
 }
 
 void audio_play() {
-	ao_play(device, (char*)audiobuf, (conf.audio_sample_rate / 60) * 2);
+	
+	if (conf.audio_api == 1) { // libao
+		ao_play(device, (char*)audiobuf, (conf.audio_sample_rate / framerate) * 2);
+	}
 }
 
 void audio_unpause() {
-	//SDL_PauseAudioDevice(dev, 0);
+	// Unpause the SDL audio device
+	if (conf.audio_api == 0) { // SDL
+		SDL_PauseAudioDevice(dev, 0);
+	}
 }
 
 void audio_deinit() {
-    //SDL_CloseAudioDevice(dev);
-    if (audiobuf) { free(audiobuf); }
-	ao_close(device);
-	ao_shutdown();
+	// Deinitialize audio
+	if (audiobuf) { free(audiobuf); }
+	
+	if (conf.audio_api == 0) { // SDL
+		SDL_CloseAudioDevice(dev);
+	}
+	else if (conf.audio_api == 1) { // libao
+		ao_close(device);
+		ao_shutdown();
+	}
+}
+
+// Timing functions
+void timing_set_default() {
+	// Set the framerate to the default
+	framerate = conf.timing_speed;
+	SDL_GL_SetSwapInterval(conf.timing_vsync);
+}
+
+void timing_set_altspeed() {
+	// Set the framerate to the alternate speed
+	framerate = conf.timing_altspeed;
+	SDL_GL_SetSwapInterval(0);
 }
