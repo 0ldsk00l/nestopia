@@ -89,7 +89,19 @@ void audio_set_params(Sound::Output *soundoutput) {
 	
 	sound.SetSampleBits(16);
 	sound.SetSampleRate(conf.audio_sample_rate);
+	
 	sound.SetVolume(Sound::ALL_CHANNELS, conf.audio_volume);
+	sound.SetVolume(Sound::CHANNEL_SQUARE1, conf.audio_vol_sq1);
+	sound.SetVolume(Sound::CHANNEL_SQUARE2, conf.audio_vol_sq2);
+	sound.SetVolume(Sound::CHANNEL_TRIANGLE, conf.audio_vol_tri);
+	sound.SetVolume(Sound::CHANNEL_NOISE, conf.audio_vol_noise);
+	sound.SetVolume(Sound::CHANNEL_DPCM, conf.audio_vol_dpcm);
+	sound.SetVolume(Sound::CHANNEL_FDS, conf.audio_vol_fds);
+	sound.SetVolume(Sound::CHANNEL_MMC5, conf.audio_vol_mmc5);
+	sound.SetVolume(Sound::CHANNEL_VRC6, conf.audio_vol_vrc6);
+	sound.SetVolume(Sound::CHANNEL_VRC7, conf.audio_vol_vrc7);
+	sound.SetVolume(Sound::CHANNEL_N163, conf.audio_vol_n163);
+	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);
 	
 	sound.SetSpeaker(Sound::SPEAKER_MONO);
 	//sound.SetSpeaker(Sound::SPEAKER_STEREO);

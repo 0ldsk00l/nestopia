@@ -24,9 +24,20 @@ typedef struct {
 	
 	// Audio
 	int audio_api;
+	bool audio_stereo;
 	int audio_sample_rate;
 	int audio_volume;
-	bool audio_stereo;
+	int audio_vol_sq1;
+	int audio_vol_sq2;
+	int audio_vol_tri;
+	int audio_vol_noise;
+	int audio_vol_dpcm;
+	int audio_vol_fds;
+	int audio_vol_mmc5;
+	int audio_vol_vrc6;
+	int audio_vol_vrc7;
+	int audio_vol_n163;
+	int audio_vol_s5b;
 	
 	// Timing
 	int timing_speed;
