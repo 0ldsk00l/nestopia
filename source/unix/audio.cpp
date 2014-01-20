@@ -62,7 +62,7 @@ void audio_init() {
 		spec.callback = audio_callback;
 		
 		dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
-		if (dev == NULL) {
+		if (!dev) {
 			fprintf(stderr, "Error opening audio device.\n");
 		}
 		else {
