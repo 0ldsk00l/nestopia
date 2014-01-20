@@ -16,5 +16,6 @@ void audio_deinit();
 
 void timing_set_default();
 void timing_set_altspeed();
+bool timing_check();
 
 #endif
