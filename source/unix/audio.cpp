@@ -39,23 +39,25 @@ ao_sample_format format;
 static int16_t *audiobuf;
 static uint32_t outputbufsize;
 
-int framerate;
+int framerate, channels;
 
 void audio_init() {
 	// Initialize audio device
 	
 	framerate = conf.timing_speed;
+	channels = conf.audio_stereo ? 2 : 1;
 	
-	outputbufsize = 4800; // This is a magic number
+	outputbufsize = 2 * channels * (conf.audio_sample_rate / framerate);
+	
 	audiobuf = (int16_t *)malloc(outputbufsize);
 	memset(audiobuf, 0, outputbufsize);
 	
 	if (conf.audio_api == 0) { // SDL
 		spec.freq = conf.audio_sample_rate;
 		spec.format = AUDIO_S16SYS;
-		spec.channels = 1;
+		spec.channels = channels;
 		spec.silence = 0;
-		spec.samples = conf.audio_sample_rate / 60;
+		spec.samples = conf.audio_sample_rate / framerate;
 		spec.userdata = 0;
 		spec.callback = audio_callback;
 		
@@ -77,7 +79,7 @@ void audio_init() {
 		
 		memset(&format, 0, sizeof(format));
 		format.bits = 16;
-		format.channels = 1;
+		format.channels = channels;
 		format.rate = conf.audio_sample_rate;
 		format.byte_format = AO_FMT_NATIVE;
 		
@@ -111,12 +113,11 @@ void audio_set_params(Sound::Output *soundoutput) {
 	sound.SetVolume(Sound::CHANNEL_N163, conf.audio_vol_n163);
 	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);
 	
-	sound.SetSpeaker(Sound::SPEAKER_MONO);
-	//sound.SetSpeaker(Sound::SPEAKER_STEREO);
+	sound.SetSpeaker(conf.audio_stereo ? Sound::SPEAKER_STEREO : Sound::SPEAKER_MONO);
 	sound.SetSpeed(Sound::DEFAULT_SPEED);
 	
 	soundoutput->samples[0] = audiobuf;
-	soundoutput->length[0] = conf.audio_sample_rate/60;
+	soundoutput->length[0] = conf.audio_sample_rate / framerate;
 	soundoutput->samples[1] = NULL;
 	soundoutput->length[1] = 0;
 }
@@ -136,7 +137,8 @@ void audio_callback(void *userdata, Uint8 *stream, int len) {
 void audio_play() {
 	
 	if (conf.audio_api == 1) { // libao
-		ao_play(device, (char*)audiobuf, (conf.audio_sample_rate / framerate) * 2);
+		int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
+		ao_play(device, (char*)audiobuf, bufsize);
 	}
 }
 
