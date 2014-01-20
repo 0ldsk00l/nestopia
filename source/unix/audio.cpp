@@ -35,7 +35,6 @@ SDL_AudioDeviceID dev;
 
 ao_device *device;
 ao_sample_format format;
-char *outputbuf;
 
 static int16_t *audiobuf;
 static uint32_t outputbufsize;
@@ -61,6 +60,12 @@ void audio_init() {
 		spec.callback = audio_callback;
 		
 		dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
+		if (dev == NULL) {
+			fprintf(stderr, "Error opening audio device.\n");
+		}
+		else {
+			fprintf(stderr, "Audio: SDL - %dHz %d-bit, %d channel(s)\n", spec.freq, 16, spec.channels);
+		}
 		
 		SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
 	}
@@ -79,6 +84,9 @@ void audio_init() {
 		device = ao_open_live(default_driver, &format, NULL);
 		if (device == NULL) {
 			fprintf(stderr, "Error opening audio device.\n");
+		}
+		else {
+			fprintf(stderr, "Audio: libao - %dHz, %d-bit, %d channel(s)\n", format.rate, format.bits, format.channels);
 		}
 	}
 }
