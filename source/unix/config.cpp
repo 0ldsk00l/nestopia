@@ -72,9 +72,20 @@ void config_file_write() {
 		// Audio
 		fprintf(fp, "[audio]\n");
 		fprintf(fp, "api=%d\n", conf.audio_api);
+		fprintf(fp, "stereo=%d\n", conf.audio_stereo);
 		fprintf(fp, "sample_rate=%d\n", conf.audio_sample_rate);
 		fprintf(fp, "volume=%d\n", conf.audio_volume);
-		fprintf(fp, "stereo=%d\n", conf.audio_stereo);
+		fprintf(fp, "vol_sq1=%d\n", conf.audio_vol_sq1);
+		fprintf(fp, "vol_sq2=%d\n", conf.audio_vol_sq2);
+		fprintf(fp, "vol_tri=%d\n", conf.audio_vol_tri);
+		fprintf(fp, "vol_noise=%d\n", conf.audio_vol_noise);
+		fprintf(fp, "vol_dpcm=%d\n", conf.audio_vol_dpcm);
+		fprintf(fp, "vol_fds=%d\n", conf.audio_vol_fds);
+		fprintf(fp, "vol_mmc5=%d\n", conf.audio_vol_mmc5);
+		fprintf(fp, "vol_vrc6=%d\n", conf.audio_vol_vrc6);
+		fprintf(fp, "vol_vrc7=%d\n", conf.audio_vol_vrc7);
+		fprintf(fp, "vol_n163=%d\n", conf.audio_vol_n163);
+		fprintf(fp, "vol_s5b=%d\n", conf.audio_vol_s5b);
 		fprintf(fp, "\n"); // End of Section
 		
 		// Timing
@@ -121,10 +132,21 @@ void config_set_default() {
 	conf.video_xbr_pixel_blending = true;
 	
 	// Audio
-	conf.audio_api = 0;
+	conf.audio_api = 1;
+	conf.audio_stereo = false;
 	conf.audio_sample_rate = 48000;
 	conf.audio_volume = 85;
-	conf.audio_stereo = false;
+	conf.audio_vol_sq1 = 85;
+	conf.audio_vol_sq2 = 85;
+	conf.audio_vol_tri = 85;
+	conf.audio_vol_noise = 85;
+	conf.audio_vol_dpcm = 85;
+	conf.audio_vol_fds = 85;
+	conf.audio_vol_mmc5 = 85;
+	conf.audio_vol_vrc6 = 85;
+	conf.audio_vol_vrc7 = 85;
+	conf.audio_vol_n163 = 85;
+	conf.audio_vol_s5b = 85;
 	
 	// Timing
 	conf.timing_speed = 60;
@@ -164,9 +186,20 @@ static int config_match(void* user, const char* section, const char* name, const
 	
 	// Audio
 	else if (MATCH("audio", "api")) { pconfig->audio_api = atoi(value); }
+	else if (MATCH("audio", "stereo")) { pconfig->audio_stereo = atoi(value); }
 	else if (MATCH("audio", "sample_rate")) { pconfig->audio_sample_rate = atoi(value); }
 	else if (MATCH("audio", "volume")) { pconfig->audio_volume = atoi(value); }
-	else if (MATCH("audio", "stereo")) { pconfig->audio_stereo = atoi(value); }
+	else if (MATCH("audio", "vol_sq1")) { pconfig->audio_vol_sq1 = atoi(value); }
+	else if (MATCH("audio", "vol_sq2")) { pconfig->audio_vol_sq2 = atoi(value); }
+	else if (MATCH("audio", "vol_tri")) { pconfig->audio_vol_tri = atoi(value); }
+	else if (MATCH("audio", "vol_noise")) { pconfig->audio_vol_noise = atoi(value); }
+	else if (MATCH("audio", "vol_dpcm")) { pconfig->audio_vol_dpcm = atoi(value); }
+	else if (MATCH("audio", "vol_fds")) { pconfig->audio_vol_fds = atoi(value); }
+	else if (MATCH("audio", "vol_mmc5")) { pconfig->audio_vol_mmc5 = atoi(value); }
+	else if (MATCH("audio", "vol_vrc6")) { pconfig->audio_vol_vrc6 = atoi(value); }
+	else if (MATCH("audio", "vol_vrc7")) { pconfig->audio_vol_vrc7 = atoi(value); }
+	else if (MATCH("audio", "vol_n163")) { pconfig->audio_vol_n163 = atoi(value); }
+	else if (MATCH("audio", "vol_s5b")) { pconfig->audio_vol_s5b = atoi(value); }
 	
 	// Timing
 	else if (MATCH("timing", "speed")) { pconfig->timing_speed = atoi(value); }
