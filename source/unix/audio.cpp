@@ -163,6 +163,9 @@ void audio_deinit() {
 }
 
 // Timing functions
+int currtick = 0;
+int lasttick = 0;
+
 void timing_set_default() {
 	// Set the framerate to the default
 	framerate = conf.timing_speed;
@@ -173,4 +176,23 @@ void timing_set_altspeed() {
 	// Set the framerate to the alternate speed
 	framerate = conf.timing_altspeed;
 	SDL_GL_SetSwapInterval(0);
+}
+
+bool timing_check() {
+	// Check if it's time to execute the next frame
+	
+	if (conf.audio_api == 1) { return true; }
+	
+	if (conf.timing_vsync && (framerate != conf.timing_altspeed)) {
+		return true;
+	}
+	
+	currtick = SDL_GetTicks();
+	
+	if (currtick > (lasttick + (1000 / framerate))) {
+		lasttick = currtick;
+		return true;
+	}
+	
+	return false;
 }

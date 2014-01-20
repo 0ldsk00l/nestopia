@@ -638,10 +638,10 @@ int main(int argc, char *argv[]) {
 					Rewinder(emulator).EnableSound(true);
 				}
 
-			//if (timing_check()) {
+			if (timing_check()) {
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
-			//}
+			}
 			
 
 			if (state_save)
