@@ -127,14 +127,14 @@ void config_set_default() {
 	conf.video_tv_aspect = false;
 	conf.video_mask_overscan = true;
 	conf.video_fullscreen = false;
-	conf.video_preserve_aspect = false;
+	conf.video_preserve_aspect = true;
 	conf.video_unlimited_sprites = true;
 	conf.video_xbr_pixel_blending = true;
 	
 	// Audio
 	conf.audio_api = 1;
-	conf.audio_stereo = false;
-	conf.audio_sample_rate = 48000;
+	conf.audio_stereo = true;
+	conf.audio_sample_rate = 44100;
 	conf.audio_volume = 85;
 	conf.audio_vol_sq1 = 85;
 	conf.audio_vol_sq2 = 85;
