@@ -95,7 +95,7 @@ void opengl_init_structures() {
 
 void opengl_cleanup() {
 	// tears down OpenGL when it's no longer needed
-	glDeleteTextures( 1, &screenTexID );
+	if (screenTexID) { glDeleteTextures( 1, &screenTexID ); }
 	
 	if (videobuf) {
 		free(videobuf);
