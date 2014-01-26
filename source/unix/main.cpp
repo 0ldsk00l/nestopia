@@ -89,6 +89,8 @@ static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
+bool nst_pal = false;
+
 //extern GtkWidget *mainwindow, *statusbar;
 //extern char windowid[24];
 extern dimensions basesize, rendersize;
@@ -586,11 +588,14 @@ int main(int argc, char *argv[]) {
 
 	// attempt to load and autostart a file specified on the commandline
 	if (argc > 1) {
-		NstLoadGame(argv[argc - 1]);
+		nst_load_game(argv[argc - 1]);
 
-		if (loaded)
-		{
+		if (loaded) {
 			NstPlayGame();
+		}
+		else {
+			fprintf(stderr, "Fatal: Could not load ROM\n");
+			exit(1);
 		}
 	}
 
@@ -703,32 +708,28 @@ int main(int argc, char *argv[]) {
 	return 0;
 }
 
-void nst_set_framerate() {
-	// Set the framerate based on region
+void nst_set_region() {
+	// Set the region
 	Machine machine(emulator);
 	Cartridge::Database database(emulator);
-
-	//framerate = 60;
-	if (conf.misc_video_region == 2) {
-		machine.SetMode(Machine::PAL);
-		//framerate = 50;
-	}
-	else if (conf.misc_video_region == 1) {
-		machine.SetMode(Machine::NTSC);
-	}
-	else {
-		if (database.IsLoaded()) {
-			if (dbentry.GetSystem() == Cartridge::Profile::System::NES_PAL) {
-				machine.SetMode(Machine::PAL);
-				//framerate = 50;
-			}
-			else {
-				machine.SetMode(Machine::NTSC);
-			}
+	//Cartridge::Profile profile;
+	
+	if (database.IsLoaded()) {
+		//std::ifstream dbfile(filename, std::ios::in|std::ios::binary);
+		//Cartridge::ReadInes(dbfile, get_favored_system(), profile);
+		//dbentry = database.FindEntry(profile.hash, get_favored_system());
+		
+		machine.SetMode(machine.GetDesiredMode());
+		
+		if (machine.GetMode() == Machine::PAL) {
+			fprintf(stderr, "Region: PAL\n");
+			nst_pal = true;
 		}
 		else {
-			machine.SetMode(machine.GetDesiredMode());
+			fprintf(stderr, "Region: NTSC\n");
+			nst_pal = false;
 		}
+		//printf("Mapper: %d\n", dbentry.GetMapper());
 	}
 }
 
@@ -827,26 +828,11 @@ static int find_patch(char *patchname)
 	return 0;
 }
 
-// load a game or NES music file
-void NstLoadGame(const char* filename)
-{
-	// acquire interface to machine
-	Cartridge::Database database( emulator );
-	Machine machine( emulator );
-	Nsf nsf( emulator );
+void nst_load_game(const char *filename) {
+	// Load a Game ROM
+	Machine machine(emulator);
 	Nes::Result result;
-	unsigned char *compbuffer;
-	int compsize, wascomp, compoffset;
 	char gamename[512], patchname[512];
-
-	if (nsf_mode)
-	{
-		Nsf nsf( emulator );
-
-		nsf.StopSong();
-
-		playing = 0;
-	}
 
 	// unload if necessary
 	nst_unload();
@@ -854,92 +840,27 @@ void NstLoadGame(const char* filename)
 	// (re)configure savename
 	configure_savename(filename);
 
-	// check if it's an archive
-	wascomp = 0;
-	if (fileio_load_archive(filename, &compbuffer, &compsize, &compoffset, NULL, gamename))
-	{
-		std::istrstream file((char *)compbuffer+compoffset, compsize);
-		wascomp = 1;
+	// C++ file stream
+	std::ifstream file(filename, std::ios::in|std::ios::binary);
 
-		strncpy(lastarchname, filename, sizeof(lastarchname));
-	
-		configure_savename(gamename);
+	if (find_patch(patchname)) {
+		std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
 
-		if (database.IsLoaded())
-		{
-			dbentry = database.FindEntry((void *)&compbuffer[compoffset], compsize, get_favored_system());
-		}
+		Machine::Patch patch(pfile, false);
 
-		if (find_patch(patchname))
-		{
-			std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
-
-			Machine::Patch patch(pfile, false);
-
-			// load game and softpatch
-			result = machine.Load( file, get_favored_system(), patch );
-		}
-		else
-		{
-			// load game
-			result = machine.Load( file, get_favored_system() );
-		}
+		// Soft Patch
+		result = machine.Load(file, get_favored_system(), patch);
 	}
-	else
-	{
-		FILE *f;
-		int length;
-		unsigned char *buffer;
-
-		// this is a little ugly
-		if (database.IsLoaded())
-		{
-			f = fopen(filename, "rb");
-			if (!f)
-			{
-				loaded = 0;
-				return;
-			}
-
-			fseek(f, 0, SEEK_END);
-			length = ftell(f);
-			fseek(f, 0, SEEK_SET);
-
-			buffer = (unsigned char *)malloc(length);
-			fread(buffer, length, 1, f);
-			fclose(f);
-
-			dbentry = database.FindEntry(buffer, length, get_favored_system());
-
-			free(buffer);
-		}
-	
-		configure_savename(filename);
-
-		// C++ file stream
-		std::ifstream file(filename, std::ios::in|std::ios::binary);
-
-		if (find_patch(patchname))
-		{
-			std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
-
-			Machine::Patch patch(pfile, false);
-
-			// load game and softpatch
-			result = machine.Load( file, get_favored_system(), patch );
-		}
-		else
-		{
-			// load game
-			result = machine.Load( file, get_favored_system() );
-		}
+	else {
+		result = machine.Load(file, get_favored_system());
 	}
-
+	
+	// Set the region
+	nst_set_region();
+	
 	// failed?
-	if (NES_FAILED(result))
-	{
-		switch (result)
-		{
+	if (NES_FAILED(result)) {
+		switch (result) {
 			case Nes::RESULT_ERR_INVALID_FILE:
 				std::cout << "Invalid file\n";
 				break;
@@ -969,26 +890,16 @@ void NstLoadGame(const char* filename)
 		return;
 	}
 
-	// free the buffer if necessary
-	if (wascomp)
-	{
-		free(compbuffer);
+	if (machine.Is(Machine::DISK)) {
+		Fds fds(emulator);
+
+		fds.InsertDisk(0, 0);
+		print_fds_info();
 	}
-
-	else
-	{
-		if (machine.Is(Machine::DISK))
-		{
-			Fds fds( emulator );
-
-			fds.InsertDisk(0, 0);
-			print_fds_info();
-		}
-	}
-
+	
 	// note that something is loaded
 	loaded = 1;
 
 	// power on
-	machine.Power( true ); // false = power off
+	machine.Power(true); // false = power off
 }
