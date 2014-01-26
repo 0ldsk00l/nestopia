@@ -10,20 +10,15 @@ void NstSoftReset();
 void NstHardReset();
 bool NstIsPlaying();
 bool NstIsLoaded();
-void NstLoadGame(const char* filename);
-void NstLaunchConfig();
+void nst_load_game(const char *filename);
 
-void SetupVideo();
-void SetupSound();
 void SetupInput();
 
-void get_screen_res();
-void ToggleFullscreen();
 void FlipFDSDisk();
 void SwitchFDSDisk();
 void print_fds_info();
-void print_message(char* message);
-void nst_set_framerate();
+void print_message(char *message);
+void nst_set_region();
 void nst_set_dirs();
 
 void QuickLoad(int isvst);
