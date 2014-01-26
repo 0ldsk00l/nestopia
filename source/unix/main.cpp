@@ -58,7 +58,6 @@
 
 #include "main.h"
 #include "cli.h"
-//#include "gtkui.h"
 #include "audio.h"
 #include "video.h"
 #include "input.h"
@@ -73,14 +72,16 @@ using namespace LinuxNst;
 // base class, all interfaces derives from this
 Emulator emulator;
 
-int playing = 0, loaded = 0;
-static int nst_quit = 0, nsf_mode = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
+bool playing = false;
+bool loaded = false;
+bool nst_pal = false;
+
+static int nst_quit = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
 int schedule_stop = 0;
 
 char nstdir[256], savedir[512];
 static char savename[512], gamebasename[512];
 char rootname[512], lastarchname[512];
-char msgbuf[512];
 
 static CheatMgr *sCheatMgr;
 
@@ -89,18 +90,12 @@ static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
-bool nst_pal = false;
-
-//extern GtkWidget *mainwindow, *statusbar;
-//extern char windowid[24];
 extern dimensions basesize, rendersize;
 extern void	*videobuf;
 
 extern settings conf;
 
-// get the favored system selected by the user
-static Machine::FavoredSystem get_favored_system(void)
-{
+static Machine::FavoredSystem get_favored_system() {
 	switch (conf.misc_default_system) {
 		case 0:
 			return Machine::FAVORED_NES_NTSC;
@@ -127,19 +122,13 @@ static Machine::FavoredSystem get_favored_system(void)
 // *******************
 
 // called right before Nestopia is about to write pixels
-static bool NST_CALLBACK VideoLock(void* userData, Video::Output& video)
-{
-	if (nsf_mode) return false;
-
+static bool NST_CALLBACK VideoLock(void* userData, Video::Output& video) {
 	video.pitch = video_lock_screen(video.pixels);
 	return true; // true=lock success, false=lock failed (Nestopia will carry on but skip video)
 }
 
 // called right after Nestopia has finished writing pixels (not called if previous lock failed)
-static void NST_CALLBACK VideoUnlock(void* userData, Video::Output& video)
-{
-	if (nsf_mode) return;
-
+static void NST_CALLBACK VideoUnlock(void* userData, Video::Output& video) {
 	video_unlock_screen(video.pixels);
 }
 
@@ -151,48 +140,28 @@ static void NST_CALLBACK SoundUnlock(void* userData, Sound::Output& sound) {
 	audio_play();
 }
 
-// do a "partial" shutdown
-static void nst_unload(void)
-{
+static void nst_unload(void) {
+	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
-
-	// if nothing's loaded, do nothing
-	if (!loaded)
-	{
-		return;
-	}
-
-	// power down the emulated NES
-	std::cout << "Powering down the emulated machine\n";
+	
+	if (!loaded) { return; }
+	
+	// Power down the NES
+	fprintf(stderr, "Powering down the emulated machine\n");
 	machine.Power(false);
 
-	// unload the cart
+	// Remove the cartridge
 	machine.Unload();
 
 	// erase any cheats
 	//sCheatMgr->Unload();
 }
 
-// returns if we're currently playing a game or NSF
-bool NstIsPlaying() {
-	return playing;
-}
-
-bool NstIsLoaded() {
-	return loaded;
-}
-
-// shuts everything down
-void NstStopPlaying()
-{
-	if (playing)
-	{
-		int i;
-
-		// kill any movie
+void nst_pause() {
+	// Pauses the game
+	if (playing) {
 		fileio_do_movie_stop();
 
-		// get machine interface...
 		Machine machine(emulator);
 		
 		audio_deinit();
@@ -216,29 +185,7 @@ std::string StrQuickSaveFile(int isvst) {
 	return ossFile.str();
 }
 
-void FlipFDSDisk() {
-	Fds fds(emulator);
-
-	if (fds.CanChangeDiskSide()) {
-		fds.ChangeSide();
-		print_fds_info();
-	}
-}
-
-void SwitchFDSDisk() {
-	Fds fds(emulator);
-	
-	int currentdisk = fds.GetCurrentDisk();
-	
-	// If it's a multi-disk game, eject and insert the other disk
-	if (fds.GetNumDisks() > 1) {
-		fds.EjectDisk();
-		fds.InsertDisk(!currentdisk, 0);
-		print_fds_info();
-	}
-}
-
-void print_fds_info() {
+void nst_fds_info() {
 	Fds fds(emulator);
 
 	char* disk;
@@ -247,52 +194,62 @@ void print_fds_info() {
 	fds.GetCurrentDisk() == 0 ? disk = "1" : disk = "2";
 	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
 
-	snprintf(msgbuf, sizeof(msgbuf), "Fds: Disk %s Side %s", disk, side);
-	print_message(msgbuf);
+	fprintf(stderr, "Fds: Disk %s Side %s", disk, side);
 }
 
-void print_message(char* message) {
-	printf("%s\n", message);
-	//gtk_statusbar_push(GTK_STATUSBAR(statusbar), 0, message);
+void nst_flip_disk() {
+	// Flips the FDS disk
+	Fds fds(emulator);
+
+	if (fds.CanChangeDiskSide()) {
+		fds.ChangeSide();
+		nst_fds_info();
+	}
 }
 
-// save state to memory slot
-void QuickSave(int isvst)
-{
+void nst_switch_disk() {
+	// Switches the FDS disk in multi-disk games
+	Fds fds(emulator);
+	
+	int currentdisk = fds.GetCurrentDisk();
+	
+	// If it's a multi-disk game, eject and insert the other disk
+	if (fds.GetNumDisks() > 1) {
+		fds.EjectDisk();
+		fds.InsertDisk(!currentdisk, 0);
+		nst_fds_info();
+	}
+}
+
+void nst_state_save(int isvst) {
+	// Save State
 	std::string strFile = StrQuickSaveFile(isvst);
 
 	Machine machine( emulator );
 	std::ofstream os(strFile.c_str());
 	// use "NO_COMPRESSION" to make it easier to hack save states
 	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::USE_COMPRESSION);
-	snprintf(msgbuf, sizeof(msgbuf), "State Saved: %s", strFile.c_str());
-	print_message(msgbuf);
+	fprintf(stderr, "State Saved: %s", strFile.c_str());
 }
 
 
-// restore state from memory slot
-void QuickLoad(int isvst)
-{
+void nst_state_load(int isvst) {
+	// Load State
 	std::string strFile = StrQuickSaveFile(isvst);
 	
 	struct stat qloadstat;
 	if (stat(strFile.c_str(), &qloadstat) == -1) {
-		snprintf(msgbuf, sizeof(msgbuf), "No State to Load");
-		print_message(msgbuf);
+		fprintf(stderr, "No State to Load");
 		return;
 	}
 
 	Machine machine( emulator );
 	std::ifstream is(strFile.c_str());
 	Nes::Result res = machine.LoadState(is);
-	snprintf(msgbuf, sizeof(msgbuf), "State Loaded: %s", strFile.c_str());
-	print_message(msgbuf);
+	fprintf(stderr, "State Loaded: %s", strFile.c_str());
 }
 
-
-// start playing
-void NstPlayGame(void)
-{
+void nst_play() {
 	// initialization
 	video_init();
 	audio_init();
@@ -312,28 +269,18 @@ void NstPlayGame(void)
 	playing = 1;
 }
 
-void NstSoftReset() {
+void nst_reset(bool hardreset) {
+	// Reset the machine (soft or hard)
 	Machine machine(emulator);
 	Fds fds(emulator);
-	machine.Reset(false);
+	machine.Reset(hardreset);
 
 	// put the disk system back to disk 0 side 0
 	fds.EjectDisk();
 	fds.InsertDisk(0, 0);
 }
 
-void NstHardReset() {
-	Machine machine(emulator);
-	Fds fds(emulator);
-	machine.Reset(true);
-
-	// put the disk system back to disk 0 side 0
-	fds.EjectDisk();
-	fds.InsertDisk(0, 0);
-}
-
-// schedule a NEStopia quit
-void NstScheduleQuit() {
+void nst_schedule_quit() {
 	nst_quit = 1;
 }
 
@@ -477,12 +424,6 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 	}
 }
 
-/*static void cleanup_after_io(void) {
-	gtk_main_iteration_do(FALSE);
-	gtk_main_iteration_do(FALSE);
-	gtk_main_iteration_do(FALSE);
-}*/
-
 void nst_set_dirs() {
 	// Set up system directories
 #ifdef MINGW
@@ -568,128 +509,102 @@ int main(int argc, char *argv[]) {
 	// Create the game window
 	video_create();
 	
-	// setup video lock/unlock callbacks
-	Video::Output::lockCallback.Set( VideoLock, userData );
-	Video::Output::unlockCallback.Set( VideoUnlock, userData );
+	// Set up the callbacks
+	Video::Output::lockCallback.Set(VideoLock, userData);
+	Video::Output::unlockCallback.Set(VideoUnlock, userData);
 	
-	// set up audio lock/unlock callbacks
 	Sound::Output::lockCallback.Set(SoundLock, userData);
 	Sound::Output::unlockCallback.Set(SoundUnlock, userData);
+	
+	User::fileIoCallback.Set(DoFileIO, userData);
+	User::logCallback.Set(DoLog, userData);
 
-	// misc callbacks (for others, see NstApuUser.hpp)
-	User::fileIoCallback.Set( DoFileIO, userData );
-	User::logCallback.Set( DoLog, userData );
-
-	// try to load the FDS BIOS
+	// Load the FDS BIOS and NstDatabase.xml
 	fileio_set_fds_bios();
-
-	// and the NST database
 	fileio_load_db();
 
 	// attempt to load and autostart a file specified on the commandline
 	if (argc > 1) {
-		nst_load_game(argv[argc - 1]);
+		nst_load(argv[argc - 1]);
 
-		if (loaded) {
-			NstPlayGame();
-		}
+		if (loaded) { nst_play(); }
+		
 		else {
 			fprintf(stderr, "Fatal: Could not load ROM\n");
 			exit(1);
 		}
 	}
-
+	
 	nst_quit = 0;
-	while (!nst_quit)
-	{
+	
+	while (!nst_quit) {
 		/*while (gtk_events_pending())
 		{
 			gtk_main_iteration();
 		}*/
 		
-		if (playing)
-		{
-				//gtk_main_iteration_do(FALSE);
-
-			 	while (SDL_PollEvent(&event))
-				{
-					switch (event.type)
-					{
-						case SDL_QUIT:
-							schedule_stop = 1;
-							return 0; // FIX
-							break;
-						
-						case SDL_KEYDOWN:
-						case SDL_KEYUP:
-							// ignore num lock, caps lock, and "mode" (whatever that is)
-							//event.key.keysym.mod = (SDLMod)((int)event.key.keysym.mod & (~(KMOD_NUM | KMOD_CAPS | KMOD_MODE)));
-							
-							// (intentional fallthrough)
-						case SDL_JOYHATMOTION:
-						case SDL_JOYAXISMOTION:
-						case SDL_JOYBUTTONDOWN:
-						case SDL_JOYBUTTONUP:
-						case SDL_MOUSEBUTTONDOWN:
-						case SDL_MOUSEBUTTONUP:
-							input_process(cNstPads, event);
-							break;
-					}	
-				}
-				//}
-
-				if (NES_SUCCEEDED(Rewinder(emulator).Enable(true)))
-				{
-					Rewinder(emulator).EnableSound(true);
-				}
-
+		if (playing) {
+			while (SDL_PollEvent(&event))
+			{
+				switch (event.type) {
+					case SDL_QUIT:
+						schedule_stop = 1;
+						return 0; // FIX
+						break;
+					
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+					case SDL_JOYHATMOTION:
+					case SDL_JOYAXISMOTION:
+					case SDL_JOYBUTTONDOWN:
+					case SDL_JOYBUTTONUP:
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+						input_process(cNstPads, event);
+						break;
+				}	
+			}
+			
+			if (NES_SUCCEEDED(Rewinder(emulator).Enable(true)))
+			{
+				Rewinder(emulator).EnableSound(true);
+			}
+			
 			if (timing_check()) {
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
 			}
 			
-
-			if (state_save)
-			{
+			if (state_save) {
 				fileio_do_state_save();
 				state_save = 0;
-				//cleanup_after_io();
 			}
-
-			if (state_load)
-			{
+			
+			if (state_load) {
 				fileio_do_state_load();
 				state_load = 0;
-				//cleanup_after_io();
 			}
-
-			if (movie_load)
-			{
+			
+			if (movie_load) {
 				fileio_do_movie_load();
 				movie_load = 0;
-				//cleanup_after_io();
 			}
 
-			if (movie_save)
-			{
+			if (movie_save) {
 				fileio_do_movie_save();
 				movie_load = 0;
-				//cleanup_after_io();
 			}
 
-			if (movie_stop)
-			{
+			if (movie_stop) {
 				movie_stop = 0;
 				fileio_do_movie_stop();
 			}
 
-			if (schedule_stop)
-			{
-				NstStopPlaying();
+			if (schedule_stop) {
+				nst_pause();
 			}
 		}
-		else
-		{
+		else {
 			//gtk_main_iteration_do(TRUE);
 		}
 	}
@@ -733,7 +648,7 @@ void nst_set_region() {
 	}
 }
 
-void set_rewinder_direction(int direction) {
+void nst_set_rewind(int direction) {
 	// Set the rewinder backward or forward
 	switch (direction) {
 		case 0:
@@ -828,13 +743,13 @@ static int find_patch(char *patchname)
 	return 0;
 }
 
-void nst_load_game(const char *filename) {
+void nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
 	Nes::Result result;
 	char gamename[512], patchname[512];
 
-	// unload if necessary
+	// Pull out any inserted cartridges
 	nst_unload();
 
 	// (re)configure savename
@@ -858,7 +773,6 @@ void nst_load_game(const char *filename) {
 	// Set the region
 	nst_set_region();
 	
-	// failed?
 	if (NES_FAILED(result)) {
 		switch (result) {
 			case Nes::RESULT_ERR_INVALID_FILE:
@@ -878,8 +792,7 @@ void nst_load_game(const char *filename) {
 				break;
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
-				snprintf(msgbuf, sizeof(msgbuf), "FDS games require the FDS BIOS.\nIt should be located at ~/.nestopia/disksys.rom");
-				//create_messagewindow(msgbuf);
+				fprintf(stderr, "FDS games require the FDS BIOS.\nIt should be located at ~/.nestopia/disksys.rom");
 				break;
 
 			default:
@@ -892,9 +805,8 @@ void nst_load_game(const char *filename) {
 
 	if (machine.Is(Machine::DISK)) {
 		Fds fds(emulator);
-
 		fds.InsertDisk(0, 0);
-		print_fds_info();
+		nst_fds_info();
 	}
 	
 	// note that something is loaded
