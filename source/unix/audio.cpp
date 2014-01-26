@@ -29,6 +29,7 @@
 
 extern settings conf;
 extern Emulator emulator;
+extern bool nst_pal;
 
 SDL_AudioSpec spec, obtained;
 SDL_AudioDeviceID dev;
@@ -44,7 +45,9 @@ int framerate, channels;
 void audio_init() {
 	// Initialize audio device
 	
-	framerate = conf.timing_speed;
+	// Set the framerate based on the region. For PAL: (60 / 6) * 5 = 50
+	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
+	
 	channels = conf.audio_stereo ? 2 : 1;
 	
 	outputbufsize = 2 * channels * (conf.audio_sample_rate / framerate);
@@ -168,7 +171,7 @@ int lasttick = 0;
 
 void timing_set_default() {
 	// Set the framerate to the default
-	framerate = conf.timing_speed;
+	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
 	SDL_GL_SetSwapInterval(conf.timing_vsync);
 }
 
