@@ -67,14 +67,14 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	SDL_GetMouseState(&x, &y);
 	
 	// Process non-game events
-	if (keys[SDL_SCANCODE_F1]) { FlipFDSDisk(); }
-	if (keys[SDL_SCANCODE_F2]) { NstSoftReset(); }
+	if (keys[SDL_SCANCODE_F1]) { nst_flip_disk(); }
+	if (keys[SDL_SCANCODE_F2]) { nst_reset(0); }
 	//if (keys[SDL_SCANCODE_F3]) {  }
 	//if (keys[SDL_SCANCODE_F4]) {  }
-	if (keys[SDL_SCANCODE_F5]) { QuickSave(0); }
-	if (keys[SDL_SCANCODE_F6]) { QuickSave(1); }
-	if (keys[SDL_SCANCODE_F7]) { QuickLoad(0); }
-	if (keys[SDL_SCANCODE_F8]) { QuickLoad(1); }
+	if (keys[SDL_SCANCODE_F5]) { nst_state_save(0); }
+	if (keys[SDL_SCANCODE_F6]) { nst_state_save(1); }
+	if (keys[SDL_SCANCODE_F7]) { nst_state_load(0); }
+	if (keys[SDL_SCANCODE_F8]) { nst_state_load(1); }
 	//if (keys[SDL_SCANCODE_F9]) {  }
 	//if (keys[SDL_SCANCODE_F10]) {  }
 	//if (keys[SDL_SCANCODE_F11]) {  }
@@ -89,12 +89,12 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[SDL_SCANCODE_2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
 	
 	// Rewinder
-	if (keys[SDL_SCANCODE_BACKSPACE]) { set_rewinder_direction(0); }
-	if (keys[SDL_SCANCODE_BACKSLASH]) { set_rewinder_direction(1); }
+	if (keys[SDL_SCANCODE_BACKSPACE]) { nst_set_rewind(0); }
+	if (keys[SDL_SCANCODE_BACKSLASH]) { nst_set_rewind(1); }
 	
 	// Escape exits when not in GUI mode
 	if (keys[SDL_SCANCODE_ESCAPE]) {
-		if (conf.misc_disable_gui) { NstScheduleQuit(); }
+		if (conf.misc_disable_gui) { nst_schedule_quit(); }
 	}
 	
 	// F toggles fullscreen
