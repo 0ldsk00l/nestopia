@@ -178,12 +178,12 @@ void video_init() {
 	// Set YUV Decoder/Picture options
 	if (video.GetPalette().GetMode() != Video::Palette::MODE_RGB) {
 		switch (conf.video_decoder) {
-			case 0: // Canonical
-				video.SetDecoder(Video::DECODER_CANONICAL);
+			case 0: // Consumer
+				video.SetDecoder(Video::DECODER_CONSUMER);
 				break;
 			
-			case 1: // Consumer
-				video.SetDecoder(Video::DECODER_CONSUMER);
+			case 1: // Canonical
+				video.SetDecoder(Video::DECODER_CANONICAL);
 				break;
 			
 			case 2: // Alternative (Canonical with yellow boost)
