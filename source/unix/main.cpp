@@ -194,7 +194,7 @@ void nst_fds_info() {
 	fds.GetCurrentDisk() == 0 ? disk = "1" : disk = "2";
 	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
 
-	fprintf(stderr, "Fds: Disk %s Side %s", disk, side);
+	fprintf(stderr, "Fds: Disk %s Side %s\n", disk, side);
 }
 
 void nst_flip_disk() {
@@ -229,7 +229,7 @@ void nst_state_save(int isvst) {
 	std::ofstream os(strFile.c_str());
 	// use "NO_COMPRESSION" to make it easier to hack save states
 	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::USE_COMPRESSION);
-	fprintf(stderr, "State Saved: %s", strFile.c_str());
+	fprintf(stderr, "State Saved: %s\n", strFile.c_str());
 }
 
 
@@ -239,14 +239,14 @@ void nst_state_load(int isvst) {
 	
 	struct stat qloadstat;
 	if (stat(strFile.c_str(), &qloadstat) == -1) {
-		fprintf(stderr, "No State to Load");
+		fprintf(stderr, "No State to Load\n");
 		return;
 	}
 
 	Machine machine( emulator );
 	std::ifstream is(strFile.c_str());
 	Nes::Result res = machine.LoadState(is);
-	fprintf(stderr, "State Loaded: %s", strFile.c_str());
+	fprintf(stderr, "State Loaded: %s\n", strFile.c_str());
 }
 
 void nst_play() {
@@ -792,7 +792,7 @@ void nst_load(const char *filename) {
 				break;
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
-				fprintf(stderr, "FDS games require the FDS BIOS.\nIt should be located at ~/.nestopia/disksys.rom");
+				fprintf(stderr, "FDS games require the FDS BIOS.\nIt should be located at ~/.nestopia/disksys.rom\n");
 				break;
 
 			default:
