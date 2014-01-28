@@ -34,6 +34,9 @@ libretro:
   - Palette options
   - Zapper support
 
+ Changes:
+  - Region detection based on NstDatabase.xml
+
 ----------------------------------------------------------------
 1.45
 ----------------------------------------------------------------
