@@ -535,7 +535,7 @@ bool retro_load_game(const struct retro_game_info *info)
    else
    {
       if (log_cb)
-         log_cb(RETRO_LOG_WARN, "NstDatabase.xml required to accurately detect some mappers.\n");
+         log_cb(RETRO_LOG_WARN, "NstDatabase.xml required to detect region and some mappers.\n");
       delete db_file;
    }
 
@@ -553,10 +553,7 @@ bool retro_load_game(const struct retro_game_info *info)
    std::stringstream ss(std::string(reinterpret_cast<const char*>(info->data),
             reinterpret_cast<const char*>(info->data) + info->size));
 
-   // Hack. Nestopia API forces us to favor either.
-   Api::Machine::FavoredSystem system = Api::Machine::FAVORED_NES_NTSC;
-   is_pal = false;
-   if (info->path && (strstr(info->path, "(E)") || strstr(info->path, "(Europe)")))
+   /*if (info->path && (strstr(info->path, "(E)") || strstr(info->path, "(Europe)")))
    {
       if (log_cb)
          log_cb(RETRO_LOG_INFO, "[Nestopia]: Favoring PAL.\n");
@@ -568,7 +565,7 @@ bool retro_load_game(const struct retro_game_info *info)
       if (log_cb)
          log_cb(RETRO_LOG_INFO, "[Nestopia]: Favoring Famicom.\n");
       system = Api::Machine::FAVORED_FAMICOM;
-   }
+   }*/
 
    if (info->path && (strstr(info->path, ".fds") || strstr(info->path, ".FDS")))
    {
@@ -593,20 +590,33 @@ bool retro_load_game(const struct retro_game_info *info)
             delete fds_bios_file;
             return false;
          }
-
-         system = Api::Machine::FAVORED_FAMICOM;
       }
       else
          return false;
    }
 
+   Api::Machine::FavoredSystem system = Api::Machine::FAVORED_NES_NTSC;
+   is_pal = false;
+
    if (machine->Load(ss, system))
       return false;
+
+   // If you have no Database, no region detection for you.
+   if (database.IsLoaded())
+   {
+	   machine->SetMode(machine->GetDesiredMode());
+	   if (machine->GetMode() == Api::Machine::PAL)
+	   {
+		   system = Api::Machine::FAVORED_NES_PAL;
+		   is_pal = true;
+	   }
+   }
+   else
+      machine->SetMode(Api::Machine::NTSC);
 
    if (machine->Is(Nes::Api::Machine::DISK))
       fds->InsertDisk(0, 0);
 
-   machine->SetMode(is_pal ? Api::Machine::PAL : Api::Machine::NTSC);
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "[Nestopia]: Machine is %s.\n", is_pal ? "PAL" : "NTSC");
 
