@@ -606,10 +606,7 @@ bool retro_load_game(const struct retro_game_info *info)
    {
 	   machine->SetMode(machine->GetDesiredMode());
 	   if (machine->GetMode() == Api::Machine::PAL)
-	   {
-		   system = Api::Machine::FAVORED_NES_PAL;
-		   is_pal = true;
-	   }
+		  is_pal = true;
    }
    else
       machine->SetMode(Api::Machine::NTSC);
