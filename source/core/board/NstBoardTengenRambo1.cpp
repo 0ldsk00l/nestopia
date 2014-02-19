@@ -185,7 +185,7 @@ namespace Nes
 
 				bool Rambo1::Irq::Unit::Clock()
 				{
-					if (!reload)
+					/*if (!reload)
 					{
 						if (count)
 						{
@@ -202,7 +202,30 @@ namespace Nes
 						reload = false;
 						count = latch + 1;
 						return false;
+					}*/
+					
+					// From dragon2snow
+					if (reload)  {
+						if (latch < 1) {
+							count = latch + 1;
+						}
+						else {
+							count = latch + 2;
+						}
+						reload = false;
 					}
+					else if (!count) {
+						count = latch + 1;
+					}
+					
+					count--;
+					
+					if (!count && enabled) {
+						/* wait one M2 cycle, then trigger IRQ */
+						return true;
+					}
+					
+					return false;
 				}
 
 				void Rambo1::Irq::Update()
