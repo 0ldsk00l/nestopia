@@ -513,7 +513,8 @@ namespace Nes
 						TENGEN_800004              = MakeId<  206,  128,   64,  0,  0, CRM_0,  NMT_2,  1 >::ID,
 						TENGEN_800008              = MakeId<    3,   64,   64,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						TENGEN_800030              = MakeId<  206,  128,   64,  0,  0, CRM_0,  NMT_X,  1 >::ID,
-						TENGEN_800032              = MakeId<   64,  128,  128,  0,  0, CRM_0,  NMT_V,  0 >::ID,
+						//TENGEN_800032              = MakeId<   64,  128,  128,  0,  0, CRM_0,  NMT_V,  0 >::ID,
+						TENGEN_800032              = MakeId<   64,  128,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						TENGEN_800037              = MakeId<  158,  128,  128,  0,  0, CRM_0,  NMT_Z,  0 >::ID,
 						TENGEN_800042              = MakeId<   68,  128,  256,  0,  0, CRM_0,  NMT_V,  1 >::ID,
 						// TXC
