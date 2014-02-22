@@ -168,9 +168,11 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	SDL_Event buttons[TOTALBUTTONS] = {
 		player[0].ju, player[0].jd, player[0].jl, player[0].jr,
 		player[0].jselect, player[0].jstart, player[0].ja, player[0].jb,
+		player[0].jta, player[0].jtb,
 		
 		player[1].ju, player[1].jd, player[1].jl, player[1].jr,
-		player[1].jselect, player[1].jstart, player[1].ja, player[1].jb
+		player[1].jselect, player[1].jstart, player[1].ja, player[1].jb,
+		player[1].jta, player[1].jtb
 	};
 	
 	static unsigned char nescodes[TOTALBUTTONS] = {
@@ -182,12 +184,16 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 		Input::Controllers::Pad::START,
 		Input::Controllers::Pad::A,
 		Input::Controllers::Pad::B,
+		Input::Controllers::Pad::A,
+		Input::Controllers::Pad::B,
 		Input::Controllers::Pad::UP,
 		Input::Controllers::Pad::DOWN,
 		Input::Controllers::Pad::LEFT,
 		Input::Controllers::Pad::RIGHT,
 		Input::Controllers::Pad::SELECT,
 		Input::Controllers::Pad::START,
+		Input::Controllers::Pad::A,
+		Input::Controllers::Pad::B,
 		Input::Controllers::Pad::A,
 		Input::Controllers::Pad::B
 	};
@@ -350,6 +356,14 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 			input.nescode = Input::Controllers::Pad::B;
 			input.player = i;
 		}
+		else if (player[i].ta == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::A;
+			input.player = i;
+		}
+		else if (player[i].tb == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::B;
+			input.player = i;
+		}
 	}
 	
 	input_inject(controllers, input);
@@ -441,6 +455,8 @@ void input_config_read() {
 		player[0].start = SDL_GetScancodeFromName(inputconf.kb_p1start);
 		player[0].a = SDL_GetScancodeFromName(inputconf.kb_p1a);
 		player[0].b = SDL_GetScancodeFromName(inputconf.kb_p1b);
+		player[0].ta = SDL_GetScancodeFromName(inputconf.kb_p1ta);
+		player[0].tb = SDL_GetScancodeFromName(inputconf.kb_p1tb);
 		
 		player[0].ju = input_translate_string(inputconf.js_p1u);
 		player[0].jd = input_translate_string(inputconf.js_p1d);
@@ -450,6 +466,8 @@ void input_config_read() {
 		player[0].jstart = input_translate_string(inputconf.js_p1start);
 		player[0].ja = input_translate_string(inputconf.js_p1a);
 		player[0].jb = input_translate_string(inputconf.js_p1b);
+		player[0].jta = input_translate_string(inputconf.js_p1ta);
+		player[0].jtb = input_translate_string(inputconf.js_p1tb);
 		
 		// Player 2
 		player[1].u = SDL_GetScancodeFromName(inputconf.kb_p2u);
@@ -460,6 +478,8 @@ void input_config_read() {
 		player[1].start = SDL_GetScancodeFromName(inputconf.kb_p2start);
 		player[1].a = SDL_GetScancodeFromName(inputconf.kb_p2a);
 		player[1].b = SDL_GetScancodeFromName(inputconf.kb_p2b);
+		player[1].ta = SDL_GetScancodeFromName(inputconf.kb_p2ta);
+		player[1].tb = SDL_GetScancodeFromName(inputconf.kb_p2tb);
 		
 		player[1].ju = input_translate_string(inputconf.js_p2u);
 		player[1].jd = input_translate_string(inputconf.js_p2d);
@@ -469,6 +489,8 @@ void input_config_read() {
 		player[1].jstart = input_translate_string(inputconf.js_p2start);
 		player[1].ja = input_translate_string(inputconf.js_p2a);
 		player[1].jb = input_translate_string(inputconf.js_p2b);
+		player[1].jta = input_translate_string(inputconf.js_p2ta);
+		player[1].jtb = input_translate_string(inputconf.js_p2tb);
 	}
 }
 
@@ -486,6 +508,8 @@ void input_config_write() {
 		fprintf(fp, "kb_start=%s\n", SDL_GetScancodeName(player[0].start));
 		fprintf(fp, "kb_a=%s\n", SDL_GetScancodeName(player[0].a));
 		fprintf(fp, "kb_b=%s\n", SDL_GetScancodeName(player[0].b));
+		fprintf(fp, "kb_ta=%s\n", SDL_GetScancodeName(player[0].ta));
+		fprintf(fp, "kb_tb=%s\n", SDL_GetScancodeName(player[0].tb));
 		
 		fprintf(fp, "js_u=%s\n", input_translate_event(player[0].ju));
 		fprintf(fp, "js_d=%s\n", input_translate_event(player[0].jd));
@@ -495,6 +519,8 @@ void input_config_write() {
 		fprintf(fp, "js_start=%s\n", input_translate_event(player[0].jstart));
 		fprintf(fp, "js_a=%s\n", input_translate_event(player[0].ja));
 		fprintf(fp, "js_b=%s\n", input_translate_event(player[0].jb));
+		fprintf(fp, "js_ta=%s\n", input_translate_event(player[0].jta));
+		fprintf(fp, "js_tb=%s\n", input_translate_event(player[0].jtb));
 		fprintf(fp, "\n"); // End of Section
 		
 		fprintf(fp, "[gamepad2]\n");
@@ -506,6 +532,8 @@ void input_config_write() {
 		fprintf(fp, "kb_start=%s\n", SDL_GetScancodeName(player[1].start));
 		fprintf(fp, "kb_a=%s\n", SDL_GetScancodeName(player[1].a));
 		fprintf(fp, "kb_b=%s\n", SDL_GetScancodeName(player[1].b));
+		fprintf(fp, "kb_ta=%s\n", SDL_GetScancodeName(player[1].ta));
+		fprintf(fp, "kb_tb=%s\n", SDL_GetScancodeName(player[1].tb));
 		
 		fprintf(fp, "js_u=%s\n", input_translate_event(player[1].ju));
 		fprintf(fp, "js_d=%s\n", input_translate_event(player[1].jd));
@@ -515,6 +543,8 @@ void input_config_write() {
 		fprintf(fp, "js_start=%s\n", input_translate_event(player[1].jstart));
 		fprintf(fp, "js_a=%s\n", input_translate_event(player[1].ja));
 		fprintf(fp, "js_b=%s\n", input_translate_event(player[1].jb));
+		fprintf(fp, "js_ta=%s\n", input_translate_event(player[1].jta));
+		fprintf(fp, "js_tb=%s\n", input_translate_event(player[1].jtb));
 		fprintf(fp, "\n"); // End of Section
 		
 		fclose(fp);
@@ -531,6 +561,8 @@ void input_set_default() {
 	player[0].start = SDL_GetScancodeFromName("Right Ctrl");
 	player[0].a = SDL_GetScancodeFromName("Z");
 	player[0].b = SDL_GetScancodeFromName("A");
+	player[0].ta = SDL_GetScancodeFromName("X");
+	player[0].tb = SDL_GetScancodeFromName("S");
 
 	player[0].ju = input_translate_string("j0h01");
 	player[0].jd = input_translate_string("j0h04");
@@ -540,6 +572,8 @@ void input_set_default() {
 	player[0].jstart = input_translate_string("j0b9");
 	player[0].ja = input_translate_string("j0b1");
 	player[0].jb = input_translate_string("j0b0");
+	player[0].jta = input_translate_string("j0b2");
+	player[0].jtb = input_translate_string("j0b3");
 	
 	player[1].u = SDL_GetScancodeFromName("I");
 	player[1].d = SDL_GetScancodeFromName("K");
@@ -549,6 +583,8 @@ void input_set_default() {
 	player[1].start = SDL_GetScancodeFromName("Left Ctrl");
 	player[1].a = SDL_GetScancodeFromName("M");
 	player[1].b = SDL_GetScancodeFromName("N");
+	player[1].ta = SDL_GetScancodeFromName("B");
+	player[1].tb = SDL_GetScancodeFromName("V");
 	
 	player[1].ju = input_translate_string("j1h01");
 	player[1].jd = input_translate_string("j1h04");
@@ -558,6 +594,8 @@ void input_set_default() {
 	player[1].jstart = input_translate_string("j1b9");
 	player[1].ja = input_translate_string("j1b1");
 	player[1].jb = input_translate_string("j1b0");
+	player[1].jta = input_translate_string("j1b2");
+	player[1].jtb = input_translate_string("j1b3");
 }
 
 static int input_config_match(void* user, const char* section, const char* name, const char* value) {
@@ -573,6 +611,8 @@ static int input_config_match(void* user, const char* section, const char* name,
 	else if (MATCH("gamepad1", "kb_start")) { pconfig->kb_p1start = strdup(value); }
 	else if (MATCH("gamepad1", "kb_a")) { pconfig->kb_p1a = strdup(value); }
 	else if (MATCH("gamepad1", "kb_b")) { pconfig->kb_p1b = strdup(value); }
+	else if (MATCH("gamepad1", "kb_ta")) { pconfig->kb_p1ta = strdup(value); }
+	else if (MATCH("gamepad1", "kb_tb")) { pconfig->kb_p1tb = strdup(value); }
 	
 	else if (MATCH("gamepad1", "js_u")) { pconfig->js_p1u = strdup(value); }
 	else if (MATCH("gamepad1", "js_d")) { pconfig->js_p1d = strdup(value); }
@@ -582,6 +622,8 @@ static int input_config_match(void* user, const char* section, const char* name,
 	else if (MATCH("gamepad1", "js_start")) { pconfig->js_p1start = strdup(value); }
 	else if (MATCH("gamepad1", "js_a")) { pconfig->js_p1a = strdup(value); }
 	else if (MATCH("gamepad1", "js_b")) { pconfig->js_p1b = strdup(value); }
+	else if (MATCH("gamepad1", "js_ta")) { pconfig->js_p1ta = strdup(value); }
+	else if (MATCH("gamepad1", "js_tb")) { pconfig->js_p1tb = strdup(value); }
 	
 	// Player 2
 	else if (MATCH("gamepad2", "kb_u")) { pconfig->kb_p2u = strdup(value); }
@@ -592,6 +634,8 @@ static int input_config_match(void* user, const char* section, const char* name,
 	else if (MATCH("gamepad2", "kb_start")) { pconfig->kb_p2start = strdup(value); }
 	else if (MATCH("gamepad2", "kb_a")) { pconfig->kb_p2a = strdup(value); }
 	else if (MATCH("gamepad2", "kb_b")) { pconfig->kb_p2b = strdup(value); }
+	else if (MATCH("gamepad2", "kb_ta")) { pconfig->kb_p2ta = strdup(value); }
+	else if (MATCH("gamepad2", "kb_tb")) { pconfig->kb_p2tb = strdup(value); }
 	
 	else if (MATCH("gamepad2", "js_u")) { pconfig->js_p2u = strdup(value); }
 	else if (MATCH("gamepad2", "js_d")) { pconfig->js_p2d = strdup(value); }
@@ -601,6 +645,8 @@ static int input_config_match(void* user, const char* section, const char* name,
 	else if (MATCH("gamepad2", "js_start")) { pconfig->js_p2start = strdup(value); }
 	else if (MATCH("gamepad2", "js_a")) { pconfig->js_p2a = strdup(value); }
 	else if (MATCH("gamepad2", "js_b")) { pconfig->js_p2b = strdup(value); }
+	else if (MATCH("gamepad2", "js_ta")) { pconfig->js_p2ta = strdup(value); }
+	else if (MATCH("gamepad2", "js_tb")) { pconfig->js_p2tb = strdup(value); }
 	
 	else { return 0; }
     return 1;
