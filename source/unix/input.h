@@ -2,7 +2,7 @@
 #define _INPUT_H_
 
 #define NUMGAMEPADS 2
-#define NUMBUTTONS 8
+#define NUMBUTTONS 10
 #define TOTALBUTTONS (NUMGAMEPADS*NUMBUTTONS)
 #define DEADZONE (32768/3)
 
@@ -20,6 +20,8 @@ typedef struct {
 	SDL_Scancode start;
 	SDL_Scancode a;
 	SDL_Scancode b;
+	SDL_Scancode ta;
+	SDL_Scancode tb;
 	
 	SDL_Event ju;
 	SDL_Event jd;
@@ -29,6 +31,8 @@ typedef struct {
 	SDL_Event jstart;
 	SDL_Event ja;
 	SDL_Event jb;
+	SDL_Event jta;
+	SDL_Event jtb;
 } gamepad;
 
 typedef struct {
@@ -41,6 +45,8 @@ typedef struct {
 	char *kb_p1start;
 	char *kb_p1a;
 	char *kb_p1b;
+	char *kb_p1ta;
+	char *kb_p1tb;
 	
 	char *js_p1u;
 	char *js_p1d;
@@ -50,6 +56,8 @@ typedef struct {
 	char *js_p1start;
 	char *js_p1a;
 	char *js_p1b;
+	char *js_p1ta;
+	char *js_p1tb;
 	
 	// Player 2
 	char *kb_p2u;
@@ -60,6 +68,8 @@ typedef struct {
 	char *kb_p2start;
 	char *kb_p2a;
 	char *kb_p2b;
+	char *kb_p2ta;
+	char *kb_p2tb;
 	
 	char *js_p2u;
 	char *js_p2d;
@@ -69,6 +79,8 @@ typedef struct {
 	char *js_p2start;
 	char *js_p2a;
 	char *js_p2b;
+	char *js_p2ta;
+	char *js_p2tb;
 } inputsettings;
 
 typedef struct {
