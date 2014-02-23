@@ -262,6 +262,16 @@ namespace Nes
 				cpu.Map( 0x4013 ).Set( this, &Apu::Peek_40xx, &Apu::Poke_4013 );
 				cpu.Map( 0x4015 ).Set( this, &Apu::Peek_4015, &Apu::Poke_4015 );
 
+				if (cpu.GetApu().IsGenie())
+				{
+					NES_DO_POKE(4000,0x4000,0x30);
+					NES_DO_POKE(4001,0x4001,0xF9);
+					NES_DO_POKE(400C,0x400C,0x30);
+					NES_DO_POKE(400E,0x400E,0x0E);
+					NES_DO_POKE(400F,0x400F,0x04);
+					NES_DO_POKE(4015,0x4015,0x09);
+				}
+
 				if (cpu.GetModel() == CPU_DENDY)
 				{
 					ctrl = STATUS_NO_FRAME_IRQ;
@@ -386,6 +396,15 @@ namespace Nes
 			if (settings.transpose != transpose)
 			{
 				settings.transpose = transpose;
+				UpdateSettings();
+			}
+		}
+
+		void Apu::SetGenie(const bool genie)
+		{
+			if (settings.genie != genie)
+			{
+				settings.genie = genie;
 				UpdateSettings();
 			}
 		}

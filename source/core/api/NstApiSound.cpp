@@ -82,6 +82,11 @@ namespace Nes
 			emulator.cpu.GetApu().SetAutoTranspose( enable );
 		}
 
+		void Sound::SetGenie(bool enable) throw()
+		{
+			emulator.cpu.GetApu().SetGenie( enable );
+		}
+
 		void Sound::SetSpeaker(Speaker speaker) throw()
 		{
 			emulator.cpu.GetApu().EnableStereo( speaker == SPEAKER_STEREO );
@@ -125,6 +130,11 @@ namespace Nes
 		bool Sound::IsAutoTransposing() const throw()
 		{
 			return emulator.cpu.GetApu().IsAutoTransposing();
+		}
+
+		bool Sound::IsGenie() const throw()
+		{
+			return emulator.cpu.GetApu().IsGenie();
 		}
 
 		Sound::Speaker Sound::GetSpeaker() const throw()

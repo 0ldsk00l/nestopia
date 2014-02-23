@@ -357,11 +357,25 @@ namespace Nes
 			void SetAutoTranspose(bool state) throw();
 
 			/**
+			* Enables the "Game Genie" sound effect
+			*
+			* @param genie true to enable
+			*/
+			void SetGenie(bool genie) throw();
+
+			/**
 			* Checks if automatic transposing is enabled.
 			*
 			* @return true if enabled
 			*/
 			bool IsAutoTransposing() const throw();
+
+			/**
+			* Checks if a "Game Genie" is present
+			*
+			* @return true if enabled
+			*/
+			bool IsGenie() const throw();
 
 			/**
 			* Checks if sound is audible at all.
