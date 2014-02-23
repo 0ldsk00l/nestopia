@@ -152,26 +152,38 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 void input_pulse_turbo(Input::Controllers *controllers) {
 	// Pulse the turbo buttons if they're pressed
 	if (turbostate.p1a) {
-		turbotoggle.p1a ^= 1;
-		if (turbotoggle.p1a) { controllers->pad[0].buttons &= ~Input::Controllers::Pad::A; }
+		turbotoggle.p1a++;
+		if (turbotoggle.p1a == conf.timing_turbopulse) {
+			turbotoggle.p1a = 0;
+			controllers->pad[0].buttons &= ~Input::Controllers::Pad::A;
+		}
 		else { controllers->pad[0].buttons |= Input::Controllers::Pad::A; }
 	}
 	
 	if (turbostate.p1b) {
-		turbotoggle.p1b ^= 1;
-		if (turbotoggle.p1b) { controllers->pad[0].buttons &= ~Input::Controllers::Pad::B; }
+		turbotoggle.p1b++;
+		if (turbotoggle.p1b == conf.timing_turbopulse) {
+			turbotoggle.p1b = 0;
+			controllers->pad[0].buttons &= ~Input::Controllers::Pad::B;
+		}
 		else { controllers->pad[0].buttons |= Input::Controllers::Pad::B; }
 	}
 	
 	if (turbostate.p2a) {
-		turbotoggle.p2a ^= 1;
-		if (turbotoggle.p2a) { controllers->pad[1].buttons &= ~Input::Controllers::Pad::A; }
+		turbotoggle.p2a++;
+		if (turbotoggle.p2a == conf.timing_turbopulse) {
+			turbotoggle.p2a = 0;
+			controllers->pad[1].buttons &= ~Input::Controllers::Pad::A;
+		}
 		else { controllers->pad[1].buttons |= Input::Controllers::Pad::A; }
 	}
 	
 	if (turbostate.p2b) {
-		turbotoggle.p2b ^= 1;
-		if (turbotoggle.p2b) { controllers->pad[1].buttons &= ~Input::Controllers::Pad::B; }
+		turbotoggle.p2b++;
+		if (turbotoggle.p2b == conf.timing_turbopulse) {
+			turbotoggle.p2b = 0;
+			controllers->pad[1].buttons &= ~Input::Controllers::Pad::B;
+		}
 		else { controllers->pad[1].buttons |= Input::Controllers::Pad::B; }
 	}
 }

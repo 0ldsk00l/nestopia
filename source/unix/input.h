@@ -92,10 +92,10 @@ typedef struct {
 } nesinput;
 
 typedef struct {
-	bool p1a;
-	bool p1b;
-	bool p2a;
-	bool p2b;
+	int p1a;
+	int p1b;
+	int p2a;
+	int p2b;
 } turbo;
 
 void input_init();

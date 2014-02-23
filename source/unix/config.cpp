@@ -92,6 +92,7 @@ void config_file_write() {
 		fprintf(fp, "[timing]\n");
 		fprintf(fp, "speed=%d\n", conf.timing_speed);
 		fprintf(fp, "altspeed=%d\n", conf.timing_altspeed);
+		fprintf(fp, "turbopulse=%d\n", conf.timing_turbopulse);
 		fprintf(fp, "vsync=%d\n", conf.timing_vsync);
 		fprintf(fp, "\n"); // End of Section
 		
@@ -151,6 +152,7 @@ void config_set_default() {
 	// Timing
 	conf.timing_speed = 60;
 	conf.timing_altspeed = 180;
+	conf.timing_turbopulse = 3;
 	conf.timing_vsync = true;
 	
 	// Misc
@@ -204,6 +206,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	// Timing
 	else if (MATCH("timing", "speed")) { pconfig->timing_speed = atoi(value); }
 	else if (MATCH("timing", "altspeed")) { pconfig->timing_altspeed = atoi(value); }
+	else if (MATCH("timing", "turbopulse")) { pconfig->timing_turbopulse = atoi(value); }
 	else if (MATCH("timing", "vsync")) { pconfig->timing_vsync = atoi(value); }
     
     // Misc
