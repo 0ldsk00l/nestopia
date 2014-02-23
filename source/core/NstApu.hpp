@@ -67,6 +67,7 @@ namespace Nes
 			uint   GetVolume(uint) const;
 			void   Mute(bool);
 			void   SetAutoTranspose(bool);
+			void   SetGenie(bool);
 			void   EnableStereo(bool);
 
 			void SaveState(State::Saver&,dword) const;
@@ -90,6 +91,7 @@ namespace Nes
 				uint  GetCpuClockDivider() const;
 				Cycle GetCpuClock(uint=1) const;
 				bool  IsMuted() const;
+				bool  IsGenie() const;
 
 			public:
 
@@ -599,6 +601,7 @@ namespace Nes
 				byte speed;
 				bool muted;
 				bool transpose;
+				bool genie;
 				bool stereo;
 				bool audible;
 				byte volumes[MAX_CHANNELS];
@@ -639,6 +642,11 @@ namespace Nes
 			bool IsAutoTransposing() const
 			{
 				return settings.transpose;
+			}
+
+			bool IsGenie() const
+			{
+				return settings.genie;
 			}
 
 			bool InStereo() const

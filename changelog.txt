@@ -40,6 +40,9 @@ libretro:
 
 Core:
 
+ Additions:
+  - Game Genie sound distortion option
+
  Fixes:
   - Hard Drivin' now playable (dragon2snow)
 
