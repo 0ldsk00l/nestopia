@@ -14,6 +14,7 @@ Unix Shell:
   - Alternate emulation speed
   - libao audio output (handles ALSA, OSS, Pulse, etc)
   - More volume controls
+  - Turbo Buttons A and B
 
  Changes:
   - Ported to SDL 2.0
@@ -36,6 +37,11 @@ libretro:
 
  Changes:
   - Region detection based on NstDatabase.xml
+
+Core:
+
+ Fixes:
+  - Hard Drivin' now playable (dragon2snow)
 
 ----------------------------------------------------------------
 1.45

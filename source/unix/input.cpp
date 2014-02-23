@@ -40,8 +40,11 @@ gamepad player[NUMGAMEPADS];
 char inputconfpath[256];
 extern char nstdir[256];
 
+turbo turbostate;
+turbo turbotoggle;
+
 void input_init() {
-	
+	// Initialize any joysticks and set default values
 	printf("%i joystick(s) found:\n", SDL_NumJoysticks());
 	
 	int i;
@@ -52,14 +55,20 @@ void input_init() {
 	}
 
 	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
+	
+	turbostate.p1a = turbotoggle.p1a = 0;
+	turbostate.p1b = turbotoggle.p1b = 0;
+	turbostate.p2a = turbotoggle.p2a = 0;
+	turbostate.p2b = turbotoggle.p2b = 0;
 }
 
 void input_deinit() {
+	// Deinitialize any joysticks
 	SDL_JoystickClose(joystick);
 }
 
 void input_process(Input::Controllers *controllers, SDL_Event event) {
-	
+	// Process input events
 	const Uint8 *keybuffer = SDL_GetKeyboardState(NULL);
 	Uint8 *keys = (Uint8*)keybuffer;
 
@@ -140,6 +149,33 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	}
 }
 
+void input_pulse_turbo(Input::Controllers *controllers) {
+	// Pulse the turbo buttons if they're pressed
+	if (turbostate.p1a) {
+		turbotoggle.p1a ^= 1;
+		if (turbotoggle.p1a) { controllers->pad[0].buttons &= ~Input::Controllers::Pad::A; }
+		else { controllers->pad[0].buttons |= Input::Controllers::Pad::A; }
+	}
+	
+	if (turbostate.p1b) {
+		turbotoggle.p1b ^= 1;
+		if (turbotoggle.p1b) { controllers->pad[0].buttons &= ~Input::Controllers::Pad::B; }
+		else { controllers->pad[0].buttons |= Input::Controllers::Pad::B; }
+	}
+	
+	if (turbostate.p2a) {
+		turbotoggle.p2a ^= 1;
+		if (turbotoggle.p2a) { controllers->pad[1].buttons &= ~Input::Controllers::Pad::A; }
+		else { controllers->pad[1].buttons |= Input::Controllers::Pad::A; }
+	}
+	
+	if (turbostate.p2b) {
+		turbotoggle.p2b ^= 1;
+		if (turbotoggle.p2b) { controllers->pad[1].buttons &= ~Input::Controllers::Pad::B; }
+		else { controllers->pad[1].buttons |= Input::Controllers::Pad::B; }
+	}
+}
+
 void input_inject(Input::Controllers *controllers, nesinput input) {
 	// Insert the input signal into the NES
 	if (input.pressed) {
@@ -147,6 +183,23 @@ void input_inject(Input::Controllers *controllers, nesinput input) {
 	}
 	else {
 		controllers->pad[input.player].buttons &= ~input.nescode;
+	}
+	
+	if (input.pressed && input.turboa) {
+		if (input.player == 0) { turbostate.p1a = true; }
+		else if (input.player == 1) { turbostate.p2a = true; }
+	}
+	else if (!input.pressed && input.turboa) {
+		if (input.player == 0 ) { turbostate.p1a = false; }
+		else if (input.player == 1) { turbostate.p2a = false; }
+	}
+	if (input.pressed && input.turbob) {
+		if (input.player == 0)  { turbostate.p1b = true; }
+		else if (input.player == 1) { turbostate.p2b = true; }
+	}
+	else if (!input.pressed && input.turbob) {
+		if (input.player == 0 ) { turbostate.p1b = false; }
+		else if (input.player == 1 ) { turbostate.p2b = false; }
 	}
 }
 
@@ -159,6 +212,8 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	input.nescode = 0x00;
 	input.player = 0;
 	input.pressed = 0;
+	input.turboa = 0;
+	input.turbob = 0;
 	
 	// This is for releasing opposing directions
 	reverseinput.nescode = 0x00;
@@ -207,6 +262,9 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 					&& buttons[j].jbutton.which == event.jbutton.which) {
 					input.nescode = nescodes[j];
 					if (j >= NUMBUTTONS) { input.player = 1; }
+					// This is really dirty
+					if (j == 8 || j == 18) { input.turboa = 1; }
+					if (j == 9 || j == 19) { input.turbob = 1; }
 				}
 			}
 			input.pressed = event.jbutton.state;
@@ -320,6 +378,8 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	input.nescode = 0x00;
 	input.player = 0;
 	input.pressed = 0;
+	input.turboa = 0;
+	input.turbob = 0;
 	
 	if (event.type == SDL_KEYDOWN) { input.pressed = 1; }
 	
@@ -359,10 +419,12 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 		else if (player[i].ta == event.key.keysym.scancode) {
 			input.nescode = Input::Controllers::Pad::A;
 			input.player = i;
+			input.turboa = 1;
 		}
 		else if (player[i].tb == event.key.keysym.scancode) {
 			input.nescode = Input::Controllers::Pad::B;
 			input.player = i;
+			input.turbob = 1;
 		}
 	}
 	

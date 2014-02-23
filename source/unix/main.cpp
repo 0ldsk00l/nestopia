@@ -570,6 +570,9 @@ int main(int argc, char *argv[]) {
 				Rewinder(emulator).EnableSound(true);
 			}
 			
+			// Pulse the turbo buttons
+			input_pulse_turbo(cNstPads);
+			
 			if (timing_check()) {
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
