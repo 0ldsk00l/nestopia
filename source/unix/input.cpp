@@ -180,26 +180,15 @@ void input_inject(Input::Controllers *controllers, nesinput input) {
 	// Insert the input signal into the NES
 	if (input.pressed) {
 		controllers->pad[input.player].buttons |= input.nescode;
+		
+		if (input.turboa) { input.player == 0 ? turbostate.p1a = true : turbostate.p2a = true; }
+		if (input.turbob) { input.player == 0 ? turbostate.p1b = true : turbostate.p2b = true; }
 	}
 	else {
 		controllers->pad[input.player].buttons &= ~input.nescode;
-	}
-	
-	if (input.pressed && input.turboa) {
-		if (input.player == 0) { turbostate.p1a = true; }
-		else if (input.player == 1) { turbostate.p2a = true; }
-	}
-	else if (!input.pressed && input.turboa) {
-		if (input.player == 0 ) { turbostate.p1a = false; }
-		else if (input.player == 1) { turbostate.p2a = false; }
-	}
-	if (input.pressed && input.turbob) {
-		if (input.player == 0)  { turbostate.p1b = true; }
-		else if (input.player == 1) { turbostate.p2b = true; }
-	}
-	else if (!input.pressed && input.turbob) {
-		if (input.player == 0 ) { turbostate.p1b = false; }
-		else if (input.player == 1 ) { turbostate.p2b = false; }
+		
+		if (input.turboa) { input.player == 0 ? turbostate.p1a = false : turbostate.p2a = false; }
+		if (input.turbob) { input.player == 0 ? turbostate.p1b = false : turbostate.p2b = false; }
 	}
 }
 
