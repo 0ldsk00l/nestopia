@@ -87,11 +87,21 @@ typedef struct {
 	unsigned char player;
 	unsigned char nescode;
 	unsigned char pressed;
+	unsigned char turboa;
+	unsigned char turbob;
 } nesinput;
+
+typedef struct {
+	bool p1a;
+	bool p1b;
+	bool p2a;
+	bool p2b;
+} turbo;
 
 void input_init();
 void input_deinit();
 void input_process(Input::Controllers *controllers, SDL_Event event);
+void input_pulse_turbo(Input::Controllers *controllers);
 void input_inject(Input::Controllers *controllers, nesinput input);
 void input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
 void input_match_joystick(Input::Controllers *controllers, SDL_Event event);
