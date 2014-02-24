@@ -2,4 +2,5 @@
 *.o
 *.dylib
 *.dll
+*.nes
 /nestopia
