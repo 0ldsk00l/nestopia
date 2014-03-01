@@ -140,6 +140,27 @@ static void NST_CALLBACK SoundUnlock(void* userData, Sound::Output& sound) {
 	audio_play();
 }
 
+static void NST_CALLBACK nst_cb_event(void *userData, User::Event event, const void* data) {
+	// Handle special events
+	switch (event) {
+		case User::EVENT_CPU_JAM:
+			fprintf(stderr, "Cpu: Jammed\n", data);
+			break;
+		case User::EVENT_CPU_UNOFFICIAL_OPCODE:
+			fprintf(stderr, "Cpu: Unofficial Opcode %s\n", data);
+			break;
+		case User::EVENT_DISPLAY_TIMER:
+			fprintf(stderr, "\r%s", data);
+			break;
+		default: break;
+	}
+}
+
+static void NST_CALLBACK nst_cb_log(void *userData, const char *string, unsigned long int length) {
+	// Print logging information to stderr
+	fprintf(stderr, "%s", string);
+}
+
 static void nst_unload(void) {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
@@ -147,7 +168,7 @@ static void nst_unload(void) {
 	if (!loaded) { return; }
 	
 	// Power down the NES
-	fprintf(stderr, "Powering down the emulated machine\n");
+	fprintf(stderr, "\rPowering down the emulated machine\n");
 	machine.Power(false);
 
 	// Remove the cartridge
@@ -284,13 +305,6 @@ void nst_schedule_quit() {
 	nst_quit = 1;
 }
 
-// logging callback called by the core
-static void NST_CALLBACK DoLog(void *userData, const char *string, unsigned long int length)
-{
-	fprintf(stderr, "%s", string);
-}
-
-// for various file operations, usually called during image file load, power on/off and reset
 static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 {
 	unsigned char *compbuffer;
@@ -517,7 +531,8 @@ int main(int argc, char *argv[]) {
 	Sound::Output::unlockCallback.Set(SoundUnlock, userData);
 	
 	User::fileIoCallback.Set(DoFileIO, userData);
-	User::logCallback.Set(DoLog, userData);
+	User::logCallback.Set(nst_cb_log, userData);
+	User::eventCallback.Set(nst_cb_event, userData);
 
 	// Load the FDS BIOS and NstDatabase.xml
 	fileio_set_fds_bios();
