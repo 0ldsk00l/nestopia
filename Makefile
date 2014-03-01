@@ -3,14 +3,12 @@ CXX = g++
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
 SDL_CFLAGS = $(shell sdl2-config --cflags)
-#GTK_CFLAGS = $(shell pkg-config --cflags gtk+-3.0)
 
 INCLUDES += -Isource
 WARNINGS += -Wno-deprecated -Wno-write-strings
 
 LDFLAGS = -Wl,--as-needed
 LIBS = -lstdc++ -lm -lz
-#LIBS += $(shell sdl2-config --libs) $(shell pkg-config --libs gtk+-3.0)
 LIBS += $(shell sdl2-config --libs)
 
 UNAME := $(shell uname)
@@ -27,7 +25,7 @@ ifneq ($(findstring MINGW,$(UNAME)),)
 	LIBS += -lopengl32
 else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
-	LIBS += -larchive
+	#LIBS += -larchive
 	LIBS += -lGL -lGLU -lao
 endif
 
@@ -333,7 +331,6 @@ OBJS += objs/core/vssystem/NstVsTkoBoxing.o
 # Interface
 IOBJS = objs/unix/main.o
 IOBJS += objs/unix/cli.o
-#IOBJS += objs/unix/gtkui.o
 IOBJS += objs/unix/audio.o
 IOBJS += objs/unix/video.o
 IOBJS += objs/unix/input.o
@@ -352,7 +349,6 @@ objs/core/%.o: source/core/%.cpp
 
 # Interface rules
 objs/unix/%.o: source/unix/%.cpp
-#	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(SDL_CFLAGS) $(GTK_CFLAGS) -c $< -o $@
 	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(SDL_CFLAGS) -c $< -o $@
 
 all: maketree $(BIN)

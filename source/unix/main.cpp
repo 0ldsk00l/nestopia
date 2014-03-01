@@ -76,7 +76,7 @@ bool playing = false;
 bool loaded = false;
 bool nst_pal = false;
 
-static int nst_quit = 0, state_save = 0, state_load = 0, movie_save = 0, movie_load = 0, movie_stop = 0;
+static int nst_quit = 0;
 int schedule_stop = 0;
 
 char nstdir[256], savedir[512];
@@ -161,6 +161,96 @@ static void NST_CALLBACK nst_cb_log(void *userData, const char *string, unsigned
 	fprintf(stderr, "%s", string);
 }
 
+static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
+	unsigned char *compbuffer;
+	int compsize, compoffset;
+	char *filename;
+	
+	switch (file.GetAction()) {
+		case User::File::LOAD_ROM:
+			// Nothing here for now			
+			break;
+
+		case User::File::LOAD_SAMPLE:
+		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU:
+		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU_88:
+		case User::File::LOAD_SAMPLE_MOERO_PRO_TENNIS:
+		case User::File::LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU:
+		case User::File::LOAD_SAMPLE_AEROBICS_STUDIO:
+			// Nothing here for now
+			break;
+
+		case User::File::LOAD_BATTERY: // load in battery data from a file
+		case User::File::LOAD_EEPROM: // used by some Bandai games, can be treated the same as battery files
+		case User::File::LOAD_TAPE: // for loading Famicom cassette tapes
+		case User::File::LOAD_TURBOFILE: // for loading turbofile data
+		{		
+			std::ifstream batteryFile(savename, std::ifstream::in|std::ifstream::binary);
+			
+			if (batteryFile.is_open()) { file.SetContent(batteryFile); }
+			break;
+		}
+		
+		case User::File::SAVE_BATTERY: // save battery data to a file
+		case User::File::SAVE_EEPROM: // can be treated the same as battery files
+		case User::File::SAVE_TAPE: // for saving Famicom cassette tapes
+		case User::File::SAVE_TURBOFILE: // for saving turbofile data
+		{
+			std::ofstream batteryFile(savename, std::ifstream::out|std::ifstream::binary);
+			const void* savedata;
+			unsigned long savedatasize;
+
+			file.GetContent(savedata, savedatasize);
+
+			if (batteryFile.is_open()) { batteryFile.write((const char*) savedata, savedatasize); }
+
+			break;
+		}
+
+		case User::File::LOAD_FDS: // for loading modified Famicom Disk System files
+		{
+			char fdsname[512];
+
+			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
+			
+			std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
+
+			// no ups, look for ips
+			if (!batteryFile.is_open())
+			{
+				snprintf(fdsname, sizeof(fdsname), "%s.ips", rootname);
+
+				std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
+
+				if (!batteryFile.is_open())
+				{
+					return;
+				}
+
+				file.SetPatchContent(batteryFile);
+				return;
+			}
+
+			file.SetPatchContent(batteryFile);
+			break;
+		}
+
+		case User::File::SAVE_FDS: // for saving modified Famicom Disk System files
+		{
+			char fdsname[512];
+
+			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
+
+			std::ofstream fdsFile( fdsname, std::ifstream::out|std::ifstream::binary );
+
+			if (fdsFile.is_open())
+				file.GetPatchContent( User::File::PATCH_UPS, fdsFile );
+
+			break;
+		}
+	}
+}
+
 static void nst_unload(void) {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
@@ -181,10 +271,7 @@ static void nst_unload(void) {
 void nst_pause() {
 	// Pauses the game
 	if (playing) {
-		fileio_do_movie_stop();
-
 		Machine machine(emulator);
-		
 		audio_deinit();
 	}
 
@@ -305,7 +392,7 @@ void nst_schedule_quit() {
 	nst_quit = 1;
 }
 
-static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
+/*static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 {
 	unsigned char *compbuffer;
 	int compsize, compoffset;
@@ -436,7 +523,7 @@ static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
 			break;
 		}
 	}
-}
+}*/
 
 void nst_set_dirs() {
 	// Set up system directories
@@ -509,17 +596,6 @@ int main(int argc, char *argv[]) {
 	// Set up the video parameters
 	video_set_params();
 	
-	// Initialize GTK+
-	/*gtk_init(&argc, &argv);
-	
-	if (conf.misc_disable_gui) {
-		// do nothing at this point
-	}
-	// Don't show a GUI if it has been disabled in the config
-	else {
-		gtkui_init(argc, argv, rendersize.w, rendersize.h);
-	}*/
-
 	// Create the game window
 	video_create();
 	
@@ -530,7 +606,7 @@ int main(int argc, char *argv[]) {
 	Sound::Output::lockCallback.Set(SoundLock, userData);
 	Sound::Output::unlockCallback.Set(SoundUnlock, userData);
 	
-	User::fileIoCallback.Set(DoFileIO, userData);
+	User::fileIoCallback.Set(nst_cb_file, userData);
 	User::logCallback.Set(nst_cb_log, userData);
 	User::eventCallback.Set(nst_cb_event, userData);
 
@@ -553,11 +629,6 @@ int main(int argc, char *argv[]) {
 	nst_quit = 0;
 	
 	while (!nst_quit) {
-		/*while (gtk_events_pending())
-		{
-			gtk_main_iteration();
-		}*/
-		
 		if (playing) {
 			while (SDL_PollEvent(&event))
 			{
@@ -593,37 +664,9 @@ int main(int argc, char *argv[]) {
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
 			}
 			
-			if (state_save) {
-				fileio_do_state_save();
-				state_save = 0;
-			}
-			
-			if (state_load) {
-				fileio_do_state_load();
-				state_load = 0;
-			}
-			
-			if (movie_load) {
-				fileio_do_movie_load();
-				movie_load = 0;
-			}
-
-			if (movie_save) {
-				fileio_do_movie_save();
-				movie_load = 0;
-			}
-
-			if (movie_stop) {
-				movie_stop = 0;
-				fileio_do_movie_stop();
-			}
-
 			if (schedule_stop) {
 				nst_pause();
 			}
-		}
-		else {
-			//gtk_main_iteration_do(TRUE);
 		}
 	}
 
