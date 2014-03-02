@@ -19,6 +19,8 @@ void nst_fds_info();
 void nst_flip_disk();
 void nst_switch_disk();
 
+void nst_dipswitch();
+
 void SetupInput();
 
 #endif
