@@ -10,7 +10,7 @@ using namespace Nes::Api;
 void audio_init();
 void audio_set_params(Sound::Output *soundoutput);
 void audio_unpause();
-void audio_play();
+void audio_play(Sound::Output *soundoutput);
 void audio_callback(void *userdata, Uint8 *stream, int len);
 void audio_deinit();
 

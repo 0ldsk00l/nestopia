@@ -37,7 +37,7 @@ SDL_AudioDeviceID dev;
 ao_device *device;
 ao_sample_format format;
 
-static int16_t *audiobuf;
+static int16_t audiobuf[0xffff];
 static uint32_t outputbufsize;
 
 int framerate, channels;
@@ -52,8 +52,7 @@ void audio_init() {
 	
 	outputbufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
-	audiobuf = (int16_t *)malloc(outputbufsize);
-	memset(audiobuf, 0, outputbufsize);
+	memset(audiobuf, 0, sizeof(audiobuf));
 	
 	if (conf.audio_api == 0) { // SDL
 		spec.freq = conf.audio_sample_rate;
@@ -137,7 +136,9 @@ void audio_callback(void *userdata, Uint8 *stream, int len) {
 	}
 }
 
-void audio_play() {
+void audio_play(Sound::Output *soundoutput) {
+	
+	soundoutput->samples[0] = &audiobuf[0];
 	
 	if (conf.audio_api == 1) { // libao
 		int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
@@ -154,7 +155,6 @@ void audio_unpause() {
 
 void audio_deinit() {
 	// Deinitialize audio
-	if (audiobuf) { free(audiobuf); }
 	
 	if (conf.audio_api == 0) { // SDL
 		SDL_CloseAudioDevice(dev);

@@ -121,7 +121,7 @@ static bool NST_CALLBACK SoundLock(void* userData, Sound::Output& sound) {
 }
 
 static void NST_CALLBACK SoundUnlock(void* userData, Sound::Output& sound) {
-	audio_play();
+	audio_play(cNstSound);
 }
 
 static void NST_CALLBACK nst_cb_event(void *userData, User::Event event, const void* data) {
@@ -661,6 +661,7 @@ int main(int argc, char *argv[]) {
 			
 			if (timing_check()) {
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
+				//fprintf(stderr, "\rFrame: %d", emulator.Frame());
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
 			}
 		}
