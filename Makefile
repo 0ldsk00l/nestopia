@@ -4,8 +4,8 @@ CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
 SDL_CFLAGS = $(shell sdl2-config --cflags)
 
-INCLUDES += -Isource
-WARNINGS += -Wno-deprecated -Wno-write-strings
+INCLUDES = -Isource
+WARNINGS = -Wno-write-strings
 
 LDFLAGS = -Wl,--as-needed
 LIBS = -lstdc++ -lm -lz

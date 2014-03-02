@@ -23,22 +23,16 @@
 
 #include <iostream>
 #include <fstream>
-#include <strstream>
 #include <sstream>
 #include <iomanip>
-#include <string.h>
-#include <cassert>
+#include <vector>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <errno.h>
-#include <vector>
 #include <libgen.h>
 #ifdef MINGW
 #include <io.h>
 #endif
-
-#include <SDL.h>
-#include <SDL_endian.h>
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -46,15 +40,9 @@
 #include "core/api/NstApiInput.hpp"
 #include "core/api/NstApiMachine.hpp"
 #include "core/api/NstApiUser.hpp"
-#include "core/api/NstApiNsf.hpp"
-#include "core/api/NstApiMovie.hpp"
 #include "core/api/NstApiFds.hpp"
 #include "core/api/NstApiRewinder.hpp"
 #include "core/api/NstApiCartridge.hpp"
-#include "core/api/NstApiCheats.hpp"
-#include "core/NstCrc32.hpp"
-#include "core/NstChecksum.hpp"
-#include "core/NstXml.hpp"
 
 #include "main.h"
 #include "cli.h"
@@ -62,12 +50,11 @@
 #include "video.h"
 #include "input.h"
 #include "fileio.h"
-#include "cheats.h"
+//#include "cheats.h"
 #include "config.h"
 #include "cursor.h"
 
 using namespace Nes::Api;
-using namespace LinuxNst;
 
 // base class, all interfaces derives from this
 Emulator emulator;
@@ -77,20 +64,16 @@ bool loaded = false;
 bool nst_pal = false;
 
 static int nst_quit = 0;
-int schedule_stop = 0;
 
 char nstdir[256], savedir[512];
 static char savename[512], gamebasename[512];
-char rootname[512], lastarchname[512];
-
-static CheatMgr *sCheatMgr;
+char rootname[512];
 
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
-extern dimensions basesize, rendersize;
 extern void	*videobuf;
 
 extern settings conf;
@@ -251,7 +234,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 	}
 }
 
-static void nst_unload(void) {
+static void nst_unload() {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
 	
@@ -373,7 +356,6 @@ void nst_play() {
 	audio_set_params(cNstSound);
 	audio_unpause();
 
-	schedule_stop = 0;
 	playing = 1;
 }
 
@@ -558,7 +540,7 @@ void nst_set_dirs() {
 }
 
 int main(int argc, char *argv[]) {
-	
+	// This is the main function
 	static SDL_Event event;
 	int i;
 	void* userData = (void*) 0xDEADC0DE;
@@ -630,12 +612,10 @@ int main(int argc, char *argv[]) {
 	
 	while (!nst_quit) {
 		if (playing) {
-			while (SDL_PollEvent(&event))
-			{
+			while (SDL_PollEvent(&event)) {
 				switch (event.type) {
 					case SDL_QUIT:
-						schedule_stop = 1;
-						return 0; // FIX
+						nst_quit = 1;
 						break;
 					
 					case SDL_KEYDOWN:
@@ -651,8 +631,7 @@ int main(int argc, char *argv[]) {
 				}	
 			}
 			
-			if (NES_SUCCEEDED(Rewinder(emulator).Enable(true)))
-			{
+			if (NES_SUCCEEDED(Rewinder(emulator).Enable(true))) {
 				Rewinder(emulator).EnableSound(true);
 			}
 			
@@ -662,10 +641,6 @@ int main(int argc, char *argv[]) {
 			if (timing_check()) {
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
 				//emulator.Execute(cNstVideo, NULL, cNstPads);
-			}
-			
-			if (schedule_stop) {
-				nst_pause();
 			}
 		}
 	}
