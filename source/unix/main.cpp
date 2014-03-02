@@ -41,6 +41,7 @@
 #include "core/api/NstApiMachine.hpp"
 #include "core/api/NstApiUser.hpp"
 #include "core/api/NstApiFds.hpp"
+#include "core/api/NstApiDipSwitches.hpp"
 #include "core/api/NstApiRewinder.hpp"
 #include "core/api/NstApiCartridge.hpp"
 
@@ -310,6 +311,26 @@ void nst_switch_disk() {
 		fds.InsertDisk(!currentdisk, 0);
 		nst_fds_info();
 	}
+}
+
+void nst_dipswitch() {
+	// Right now just print the info
+	DipSwitches dipswitches(emulator);
+	
+	int numdips = dipswitches.NumDips();
+	
+	if (numdips > 0) {
+		for (int i = 0; i < numdips; i++) {
+			fprintf(stderr, "%d: %s\n", i, dipswitches.GetDipName(i));
+			int numvalues = dipswitches.NumValues(i);
+			
+			for (int j = 0; j < numvalues; j++) {
+				fprintf(stderr, " %d: %s\n", j, dipswitches.GetValueName(i, j));
+			}
+		}
+	}
+	//dipswitches.SetValue(0,15);
+	//dipswitches.SetValue(1,0);
 }
 
 void nst_state_save(int isvst) {
@@ -806,39 +827,41 @@ void nst_load(const char *filename) {
 		result = machine.Load(file, get_favored_system());
 	}
 	
-	// Set the region
-	nst_set_region();
-	
 	if (NES_FAILED(result)) {
 		switch (result) {
 			case Nes::RESULT_ERR_INVALID_FILE:
-				std::cout << "Invalid file\n";
+				fprintf(stderr, "Error: Invalid file\n");
 				break;
 
 			case Nes::RESULT_ERR_OUT_OF_MEMORY:
-				std::cout << "Out of memory\n";
+				fprintf(stderr, "Error: Out of Memory\n");
 				break;
 
 			case Nes::RESULT_ERR_CORRUPT_FILE:
-				std::cout << "Corrupt or missing file\n";
+				fprintf(stderr, "Error: Corrupt or Missing File\n");
 				break;
 
 			case Nes::RESULT_ERR_UNSUPPORTED_MAPPER:
-				std::cout << "Unsupported mapper\n";
+				fprintf(stderr, "Error: Unsupported Mapper\n");
 				break;
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
-				fprintf(stderr, "FDS games require the FDS BIOS.\nIt should be located at ~/.nestopia/disksys.rom\n");
+				fprintf(stderr, "Error: Missing Fds BIOS\n");
 				break;
 
 			default:
-				std::cout << "Unknown error #" << result << "\n";
+				fprintf(stderr, "Error: %d\n", result);
 				break;
 		}
-
 		return;
 	}
-
+	
+	// Deal with any DIP Switches
+	nst_dipswitch();
+	
+	// Set the region
+	nst_set_region();
+	
 	if (machine.Is(Machine::DISK)) {
 		Fds fds(emulator);
 		fds.InsertDisk(0, 0);
