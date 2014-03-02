@@ -3,4 +3,7 @@
 *.dylib
 *.dll
 *.nes
+*.fds
+*.ips
+*.ups
 /nestopia
