@@ -441,11 +441,7 @@ void retro_run(void)
 {
    update_input();
    emulator.Execute(video, audio, input);
-   
-   delete video;
-   video = 0;
-   video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
-   
+
    if (Api::Input(emulator).GetConnectedController(1) == 5)
       draw_crosshair(crossx, crossy);
    
@@ -456,8 +452,13 @@ void retro_run(void)
    
    bool updated = false;
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE_UPDATE, &updated) && updated)
+   {
       check_variables();
-      
+      delete video;
+      video = 0;
+      video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
+   }
+   
    bool overscan = blargg_ntsc || use_overscan;
    
    video_cb(video_buffer + (overscan ? 0 : (8 + 256 * 8)),
@@ -650,6 +651,8 @@ bool retro_load_game(const struct retro_game_info *info)
    machine->Power(true);
 
    check_variables();
+   
+   video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
 
    return true;
 }
