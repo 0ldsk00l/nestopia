@@ -12,7 +12,6 @@ void audio_deinit();
 void audio_update();
 void audio_pause();
 void audio_unpause();
-void audio_play(Sound::Output *soundoutput);
 void audio_set_params(Sound::Output *soundoutput);
 void audio_sdl_callback(void *userdata, Uint8 *stream, int len);
 void audio_set_samples(uint32_t samples_per_frame);

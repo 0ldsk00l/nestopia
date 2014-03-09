@@ -122,7 +122,7 @@ static bool NST_CALLBACK SoundLock(void* userData, Sound::Output& sound) {
 }
 
 static void NST_CALLBACK SoundUnlock(void* userData, Sound::Output& sound) {
-	audio_play(cNstSound);
+	// Do Nothing
 }
 
 static void NST_CALLBACK nst_cb_event(void *userData, User::Event event, const void* data) {
