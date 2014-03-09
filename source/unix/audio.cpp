@@ -143,7 +143,7 @@ void audio_set_samples(uint32_t samples_per_frame) {
 	writebuf = 1;
 }
 
-void audio_update() {	
+void audio_update() {
 	audio_output_frame(nDSoundSegLen, (int16_t *)buffer[writebuf]);
 		
 	// You can speed it up by manipulating the following line
@@ -308,12 +308,15 @@ void audio_output_frame(unsigned long numsamples, int16_t *out) {
 // Timing Functions
 
 void timing_check() {
-	//SDL_LockAudio();
-	while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
-		audio_update();
+	
+	if (conf.audio_api == 0) { // SDL
+		while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
+			audio_update();
+		}
 	}
-	//SDL_UnlockAudio();
-	//usleep(50);
+	else {
+		updateok = true;
+	}
 }
 
 void timing_set_default() {
