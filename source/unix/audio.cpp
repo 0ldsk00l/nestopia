@@ -86,7 +86,7 @@ void audio_fill_buffer(int bufnum) {
 
 void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
 	int temp;
-	
+	static int ufnum = 0;
 	curpos = stream;
 	bytes_left = len;
 	
@@ -108,8 +108,8 @@ void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
 				playbuf = temp;
 			}
 			else {
-			  //printf("UF\n");
-				// underflow!
+				ufnum++;
+				//fprintf(stderr, "\rBuffer Underflows: %d", ufnum);
 				memset(curpos, 0, bytes_left);
 				bytes_left = 0;
 			}
@@ -144,15 +144,25 @@ void audio_set_samples(uint32_t samples_per_frame) {
 }
 
 void audio_update() {
-	audio_output_frame(nDSoundSegLen, (int16_t *)buffer[writebuf]);
-		
-	// You can speed it up by manipulating the following line
-	bufstat[writebuf] = nDSoundSegLen * 2 * sizeof(uint16_t);
-	//printf("len: %d\n", nDSoundSegLen);
 	
-	if (++writebuf >= NUMBUFFERS) {
-		writebuf = 0;
+	int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
+	
+	audio_output_frame(nDSoundSegLen, (int16_t *)buffer[writebuf]);
+	
+	if (conf.audio_api == 0) { // SDL			
+		// You can speed it up by manipulating the following line
+		//bufstat[writebuf] = nDSoundSegLen * 2 * sizeof(uint16_t);
+		bufstat[writebuf] = bufsize;
+		
+		if (++writebuf >= NUMBUFFERS) {
+			writebuf = 0;
+		}
 	}
+#ifndef MINGW
+	else { // libao
+		ao_play(device, (char*)buffer[writebuf], bufsize);
+	}
+#endif
 }
 
 void audio_init() {
@@ -170,7 +180,7 @@ void audio_init() {
 		spec.format = AUDIO_S16SYS;
 		spec.channels = channels;
 		spec.silence = 0;
-		spec.samples = conf.audio_sample_rate / framerate;
+		spec.samples = 512;
 		spec.userdata = 0;
 		spec.callback = audio_sdl_callback;
 		
@@ -227,7 +237,7 @@ void audio_deinit() {
 		}
 	}
 	
-	memset(audiobuf, 0, sizeof(audiobuf));
+	//memset(audiobuf, 0, sizeof(audiobuf));
 }
 
 void audio_pause() {
@@ -242,17 +252,6 @@ void audio_unpause() {
 	if (conf.audio_api == 0) { // SDL
 		SDL_PauseAudioDevice(dev, 0);
 	}
-}
-
-void audio_play(Sound::Output *soundoutput) {
-#ifndef MINGW	
-	soundoutput->samples[0] = &audiobuf[0];
-
-	if (conf.audio_api == 1) { // libao
-		int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
-		ao_play(device, (char*)audiobuf, bufsize);
-	}
-#endif
 }
 
 void audio_set_params(Sound::Output *soundoutput) {
@@ -286,9 +285,7 @@ void audio_set_params(Sound::Output *soundoutput) {
 
 void audio_output_frame(unsigned long numsamples, int16_t *out) {
 	int16_t *pbufL = (int16_t *)audiobuf;
-	int16_t *outbuf;
-
-	outbuf = out;
+	
 	if (conf.audio_stereo) {
 		for (int s = 0; s < numsamples; s++) {
 			*out++ = *pbufL++;
@@ -301,7 +298,7 @@ void audio_output_frame(unsigned long numsamples, int16_t *out) {
 			*out++ = *pbufL++;
 		}
 	}
-
+	
 	updateok = true;
 }
 
@@ -315,6 +312,7 @@ void timing_check() {
 		}
 	}
 	else {
+		audio_update();
 		updateok = true;
 	}
 }
