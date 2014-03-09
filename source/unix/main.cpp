@@ -60,9 +60,10 @@ using namespace Nes::Api;
 // base class, all interfaces derives from this
 Emulator emulator;
 
-bool playing = false;
 bool loaded = false;
 bool nst_pal = false;
+bool playing = false;
+bool updateok = false;
 
 static int nst_quit = 0;
 
@@ -247,20 +248,16 @@ static void nst_unload() {
 
 	// Remove the cartridge
 	machine.Unload();
-
-	// erase any cheats
-	//sCheatMgr->Unload();
 }
 
 void nst_pause() {
 	// Pauses the game
 	if (playing) {
-		Machine machine(emulator);
+		audio_pause();
 		audio_deinit();
 	}
-
-	playing = 0;
-
+	
+	playing = false;
 	cursor_set_default();
 }
 
@@ -362,22 +359,21 @@ void nst_state_load(int isvst) {
 }
 
 void nst_play() {
-	// initialization
 	video_init();
 	audio_init();
 	SetupInput();
-
-	// apply any cheats into the engine
-	//sCheatMgr->Enable();
-
+	
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
 	
 	audio_set_params(cNstSound);
 	audio_unpause();
-
-	playing = 1;
+	
+	audio_set_samples(cNstSound->length[0]);
+	
+	updateok = false;
+	playing = true;
 }
 
 void nst_reset(bool hardreset) {
@@ -656,13 +652,13 @@ int main(int argc, char *argv[]) {
 				Rewinder(emulator).EnableSound(true);
 			}
 			
-			// Pulse the turbo buttons
-			input_pulse_turbo(cNstPads);
-			
-			if (timing_check()) {
+			timing_check();
+			if (updateok) {
+				// Pulse the turbo buttons
+				input_pulse_turbo(cNstPads);
+				
 				emulator.Execute(cNstVideo, cNstSound, cNstPads);
-				//fprintf(stderr, "\rFrame: %d", emulator.Frame());
-				//emulator.Execute(cNstVideo, NULL, cNstPads);
+				updateok = false;
 			}
 		}
 	}

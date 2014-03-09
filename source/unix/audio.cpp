@@ -1,6 +1,7 @@
 /*
  * Nestopia UE
  * 
+ * Copyright (C) 2007-2008 R. Belmont
  * Copyright (C) 2012-2014 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -21,6 +22,7 @@
  */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "config.h"
@@ -33,17 +35,125 @@ ao_device *device;
 ao_sample_format format;
 #endif
 
+#define NUMBUFFERS 2
+
 extern settings conf;
 extern Emulator emulator;
 extern bool nst_pal;
+extern bool updateok;
 
 SDL_AudioSpec spec, obtained;
 SDL_AudioDeviceID dev;
 
-static int16_t audiobuf[0xffff];
-static uint32_t outputbufsize;
+int16_t audiobuf[96000];
 
 int framerate, channels;
+
+int nDSoundSegLen = 0;
+
+static volatile int16_t *buffer[NUMBUFFERS];
+static volatile int bufstat[NUMBUFFERS];
+static int playbuf, writebuf;
+static uint8_t *curpos;
+static int bytes_left;
+
+void audio_fill_buffer(int bufnum) {
+	int bytes_to_fill, bufpos;
+	uint8_t *bufptr;
+	
+	//printf("FB%d\n", bufnum);
+	
+	// figure out how much we need out of this buffer
+	// vs how much we can get out of it
+	if (bytes_left >= bufstat[bufnum]) {
+		bytes_to_fill = bufstat[bufnum];
+	}
+	else {
+		bytes_to_fill = bytes_left;
+	}
+	
+	// copy from the buffer's current position
+	bufptr = (uint8_t*)buffer[bufnum];
+	bufpos = (nDSoundSegLen*2*sizeof(int16_t)) - bufstat[bufnum];
+	bufptr += bufpos;
+	memcpy(curpos, bufptr, bytes_to_fill);
+	
+	// reduce the counters
+	curpos += bytes_to_fill;
+	bufstat[bufnum] -= bytes_to_fill;
+	bytes_left -= bytes_to_fill;
+}
+
+void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
+	int temp;
+	
+	curpos = stream;
+	bytes_left = len;
+	
+	// need more data?
+	while (bytes_left > 0) {
+		// does our current buffer have any samples?
+		if (bufstat[playbuf] > 0) {
+			audio_fill_buffer(playbuf);
+		}
+		else {
+			// check if the next buffer would collide
+			temp = playbuf + 1;
+			if (temp >= NUMBUFFERS) {
+				temp = 0;
+			}
+			
+			// no collision, set it and continue looping
+			if (temp != writebuf) {
+				playbuf = temp;
+			}
+			else {
+			  //printf("UF\n");
+				// underflow!
+				memset(curpos, 0, bytes_left);
+				bytes_left = 0;
+			}
+		}
+	}
+}
+
+void audio_set_samples(uint32_t samples_per_frame) {
+	// Set the number of samples per frame
+	nDSoundSegLen = samples_per_frame;
+	
+	for (int i = 0; i < NUMBUFFERS; i++) {
+		if (buffer[i]) {
+			free((void *)buffer[i]);
+			buffer[i] = (volatile int16_t *)NULL;
+		}
+		
+		buffer[i] = (volatile int16_t *)malloc(nDSoundSegLen * 2 * sizeof(uint16_t));
+		
+		if (!buffer[i]) {
+			fprintf(stderr, "Couldn't alloc buffer for SDL audio!\n");
+			exit(-1);
+		}
+		
+		memset((void *)buffer[i], 0, nDSoundSegLen * 2 * sizeof(uint16_t));
+		
+		bufstat[i] = 0;
+	}
+	
+	playbuf = 0;
+	writebuf = 1;
+}
+
+void audio_update() {	
+	audio_output_frame(nDSoundSegLen, (int16_t *)buffer[writebuf]);
+		
+	// You can speed it up by manipulating the following line
+	bufstat[writebuf] = nDSoundSegLen * 2 * sizeof(uint16_t);
+	//printf("len: %d\n", nDSoundSegLen);
+	
+	if (++writebuf >= NUMBUFFERS) {
+		writebuf = 0;
+	}
+}
 
 void audio_init() {
 	// Initialize audio device
@@ -52,8 +162,6 @@ void audio_init() {
 	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
 	
 	channels = conf.audio_stereo ? 2 : 1;
-	
-	outputbufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
 	memset(audiobuf, 0, sizeof(audiobuf));
 	
@@ -64,7 +172,7 @@ void audio_init() {
 		spec.silence = 0;
 		spec.samples = conf.audio_sample_rate / framerate;
 		spec.userdata = 0;
-		spec.callback = audio_callback;
+		spec.callback = audio_sdl_callback;
 		
 		dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 		if (!dev) {
@@ -99,6 +207,54 @@ void audio_init() {
 #endif
 }
 
+void audio_deinit() {
+	// Deinitialize audio
+	
+	if (conf.audio_api == 0) { // SDL
+		SDL_CloseAudioDevice(dev);
+	}
+#ifndef MINGW
+	else if (conf.audio_api == 1) { // libao
+		ao_close(device);
+		ao_shutdown();
+	}
+#endif
+	
+	for (int i = 0; i < NUMBUFFERS; i++) {
+		if (buffer[i]) {
+			free((void*)buffer[i]);
+			buffer[i] = (volatile int16_t*)NULL;
+		}
+	}
+	
+	memset(audiobuf, 0, sizeof(audiobuf));
+}
+
+void audio_pause() {
+	// Pause the SDL audio device
+	if (conf.audio_api == 0) { // SDL
+		SDL_PauseAudioDevice(dev, 1);
+	}
+}
+
+void audio_unpause() {
+	// Unpause the SDL audio device
+	if (conf.audio_api == 0) { // SDL
+		SDL_PauseAudioDevice(dev, 0);
+	}
+}
+
+void audio_play(Sound::Output *soundoutput) {
+#ifndef MINGW	
+	soundoutput->samples[0] = &audiobuf[0];
+
+	if (conf.audio_api == 1) { // libao
+		int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
+		ao_play(device, (char*)audiobuf, bufsize);
+	}
+#endif
+}
+
 void audio_set_params(Sound::Output *soundoutput) {
 	// Set audio parameters
 	Sound sound(emulator);
@@ -128,53 +284,37 @@ void audio_set_params(Sound::Output *soundoutput) {
 	soundoutput->length[1] = 0;
 }
 
-void audio_callback(void *userdata, Uint8 *stream, int len) {
-	// Audio callback for SDL
-	int i;
-	Uint8 *outputbuf = (Uint8*)audiobuf;
-	
-	SDL_memset(stream, 0, len);
-	
-	for (i = 0; i < len; i++) {
-		stream[i] = outputbuf[i];
+void audio_output_frame(unsigned long numsamples, int16_t *out) {
+	int16_t *pbufL = (int16_t *)audiobuf;
+	int16_t *outbuf;
+
+	outbuf = out;
+	if (conf.audio_stereo) {
+		for (int s = 0; s < numsamples; s++) {
+			*out++ = *pbufL++;
+			*out++ = *pbufL++;
+		}
 	}
+	else {
+		for (int s = 0; s < numsamples; s++) {
+			*out++ = *pbufL;
+			*out++ = *pbufL++;
+		}
+	}
+
+	updateok = true;
 }
 
-void audio_play(Sound::Output *soundoutput) {
-	
-	soundoutput->samples[0] = &audiobuf[0];
-#ifndef MINGW
-	if (conf.audio_api == 1) { // libao
-		int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
-		ao_play(device, (char*)audiobuf, bufsize);
-	}
-#endif
-}
+// Timing Functions
 
-void audio_unpause() {
-	// Unpause the SDL audio device
-	if (conf.audio_api == 0) { // SDL
-		SDL_PauseAudioDevice(dev, 0);
+void timing_check() {
+	//SDL_LockAudio();
+	while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
+		audio_update();
 	}
+	//SDL_UnlockAudio();
+	//usleep(50);
 }
-
-void audio_deinit() {
-	// Deinitialize audio
-	
-	if (conf.audio_api == 0) { // SDL
-		SDL_CloseAudioDevice(dev);
-	}
-#ifndef MINGW
-	else if (conf.audio_api == 1) { // libao
-		ao_close(device);
-		ao_shutdown();
-	}
-#endif
-}
-
-// Timing functions
-int currtick = 0;
-int lasttick = 0;
 
 void timing_set_default() {
 	// Set the framerate to the default
@@ -186,23 +326,4 @@ void timing_set_altspeed() {
 	// Set the framerate to the alternate speed
 	framerate = conf.timing_altspeed;
 	SDL_GL_SetSwapInterval(0);
-}
-
-bool timing_check() {
-	// Check if it's time to execute the next frame
-	
-	if (conf.audio_api == 1) { return true; }
-	
-	if (conf.timing_vsync && (framerate != conf.timing_altspeed)) {
-		return true;
-	}
-	
-	currtick = SDL_GetTicks();
-	
-	if (currtick > (lasttick + (1000 / framerate))) {
-		lasttick = currtick;
-		return true;
-	}
-	
-	return false;
 }
