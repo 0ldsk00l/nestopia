@@ -49,8 +49,6 @@ int16_t audiobuf[96000];
 
 int framerate, channels;
 
-int nDSoundSegLen = 0;
-
 static volatile int16_t *buffer[NUMBUFFERS];
 static volatile int bufstat[NUMBUFFERS];
 static int playbuf, writebuf;
@@ -74,7 +72,8 @@ void audio_fill_buffer(int bufnum) {
 	
 	// copy from the buffer's current position
 	bufptr = (uint8_t*)buffer[bufnum];
-	bufpos = (nDSoundSegLen*2*sizeof(int16_t)) - bufstat[bufnum];
+	bufpos = ((conf.audio_sample_rate / framerate) * 2 * sizeof(int16_t)) - bufstat[bufnum];
+	if (bufpos < 0) { bufpos = 0; }
 	bufptr += bufpos;
 	memcpy(curpos, bufptr, bytes_to_fill);
 	
@@ -119,7 +118,6 @@ void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
 
 void audio_set_samples(uint32_t samples_per_frame) {
 	// Set the number of samples per frame
-	nDSoundSegLen = samples_per_frame;
 	
 	for (int i = 0; i < NUMBUFFERS; i++) {
 		if (buffer[i]) {
@@ -127,14 +125,14 @@ void audio_set_samples(uint32_t samples_per_frame) {
 			buffer[i] = (volatile int16_t *)NULL;
 		}
 		
-		buffer[i] = (volatile int16_t *)malloc(nDSoundSegLen * 2 * sizeof(uint16_t));
+		buffer[i] = (volatile int16_t *)malloc(samples_per_frame * 2 * sizeof(uint16_t));
 		
 		if (!buffer[i]) {
 			fprintf(stderr, "Couldn't alloc buffer for SDL audio!\n");
 			exit(-1);
 		}
 		
-		memset((void *)buffer[i], 0, nDSoundSegLen * 2 * sizeof(uint16_t));
+		memset((void *)buffer[i], 0, samples_per_frame * 2 * sizeof(uint16_t));
 		
 		bufstat[i] = 0;
 	}
@@ -143,15 +141,14 @@ void audio_set_samples(uint32_t samples_per_frame) {
 	writebuf = 1;
 }
 
-void audio_update() {
+void audio_play() {
 	
 	int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
-	audio_output_frame(nDSoundSegLen, (int16_t *)buffer[writebuf]);
+	audio_output_frame((conf.audio_sample_rate / framerate), (int16_t *)buffer[writebuf]);
 	
 	if (conf.audio_api == 0) { // SDL			
 		// You can speed it up by manipulating the following line
-		//bufstat[writebuf] = nDSoundSegLen * 2 * sizeof(uint16_t);
 		bufstat[writebuf] = bufsize;
 		
 		if (++writebuf >= NUMBUFFERS) {
@@ -159,7 +156,7 @@ void audio_update() {
 		}
 	}
 #ifndef MINGW
-	else { // libao
+	else if (conf.audio_api == 1) { // libao
 		ao_play(device, (char*)buffer[writebuf], bufsize);
 	}
 #endif
@@ -308,11 +305,11 @@ void timing_check() {
 	
 	if (conf.audio_api == 0) { // SDL
 		while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
-			audio_update();
+			audio_play();
 		}
 	}
 	else {
-		audio_update();
+		audio_play();
 		updateok = true;
 	}
 }
