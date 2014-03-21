@@ -504,7 +504,6 @@ void input_config_read() {
 	
 	if (ini_parse(inputconfpath, input_config_match, &inputconf) < 0) {
 		fprintf(stderr, "Failed to load input config file %s: Using defaults.\n", inputconfpath);
-		input_set_default();
 	}
 	else {
 		// Map the input settings from the config file

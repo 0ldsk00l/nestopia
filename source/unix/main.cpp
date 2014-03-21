@@ -76,8 +76,6 @@ static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
-extern void	*videobuf;
-
 extern settings conf;
 
 static Machine::FavoredSystem get_favored_system() {
@@ -556,127 +554,6 @@ void nst_set_dirs() {
 	}
 }
 
-int main(int argc, char *argv[]) {
-	// This is the main function
-	static SDL_Event event;
-	int i;
-	void* userData = (void*) 0xDEADC0DE;
-
-	// Set up directories
-	nst_set_dirs();
-	
-	// read the config file
-	config_file_read();
-	
-	if (argc == 1 && conf.misc_disable_gui) {
-		// Show usage and free config 
-		cli_show_usage();
-		return 0;
-	}
-	
-	cli_handle_command(argc, argv);
-	
-	playing = 0;
-	videobuf = NULL;
-	
-	// Initialize File input/output routines
-	fileio_init();
-	
-	// Initialize SDL
-	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
-		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
-		return 1;
-	}
-	
-	// Initialize input and read input config
-	input_init();
-	input_config_read();
-	
-	// Set up the video parameters
-	video_set_params();
-	
-	// Create the game window
-	video_create();
-	
-	// Set up the callbacks
-	Video::Output::lockCallback.Set(VideoLock, userData);
-	Video::Output::unlockCallback.Set(VideoUnlock, userData);
-	
-	Sound::Output::lockCallback.Set(SoundLock, userData);
-	Sound::Output::unlockCallback.Set(SoundUnlock, userData);
-	
-	User::fileIoCallback.Set(nst_cb_file, userData);
-	User::logCallback.Set(nst_cb_log, userData);
-	User::eventCallback.Set(nst_cb_event, userData);
-
-	// Load the FDS BIOS and NstDatabase.xml
-	fileio_set_fds_bios();
-	fileio_load_db();
-
-	// attempt to load and autostart a file specified on the commandline
-	if (argc > 1) {
-		nst_load(argv[argc - 1]);
-
-		if (loaded) { nst_play(); }
-		
-		else {
-			fprintf(stderr, "Fatal: Could not load ROM\n");
-			exit(1);
-		}
-	}
-	
-	nst_quit = 0;
-	
-	while (!nst_quit) {
-		if (playing) {
-			while (SDL_PollEvent(&event)) {
-				switch (event.type) {
-					case SDL_QUIT:
-						nst_quit = 1;
-						break;
-					
-					case SDL_KEYDOWN:
-					case SDL_KEYUP:
-					case SDL_JOYHATMOTION:
-					case SDL_JOYAXISMOTION:
-					case SDL_JOYBUTTONDOWN:
-					case SDL_JOYBUTTONUP:
-					case SDL_MOUSEBUTTONDOWN:
-					case SDL_MOUSEBUTTONUP:
-						input_process(cNstPads, event);
-						break;
-				}	
-			}
-			
-			if (NES_SUCCEEDED(Rewinder(emulator).Enable(true))) {
-				Rewinder(emulator).EnableSound(true);
-			}
-			
-			timing_check();
-			if (updateok) {
-				// Pulse the turbo buttons
-				input_pulse_turbo(cNstPads);
-				
-				emulator.Execute(cNstVideo, cNstSound, cNstPads);
-				updateok = false;
-			}
-		}
-	}
-
-	nst_unload();
-
-	fileio_shutdown();
-	
-	audio_deinit();
-	
-	input_deinit();
-	input_config_write();
-	
-	config_file_write();
-
-	return 0;
-}
-
 void nst_set_region() {
 	// Set the region
 	Machine machine(emulator);
@@ -800,6 +677,7 @@ static int find_patch(char *patchname)
 void nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
+	Sound sound(emulator);
 	Nes::Result result;
 	char gamename[512], patchname[512];
 
@@ -865,9 +743,148 @@ void nst_load(const char *filename) {
 		nst_fds_info();
 	}
 	
+	// Check if sound distortion should be enabled
+	conf.misc_genie_distortion ? sound.SetGenie(true) : sound.SetGenie(false);
+	
 	// note that something is loaded
 	loaded = 1;
 
 	// power on
 	machine.Power(true); // false = power off
+}
+
+int main(int argc, char *argv[]) {
+	// This is the main function
+	
+	static SDL_Event event;
+	void *userData = (void*)0xDEADC0DE;
+
+	// Set up directories
+	nst_set_dirs();
+	
+	if (argc == 1 && conf.misc_disable_gui) {
+		// Show usage and free config 
+		cli_show_usage();
+		return 0;
+	}
+	
+	// Set default config options
+	config_set_default();
+	
+	// Read the config file and override defaults
+	config_file_read();
+	
+	// Handle command line arguments
+	cli_handle_command(argc, argv);
+	
+	// Initialize File input/output routines
+	fileio_init();
+	
+	// Initialize SDL
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		return 1;
+	}
+	
+	// Initialize input
+	input_init();
+	
+	// Set default input keys
+	input_set_default();
+	
+	// Read the input config file and override defaults
+	input_config_read();
+	
+	// Set up the video parameters
+	video_set_params();
+	
+	// Create the window
+	video_create();
+	
+	// Set up the callbacks
+	Video::Output::lockCallback.Set(VideoLock, userData);
+	Video::Output::unlockCallback.Set(VideoUnlock, userData);
+	
+	Sound::Output::lockCallback.Set(SoundLock, userData);
+	Sound::Output::unlockCallback.Set(SoundUnlock, userData);
+	
+	User::fileIoCallback.Set(nst_cb_file, userData);
+	User::logCallback.Set(nst_cb_log, userData);
+	User::eventCallback.Set(nst_cb_event, userData);
+
+	// Load the FDS BIOS and NstDatabase.xml
+	fileio_set_fds_bios();
+	fileio_load_db();
+
+	// Load a rom from the command line
+	if (argc > 1) {
+		nst_load(argv[argc - 1]);
+
+		if (loaded) { nst_play(); }
+		
+		else {
+			fprintf(stderr, "Fatal: Could not load ROM\n");
+			exit(1);
+		}
+	}
+	
+	// Start the main loop
+	nst_quit = 0;
+	
+	while (!nst_quit) {
+		if (playing) {
+			while (SDL_PollEvent(&event)) {
+				switch (event.type) {
+					case SDL_QUIT:
+						nst_quit = 1;
+						break;
+					
+					case SDL_KEYDOWN:
+					case SDL_KEYUP:
+					case SDL_JOYHATMOTION:
+					case SDL_JOYAXISMOTION:
+					case SDL_JOYBUTTONDOWN:
+					case SDL_JOYBUTTONUP:
+					case SDL_MOUSEBUTTONDOWN:
+					case SDL_MOUSEBUTTONUP:
+						input_process(cNstPads, event);
+						break;
+				}	
+			}
+			
+			if (NES_SUCCEEDED(Rewinder(emulator).Enable(true))) {
+				Rewinder(emulator).EnableSound(true);
+			}
+			
+			timing_check();
+			if (updateok) {
+				// Pulse the turbo buttons
+				input_pulse_turbo(cNstPads);
+				
+				// Execute a frame
+				emulator.Execute(cNstVideo, cNstSound, cNstPads);
+				updateok = false;
+			}
+		}
+	}
+	
+	// Remove the cartridge and shut down the NES
+	nst_unload();
+	
+	// Unload the FDS BIOS and game database
+	fileio_shutdown();
+	
+	// Deinitialize audio
+	audio_deinit();
+	
+	// Deinitialize input
+	input_deinit();
+	
+	// Write the input config file
+	input_config_write();
+	
+	// Write the config file
+	config_file_write();
+
+	return 0;
 }

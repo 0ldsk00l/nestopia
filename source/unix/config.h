@@ -50,6 +50,7 @@ typedef struct {
 	int misc_default_system;
 	bool misc_soft_patching;
 	bool misc_suppress_screensaver;
+	bool misc_genie_distortion;
 	bool misc_disable_gui;
 } settings;
 
