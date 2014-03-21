@@ -39,7 +39,6 @@ void config_file_read() {
 
 	if (ini_parse(confpath, config_match, &conf) < 0) {
 		fprintf(stderr, "Failed to read config file %s: Using defaults.\n", confpath);
-		config_set_default();
 	}
 }
 
@@ -102,6 +101,7 @@ void config_file_write() {
 		fprintf(fp, "default_system=%d\n", conf.misc_default_system);
 		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
 		fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
+		fprintf(fp, "genie_distortion=%d\n", conf.misc_genie_distortion);
 		fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
 		
 		fclose(fp);
@@ -160,6 +160,7 @@ void config_set_default() {
 	conf.misc_default_system = 0;
 	conf.misc_soft_patching = true;
 	conf.misc_suppress_screensaver = true;
+	conf.misc_genie_distortion = false;
 	conf.misc_disable_gui = true;
 }
 
@@ -214,6 +215,7 @@ static int config_match(void* user, const char* section, const char* name, const
     else if (MATCH("misc", "default_system")) { pconfig->misc_default_system = atoi(value); }
     else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
     else if (MATCH("misc", "suppress_screensaver")) { pconfig->misc_suppress_screensaver = atoi(value); }
+    else if (MATCH("misc", "genie_distortion")) { pconfig->misc_genie_distortion = atoi(value); }
     else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
     
     else { return 0; }
