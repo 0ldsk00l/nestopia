@@ -46,10 +46,10 @@ typedef struct {
 	bool timing_vsync;
 	
 	// Misc
-	int misc_video_region;
+	//int misc_video_region;
 	int misc_default_system;
 	bool misc_soft_patching;
-	bool misc_suppress_screensaver;
+	//bool misc_suppress_screensaver;
 	bool misc_genie_distortion;
 	bool misc_disable_gui;
 } settings;
