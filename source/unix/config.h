@@ -52,7 +52,7 @@ typedef struct {
 	//bool misc_suppress_screensaver;
 	bool misc_genie_distortion;
 	bool misc_disable_gui;
-} settings;
+} settings_t;
 
 void config_file_read();
 void config_file_write();

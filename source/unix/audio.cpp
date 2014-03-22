@@ -37,7 +37,7 @@ ao_sample_format format;
 
 #define NUMBUFFERS 2
 
-extern settings conf;
+extern settings_t conf;
 extern Emulator emulator;
 extern bool nst_pal;
 extern bool updateok;

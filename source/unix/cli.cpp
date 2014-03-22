@@ -28,7 +28,7 @@
 #include "cli.h"
 #include "config.h"
 
-extern settings conf;
+extern settings_t conf;
 
 void cli_error(char *message) {
 	cli_show_usage();

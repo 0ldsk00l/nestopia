@@ -75,7 +75,7 @@ static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
-extern settings conf;
+extern settings_t conf;
 
 static Machine::FavoredSystem get_favored_system() {
 	switch (conf.misc_default_system) {

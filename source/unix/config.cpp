@@ -27,7 +27,7 @@
 #include "config.h"
 #include "ini.h"
 
-settings conf;
+settings_t conf;
 
 char confpath[256];
 extern char nstdir[256];
@@ -185,7 +185,7 @@ void config_set_default() {
 
 static int config_match(void* user, const char* section, const char* name, const char* value) {
 	// Match values from config file and populate live config
-	settings* pconfig = (settings*)user;
+	settings_t* pconfig = (settings_t*)user;
 	
 	// Video
 	if (MATCH("video", "filter")) { pconfig->video_filter = atoi(value); }
