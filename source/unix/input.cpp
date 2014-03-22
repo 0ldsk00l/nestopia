@@ -31,17 +31,17 @@
 #include "input.h"
 #include "ini.h"
 
-extern settings conf;
-inputsettings inputconf;
+extern settings_t conf;
+inputsettings_t inputconf;
 
 SDL_Joystick *joystick;
-gamepad player[NUMGAMEPADS];
+gamepad_t player[NUMGAMEPADS];
 
 char inputconfpath[256];
 extern char nstdir[256];
 
-turbo turbostate;
-turbo turbotoggle;
+turbo_t turbostate;
+turbo_t turbotoggle;
 
 void input_init() {
 	// Initialize any joysticks and set default values
@@ -188,7 +188,7 @@ void input_pulse_turbo(Input::Controllers *controllers) {
 	}
 }
 
-void input_inject(Input::Controllers *controllers, nesinput input) {
+void input_inject(Input::Controllers *controllers, nesinput_t input) {
 	// Insert the input signal into the NES
 	if (input.pressed) {
 		controllers->pad[input.player].buttons |= input.nescode;
@@ -208,7 +208,7 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	// Match NES buttons to joystick input
 	int j;
 	
-	nesinput input, reverseinput;
+	nesinput_t input, reverseinput;
 	
 	input.nescode = 0x00;
 	input.player = 0;
@@ -374,7 +374,7 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	// Match NES buttons to keyboard buttons
 	int i;
 	
-	nesinput input;
+	nesinput_t input;
 	
 	input.nescode = 0x00;
 	input.player = 0;
@@ -662,7 +662,7 @@ void input_set_default() {
 
 static int input_config_match(void* user, const char* section, const char* name, const char* value) {
 	// Match values from input config file and populate live config
-	inputsettings* pconfig = (inputsettings*)user;
+	inputsettings_t* pconfig = (inputsettings_t*)user;
 	
 	// Player 1
 	if (MATCH("gamepad1", "kb_u")) { pconfig->kb_p1u = strdup(value); }

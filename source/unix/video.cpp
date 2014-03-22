@@ -51,7 +51,7 @@ Video::RenderState renderstate;
 
 dimensions basesize, rendersize;
 
-extern settings conf;
+extern settings_t conf;
 extern Emulator emulator;
 
 void opengl_init_structures() {

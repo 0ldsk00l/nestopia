@@ -33,7 +33,7 @@ typedef struct {
 	SDL_Event jb;
 	SDL_Event jta;
 	SDL_Event jtb;
-} gamepad;
+} gamepad_t;
 
 typedef struct {
 	// Player 1
@@ -81,7 +81,7 @@ typedef struct {
 	char *js_p2b;
 	char *js_p2ta;
 	char *js_p2tb;
-} inputsettings;
+} inputsettings_t;
 
 typedef struct {
 	unsigned char player;
@@ -89,20 +89,20 @@ typedef struct {
 	unsigned char pressed;
 	unsigned char turboa;
 	unsigned char turbob;
-} nesinput;
+} nesinput_t;
 
 typedef struct {
 	int p1a;
 	int p1b;
 	int p2a;
 	int p2b;
-} turbo;
+} turbo_t;
 
 void input_init();
 void input_deinit();
 void input_process(Input::Controllers *controllers, SDL_Event event);
 void input_pulse_turbo(Input::Controllers *controllers);
-void input_inject(Input::Controllers *controllers, nesinput input);
+void input_inject(Input::Controllers *controllers, nesinput_t input);
 void input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
 void input_match_joystick(Input::Controllers *controllers, SDL_Event event);
 char* input_translate_event(SDL_Event event);
