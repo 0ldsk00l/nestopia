@@ -51,7 +51,6 @@
 #include "video.h"
 #include "input.h"
 #include "fileio.h"
-//#include "cheats.h"
 #include "config.h"
 #include "cursor.h"
 
