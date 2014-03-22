@@ -49,16 +49,25 @@ void config_file_write() {
 	if (fp != NULL)	{
 		// Video
 		fprintf(fp, "[video]\n");
-		fprintf(fp, "filter=%d\n", conf.video_filter);
-		fprintf(fp, "scale_factor=%d\n", conf.video_scale_factor);
-		fprintf(fp, "palette_mode=%d\n", conf.video_palette_mode);
-		fprintf(fp, "decoder=%d\n", conf.video_decoder);
+		fprintf(fp, "; 0=None, 1=NTSC, 2=xBR, 3=HqX, 4=2xSaI, 5=ScaleX\n");
+		fprintf(fp, "filter=%d\n\n", conf.video_filter);
+		fprintf(fp, "; Valid values are 1 to 4.\n");
+		fprintf(fp, "scale_factor=%d\n\n", conf.video_scale_factor);
+		fprintf(fp, "; 0=YUV, 1=RGB\n");
+		fprintf(fp, "palette_mode=%d\n\n", conf.video_palette_mode);
+		fprintf(fp, "; 0=Consumer, 1=Canonical, 2=Alternative\n");
+		fprintf(fp, "decoder=%d\n\n", conf.video_decoder);
+		fprintf(fp, "; Valid values are -100 to 100.\n");
 		fprintf(fp, "brightness=%d\n", conf.video_brightness);
 		fprintf(fp, "saturation=%d\n", conf.video_saturation);
-		fprintf(fp, "contrast=%d\n", conf.video_contrast);
-		fprintf(fp, "hue=%d\n", conf.video_hue);
-		fprintf(fp, "ntsc_mode=%d\n", conf.video_ntsc_mode);
-		fprintf(fp, "xbr_corner_rounding=%d\n", conf.video_xbr_corner_rounding);
+		fprintf(fp, "contrast=%d\n\n", conf.video_contrast);
+		fprintf(fp, "; Valid values are -45 to 45.\n");
+		fprintf(fp, "hue=%d\n\n", conf.video_hue);
+		fprintf(fp, "; 0=Composite, 1=S-Video, 2=RGB\n");
+		fprintf(fp, "ntsc_mode=%d\n\n", conf.video_ntsc_mode);
+		fprintf(fp, "; 0=Some, 1=None, 2=All\n");
+		fprintf(fp, "xbr_corner_rounding=%d\n\n", conf.video_xbr_corner_rounding);
+		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "linear_filter=%d\n", conf.video_linear_filter);
 		fprintf(fp, "tv_aspect=%d\n", conf.video_tv_aspect);
 		fprintf(fp, "mask_overscan=%d\n", conf.video_mask_overscan);
@@ -70,9 +79,13 @@ void config_file_write() {
 		
 		// Audio
 		fprintf(fp, "[audio]\n");
-		fprintf(fp, "api=%d\n", conf.audio_api);
-		fprintf(fp, "stereo=%d\n", conf.audio_stereo);
-		fprintf(fp, "sample_rate=%d\n", conf.audio_sample_rate);
+		fprintf(fp, "; 0=SDL, 1=libao\n");
+		fprintf(fp, "api=%d\n\n", conf.audio_api);
+		fprintf(fp, "; Valid values are 1 and 0.\n");
+		fprintf(fp, "stereo=%d\n\n", conf.audio_stereo);
+		fprintf(fp, "; Valid values are 11025, 22050, 44100, and 48000.\n");
+		fprintf(fp, "sample_rate=%d\n\n", conf.audio_sample_rate);
+		fprintf(fp, "; Valid values are 0 to 100.\n");
 		fprintf(fp, "volume=%d\n", conf.audio_volume);
 		fprintf(fp, "vol_sq1=%d\n", conf.audio_vol_sq1);
 		fprintf(fp, "vol_sq2=%d\n", conf.audio_vol_sq2);
@@ -89,18 +102,24 @@ void config_file_write() {
 		
 		// Timing
 		fprintf(fp, "[timing]\n");
-		fprintf(fp, "speed=%d\n", conf.timing_speed);
-		fprintf(fp, "altspeed=%d\n", conf.timing_altspeed);
-		fprintf(fp, "turbopulse=%d\n", conf.timing_turbopulse);
+		fprintf(fp, "; Base speed for NTSC in Frames per Second.\n");
+		fprintf(fp, "speed=%d\n\n", conf.timing_speed);
+		fprintf(fp, "; Alternate speed (slow down or fast forward)\n");
+		fprintf(fp, "altspeed=%d\n\n", conf.timing_altspeed);
+		fprintf(fp, "; Pulse turbo buttons every n frames. Minimum value is 2.\n");
+		fprintf(fp, "turbopulse=%d\n\n", conf.timing_turbopulse);
+		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "vsync=%d\n", conf.timing_vsync);
 		fprintf(fp, "\n"); // End of Section
 		
 		// Misc
 		fprintf(fp, "[misc]\n");
-		fprintf(fp, "video_region=%d\n", conf.misc_video_region);
-		fprintf(fp, "default_system=%d\n", conf.misc_default_system);
+		//fprintf(fp, "video_region=%d\n", conf.misc_video_region);
+		fprintf(fp, "; 0=NTSC, 1=PAL, 2=Famicom, 3=Dendy\n");
+		fprintf(fp, "default_system=%d\n\n", conf.misc_default_system);
+		fprintf(fp, "; Valid values are 1 and 0)\n");
 		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
-		fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
+		//fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
 		fprintf(fp, "genie_distortion=%d\n", conf.misc_genie_distortion);
 		fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
 		
@@ -156,10 +175,10 @@ void config_set_default() {
 	conf.timing_vsync = true;
 	
 	// Misc
-	conf.misc_video_region = 0;
+	//conf.misc_video_region = 0; // Not in use right now
 	conf.misc_default_system = 0;
 	conf.misc_soft_patching = true;
-	conf.misc_suppress_screensaver = true;
+	//conf.misc_suppress_screensaver = true;
 	conf.misc_genie_distortion = false;
 	conf.misc_disable_gui = true;
 }
@@ -210,14 +229,14 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("timing", "turbopulse")) { pconfig->timing_turbopulse = atoi(value); }
 	else if (MATCH("timing", "vsync")) { pconfig->timing_vsync = atoi(value); }
     
-    // Misc
-    else if (MATCH("misc", "video_region")) { pconfig->misc_video_region = atoi(value); }
-    else if (MATCH("misc", "default_system")) { pconfig->misc_default_system = atoi(value); }
-    else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
-    else if (MATCH("misc", "suppress_screensaver")) { pconfig->misc_suppress_screensaver = atoi(value); }
-    else if (MATCH("misc", "genie_distortion")) { pconfig->misc_genie_distortion = atoi(value); }
-    else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
+	// Misc
+	//else if (MATCH("misc", "video_region")) { pconfig->misc_video_region = atoi(value); }
+	else if (MATCH("misc", "default_system")) { pconfig->misc_default_system = atoi(value); }
+	else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
+	//else if (MATCH("misc", "suppress_screensaver")) { pconfig->misc_suppress_screensaver = atoi(value); }
+	else if (MATCH("misc", "genie_distortion")) { pconfig->misc_genie_distortion = atoi(value); }
+	else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
     
-    else { return 0; }
-    return 1;
+	else { return 0; }
+	return 1;
 }
