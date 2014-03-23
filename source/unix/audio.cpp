@@ -31,7 +31,7 @@
 #ifndef MINGW
 #include <ao/ao.h>
 
-ao_device *device;
+ao_device *aodevice;
 ao_sample_format format;
 #endif
 
@@ -116,6 +116,10 @@ void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
 	}
 }
 
+void audio_ao_callback(char *stream, int len) {
+	ao_play(aodevice, stream, len);
+}
+
 void audio_set_samples(uint32_t samples_per_frame) {
 	// Set the number of samples per frame
 	
@@ -157,7 +161,8 @@ void audio_play() {
 	}
 #ifndef MINGW
 	else if (conf.audio_api == 1) { // libao
-		ao_play(device, (char*)buffer[writebuf], bufsize);
+		audio_ao_callback((char*)buffer[writebuf], bufsize);
+		//ao_play(aodevice, (char*)buffer[writebuf], bufsize);
 	}
 #endif
 }
@@ -203,8 +208,8 @@ void audio_init() {
 		format.rate = conf.audio_sample_rate;
 		format.byte_format = AO_FMT_NATIVE;
 		
-		device = ao_open_live(default_driver, &format, NULL);
-		if (device == NULL) {
+		aodevice = ao_open_live(default_driver, &format, NULL);
+		if (aodevice == NULL) {
 			fprintf(stderr, "Error opening audio device.\n");
 		}
 		else {
@@ -222,7 +227,7 @@ void audio_deinit() {
 	}
 #ifndef MINGW
 	else if (conf.audio_api == 1) { // libao
-		ao_close(device);
+		ao_close(aodevice);
 		ao_shutdown();
 	}
 #endif
