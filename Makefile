@@ -2,7 +2,7 @@ CC = gcc
 CXX = g++
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
-SDL_CFLAGS = $(shell sdl2-config --cflags)
+CFLAGS = $(shell sdl2-config --cflags)
 
 INCLUDES = -Isource
 WARNINGS = -Wno-write-strings
@@ -28,11 +28,6 @@ else
 	#LIBS += -larchive
 	LIBS += -lGL -lGLU -lao
 endif
-
-#ifeq ($(UNAME), Linux)
-#	LIBS += -lasound
-#	DEFINES += -DOSS_ALSA
-#endif
 
 # Core
 OBJS = objs/core/NstApu.o
@@ -335,13 +330,21 @@ IOBJS += objs/unix/audio.o
 IOBJS += objs/unix/video.o
 IOBJS += objs/unix/input.o
 IOBJS += objs/unix/fileio.o
-#IOBJS += objs/unix/cheats.o
 IOBJS += objs/unix/config.o
 IOBJS += objs/unix/cursor.o
 IOBJS += objs/unix/ini.o
 
 # object dirs
-OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input objs/core/vssystem objs/nes_ntsc objs/unix
+OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input
+OBJDIRS += objs/core/vssystem objs/nes_ntsc objs/unix
+
+# GTK Stuff - Comment this section to disable GTK+
+#CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
+#LIBS += $(shell pkg-config --libs gtk+-3.0)
+#DEFINES += -D_GTK
+#IOBJS += objs/unix/gtkui/gtkui.o
+#IOBJS += objs/unix/gtkui/gtk_opengl.o
+#OBJDIRS += objs/unix/gtkui
 
 # Core rules
 objs/core/%.o: source/core/%.cpp
@@ -349,7 +352,7 @@ objs/core/%.o: source/core/%.cpp
 
 # Interface rules
 objs/unix/%.o: source/unix/%.cpp
-	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(SDL_CFLAGS) -c $< -o $@
+	$(CXX) $(CXXFLAGS) $(INCLUDES) $(WARNINGS) $(DEFINES) $(CFLAGS) -c $< -o $@
 
 all: maketree $(BIN)
 

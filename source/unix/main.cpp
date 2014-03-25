@@ -54,6 +54,10 @@
 #include "config.h"
 #include "cursor.h"
 
+#ifdef _GTK
+#include "gtkui/gtkui.h"
+#endif
+
 using namespace Nes::Api;
 
 // base class, all interfaces derives from this
@@ -798,7 +802,11 @@ int main(int argc, char *argv[]) {
 	video_set_params();
 	
 	// Create the window
+	#ifdef _GTK
+	conf.misc_disable_gui ? video_create() : gtkui_init(argc, argv);
+	#else
 	video_create();
+	#endif
 	
 	// Set up the callbacks
 	Video::Output::lockCallback.Set(VideoLock, userData);
@@ -831,6 +839,11 @@ int main(int argc, char *argv[]) {
 	nst_quit = 0;
 	
 	while (!nst_quit) {
+		#ifdef _GTK
+		while (gtk_events_pending()) {
+			gtk_main_iteration_do(FALSE);
+		}
+		#endif
 		if (playing) {
 			while (SDL_PollEvent(&event)) {
 				switch (event.type) {
