@@ -31,6 +31,7 @@
 #include "../video.h"
 
 #include "gtkui.h"
+#include "gtkui_dialogs.h"
 #include "gtk_opengl.h"
 
 GLXContext context;
@@ -62,70 +63,80 @@ void gtkui_init(int argc, char *argv[]) {
 
 void gtkui_create() {
 	// Create the GTK+ Window
-	GtkWidget *box;
-	GtkWidget *menubar;
-	GtkWidget *filemenu;
-	GtkWidget *file;
-	GtkWidget *quit;
-	GtkWidget *helpmenu;
-	GtkWidget *help;
-	GtkWidget *about;
-	
+		
 	gtkwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(gtkwindow), "Nestopia");
 	
-	box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(gtkwindow), box);
 	
-	menubar = gtk_menu_bar_new();
+	// Define the menubar and menus
+	GtkWidget *menubar = gtk_menu_bar_new();
 	
-	filemenu = gtk_menu_new();
-	file = gtk_menu_item_new_with_label("File");
-	quit = gtk_menu_item_new_with_label("Quit");
+	GtkWidget *filemenu = gtk_menu_new();
+	GtkWidget *file = gtk_menu_item_new_with_label("File");
+	GtkWidget *open = gtk_menu_item_new_with_label("Open...");
+	GtkWidget *quit = gtk_menu_item_new_with_label("Quit");
 	
-	helpmenu = gtk_menu_new();
-	help = gtk_menu_item_new_with_label("Help");
-	about = gtk_menu_item_new_with_label("About");
+	GtkWidget *helpmenu = gtk_menu_new();
+	GtkWidget *help = gtk_menu_item_new_with_label("Help");
+	GtkWidget *about = gtk_menu_item_new_with_label("About");
 	
+	// Populate the File menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
+	
+	// Populate the Help menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpmenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(helpmenu), about);
 	
+	// Put the menus into the menubar
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
+	// Create the DrawingArea/OpenGL context
 	context = NULL;
 	drawingarea = gtk_drawing_area_new();
 	context = gtk_opengl_create(drawingarea, attributes, context, TRUE);
+	
 	g_object_set_data(G_OBJECT(gtkwindow), "area", drawingarea);
 	g_object_set_data(G_OBJECT(gtkwindow), "context", context);
 	
 	gtk_widget_set_size_request(drawingarea, 512, 448);
 	
-	statusbar = gtk_statusbar_new();
+	// Create the statusbar
+	GtkWidget *statusbar = gtk_statusbar_new();
 	
+	// Pack the box with the menubar, drawingarea, and statusbar
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), drawingarea, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
 	
+	// Connect the signals
 	g_signal_connect(drawingarea, "realize",
 		G_CALLBACK(area_start), gtkwindow);
 	
 	g_signal_connect(G_OBJECT(gtkwindow), "destroy",
 		G_CALLBACK(nst_schedule_quit), NULL);
 	
+	// File menu
 	g_signal_connect(G_OBJECT(quit), "activate",
 		G_CALLBACK(nst_schedule_quit), NULL);
 	
+	g_signal_connect(G_OBJECT(open), "activate",
+		G_CALLBACK(gtkui_file_open), NULL);
+	
+	// Help menu
+	g_signal_connect(G_OBJECT(about), "activate",
+		G_CALLBACK(gtkui_about), NULL);
+	
+	// Key translation
 	g_signal_connect(G_OBJECT(gtkwindow), "key_press_event",
 		G_CALLBACK(convert_keypress), NULL);
 	
 	g_signal_connect(G_OBJECT(gtkwindow), "key_release_event",
 		G_CALLBACK(convert_keypress), NULL);
-	
-	g_signal_connect(G_OBJECT(about), "activate",
-		G_CALLBACK(gtkui_about), NULL);
 	
 	gtk_widget_show_all(gtkwindow);
 }
