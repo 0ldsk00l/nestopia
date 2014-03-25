@@ -37,6 +37,10 @@
 #include "video.h"
 #include "config.h"
 
+#ifdef _GTK
+#include "gtkui/gtkui.h"
+#endif
+
 using namespace Nes::Api;
 
 GLuint screenTexID = 0;
@@ -128,7 +132,11 @@ void opengl_blit() {
 		glVertex2i(0, rendersize.h);
 	glEnd();
 
+	#ifdef _GTK
+	conf.misc_disable_gui ? SDL_GL_SwapWindow(sdlwindow) : gtkui_swapbuffers();
+	#else
 	SDL_GL_SwapWindow(sdlwindow);
+	#endif
 }
 
 void video_init() {
