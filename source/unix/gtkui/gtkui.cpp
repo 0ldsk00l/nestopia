@@ -50,6 +50,8 @@ GtkWidget *gtkwindow;
 GtkWidget *statusbar;
 GtkWidget *drawingarea;
 
+GdkRGBA bg = {0, 0, 0, 0};
+
 extern dimensions basesize, rendersize;
 extern settings_t conf;
 extern GLuint screenTexID;
@@ -103,7 +105,8 @@ void gtkui_create() {
 	g_object_set_data(G_OBJECT(gtkwindow), "area", drawingarea);
 	g_object_set_data(G_OBJECT(gtkwindow), "context", context);
 	
-	gtk_widget_set_size_request(drawingarea, 512, 448);
+	//gtk_widget_set_size_request(drawingarea, 512, 448);
+	gtk_widget_set_size_request(drawingarea, 768, 672);
 	
 	// Create the statusbar
 	GtkWidget *statusbar = gtk_statusbar_new();
@@ -139,6 +142,8 @@ void gtkui_create() {
 		G_CALLBACK(convert_keypress), NULL);
 	
 	gtk_widget_show_all(gtkwindow);
+	
+	gtk_widget_override_background_color(drawingarea, GTK_STATE_FLAG_NORMAL, &bg);
 }
 
 GtkWidget *gtkui_about() {
