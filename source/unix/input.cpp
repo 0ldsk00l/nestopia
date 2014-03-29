@@ -43,6 +43,29 @@ extern char nstdir[256];
 turbo_t turbostate;
 turbo_t turbotoggle;
 
+static unsigned char nescodes[TOTALBUTTONS] = {
+	Input::Controllers::Pad::UP,
+	Input::Controllers::Pad::DOWN,
+	Input::Controllers::Pad::LEFT,
+	Input::Controllers::Pad::RIGHT,
+	Input::Controllers::Pad::SELECT,
+	Input::Controllers::Pad::START,
+	Input::Controllers::Pad::A,
+	Input::Controllers::Pad::B,
+	Input::Controllers::Pad::A,
+	Input::Controllers::Pad::B,
+	Input::Controllers::Pad::UP,
+	Input::Controllers::Pad::DOWN,
+	Input::Controllers::Pad::LEFT,
+	Input::Controllers::Pad::RIGHT,
+	Input::Controllers::Pad::SELECT,
+	Input::Controllers::Pad::START,
+	Input::Controllers::Pad::A,
+	Input::Controllers::Pad::B,
+	Input::Controllers::Pad::A,
+	Input::Controllers::Pad::B
+};
+
 void input_init() {
 	// Initialize any joysticks and set default values
 	printf("%i joystick(s) found:\n", SDL_NumJoysticks());
@@ -69,53 +92,15 @@ void input_deinit() {
 
 void input_process(Input::Controllers *controllers, SDL_Event event) {
 	// Process input events
-	const Uint8 *keybuffer = SDL_GetKeyboardState(NULL);
-	Uint8 *keys = (Uint8*)keybuffer;
-
+	
 	int x, y;
 	SDL_GetMouseState(&x, &y);
-	
-	// Process non-game events
-	if (keys[SDL_SCANCODE_F1]) { nst_flip_disk(); }
-	if (keys[SDL_SCANCODE_F2]) { nst_reset(0); }
-	//if (keys[SDL_SCANCODE_F3]) {  }
-	//if (keys[SDL_SCANCODE_F4]) {  }
-	if (keys[SDL_SCANCODE_F5]) { nst_state_save(0); }
-	if (keys[SDL_SCANCODE_F6]) { nst_state_save(1); }
-	if (keys[SDL_SCANCODE_F7]) { nst_state_load(0); }
-	if (keys[SDL_SCANCODE_F8]) { nst_state_load(1); }
-	//if (keys[SDL_SCANCODE_F9]) {  }
-	//if (keys[SDL_SCANCODE_F10]) {  }
-	//if (keys[SDL_SCANCODE_F11]) {  }
-	//if (keys[SDL_SCANCODE_F12]) {  }
-	
-	if (keys[SDL_SCANCODE_GRAVE]) { timing_set_altspeed(); }
-	if (!keys[SDL_SCANCODE_GRAVE]) { timing_set_default(); }
-	
-	// Insert Coins
-	controllers->vsSystem.insertCoin = 0;
-	if (keys[SDL_SCANCODE_1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
-	if (keys[SDL_SCANCODE_2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
-	
-	// Rewinder
-	if (keys[SDL_SCANCODE_BACKSPACE]) { nst_set_rewind(0); }
-	if (keys[SDL_SCANCODE_BACKSLASH]) { nst_set_rewind(1); }
-	
-	// Escape exits when not in GUI mode
-	if (keys[SDL_SCANCODE_ESCAPE]) {
-		if (conf.misc_disable_gui) { nst_schedule_quit(); }
-	}
-	
-	// F toggles fullscreen
-	if (keys[SDL_SCANCODE_F]) { video_toggle_fullscreen(); }
-	if (keys[SDL_SCANCODE_T]) { video_toggle_filter(); }
-	if (keys[SDL_SCANCODE_G]) { video_toggle_scalefactor(); }
 	
 	// Match keyboard and joystick input
 	switch(event.type) {
 		case SDL_KEYUP:
 		case SDL_KEYDOWN:
-			input_match_keyboard(controllers, event);
+			input_match_keyboard(controllers);
 			break;
 			
 		case SDL_JOYBUTTONUP:
@@ -229,29 +214,6 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 		player[1].ju, player[1].jd, player[1].jl, player[1].jr,
 		player[1].jselect, player[1].jstart, player[1].ja, player[1].jb,
 		player[1].jta, player[1].jtb
-	};
-	
-	static unsigned char nescodes[TOTALBUTTONS] = {
-		Input::Controllers::Pad::UP,
-		Input::Controllers::Pad::DOWN,
-		Input::Controllers::Pad::LEFT,
-		Input::Controllers::Pad::RIGHT,
-		Input::Controllers::Pad::SELECT,
-		Input::Controllers::Pad::START,
-		Input::Controllers::Pad::A,
-		Input::Controllers::Pad::B,
-		Input::Controllers::Pad::A,
-		Input::Controllers::Pad::B,
-		Input::Controllers::Pad::UP,
-		Input::Controllers::Pad::DOWN,
-		Input::Controllers::Pad::LEFT,
-		Input::Controllers::Pad::RIGHT,
-		Input::Controllers::Pad::SELECT,
-		Input::Controllers::Pad::START,
-		Input::Controllers::Pad::A,
-		Input::Controllers::Pad::B,
-		Input::Controllers::Pad::A,
-		Input::Controllers::Pad::B
 	};
 	
 	switch(event.type) {
@@ -370,11 +332,10 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	input_inject(controllers, input);
 }
 
-void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
+void input_match_keyboard(Input::Controllers *controllers) {
 	// Match NES buttons to keyboard buttons
-	int i;
 	
-	nesinput_t input;
+	nesinput_t input, reverseinput;
 	
 	input.nescode = 0x00;
 	input.player = 0;
@@ -382,54 +343,103 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	input.turboa = 0;
 	input.turbob = 0;
 	
-	if (event.type == SDL_KEYDOWN) { input.pressed = 1; }
+	reverseinput.nescode = 0xff;
+	reverseinput.player = 0;
+	reverseinput.pressed = 0;
+	reverseinput.turboa = 0;
+	reverseinput.turbob = 0;
 	
-	for (i = 0; i < NUMGAMEPADS; i++) {
-		if (player[i].u == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::UP;
-			input.player = i;
-		}
-		else if (player[i].d == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::DOWN;
-			input.player = i;
-		}
-		else if (player[i].l == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::LEFT;
-			input.player = i;
-		}
-		else if (player[i].r == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::RIGHT;
-			input.player = i;
-		}
-		else if (player[i].select == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::SELECT;
-			input.player = i;
-		}
-		else if (player[i].start == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::START;
-			input.player = i;
-		}
-		else if (player[i].a == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::A;
-			input.player = i;
-		}
-		else if (player[i].b == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::B;
-			input.player = i;
-		}
-		else if (player[i].ta == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::A;
-			input.player = i;
-			input.turboa = 1;
-		}
-		else if (player[i].tb == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::B;
-			input.player = i;
-			input.turbob = 1;
+	SDL_Scancode buttons[TOTALBUTTONS] = {
+		player[0].u, player[0].d, player[0].l, player[0].r,
+		player[0].select, player[0].start, player[0].a, player[0].b,
+		player[0].ta, player[0].tb,
+		
+		player[1].u, player[1].d, player[1].l, player[1].r,
+		player[1].select, player[1].start, player[1].a, player[1].b,
+		player[1].ta, player[1].tb
+	};
+	
+	const Uint8 *keys = SDL_GetKeyboardState(NULL);
+	
+	// This is really dirty
+	input_inject(controllers, reverseinput);
+	reverseinput.player = 1;
+	input_inject(controllers, reverseinput);
+	
+	if (!keys[buttons[8]]) {
+		reverseinput.player = 0;
+		reverseinput.turboa = 1;
+		reverseinput.pressed = 0;
+		input_inject(controllers, reverseinput);
+	}
+	
+	if (!keys[buttons[9]]) {
+		reverseinput.player = 0;
+		reverseinput.turbob = 1;
+		reverseinput.pressed = 0;
+		input_inject(controllers, reverseinput);
+	}
+	
+	if (!keys[buttons[18]]) {
+		reverseinput.player = 1;
+		reverseinput.turboa = 1;
+		reverseinput.pressed = 0;
+		input_inject(controllers, reverseinput);
+	}
+	
+	if (!keys[buttons[19]]) {
+		reverseinput.player = 1;
+		reverseinput.turbob = 1;
+		reverseinput.pressed = 0;
+		input_inject(controllers, reverseinput);
+	}
+	
+	for (int i = 0; i < TOTALBUTTONS; i++) {
+		if (keys[buttons[i]]) {
+			input.nescode = nescodes[i];
+			input.pressed = 1;
+			i > 9 ? input.player = 1 : input.player = 0;
+			i == 8 || i == 18 ? input.turboa = 1 : input.turboa = 0;
+			i == 9 || i == 19 ? input.turbob = 1 : input.turbob = 0;
+			input_inject(controllers, input);
 		}
 	}
 	
-	input_inject(controllers, input);
+	// Process non-game events
+	if (keys[SDL_SCANCODE_F1]) { nst_flip_disk(); }
+	if (keys[SDL_SCANCODE_F2]) { nst_reset(0); }
+	//if (keys[SDL_SCANCODE_F3]) {  }
+	//if (keys[SDL_SCANCODE_F4]) {  }
+	if (keys[SDL_SCANCODE_F5]) { nst_state_save(0); }
+	if (keys[SDL_SCANCODE_F6]) { nst_state_save(1); }
+	if (keys[SDL_SCANCODE_F7]) { nst_state_load(0); }
+	if (keys[SDL_SCANCODE_F8]) { nst_state_load(1); }
+	//if (keys[SDL_SCANCODE_F9]) {  }
+	//if (keys[SDL_SCANCODE_F10]) {  }
+	//if (keys[SDL_SCANCODE_F11]) {  }
+	//if (keys[SDL_SCANCODE_F12]) {  }
+	
+	if (keys[SDL_SCANCODE_GRAVE]) { timing_set_altspeed(); }
+	if (!keys[SDL_SCANCODE_GRAVE]) { timing_set_default(); }
+	
+	// Insert Coins
+	controllers->vsSystem.insertCoin = 0;
+	if (keys[SDL_SCANCODE_1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
+	if (keys[SDL_SCANCODE_2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
+	
+	// Rewinder
+	if (keys[SDL_SCANCODE_BACKSPACE]) { nst_set_rewind(0); }
+	if (keys[SDL_SCANCODE_BACKSLASH]) { nst_set_rewind(1); }
+	
+	// Escape exits when not in GUI mode
+	if (keys[SDL_SCANCODE_ESCAPE]) {
+		if (conf.misc_disable_gui) { nst_schedule_quit(); }
+	}
+	
+	// F toggles fullscreen
+	if (keys[SDL_SCANCODE_F]) { video_toggle_fullscreen(); }
+	if (keys[SDL_SCANCODE_T]) { video_toggle_filter(); }
+	if (keys[SDL_SCANCODE_G]) { video_toggle_scalefactor(); }
 }
 
 char* input_translate_event(SDL_Event event) {
