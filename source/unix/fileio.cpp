@@ -116,7 +116,7 @@ void fileio_load_db(void) {
 		database.Enable(true);
 		return;
 	}
-#ifndef MINGW
+#ifndef _MINGW
 	// If it fails, try looking in the data directory
 	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", DATADIR);
 	nstDBFile = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);

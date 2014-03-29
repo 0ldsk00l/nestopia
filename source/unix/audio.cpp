@@ -28,7 +28,7 @@
 #include "config.h"
 #include "audio.h"
 
-#ifndef MINGW
+#ifndef _MINGW
 #include <ao/ao.h>
 
 ao_device *aodevice;
@@ -117,7 +117,9 @@ void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
 }
 
 void audio_ao_callback(char *stream, int len) {
+#ifndef _MINGW
 	ao_play(aodevice, stream, len);
+#endif
 }
 
 void audio_set_samples(uint32_t samples_per_frame) {
@@ -159,7 +161,7 @@ void audio_play() {
 			writebuf = 0;
 		}
 	}
-#ifndef MINGW
+#ifndef _MINGW
 	else if (conf.audio_api == 1) { // libao
 		audio_ao_callback((char*)buffer[writebuf], bufsize);
 		//ao_play(aodevice, (char*)buffer[writebuf], bufsize);
@@ -196,7 +198,7 @@ void audio_init() {
 		
 		SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
 	}
-#ifndef MINGW
+#ifndef _MINGW
 	else if (conf.audio_api == 1) { // libao
 		ao_initialize();
 		
@@ -225,7 +227,7 @@ void audio_deinit() {
 	if (conf.audio_api == 0) { // SDL
 		SDL_CloseAudioDevice(dev);
 	}
-#ifndef MINGW
+#ifndef _MINGW
 	else if (conf.audio_api == 1) { // libao
 		ao_close(aodevice);
 		ao_shutdown();
