@@ -754,6 +754,8 @@ void nst_load(const char *filename) {
 
 	// power on
 	machine.Power(true); // false = power off
+	
+	nst_play();
 }
 
 int main(int argc, char *argv[]) {
@@ -826,10 +828,8 @@ int main(int argc, char *argv[]) {
 	// Load a rom from the command line
 	if (argc > 1) {
 		nst_load(argv[argc - 1]);
-
-		if (loaded) { nst_play(); }
 		
-		else {
+		if (!loaded) {
 			fprintf(stderr, "Fatal: Could not load ROM\n");
 			exit(1);
 		}
