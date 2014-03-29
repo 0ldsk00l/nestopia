@@ -30,7 +30,7 @@
 #include <sys/types.h>
 #include <errno.h>
 #include <libgen.h>
-#ifdef MINGW
+#ifdef _MINGW
 #include <io.h>
 #endif
 
@@ -527,7 +527,7 @@ void nst_schedule_quit() {
 
 void nst_set_dirs() {
 	// Set up system directories
-#ifdef MINGW
+#ifdef _MINGW
 	snprintf(nstdir, sizeof(nstdir), "");
 #else
 	// create system directory if it doesn't exist
@@ -539,7 +539,7 @@ void nst_set_dirs() {
 	// create save and state directories if they don't exist
 	char dirstr[256];
 	snprintf(dirstr, sizeof(dirstr), "%ssave", nstdir);
-#ifdef MINGW	
+#ifdef _MINGW	
 	if (mkdir(dirstr) && errno != EEXIST) {
 #else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
@@ -548,7 +548,7 @@ void nst_set_dirs() {
 	}
 
 	snprintf(dirstr, sizeof(dirstr), "%sstate", nstdir);
-#ifdef MINGW	
+#ifdef _MINGW	
 	if (mkdir(dirstr) && errno != EEXIST) {
 #else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
