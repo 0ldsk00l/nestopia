@@ -10,7 +10,7 @@
 typedef struct {
 	int w;
 	int h;
-} dimensions;
+} dimensions_t;
 
 void opengl_init_structures();
 void opengl_cleanup();

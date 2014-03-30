@@ -53,7 +53,7 @@ SDL_DisplayMode displaymode;
 Video::RenderState::Filter filter;
 Video::RenderState renderstate;
 
-dimensions basesize, rendersize;
+dimensions_t basesize, rendersize;
 
 extern settings_t conf;
 extern Emulator emulator;
@@ -290,6 +290,10 @@ void video_toggle_filter() {
 	
 	video_init();
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
+	
+	#ifdef _GTK
+	gtkui_resize();
+	#endif
 }
 
 void video_toggle_scalefactor() {
@@ -305,6 +309,10 @@ void video_toggle_scalefactor() {
 	
 	video_init();
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
+	
+	#ifdef _GTK
+	gtkui_resize();
+	#endif
 }
 
 void video_create() {
