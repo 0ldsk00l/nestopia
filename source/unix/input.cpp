@@ -100,7 +100,7 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	switch(event.type) {
 		case SDL_KEYUP:
 		case SDL_KEYDOWN:
-			input_match_keyboard(controllers);
+			input_match_keyboard(controllers, event);
 			break;
 			
 		case SDL_JOYBUTTONUP:
@@ -332,78 +332,70 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	input_inject(controllers, input);
 }
 
-void input_match_keyboard(Input::Controllers *controllers) {
+void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	// Match NES buttons to keyboard buttons
 	
-	nesinput_t input, reverseinput;
-	
+	nesinput_t input;
+
 	input.nescode = 0x00;
 	input.player = 0;
 	input.pressed = 0;
 	input.turboa = 0;
 	input.turbob = 0;
-	
-	reverseinput.nescode = 0xff;
-	reverseinput.player = 0;
-	reverseinput.pressed = 0;
-	reverseinput.turboa = 0;
-	reverseinput.turbob = 0;
-	
-	SDL_Scancode buttons[TOTALBUTTONS] = {
-		player[0].u, player[0].d, player[0].l, player[0].r,
-		player[0].select, player[0].start, player[0].a, player[0].b,
-		player[0].ta, player[0].tb,
-		
-		player[1].u, player[1].d, player[1].l, player[1].r,
-		player[1].select, player[1].start, player[1].a, player[1].b,
-		player[1].ta, player[1].tb
-	};
-	
-	const Uint8 *keys = SDL_GetKeyboardState(NULL);
-	
-	// This is really dirty
-	input_inject(controllers, reverseinput);
-	reverseinput.player = 1;
-	input_inject(controllers, reverseinput);
-	
-	if (!keys[buttons[8]]) {
-		reverseinput.player = 0;
-		reverseinput.turboa = 1;
-		reverseinput.pressed = 0;
-		input_inject(controllers, reverseinput);
-	}
-	
-	if (!keys[buttons[9]]) {
-		reverseinput.player = 0;
-		reverseinput.turbob = 1;
-		reverseinput.pressed = 0;
-		input_inject(controllers, reverseinput);
-	}
-	
-	if (!keys[buttons[18]]) {
-		reverseinput.player = 1;
-		reverseinput.turboa = 1;
-		reverseinput.pressed = 0;
-		input_inject(controllers, reverseinput);
-	}
-	
-	if (!keys[buttons[19]]) {
-		reverseinput.player = 1;
-		reverseinput.turbob = 1;
-		reverseinput.pressed = 0;
-		input_inject(controllers, reverseinput);
-	}
-	
-	for (int i = 0; i < TOTALBUTTONS; i++) {
-		if (keys[buttons[i]]) {
-			input.nescode = nescodes[i];
-			input.pressed = 1;
-			i > 9 ? input.player = 1 : input.player = 0;
-			i == 8 || i == 18 ? input.turboa = 1 : input.turboa = 0;
-			i == 9 || i == 19 ? input.turbob = 1 : input.turbob = 0;
-			input_inject(controllers, input);
+
+	if (event.type == SDL_KEYDOWN) { input.pressed = 1; }
+
+	for (int i = 0; i < NUMGAMEPADS; i++) {
+		if (player[i].u == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::UP;
+			input.player = i;
+		}
+		else if (player[i].d == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::DOWN;
+			input.player = i;
+		}
+		else if (player[i].l == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::LEFT;
+			input.player = i;
+		}
+		else if (player[i].r == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::RIGHT;
+			input.player = i;
+		}
+		else if (player[i].select == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::SELECT;
+			input.player = i;
+		}
+		else if (player[i].start == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::START;
+			input.player = i;
+		}
+		else if (player[i].a == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::A;
+			input.player = i;
+		}
+		else if (player[i].b == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::B;
+			input.player = i;
+		}
+		else if (player[i].ta == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::A;
+			input.player = i;
+			input.turboa = 1;
+		}
+		else if (player[i].tb == event.key.keysym.scancode) {
+			input.nescode = Input::Controllers::Pad::B;
+			input.player = i;
+			input.turbob = 1;
 		}
 	}
+
+	input_inject(controllers, input);
+	
+	if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE && event.type == SDL_KEYDOWN) { timing_set_altspeed(); }
+	if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE && event.type == SDL_KEYUP) { timing_set_default(); }
+	
+	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	
 	// Process non-game events
 	if (keys[SDL_SCANCODE_F1]) { nst_flip_disk(); }
@@ -418,9 +410,6 @@ void input_match_keyboard(Input::Controllers *controllers) {
 	//if (keys[SDL_SCANCODE_F10]) {  }
 	//if (keys[SDL_SCANCODE_F11]) {  }
 	//if (keys[SDL_SCANCODE_F12]) {  }
-	
-	if (keys[SDL_SCANCODE_GRAVE]) { timing_set_altspeed(); }
-	if (!keys[SDL_SCANCODE_GRAVE]) { timing_set_default(); }
 	
 	// Insert Coins
 	controllers->vsSystem.insertCoin = 0;
