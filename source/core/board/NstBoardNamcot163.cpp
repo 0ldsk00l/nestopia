@@ -44,7 +44,8 @@ namespace Nes
 				:
 				Board (c),
 				irq   (*c.cpu),
-				sound (*c.apu)
+				sound (*c.apu),
+				namcot106 (c.chips.Has(L"106"))
 				{
 				}
 
@@ -58,7 +59,7 @@ namespace Nes
 						Connect( audible );
 				}
 
-				void N163::SubReset(const bool hard)
+				/*void N163::SubReset(const bool hard)
 				{
 					irq.Reset( hard, hard || irq.Connected() );
 
@@ -81,6 +82,35 @@ namespace Nes
 					Map( 0xE800U, 0xEFFFU, PRG_SWAP_8K_1 );
 					Map( 0xF000U, 0xF7FFU, PRG_SWAP_8K_2 );
 					Map( 0xF800U, 0xFFFFU, &N163::Poke_F800 );
+				}*/
+				
+				void N163::SubReset(const bool hard)
+				{
+				
+					irq.Reset( hard, hard || irq.Connected() );
+					
+					if (!namcot106) //if isn't Namcot-106 provide nmt-control feature
+					{
+						Map( 0x4800U, 0x4FFFU, &N163::Peek_4800, &N163::Poke_4800 );
+						Map( 0x5000U, 0x57FFU, &N163::Peek_5000, &N163::Poke_5000 );
+						Map( 0x5800U, 0x5FFFU, &N163::Peek_5800, &N163::Poke_5800 );
+						Map( 0xC000U, 0xC7FFU, &N163::Poke_C000 );
+						Map( 0xC800U, 0xCFFFU, &N163::Poke_C800 );
+						Map( 0xD000U, 0xD7FFU, &N163::Poke_D000 );
+						Map( 0xD800U, 0xDFFFU, &N163::Poke_D800 );
+						Map( 0xF800U, 0xFFFFU, &N163::Poke_F800 );
+					}
+					Map( 0x8000U, 0x87FFU, CHR_SWAP_1K_0 );
+					Map( 0x8800U, 0x8FFFU, CHR_SWAP_1K_1 );
+					Map( 0x9000U, 0x97FFU, CHR_SWAP_1K_2 );
+					Map( 0x9800U, 0x9FFFU, CHR_SWAP_1K_3 );
+					Map( 0xA000U, 0xA7FFU, CHR_SWAP_1K_4 );
+					Map( 0xA800U, 0xAFFFU, CHR_SWAP_1K_5 );
+					Map( 0xB000U, 0xB7FFU, CHR_SWAP_1K_6 );
+					Map( 0xB800U, 0xBFFFU, CHR_SWAP_1K_7 );
+					Map( 0xE000U, 0xE7FFU, PRG_SWAP_8K_0 );
+					Map( 0xE800U, 0xEFFFU, PRG_SWAP_8K_1 );
+					Map( 0xF000U, 0xF7FFU, PRG_SWAP_8K_2 );
 				}
 
 				void N163::Irq::Reset(const bool hard)
