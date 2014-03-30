@@ -5,6 +5,7 @@
 
 void gtkui_init(int argc, char *argv[]);
 void gtkui_create();
+void gtkui_resize();
 GtkWidget *gtkui_about();
 
 int area_start(GtkWidget *widget, void *data);

@@ -52,7 +52,7 @@ GtkWidget *drawingarea;
 
 GdkRGBA bg = {0, 0, 0, 0};
 
-extern dimensions basesize, rendersize;
+extern dimensions_t basesize, rendersize;
 extern settings_t conf;
 extern GLuint screenTexID;
 
@@ -68,6 +68,7 @@ void gtkui_create() {
 		
 	gtkwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(gtkwindow), "Nestopia");
+	gtk_window_set_resizable(GTK_WINDOW(gtkwindow), FALSE);
 	
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	gtk_container_add(GTK_CONTAINER(gtkwindow), box);
@@ -105,8 +106,8 @@ void gtkui_create() {
 	g_object_set_data(G_OBJECT(gtkwindow), "area", drawingarea);
 	g_object_set_data(G_OBJECT(gtkwindow), "context", context);
 	
-	//gtk_widget_set_size_request(drawingarea, 512, 448);
-	gtk_widget_set_size_request(drawingarea, 768, 672);
+	// Set the Drawing Area to be the size of the game output
+	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
 	
 	// Create the statusbar
 	GtkWidget *statusbar = gtk_statusbar_new();
@@ -115,6 +116,10 @@ void gtkui_create() {
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), drawingarea, TRUE, TRUE, 0);
 	gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
+	
+	// Make it dark if there's a dark theme
+	GtkSettings *gtksettings = gtk_settings_get_default();
+	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
 	
 	// Connect the signals
 	g_signal_connect(drawingarea, "realize",
@@ -143,6 +148,12 @@ void gtkui_create() {
 	
 	gtk_widget_show_all(gtkwindow);
 	
+	gtk_widget_override_background_color(drawingarea, GTK_STATE_FLAG_NORMAL, &bg);
+}
+
+void gtkui_resize() {
+	// Resize the GTK+ window
+	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
 	gtk_widget_override_background_color(drawingarea, GTK_STATE_FLAG_NORMAL, &bg);
 }
 
