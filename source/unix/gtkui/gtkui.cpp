@@ -31,6 +31,7 @@
 #include "../video.h"
 
 #include "gtkui.h"
+#include "gtkui_callbacks.h"
 #include "gtkui_dialogs.h"
 #include "gtk_opengl.h"
 
@@ -54,7 +55,6 @@ GdkRGBA bg = {0, 0, 0, 0};
 
 extern dimensions_t basesize, rendersize;
 extern settings_t conf;
-extern GLuint screenTexID;
 
 void gtkui_init(int argc, char *argv[]) {
 	// Initialize the GTK+ GUI
@@ -76,19 +76,36 @@ void gtkui_create() {
 	// Define the menubar and menus
 	GtkWidget *menubar = gtk_menu_bar_new();
 	
+	// Define the File menu
 	GtkWidget *filemenu = gtk_menu_new();
 	GtkWidget *file = gtk_menu_item_new_with_label("File");
 	GtkWidget *open = gtk_menu_item_new_with_label("Open...");
 	GtkWidget *quit = gtk_menu_item_new_with_label("Quit");
 	
-	GtkWidget *helpmenu = gtk_menu_new();
-	GtkWidget *help = gtk_menu_item_new_with_label("Help");
-	GtkWidget *about = gtk_menu_item_new_with_label("About");
-	
 	// Populate the File menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
+	
+	// Define the Emulator menu
+	GtkWidget *emulatormenu = gtk_menu_new();
+	GtkWidget *emu = gtk_menu_item_new_with_label("Emulator");
+	GtkWidget *cont = gtk_menu_item_new_with_label("Continue");
+	GtkWidget *pause = gtk_menu_item_new_with_label("Pause");
+	GtkWidget *resetsoft = gtk_menu_item_new_with_label("Reset (Soft)");
+	GtkWidget *resethard = gtk_menu_item_new_with_label("Reset (Hard)");
+	
+	// Populate the Emulator menu
+	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emu), emulatormenu);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cont);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), pause);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resetsoft);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resethard);
+	
+	// Define the Help menu
+	GtkWidget *helpmenu = gtk_menu_new();
+	GtkWidget *help = gtk_menu_item_new_with_label("Help");
+	GtkWidget *about = gtk_menu_item_new_with_label("About");
 	
 	// Populate the Help menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpmenu);
@@ -96,6 +113,7 @@ void gtkui_create() {
 	
 	// Put the menus into the menubar
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), file);
+	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), emu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	// Create the DrawingArea/OpenGL context
@@ -134,6 +152,19 @@ void gtkui_create() {
 	
 	g_signal_connect(G_OBJECT(open), "activate",
 		G_CALLBACK(gtkui_file_open), NULL);
+	
+	// Emulator menu
+	g_signal_connect(G_OBJECT(cont), "activate",
+		G_CALLBACK(nst_play), NULL);
+	
+	g_signal_connect(G_OBJECT(pause), "activate",
+		G_CALLBACK(nst_pause), NULL);
+	
+	g_signal_connect(G_OBJECT(resetsoft), "activate",
+		G_CALLBACK(gtkui_cb_reset), gpointer(0));
+	
+	g_signal_connect(G_OBJECT(resethard), "activate",
+		G_CALLBACK(gtkui_cb_reset), gpointer(1));
 	
 	// Help menu
 	g_signal_connect(G_OBJECT(about), "activate",
