@@ -80,11 +80,15 @@ void gtkui_create() {
 	GtkWidget *filemenu = gtk_menu_new();
 	GtkWidget *file = gtk_menu_item_new_with_label("File");
 	GtkWidget *open = gtk_menu_item_new_with_label("Open...");
+	GtkWidget *statesave = gtk_menu_item_new_with_label("Save State...");
+	GtkWidget *stateload = gtk_menu_item_new_with_label("Load State...");
 	GtkWidget *quit = gtk_menu_item_new_with_label("Quit");
 	
 	// Populate the File menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), statesave);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), stateload);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
 	
 	// Define the Emulator menu
@@ -147,11 +151,17 @@ void gtkui_create() {
 		G_CALLBACK(nst_schedule_quit), NULL);
 	
 	// File menu
-	g_signal_connect(G_OBJECT(quit), "activate",
-		G_CALLBACK(nst_schedule_quit), NULL);
-	
 	g_signal_connect(G_OBJECT(open), "activate",
 		G_CALLBACK(gtkui_file_open), NULL);
+	
+	g_signal_connect(G_OBJECT(statesave), "activate",
+		G_CALLBACK(gtkui_state_save), NULL);
+	
+	g_signal_connect(G_OBJECT(stateload), "activate",
+		G_CALLBACK(gtkui_state_load), NULL);
+	
+	g_signal_connect(G_OBJECT(quit), "activate",
+		G_CALLBACK(nst_schedule_quit), NULL);
 	
 	// Emulator menu
 	g_signal_connect(G_OBJECT(cont), "activate",
