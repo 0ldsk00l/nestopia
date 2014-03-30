@@ -343,6 +343,7 @@ CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
 LIBS += $(shell pkg-config --libs gtk+-3.0)
 DEFINES += -D_GTK
 IOBJS += objs/unix/gtkui/gtkui.o
+IOBJS += objs/unix/gtkui/gtkui_callbacks.o
 IOBJS += objs/unix/gtkui/gtkui_dialogs.o
 IOBJS += objs/unix/gtkui/gtk_opengl.o
 OBJDIRS += objs/unix/gtkui

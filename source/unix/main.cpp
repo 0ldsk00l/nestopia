@@ -382,8 +382,8 @@ void nst_reset(bool hardreset) {
 	Machine machine(emulator);
 	Fds fds(emulator);
 	machine.Reset(hardreset);
-
-	// put the disk system back to disk 0 side 0
+	
+	// Set the FDS disk to defaults
 	fds.EjectDisk();
 	fds.InsertDisk(0, 0);
 }
@@ -683,7 +683,10 @@ void nst_load(const char *filename) {
 	Sound sound(emulator);
 	Nes::Result result;
 	char gamename[512], patchname[512];
-
+	
+	// Pause play before pulling out a cartridge
+	if (playing) { nst_pause(); }
+	
 	// Pull out any inserted cartridges
 	nst_unload();
 
