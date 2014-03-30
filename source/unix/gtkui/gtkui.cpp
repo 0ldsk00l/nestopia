@@ -337,7 +337,8 @@ int convert_keypress(GtkWidget *grab, GdkEventKey *event, gpointer user_data) {
 	
 	sdlkeycode = (SDL_Keycode)translate_gdk_sdl(event->keyval);
 	sdlevent.key.keysym.sym = sdlkeycode;
-	
+	sdlevent.key.keysym.scancode = SDL_GetScancodeFromKey(sdlevent.key.keysym.sym);
+		
 	if (sdlkeycode != 0) {
 		SDL_PushEvent(&sdlevent);
 		
