@@ -45,6 +45,7 @@ Core:
 
  Fixes:
   - Hard Drivin' now playable (dragon2snow)
+  - Family Circuit '91 (Japan) fixes (plasturion)
 
 ----------------------------------------------------------------
 1.45
