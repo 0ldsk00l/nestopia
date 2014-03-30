@@ -402,10 +402,10 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[SDL_SCANCODE_F2]) { nst_reset(0); }
 	//if (keys[SDL_SCANCODE_F3]) {  }
 	//if (keys[SDL_SCANCODE_F4]) {  }
-	if (keys[SDL_SCANCODE_F5]) { nst_state_save(0); }
-	if (keys[SDL_SCANCODE_F6]) { nst_state_save(1); }
-	if (keys[SDL_SCANCODE_F7]) { nst_state_load(0); }
-	if (keys[SDL_SCANCODE_F8]) { nst_state_load(1); }
+	if (keys[SDL_SCANCODE_F5]) { nst_state_quicksave(0); }
+	if (keys[SDL_SCANCODE_F6]) { nst_state_quicksave(1); }
+	if (keys[SDL_SCANCODE_F7]) { nst_state_quickload(0); }
+	if (keys[SDL_SCANCODE_F8]) { nst_state_quickload(1); }
 	//if (keys[SDL_SCANCODE_F9]) {  }
 	//if (keys[SDL_SCANCODE_F10]) {  }
 	//if (keys[SDL_SCANCODE_F11]) {  }

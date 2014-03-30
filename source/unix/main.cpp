@@ -331,19 +331,37 @@ void nst_dipswitch() {
 	//dipswitches.SetValue(1,0);
 }
 
-void nst_state_save(int isvst) {
+void nst_state_save(char *filename) {
+	// Save a state by filename
+	Machine machine(emulator);
+	
+	std::ofstream statefile(filename, std::ifstream::out|std::ifstream::binary);
+	
+	if (statefile.is_open()) { machine.SaveState(statefile, Nes::Api::Machine::NO_COMPRESSION); }
+}
+
+void nst_state_load(char *filename) {
+	// Load a state by filename
+	Machine machine(emulator);
+	
+	std::ifstream statefile(filename, std::ifstream::in|std::ifstream::binary);
+
+	if (statefile.is_open()) { machine.LoadState(statefile); }
+}
+
+void nst_state_quicksave(int isvst) {
 	// Save State
 	std::string strFile = StrQuickSaveFile(isvst);
 
 	Machine machine( emulator );
 	std::ofstream os(strFile.c_str());
 	// use "NO_COMPRESSION" to make it easier to hack save states
-	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::USE_COMPRESSION);
+	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::NO_COMPRESSION);
 	fprintf(stderr, "State Saved: %s\n", strFile.c_str());
 }
 
 
-void nst_state_load(int isvst) {
+void nst_state_quickload(int isvst) {
 	// Load State
 	std::string strFile = StrQuickSaveFile(isvst);
 	
