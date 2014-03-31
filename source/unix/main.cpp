@@ -378,6 +378,9 @@ void nst_state_quickload(int isvst) {
 }
 
 void nst_play() {
+	// Play the game
+	if (playing || !loaded) { return; }
+	
 	video_init();
 	audio_init();
 	SetupInput();

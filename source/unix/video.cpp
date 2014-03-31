@@ -133,7 +133,8 @@ void opengl_blit() {
 	glEnd();
 
 	#ifdef _GTK
-	conf.misc_disable_gui ? SDL_GL_SwapWindow(sdlwindow) : gtkui_swapbuffers();
+	if (conf.misc_disable_gui) { SDL_GL_SwapWindow(sdlwindow); }
+	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : gtkui_swapbuffers(); }
 	#else
 	SDL_GL_SwapWindow(sdlwindow);
 	#endif
@@ -258,7 +259,7 @@ void video_toggle_fullscreen() {
 	
 	conf.video_fullscreen ^= 1;
 	
-	if(conf.video_fullscreen) {
+	if (conf.video_fullscreen) {
 		cursor = 0;
 		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
@@ -270,6 +271,10 @@ void video_toggle_fullscreen() {
 	SDL_ShowCursor(cursor);
 	SDL_SetWindowFullscreen(sdlwindow, flags);
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
+	
+	#ifdef _GTK
+	gtkui_toggle_fullscreen();
+	#endif
 }
 
 void video_toggle_filter() {
@@ -344,6 +349,8 @@ void video_create() {
 	
 	//printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
 	
+	opengl_init_structures();
+	
 	glcontext = SDL_GL_CreateContext(sdlwindow);
 	
 	if(glcontext == NULL) {
@@ -353,6 +360,12 @@ void video_create() {
 	SDL_GL_MakeCurrent(sdlwindow, glcontext);
 	
 	SDL_GL_SetSwapInterval(conf.timing_vsync);
+}
+
+void video_destroy() {
+	// Bring down the SDL window
+	SDL_GL_DeleteContext(glcontext);
+	SDL_DestroyWindow(sdlwindow);
 }
 
 void video_set_filter() {
