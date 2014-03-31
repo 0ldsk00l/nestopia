@@ -297,7 +297,7 @@ void video_toggle_filter() {
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 	
 	#ifdef _GTK
-	gtkui_resize();
+	if (!conf.misc_disable_gui) { gtkui_resize(); }
 	#endif
 }
 
@@ -316,7 +316,7 @@ void video_toggle_scalefactor() {
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 	
 	#ifdef _GTK
-	gtkui_resize();
+	if (!conf.misc_disable_gui) { gtkui_resize(); }
 	#endif
 }
 
