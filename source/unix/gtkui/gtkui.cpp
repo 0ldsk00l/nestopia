@@ -192,6 +192,20 @@ void gtkui_create() {
 	gtk_widget_override_background_color(drawingarea, GTK_STATE_FLAG_NORMAL, &bg);
 }
 
+void gtkui_toggle_fullscreen() {
+	// Toggle fullscreen
+	if (conf.video_fullscreen) {
+		video_create();
+		video_init();
+	}
+	else {
+		video_destroy();
+		gtk_opengl_current(drawingarea, context);
+		video_init();
+		gtkui_resize();
+	}
+}
+
 void gtkui_resize() {
 	// Resize the GTK+ window
 	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
