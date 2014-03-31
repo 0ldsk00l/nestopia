@@ -273,7 +273,7 @@ void video_toggle_fullscreen() {
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 	
 	#ifdef _GTK
-	gtkui_toggle_fullscreen();
+	if (!conf.misc_disable_gui) { gtkui_toggle_fullscreen(); }
 	#endif
 }
 

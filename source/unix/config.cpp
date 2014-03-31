@@ -117,7 +117,7 @@ void config_file_write() {
 		//fprintf(fp, "video_region=%d\n", conf.misc_video_region);
 		fprintf(fp, "; 0=NTSC, 1=PAL, 2=Famicom, 3=Dendy\n");
 		fprintf(fp, "default_system=%d\n\n", conf.misc_default_system);
-		fprintf(fp, "; Valid values are 1 and 0)\n");
+		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
 		//fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
 		fprintf(fp, "genie_distortion=%d\n", conf.misc_genie_distortion);
