@@ -830,6 +830,7 @@ int main(int argc, char *argv[]) {
 	// Create the window
 	#ifdef _GTK
 	conf.misc_disable_gui ? video_create() : gtkui_init(argc, argv);
+	if (conf.video_fullscreen) { video_create(); }
 	#else
 	video_create();
 	#endif
