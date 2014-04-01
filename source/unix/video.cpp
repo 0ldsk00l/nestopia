@@ -61,7 +61,7 @@ extern Emulator emulator;
 void opengl_init_structures() {
 	// init OpenGL and set up for blitting
 	int scalefactor = conf.video_scale_factor;
-
+	
 	// Fix the fencepost issue when masking overscan
 	float fencepost = scalefactor / 2.0;
 	
@@ -72,7 +72,10 @@ void opengl_init_structures() {
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, conf.video_linear_filter ? GL_LINEAR : GL_NEAREST) ;
 	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) ;
 	
+	conf.video_fullscreen ? 
+	glViewport( displaymode.w / 2.0f - rendersize.w / 2.0f, 0, rendersize.w, rendersize.h) :
 	glViewport( 0, 0, rendersize.w, rendersize.h);
+	
 	glDisable( GL_DEPTH_TEST );
 	glDisable( GL_ALPHA_TEST );
 	glDisable( GL_BLEND );
@@ -120,18 +123,18 @@ void opengl_blit() {
 
 	glBegin( GL_QUADS ) ;
 		glTexCoord2f(1.0f, 1.0f);
-		glVertex2i(rendersize.w, rendersize.h);
+		glVertex2f(rendersize.w, rendersize.h);
 		
 		glTexCoord2f(1.0f, 0.0f);
-		glVertex2i(rendersize.w, 0);
+		glVertex2f(rendersize.w, 0);
 		
 		glTexCoord2f(0.0f, 0.0f);
-		glVertex2i(0, 0);
+		glVertex2f(0, 0);
 		
 		glTexCoord2f(0.0f, 1.0f);
-		glVertex2i(0, rendersize.h);
+		glVertex2f(0, rendersize.h);
 	glEnd();
-
+	
 	#ifdef _GTK
 	if (conf.misc_disable_gui) { SDL_GL_SwapWindow(sdlwindow); }
 	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : gtkui_swapbuffers(); }
