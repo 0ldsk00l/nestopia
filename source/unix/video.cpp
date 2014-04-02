@@ -291,9 +291,6 @@ void video_toggle_filter() {
 		conf.video_scale_factor = 3;
 	}
 	
-	Video video(emulator);
-	video.ClearFilterUpdateFlag();
-	
 	opengl_cleanup();
 	
 	video_init();
