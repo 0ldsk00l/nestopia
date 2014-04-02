@@ -23,12 +23,65 @@
 #include <SDL.h>
 
 #include "../main.h"
+#include "../config.h"
+#include "../video.h"
+
 #include "gtkui.h"
+#include "gtkui_callbacks.h"
+
+extern settings_t conf;
+
+//// Menu ////
 
 void gtkui_cb_reset(GtkWidget *reset, int hard) {
 	// Reset the NES from the GUI
 	nst_reset(hard);
 }
+
+//// Config Window ////
+
+void gtkui_cb_destroy_config() {
+	// Do nothing
+}
+
+void gtkui_cb_video_filter(GtkComboBox *combobox, gpointer userdata) {
+	// Change the video filter
+	conf.video_filter = gtk_combo_box_get_active(combobox);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_scale(GtkComboBox *combobox, gpointer userdata) {
+	// Change the scale factor
+	conf.video_scale_factor = gtk_combo_box_get_active(combobox) + 1;
+	
+	// The scalex filter only allows 3x scale and crashes otherwise
+	if (conf.video_filter == 5 && conf.video_scale_factor == 4) {
+		conf.video_scale_factor = 3;
+	}
+	
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_palette(GtkComboBox *combobox, gpointer userdata) {
+	// Change the video palette
+	conf.video_palette_mode = gtk_combo_box_get_active(combobox);
+	gtkui_cb_video_refresh();
+	// this doesn't work unless there's a restart - fix
+}
+
+void gtkui_cb_video_decoder(GtkComboBox *combobox, gpointer userdata) {
+	// Change the YUV Decoder
+	conf.video_decoder = gtk_combo_box_get_active(combobox);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_refresh() {
+	opengl_cleanup();
+	video_init();
+	gtkui_resize();
+}
+
+//// Key Translation ////
 
 unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval) {
 	// Translate GDK keys to SDL keys

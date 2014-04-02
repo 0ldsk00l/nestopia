@@ -348,6 +348,7 @@ IOBJS += objs/unix/gtkui/gtkui_config.o
 IOBJS += objs/unix/gtkui/gtkui_dialogs.o
 IOBJS += objs/unix/gtkui/gtk_opengl.o
 OBJDIRS += objs/unix/gtkui
+WARNINGS += -Wno-deprecated-declarations
 
 # Core rules
 objs/core/%.o: source/core/%.cpp
