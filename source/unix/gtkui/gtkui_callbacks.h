@@ -8,6 +8,8 @@ void gtkui_cb_video_filter(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_video_scale(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_video_palette(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_video_decoder(GtkComboBox *combobox, gpointer userdata);
+void gtkui_cb_video_ntscmode(GtkComboBox *combobox, gpointer userdata);
+void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata);
 
 void gtkui_cb_video_refresh();
 

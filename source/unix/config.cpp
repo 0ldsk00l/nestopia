@@ -65,7 +65,7 @@ void config_file_write() {
 		fprintf(fp, "hue=%d\n\n", conf.video_hue);
 		fprintf(fp, "; 0=Composite, 1=S-Video, 2=RGB\n");
 		fprintf(fp, "ntsc_mode=%d\n\n", conf.video_ntsc_mode);
-		fprintf(fp, "; 0=Some, 1=None, 2=All\n");
+		fprintf(fp, "; 0=None, 1=Some, 2=All\n");
 		fprintf(fp, "xbr_corner_rounding=%d\n\n", conf.video_xbr_corner_rounding);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "linear_filter=%d\n", conf.video_linear_filter);

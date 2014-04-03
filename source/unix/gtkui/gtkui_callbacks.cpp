@@ -75,6 +75,18 @@ void gtkui_cb_video_decoder(GtkComboBox *combobox, gpointer userdata) {
 	gtkui_cb_video_refresh();
 }
 
+void gtkui_cb_video_ntscmode(GtkComboBox *combobox, gpointer userdata) {
+	// Change the NTSC Mode
+	conf.video_ntsc_mode = gtk_combo_box_get_active(combobox);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata) {
+	// Set xBR corner rounding parameters
+	conf.video_xbr_corner_rounding = gtk_combo_box_get_active(combobox);
+	gtkui_cb_video_refresh();
+}
+
 void gtkui_cb_video_refresh() {
 	opengl_cleanup();
 	video_init();
