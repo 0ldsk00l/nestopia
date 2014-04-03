@@ -161,6 +161,62 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(combo_video_decoder), "changed",
 		G_CALLBACK(gtkui_cb_video_decoder), NULL);
 	
+	// NTSC Mode
+	GtkWidget *box_video_ntscmode = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_video_ntscmode = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "NTSC Mode:",
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	GtkWidget *combo_video_ntscmode = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_ntscmode), "Composite");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_ntscmode), "S-Video");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_ntscmode), "RGB");
+		
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_video_ntscmode), conf.video_ntsc_mode);
+	
+	gtk_box_pack_start(GTK_BOX(box_video_ntscmode), label_video_ntscmode, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_video_ntscmode), combo_video_ntscmode, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_video), box_video_ntscmode, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_video_ntscmode), "changed",
+		G_CALLBACK(gtkui_cb_video_ntscmode), NULL);
+	
+	// NTSC Mode
+	GtkWidget *box_video_xbrrounding = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_video_xbrrounding = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "xBR Corner Rounding:",
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	GtkWidget *combo_video_xbrrounding = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_xbrrounding), "None");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_xbrrounding), "Some");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_xbrrounding), "All");
+		
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_video_xbrrounding), conf.video_xbr_corner_rounding);
+	
+	gtk_box_pack_start(GTK_BOX(box_video_xbrrounding), label_video_xbrrounding, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_video_xbrrounding), combo_video_xbrrounding, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_video), box_video_xbrrounding, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_video_xbrrounding), "changed",
+		G_CALLBACK(gtkui_cb_video_xbrrounding), NULL);
+	
 	// Audio //
 	GtkWidget *box_audio = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	
