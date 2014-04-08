@@ -220,6 +220,112 @@ GtkWidget *gtkui_config() {
 	// Audio //
 	GtkWidget *box_audio = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	
+	// Audio API
+	GtkWidget *box_audio_api = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_audio_api = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "API:",
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	GtkWidget *combo_audio_api = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "SDL");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "libao");
+		
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_api), conf.audio_api);
+	
+	gtk_box_pack_start(GTK_BOX(box_audio_api), label_audio_api, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_audio_api), combo_audio_api, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_audio), box_audio_api, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_audio_api), "changed",
+		G_CALLBACK(gtkui_cb_audio_api), NULL);
+	
+	// Sample Rate
+	GtkWidget *box_audio_samplerate = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_audio_samplerate = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "Sample Rate:",
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	GtkWidget *combo_audio_samplerate = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "11025Hz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "22050Hz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "44100Hz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "48000Hz");
+	
+	switch (conf.audio_sample_rate) {
+		case 11025:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 0);
+			break;
+		case 22050:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 1);
+			break;
+		case 44100:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 2);
+			break;
+		case 48000:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 3);
+			break;
+		default:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 2);
+			break;
+	}
+	
+	gtk_box_pack_start(GTK_BOX(box_audio_samplerate), label_audio_samplerate, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_audio_samplerate), combo_audio_samplerate, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_audio), box_audio_samplerate, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_audio_samplerate), "changed",
+		G_CALLBACK(gtkui_cb_audio_samplerate), NULL);
+	
+	// Stereo
+	GtkWidget *check_audio_stereo = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Stereo",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_audio_stereo), conf.audio_stereo);
+	
+	gtk_box_pack_start(GTK_BOX(box_audio), check_audio_stereo, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_audio_stereo), "toggled",
+		G_CALLBACK(gtkui_cb_audio_stereo), NULL);
+	
+	// Volume
+	GtkAdjustment *adj_audio_volume = gtk_adjustment_new(conf.audio_volume, 0, 100, 1, 5, 0);
+	GtkWidget *box_audio_volume = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *scale_audio_volume = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume,
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	gtk_box_pack_start(GTK_BOX(box_audio_volume), scale_audio_volume, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_audio), box_audio_volume, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(scale_audio_volume), "value-changed",
+		G_CALLBACK(gtkui_cb_audio_volume), NULL);
+	
 	// Input //
 	GtkWidget *box_input = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	

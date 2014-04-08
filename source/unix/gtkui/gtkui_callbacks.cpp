@@ -24,6 +24,7 @@
 
 #include "../main.h"
 #include "../config.h"
+#include "../audio.h"
 #include "../video.h"
 
 #include "gtkui.h"
@@ -43,6 +44,15 @@ void gtkui_cb_reset(GtkWidget *reset, int hard) {
 void gtkui_cb_destroy_config() {
 	// Do nothing
 }
+
+void gtkui_cb_video_refresh() {
+	// Refresh the Video output after changes
+	opengl_cleanup();
+	video_init();
+	gtkui_resize();
+}
+
+// Video //
 
 void gtkui_cb_video_filter(GtkComboBox *combobox, gpointer userdata) {
 	// Change the video filter
@@ -87,10 +97,50 @@ void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata) {
 	gtkui_cb_video_refresh();
 }
 
-void gtkui_cb_video_refresh() {
-	opengl_cleanup();
-	video_init();
-	gtkui_resize();
+// Audio //
+
+void gtkui_cb_audio_api(GtkComboBox *combobox, gpointer userdata) {
+	// Change the Audio API
+	nst_pause();
+	conf.audio_api = gtk_combo_box_get_active(combobox);
+	nst_play();
+}
+
+void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata) {
+	// Change the Sample Rate
+	nst_pause();
+	switch (gtk_combo_box_get_active(combobox)) {
+		case 0:
+			conf.audio_sample_rate = 11025;
+			break;
+		case 1:
+			conf.audio_sample_rate = 22050;
+			break;
+		case 2:
+			conf.audio_sample_rate = 44100;
+			break;
+		case 3:
+			conf.audio_sample_rate = 48000;
+			break;
+		default:
+			conf.audio_sample_rate = 44100;
+			break;
+	}
+	nst_play();
+}
+
+void gtkui_cb_audio_stereo(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Toggle Stereo
+	nst_pause();
+	conf.audio_stereo = gtk_toggle_button_get_active(togglebutton);
+	nst_play();
+}
+
+void gtkui_cb_audio_volume(GtkRange *range, gpointer userdata) {
+	// Change master volume
+	conf.audio_volume = (int)gtk_range_get_value(range);
+	//printf("Volume: %d\n", (int)gtk_range_get_value(range));
+	audio_adj_volume();
 }
 
 //// Key Translation ////
