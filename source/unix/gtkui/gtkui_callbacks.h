@@ -12,6 +12,10 @@ void gtkui_cb_video_palette(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_video_decoder(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_video_ntscmode(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata);
+void gtkui_cb_video_brightness(GtkRange *range, gpointer userdata);
+void gtkui_cb_video_saturation(GtkRange *range, gpointer userdata);
+void gtkui_cb_video_contrast(GtkRange *range, gpointer userdata);
+void gtkui_cb_video_hue(GtkRange *range, gpointer userdata);
 
 void gtkui_cb_audio_api(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata);
