@@ -97,6 +97,30 @@ void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata) {
 	gtkui_cb_video_refresh();
 }
 
+void gtkui_cb_video_brightness(GtkRange *range, gpointer userdata) {
+	// Change video brightness
+	conf.video_brightness = (int)gtk_range_get_value(range);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_saturation(GtkRange *range, gpointer userdata) {
+	// Change video saturation
+	conf.video_saturation = (int)gtk_range_get_value(range);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_contrast(GtkRange *range, gpointer userdata) {
+	// Change video contrast
+	conf.video_contrast = (int)gtk_range_get_value(range);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_hue(GtkRange *range, gpointer userdata) {
+	// Change video hue
+	conf.video_hue = (int)gtk_range_get_value(range);
+	gtkui_cb_video_refresh();
+}
+
 // Audio //
 
 void gtkui_cb_audio_api(GtkComboBox *combobox, gpointer userdata) {
