@@ -148,7 +148,7 @@ void gtkui_create() {
 	g_signal_connect(drawingarea, "realize",
 		G_CALLBACK(area_start), gtkwindow);
 	
-	g_signal_connect(G_OBJECT(gtkwindow), "destroy",
+	g_signal_connect(G_OBJECT(gtkwindow), "delete_event",
 		G_CALLBACK(nst_schedule_quit), NULL);
 	
 	// File menu
