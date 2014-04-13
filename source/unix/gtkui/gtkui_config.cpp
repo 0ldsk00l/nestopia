@@ -526,6 +526,33 @@ GtkWidget *gtkui_config() {
 	// Input //
 	GtkWidget *box_input = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	
+	// Turbo Pulse
+	GtkAdjustment *adj_input_turbopulse = gtk_adjustment_new(conf.timing_turbopulse, 2, 9, 1, 5, 0);
+	GtkWidget *box_input_turbopulse = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_input_turbopulse = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "Turbo Pulse",
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	GtkWidget *scale_input_turbopulse = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				"orientation", GTK_ORIENTATION_HORIZONTAL,
+				"adjustment", adj_input_turbopulse,
+				"width-request", 60,
+				"height-request", 32,
+				"digits", 0,
+				NULL);
+	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), label_input_turbopulse, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), scale_input_turbopulse, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_turbopulse, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(scale_input_turbopulse), "value-changed",
+		G_CALLBACK(gtkui_cb_input_turbopulse), NULL);
+	
 	// Misc //
 	GtkWidget *box_misc = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	

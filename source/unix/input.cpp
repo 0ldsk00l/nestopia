@@ -138,7 +138,7 @@ void input_pulse_turbo(Input::Controllers *controllers) {
 	// Pulse the turbo buttons if they're pressed
 	if (turbostate.p1a) {
 		turbotoggle.p1a++;
-		if (turbotoggle.p1a == conf.timing_turbopulse) {
+		if (turbotoggle.p1a >= conf.timing_turbopulse) {
 			turbotoggle.p1a = 0;
 			controllers->pad[0].buttons &= ~Input::Controllers::Pad::A;
 		}
@@ -147,7 +147,7 @@ void input_pulse_turbo(Input::Controllers *controllers) {
 	
 	if (turbostate.p1b) {
 		turbotoggle.p1b++;
-		if (turbotoggle.p1b == conf.timing_turbopulse) {
+		if (turbotoggle.p1b >= conf.timing_turbopulse) {
 			turbotoggle.p1b = 0;
 			controllers->pad[0].buttons &= ~Input::Controllers::Pad::B;
 		}
@@ -156,7 +156,7 @@ void input_pulse_turbo(Input::Controllers *controllers) {
 	
 	if (turbostate.p2a) {
 		turbotoggle.p2a++;
-		if (turbotoggle.p2a == conf.timing_turbopulse) {
+		if (turbotoggle.p2a >= conf.timing_turbopulse) {
 			turbotoggle.p2a = 0;
 			controllers->pad[1].buttons &= ~Input::Controllers::Pad::A;
 		}
@@ -165,7 +165,7 @@ void input_pulse_turbo(Input::Controllers *controllers) {
 	
 	if (turbostate.p2b) {
 		turbotoggle.p2b++;
-		if (turbotoggle.p2b == conf.timing_turbopulse) {
+		if (turbotoggle.p2b >= conf.timing_turbopulse) {
 			turbotoggle.p2b = 0;
 			controllers->pad[1].buttons &= ~Input::Controllers::Pad::B;
 		}
