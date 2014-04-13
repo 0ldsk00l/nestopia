@@ -67,6 +67,7 @@ bool loaded = false;
 bool nst_pal = false;
 bool playing = false;
 bool updateok = false;
+bool frameskip = false;
 
 static int nst_quit = 0;
 
@@ -898,9 +899,17 @@ int main(int argc, char *argv[]) {
 				// Pulse the turbo buttons
 				input_pulse_turbo(cNstPads);
 				
+				// Check if it's time to skip a frame
+				frameskip = timing_frameskip();
+				
 				// Execute a frame
-				emulator.Execute(cNstVideo, cNstSound, cNstPads);
-				updateok = false;
+				if (!frameskip) {
+					emulator.Execute(cNstVideo, cNstSound, cNstPads);
+				}
+				else { emulator.Execute(NULL, cNstSound, cNstPads); }
+				
+				// Prevent insane speeds if vsync is turned off
+				if (!conf.timing_vsync) { updateok = false; }
 			}
 		}
 	}

@@ -49,6 +49,11 @@ int16_t audiobuf[96000];
 
 int framerate, channels;
 
+bool libao_hack = false;
+bool altspeed = false;
+int framepulse = 2;
+int framecounter = 0;
+
 static volatile int16_t *buffer[NUMBUFFERS];
 static volatile int bufstat[NUMBUFFERS];
 static int playbuf, writebuf;
@@ -182,6 +187,8 @@ void audio_init() {
 	
 	memset(audiobuf, 0, sizeof(audiobuf));
 	
+	libao_hack = false;
+	
 	if (conf.audio_api == 0) { // SDL
 		spec.freq = conf.audio_sample_rate;
 		spec.format = AUDIO_S16SYS;
@@ -220,6 +227,12 @@ void audio_init() {
 		}
 		else {
 			fprintf(stderr, "Audio: libao - %dHz, %d-bit, %d channel(s)\n", format.rate, format.bits, format.channels);
+		}
+		
+		// libao's ALSA plugin causes buffer underflows when vsync is enabled
+		if (ao_default_driver_id() == ao_driver_id("alsa")) {
+			fprintf(stderr, "Warning: libao's ALSA plugin is buggy. Hack enabled, but no promises!\n");
+			libao_hack = true;
 		}
 	}
 #endif
@@ -318,14 +331,38 @@ void audio_output_frame(unsigned long numsamples, int16_t *out) {
 
 // Timing Functions
 
+bool timing_frameskip() {
+	// Calculate whether to skip a frame or not
+	static int flipper = 1;
+	
+	framecounter++;
+	
+	if (libao_hack) {
+		if (framecounter == 900) {
+			framecounter = 0;
+			return true;
+		}
+	}
+	
+	if (!altspeed) {
+		return false;
+	}
+	else {
+		if (flipper > framepulse) { flipper = 0; return false; }
+		else { flipper++; return true; }
+	}
+	
+	return false;
+}
+
 void timing_set_default() {
 	// Set the framerate to the default
+	altspeed = false;
 	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
-	SDL_GL_SetSwapInterval(conf.timing_vsync);
 }
 
 void timing_set_altspeed() {
 	// Set the framerate to the alternate speed
+	altspeed = true;
 	framerate = conf.timing_altspeed;
-	SDL_GL_SetSwapInterval(0);
 }
