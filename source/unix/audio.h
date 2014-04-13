@@ -20,7 +20,6 @@ void audio_set_samples(uint32_t samples_per_frame);
 void audio_fill_buffer(int bufnum);
 void audio_output_frame(unsigned long numsamples, int16_t *out);
 
-void timing_check();
 void timing_set_default();
 void timing_set_altspeed();
 

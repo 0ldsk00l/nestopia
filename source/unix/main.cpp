@@ -893,7 +893,7 @@ int main(int argc, char *argv[]) {
 				Rewinder(emulator).EnableSound(true);
 			}
 			
-			timing_check();
+			audio_play();
 			if (updateok) {
 				// Pulse the turbo buttons
 				input_pulse_turbo(cNstPads);
