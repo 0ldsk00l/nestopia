@@ -215,6 +215,14 @@ void gtkui_cb_audio_volume(GtkRange *range, gpointer userdata) {
 	audio_adj_volume();
 }
 
+//// Input ////
+
+void gtkui_cb_input_turbopulse(GtkRange *range, gpointer userdata) {
+	// Change master volume
+	conf.timing_turbopulse = (int)gtk_range_get_value(range);
+	audio_adj_volume();
+}
+
 //// Key Translation ////
 
 unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval) {
