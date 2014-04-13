@@ -134,7 +134,7 @@ void audio_set_samples(uint32_t samples_per_frame) {
 		buffer[i] = (volatile int16_t *)malloc(samples_per_frame * 2 * sizeof(uint16_t));
 		
 		if (!buffer[i]) {
-			fprintf(stderr, "Couldn't alloc buffer for SDL audio!\n");
+			fprintf(stderr, "Warning: Unable to allocate audio buffer.\n");
 			exit(-1);
 		}
 		
@@ -151,20 +151,23 @@ void audio_play() {
 	
 	int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
-	audio_output_frame((conf.audio_sample_rate / framerate), (int16_t *)buffer[writebuf]);
-	
-	if (conf.audio_api == 0) { // SDL			
-		// You can speed it up by manipulating the following line
-		bufstat[writebuf] = bufsize;
-		
-		if (++writebuf >= NUMBUFFERS) {
-			writebuf = 0;
+	if (conf.audio_api == 0) { // SDL
+		while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
+			
+			audio_output_frame((conf.audio_sample_rate / framerate), (int16_t *)buffer[writebuf]);
+			
+			// You can speed it up by manipulating the following line
+			bufstat[writebuf] = bufsize;
+			
+			if (++writebuf >= NUMBUFFERS) {
+				writebuf = 0;
+			}
 		}
 	}
 #ifndef _MINGW
 	else if (conf.audio_api == 1) { // libao
+		audio_output_frame((conf.audio_sample_rate / framerate), (int16_t *)buffer[writebuf]);
 		audio_ao_callback((char*)buffer[writebuf], bufsize);
-		//ao_play(aodevice, (char*)buffer[writebuf], bufsize);
 	}
 #endif
 }
@@ -213,6 +216,7 @@ void audio_init() {
 		aodevice = ao_open_live(default_driver, &format, NULL);
 		if (aodevice == NULL) {
 			fprintf(stderr, "Error opening audio device.\n");
+			aodevice = ao_open_live(ao_driver_id("null"), &format, NULL);
 		}
 		else {
 			fprintf(stderr, "Audio: libao - %dHz, %d-bit, %d channel(s)\n", format.rate, format.bits, format.channels);
@@ -313,18 +317,6 @@ void audio_output_frame(unsigned long numsamples, int16_t *out) {
 }
 
 // Timing Functions
-
-void timing_check() {
-	
-	if (conf.audio_api == 0) { // SDL
-		while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
-			audio_play();
-		}
-	}
-	else {
-		audio_play();
-	}
-}
 
 void timing_set_default() {
 	// Set the framerate to the default
