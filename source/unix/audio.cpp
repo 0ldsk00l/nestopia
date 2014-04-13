@@ -265,6 +265,20 @@ void audio_set_params(Sound::Output *soundoutput) {
 	sound.SetSampleBits(16);
 	sound.SetSampleRate(conf.audio_sample_rate);
 	
+	sound.SetSpeaker(conf.audio_stereo ? Sound::SPEAKER_STEREO : Sound::SPEAKER_MONO);
+	sound.SetSpeed(Sound::DEFAULT_SPEED);
+	
+	audio_adj_volume();
+	
+	soundoutput->samples[0] = audiobuf;
+	soundoutput->length[0] = conf.audio_sample_rate / framerate;
+	soundoutput->samples[1] = NULL;
+	soundoutput->length[1] = 0;
+}
+
+void audio_adj_volume() {
+	// Adjust the audio volume to the current settings
+	Sound sound(emulator);
 	sound.SetVolume(Sound::ALL_CHANNELS, conf.audio_volume);
 	/*sound.SetVolume(Sound::CHANNEL_SQUARE1, conf.audio_vol_sq1);
 	sound.SetVolume(Sound::CHANNEL_SQUARE2, conf.audio_vol_sq2);
@@ -277,20 +291,6 @@ void audio_set_params(Sound::Output *soundoutput) {
 	sound.SetVolume(Sound::CHANNEL_VRC7, conf.audio_vol_vrc7);
 	sound.SetVolume(Sound::CHANNEL_N163, conf.audio_vol_n163);
 	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);*/
-	
-	sound.SetSpeaker(conf.audio_stereo ? Sound::SPEAKER_STEREO : Sound::SPEAKER_MONO);
-	sound.SetSpeed(Sound::DEFAULT_SPEED);
-	
-	soundoutput->samples[0] = audiobuf;
-	soundoutput->length[0] = conf.audio_sample_rate / framerate;
-	soundoutput->samples[1] = NULL;
-	soundoutput->length[1] = 0;
-}
-
-void audio_adj_volume() {
-	// Adjust the audio volume to the current settings
-	Sound sound(emulator);
-	sound.SetVolume(Sound::ALL_CHANNELS, conf.audio_volume);
 }
 
 void audio_output_frame(unsigned long numsamples, int16_t *out) {
@@ -323,7 +323,6 @@ void timing_check() {
 	}
 	else {
 		audio_play();
-		updateok = true;
 	}
 }
 
