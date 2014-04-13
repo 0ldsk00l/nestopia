@@ -31,6 +31,7 @@
 #include "gtkui_callbacks.h"
 
 extern settings_t conf;
+extern bool playing;
 
 //// Menu ////
 
@@ -47,8 +48,11 @@ void gtkui_cb_destroy_config() {
 
 void gtkui_cb_video_refresh() {
 	// Refresh the Video output after changes
-	opengl_cleanup();
-	video_init();
+	if (playing) {
+		opengl_cleanup();
+		video_init();
+	}
+	else { video_set_params(); }
 	gtkui_resize();
 }
 
@@ -72,6 +76,54 @@ void gtkui_cb_video_scale(GtkComboBox *combobox, gpointer userdata) {
 	gtkui_cb_video_refresh();
 }
 
+void gtkui_cb_video_ntscmode(GtkComboBox *combobox, gpointer userdata) {
+	// Change the NTSC Mode
+	conf.video_ntsc_mode = gtk_combo_box_get_active(combobox);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata) {
+	// Set xBR corner rounding parameters
+	conf.video_xbr_corner_rounding = gtk_combo_box_get_active(combobox);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_xbrpixblend(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set xBR pixel blending parameters
+	conf.video_xbr_pixel_blending = gtk_toggle_button_get_active(togglebutton);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_linear_filter(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set linear filter
+	conf.video_linear_filter = gtk_toggle_button_get_active(togglebutton);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_tv_aspect(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set TV aspect ratio
+	conf.video_tv_aspect = gtk_toggle_button_get_active(togglebutton);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_mask_overscan(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set overscan mask
+	conf.video_mask_overscan = gtk_toggle_button_get_active(togglebutton);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_preserve_aspect(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set aspect ratio preservation
+	conf.video_preserve_aspect = gtk_toggle_button_get_active(togglebutton);
+	gtkui_cb_video_refresh();
+}
+
+void gtkui_cb_video_unlimited_sprites(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set sprite limit
+	conf.video_unlimited_sprites = gtk_toggle_button_get_active(togglebutton);
+	gtkui_cb_video_refresh();
+}
+
 void gtkui_cb_video_palette(GtkComboBox *combobox, gpointer userdata) {
 	// Change the video palette
 	conf.video_palette_mode = gtk_combo_box_get_active(combobox);
@@ -82,18 +134,6 @@ void gtkui_cb_video_palette(GtkComboBox *combobox, gpointer userdata) {
 void gtkui_cb_video_decoder(GtkComboBox *combobox, gpointer userdata) {
 	// Change the YUV Decoder
 	conf.video_decoder = gtk_combo_box_get_active(combobox);
-	gtkui_cb_video_refresh();
-}
-
-void gtkui_cb_video_ntscmode(GtkComboBox *combobox, gpointer userdata) {
-	// Change the NTSC Mode
-	conf.video_ntsc_mode = gtk_combo_box_get_active(combobox);
-	gtkui_cb_video_refresh();
-}
-
-void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata) {
-	// Set xBR corner rounding parameters
-	conf.video_xbr_corner_rounding = gtk_combo_box_get_active(combobox);
 	gtkui_cb_video_refresh();
 }
 
@@ -125,14 +165,16 @@ void gtkui_cb_video_hue(GtkRange *range, gpointer userdata) {
 
 void gtkui_cb_audio_api(GtkComboBox *combobox, gpointer userdata) {
 	// Change the Audio API
-	nst_pause();
 	conf.audio_api = gtk_combo_box_get_active(combobox);
-	nst_play();
+	
+	if (playing) {
+		nst_pause();
+		nst_play();
+	}
 }
 
 void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata) {
 	// Change the Sample Rate
-	nst_pause();
 	switch (gtk_combo_box_get_active(combobox)) {
 		case 0:
 			conf.audio_sample_rate = 11025;
@@ -150,20 +192,26 @@ void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata) {
 			conf.audio_sample_rate = 44100;
 			break;
 	}
-	nst_play();
+	
+	if (playing) {
+		nst_pause();
+		nst_play();
+	}
 }
 
 void gtkui_cb_audio_stereo(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Toggle Stereo
-	nst_pause();
 	conf.audio_stereo = gtk_toggle_button_get_active(togglebutton);
-	nst_play();
+	
+	if (playing) {
+		nst_pause();
+		nst_play();
+	}
 }
 
 void gtkui_cb_audio_volume(GtkRange *range, gpointer userdata) {
 	// Change master volume
 	conf.audio_volume = (int)gtk_range_get_value(range);
-	//printf("Volume: %d\n", (int)gtk_range_get_value(range));
 	audio_adj_volume();
 }
 
