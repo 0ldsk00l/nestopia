@@ -910,8 +910,11 @@ int main(int argc, char *argv[]) {
 				}
 				else { emulator.Execute(NULL, cNstSound, cNstPads); }
 				
-				// Prevent insane speeds if vsync is turned off
-				if (!conf.timing_vsync || !altspeed) { updateok = false; }
+				// Prevent insane speeds when vsync is turned off...
+				if (!altspeed) { updateok = false; }
+				
+				// ...but only use the limiter when enabled
+				if (!conf.timing_limiter) { updateok = true; }
 			}
 		}
 	}

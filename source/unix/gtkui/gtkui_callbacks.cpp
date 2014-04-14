@@ -223,6 +223,13 @@ void gtkui_cb_input_turbopulse(GtkRange *range, gpointer userdata) {
 	audio_adj_volume();
 }
 
+//// Misc ////
+
+void gtkui_cb_timing_limiter(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set the limiter on or off
+	conf.timing_limiter = gtk_toggle_button_get_active(togglebutton);
+}
+
 //// Key Translation ////
 
 unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval) {

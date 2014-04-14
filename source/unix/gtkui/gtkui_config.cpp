@@ -556,6 +556,20 @@ GtkWidget *gtkui_config() {
 	// Misc //
 	GtkWidget *box_misc = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	
+	// Limiter
+	GtkWidget *check_timing_limiter = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Speed Limiter",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_timing_limiter), conf.timing_limiter);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc), check_timing_limiter, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_timing_limiter), "toggled",
+		G_CALLBACK(gtkui_cb_timing_limiter), NULL);
+	
 	// Structuring the notebook
 	GtkWidget *label_video = gtk_label_new("Video");
 	GtkWidget *label_audio = gtk_label_new("Audio");

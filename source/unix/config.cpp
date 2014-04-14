@@ -110,6 +110,7 @@ void config_file_write() {
 		fprintf(fp, "turbopulse=%d\n\n", conf.timing_turbopulse);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "vsync=%d\n", conf.timing_vsync);
+		fprintf(fp, "limiter=%d\n", conf.timing_limiter);
 		fprintf(fp, "\n"); // End of Section
 		
 		// Misc
@@ -173,6 +174,7 @@ void config_set_default() {
 	conf.timing_altspeed = 180;
 	conf.timing_turbopulse = 3;
 	conf.timing_vsync = true;
+	conf.timing_limiter = true;
 	
 	// Misc
 	//conf.misc_video_region = 0; // Not in use right now
@@ -228,6 +230,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("timing", "altspeed")) { pconfig->timing_altspeed = atoi(value); }
 	else if (MATCH("timing", "turbopulse")) { pconfig->timing_turbopulse = atoi(value); }
 	else if (MATCH("timing", "vsync")) { pconfig->timing_vsync = atoi(value); }
+	else if (MATCH("timing", "limiter")) { pconfig->timing_vsync = atoi(value); }
     
 	// Misc
 	//else if (MATCH("misc", "video_region")) { pconfig->misc_video_region = atoi(value); }
