@@ -337,7 +337,7 @@ bool timing_frameskip() {
 	framecounter++;
 	
 	if (libao_hack) {
-		if (framecounter == 900) {
+		if (framecounter == 600) {
 			framecounter = 0;
 			return true;
 		}

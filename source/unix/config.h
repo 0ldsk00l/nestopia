@@ -44,6 +44,7 @@ typedef struct {
 	int timing_altspeed;
 	int timing_turbopulse;
 	bool timing_vsync;
+	bool timing_limiter;
 	
 	// Misc
 	//int misc_video_region;
