@@ -158,7 +158,6 @@ void audio_play() {
 	
 	if (conf.audio_api == 0) { // SDL
 		while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
-			
 			audio_output_frame((conf.audio_sample_rate / framerate), (int16_t *)buffer[writebuf]);
 			
 			// You can speed it up by manipulating the following line

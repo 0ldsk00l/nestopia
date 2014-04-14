@@ -81,6 +81,7 @@ static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
 extern settings_t conf;
+extern bool altspeed;
 
 static Machine::FavoredSystem get_favored_system() {
 	switch (conf.misc_default_system) {
@@ -895,6 +896,7 @@ int main(int argc, char *argv[]) {
 			}
 			
 			audio_play();
+			
 			if (updateok) {
 				// Pulse the turbo buttons
 				input_pulse_turbo(cNstPads);
@@ -909,7 +911,7 @@ int main(int argc, char *argv[]) {
 				else { emulator.Execute(NULL, cNstSound, cNstPads); }
 				
 				// Prevent insane speeds if vsync is turned off
-				if (!conf.timing_vsync) { updateok = false; }
+				if (!conf.timing_vsync || !altspeed) { updateok = false; }
 			}
 		}
 	}
