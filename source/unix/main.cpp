@@ -83,28 +83,6 @@ static Cartridge::Database::Entry dbentry;
 extern settings_t conf;
 extern bool altspeed;
 
-static Machine::FavoredSystem get_favored_system() {
-	switch (conf.misc_default_system) {
-		case 0:
-			return Machine::FAVORED_NES_NTSC;
-			break;
-
-		case 1:
-			return Machine::FAVORED_NES_PAL;
-			break;
-
-		case 2:
-			return Machine::FAVORED_FAMICOM;
-			break;
-
-		case 3:
-			return Machine::FAVORED_DENDY;
-			break;
-	}
-
-	return Machine::FAVORED_NES_NTSC;
-}
-
 // *******************
 // emulation callbacks
 // *******************
@@ -313,6 +291,28 @@ void nst_switch_disk() {
 	}
 }
 
+static Machine::FavoredSystem nst_default_system() {
+	switch (conf.misc_default_system) {
+		case 0:
+			return Machine::FAVORED_NES_NTSC;
+			break;
+
+		case 1:
+			return Machine::FAVORED_NES_PAL;
+			break;
+
+		case 2:
+			return Machine::FAVORED_FAMICOM;
+			break;
+
+		case 3:
+			return Machine::FAVORED_DENDY;
+			break;
+	}
+
+	return Machine::FAVORED_NES_NTSC;
+}
+
 void nst_dipswitch() {
 	// Right now just print the info
 	DipSwitches dipswitches(emulator);
@@ -347,18 +347,18 @@ void nst_state_load(char *filename) {
 	Machine machine(emulator);
 	
 	std::ifstream statefile(filename, std::ifstream::in|std::ifstream::binary);
-
+	
 	if (statefile.is_open()) { machine.LoadState(statefile); }
 }
 
 void nst_state_quicksave(int isvst) {
 	// Save State
 	std::string strFile = StrQuickSaveFile(isvst);
-
+	
 	Machine machine( emulator );
 	std::ofstream os(strFile.c_str());
-	// use "NO_COMPRESSION" to make it easier to hack save states
-	Nes::Result res = machine.SaveState(os, Nes::Api::Machine::NO_COMPRESSION);
+	
+	machine.SaveState(os, Nes::Api::Machine::NO_COMPRESSION);
 	fprintf(stderr, "State Saved: %s\n", strFile.c_str());
 }
 
@@ -375,7 +375,7 @@ void nst_state_quickload(int isvst) {
 
 	Machine machine( emulator );
 	std::ifstream is(strFile.c_str());
-	Nes::Result res = machine.LoadState(is);
+	machine.LoadState(is);
 	fprintf(stderr, "State Loaded: %s\n", strFile.c_str());
 }
 
@@ -414,139 +414,6 @@ void nst_reset(bool hardreset) {
 void nst_schedule_quit() {
 	nst_quit = 1;
 }
-
-/*static void NST_CALLBACK DoFileIO(void *userData, User::File& file)
-{
-	unsigned char *compbuffer;
-	int compsize, compoffset;
-	char mbstr[512];
-
-	switch (file.GetAction())
-	{
-		case User::File::LOAD_ROM:
-			wcstombs(mbstr, file.GetName(), 511);
-
-			if (fileio_load_archive(lastarchname, &compbuffer, &compsize, &compoffset, (const char *)mbstr))
-			{
-				file.SetContent((const void*)&compbuffer[compoffset], (unsigned long int)compsize);
-
-				free(compbuffer);
-			}				
-			break;
-
-		case User::File::LOAD_SAMPLE:
-		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU:
-		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU_88:
-		case User::File::LOAD_SAMPLE_MOERO_PRO_TENNIS:
-		case User::File::LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU:
-		case User::File::LOAD_SAMPLE_AEROBICS_STUDIO:
-			wcstombs(mbstr, file.GetName(), 511);
-
-			if (fileio_load_archive(lastarchname, &compbuffer, &compsize, &compoffset, (const char *)mbstr))
-			{
-				int chan, bits, rate;
-
-				if (!strncmp((const char *)compbuffer, "RIFF", 4))
-				{
-					chan = compbuffer[20] | compbuffer[21]<<8;
-					rate = compbuffer[24] | compbuffer[25]<<8 | compbuffer[26]<<16 | compbuffer[27]<<24;
-					bits = compbuffer[34] | compbuffer[35]<<8; 
-
-//					std::cout << "WAV has " << chan << " chan, " << bits << " bits per sample, rate = " << rate << "\n";
-
-					file.SetSampleContent((const void*)&compbuffer[compoffset], (unsigned long int)compsize, (chan == 2) ? true : false, bits, rate);
-				}
-
-				free(compbuffer);
-			}				
-			break;
-
-		case User::File::LOAD_BATTERY: // load in battery data from a file
-		case User::File::LOAD_EEPROM: // used by some Bandai games, can be treated the same as battery files
-		case User::File::LOAD_TAPE: // for loading Famicom cassette tapes
-		case User::File::LOAD_TURBOFILE: // for loading turbofile data
-		{
-			//int size;
-			FILE *f;
-
-			f = fopen(savename, "rb");
-			if (!f)
-			{
-				return;
-			}
-			fseek(f, 0, SEEK_END);
-			//size = ftell(f);
-			fclose(f);
-
-			std::ifstream batteryFile( savename, std::ifstream::in|std::ifstream::binary );
-
-			if (batteryFile.is_open())
-			{
-				file.SetContent( batteryFile );
-			}
-			break;
-		}
-
-		case User::File::SAVE_BATTERY: // save battery data to a file
-		case User::File::SAVE_EEPROM: // can be treated the same as battery files
-		case User::File::SAVE_TAPE: // for saving Famicom cassette tapes
-		case User::File::SAVE_TURBOFILE: // for saving turbofile data
-		{
-			std::ofstream batteryFile( savename, std::ifstream::out|std::ifstream::binary );
-			const void* savedata;
-			unsigned long savedatasize;
-
-			file.GetContent( savedata, savedatasize );
-
-			if (batteryFile.is_open())
-				batteryFile.write( (const char*) savedata, savedatasize );
-
-			break;
-		}
-
-		case User::File::LOAD_FDS: // for loading modified Famicom Disk System files
-		{
-			char fdsname[512];
-
-			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
-			
-			std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
-
-			// no ups, look for ips
-			if (!batteryFile.is_open())
-			{
-				snprintf(fdsname, sizeof(fdsname), "%s.ips", rootname);
-
-				std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
-
-				if (!batteryFile.is_open())
-				{
-					return;
-				}
-
-				file.SetPatchContent(batteryFile);
-				return;
-			}
-
-			file.SetPatchContent(batteryFile);
-			break;
-		}
-
-		case User::File::SAVE_FDS: // for saving modified Famicom Disk System files
-		{
-			char fdsname[512];
-
-			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
-
-			std::ofstream fdsFile( fdsname, std::ifstream::out|std::ifstream::binary );
-
-			if (fdsFile.is_open())
-				file.GetPatchContent( User::File::PATCH_UPS, fdsFile );
-
-			break;
-		}
-	}
-}*/
 
 void nst_set_dirs() {
 	// Set up system directories
@@ -588,8 +455,8 @@ void nst_set_region() {
 	
 	if (database.IsLoaded()) {
 		//std::ifstream dbfile(filename, std::ios::in|std::ios::binary);
-		//Cartridge::ReadInes(dbfile, get_favored_system(), profile);
-		//dbentry = database.FindEntry(profile.hash, get_favored_system());
+		//Cartridge::ReadInes(dbfile, nst_default_system(), profile);
+		//dbentry = database.FindEntry(profile.hash, nst_default_system());
 		
 		machine.SetMode(machine.GetDesiredMode());
 		
@@ -725,10 +592,10 @@ void nst_load(const char *filename) {
 		Machine::Patch patch(pfile, false);
 
 		// Soft Patch
-		result = machine.Load(file, get_favored_system(), patch);
+		result = machine.Load(file, nst_default_system(), patch);
 	}
 	else {
-		result = machine.Load(file, get_favored_system());
+		result = machine.Load(file, nst_default_system());
 	}
 	
 	if (NES_FAILED(result)) {
