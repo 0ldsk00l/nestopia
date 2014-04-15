@@ -26,12 +26,9 @@
  
 extern GtkWidget *gtkwindow;
 
-void gtkui_file_open(GtkButton *button, gpointer user_data) {
+void gtkui_file_open() {
 	// Open a file using a GTK+ dialog
-	GtkWidget *dialog;
-	GtkFileFilter *filter;
-
-	dialog = gtk_file_chooser_dialog_new(
+	GtkWidget *dialog = gtk_file_chooser_dialog_new(
 				"Select a ROM",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_OPEN,
@@ -41,7 +38,7 @@ void gtkui_file_open(GtkButton *button, gpointer user_data) {
 				GTK_RESPONSE_ACCEPT,
 				NULL);
 	
-	filter = gtk_file_filter_new();
+	GtkFileFilter *filter = gtk_file_filter_new();
 	
 	gtk_file_filter_set_name(filter, "NES ROMs");
 	gtk_file_filter_add_pattern(filter, "*.nes");
@@ -72,9 +69,7 @@ void gtkui_file_open(GtkButton *button, gpointer user_data) {
 
 void gtkui_state_save() {
 	// Save a state from the GUI
-	GtkWidget *dialog;
-	
-	dialog = gtk_file_chooser_dialog_new("Save state (.nst)",
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save state (.nst)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_SAVE,
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -94,17 +89,14 @@ void gtkui_state_save() {
 
 void gtkui_state_load() {
 	// Load a state from the GUI
-	GtkWidget *dialog;
-	GtkFileFilter *filter;
-	
-	dialog = gtk_file_chooser_dialog_new("Load state (.nst)",
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load state (.nst)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_OPEN,
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
 				GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
 				NULL);
 
-	filter = gtk_file_filter_new();
+	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, "Nestopia save states");
 	gtk_file_filter_add_pattern(filter, "*.nst");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);

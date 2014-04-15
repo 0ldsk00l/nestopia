@@ -1,8 +1,10 @@
 #ifndef _GTKUI_DIALOGS_H_
 #define _GTKUI_DIALOGS_H_
 
-void gtkui_file_open(GtkButton *button, gpointer user_data);
+void gtkui_file_open();
 void gtkui_state_save();
 void gtkui_state_load();
+void gtkui_movie_save();
+void gtkui_movie_load();
 
 #endif
