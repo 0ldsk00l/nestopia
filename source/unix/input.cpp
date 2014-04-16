@@ -32,16 +32,17 @@
 #include "ini.h"
 
 extern settings_t conf;
-inputsettings_t inputconf;
+extern nstpaths_t nstpaths;
 
-SDL_Joystick *joystick;
+inputsettings_t inputconf;
 gamepad_t player[NUMGAMEPADS];
 
 char inputconfpath[256];
-extern char nstdir[256];
 
 turbo_t turbostate;
 turbo_t turbotoggle;
+
+SDL_Joystick *joystick;
 
 static unsigned char nescodes[TOTALBUTTONS] = {
 	Input::Controllers::Pad::UP,
@@ -499,7 +500,7 @@ int input_checksign(int axisvalue) {
 
 void input_config_read() {
 	// Read the input config file
-	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstdir);
+	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstpaths.nstdir);
 	
 	if (ini_parse(inputconfpath, input_config_match, &inputconf) < 0) {
 		fprintf(stderr, "Failed to load input config file %s: Using defaults.\n", inputconfpath);
