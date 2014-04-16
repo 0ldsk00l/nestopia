@@ -3,6 +3,15 @@
 
 #define VERSION "1.46-WIP"
 
+typedef struct {
+	char nstdir[256];
+	char savedir[256];
+	char gamename[256];
+	char savename[512];
+	char fdssave[512];
+} nstpaths_t;
+
+bool nst_find_patch(char *filename);
 void nst_load(const char *filename);
 void nst_play();
 void nst_pause();
@@ -11,6 +20,8 @@ void nst_schedule_quit();
 void nst_set_dirs();
 void nst_set_region();
 void nst_set_rewind(int direction);
+
+void nst_set_savepaths(const char *filename);
 
 void nst_state_save(char *filename);
 void nst_state_load(char *filename);

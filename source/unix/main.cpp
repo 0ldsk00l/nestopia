@@ -64,16 +64,15 @@ using namespace Nes::Api;
 Emulator emulator;
 
 bool loaded = false;
-bool nst_pal = false;
 bool playing = false;
 bool updateok = false;
 bool frameskip = false;
 
+bool nst_pal = false;
+
 static int nst_quit = 0;
 
-char nstdir[256], savedir[512];
-static char savename[512], gamebasename[512];
-char rootname[512];
+nstpaths_t nstpaths;
 
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
@@ -151,7 +150,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 		case User::File::LOAD_TAPE: // for loading Famicom cassette tapes
 		case User::File::LOAD_TURBOFILE: // for loading turbofile data
 		{		
-			std::ifstream batteryFile(savename, std::ifstream::in|std::ifstream::binary);
+			std::ifstream batteryFile(nstpaths.savename, std::ifstream::in|std::ifstream::binary);
 			
 			if (batteryFile.is_open()) { file.SetContent(batteryFile); }
 			break;
@@ -162,7 +161,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 		case User::File::SAVE_TAPE: // for saving Famicom cassette tapes
 		case User::File::SAVE_TURBOFILE: // for saving turbofile data
 		{
-			std::ofstream batteryFile(savename, std::ifstream::out|std::ifstream::binary);
+			std::ofstream batteryFile(nstpaths.savename, std::ifstream::out|std::ifstream::binary);
 			const void* savedata;
 			unsigned long savedatasize;
 
@@ -177,14 +176,14 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 		{
 			char fdsname[512];
 
-			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
+			snprintf(fdsname, sizeof(fdsname), "%s.ups", nstpaths.fdssave);
 			
 			std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
 
 			// no ups, look for ips
 			if (!batteryFile.is_open())
 			{
-				snprintf(fdsname, sizeof(fdsname), "%s.ips", rootname);
+				snprintf(fdsname, sizeof(fdsname), "%s.ips", nstpaths.fdssave);
 
 				std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
 
@@ -205,7 +204,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 		{
 			char fdsname[512];
 
-			snprintf(fdsname, sizeof(fdsname), "%s.ups", rootname);
+			snprintf(fdsname, sizeof(fdsname), "%s.ups", nstpaths.fdssave);
 
 			std::ofstream fdsFile( fdsname, std::ifstream::out|std::ifstream::binary );
 
@@ -243,14 +242,14 @@ void nst_pause() {
 }
 
 // generate the filename for quicksave files
-std::string StrQuickSaveFile(int isvst) {
+std::string StrQuickSaveFile(int slot) {
 	
 	std::ostringstream ossFile;
-	ossFile << nstdir;
+	ossFile << nstpaths.nstdir;
 	ossFile << "state";
 	
 	ossFile << "/" << std::setbase(16) << std::setfill('0') << std::setw(8)
-		<< basename(gamebasename) << std::string("_") << isvst << ".nst";
+		<< basename(nstpaths.gamename) << std::string("_") << slot << ".nst";
 	
 	return ossFile.str();
 }
@@ -351,9 +350,9 @@ void nst_state_load(char *filename) {
 	if (statefile.is_open()) { machine.LoadState(statefile); }
 }
 
-void nst_state_quicksave(int isvst) {
+void nst_state_quicksave(int slot) {
 	// Save State
-	std::string strFile = StrQuickSaveFile(isvst);
+	std::string strFile = StrQuickSaveFile(slot);
 	
 	Machine machine( emulator );
 	std::ofstream os(strFile.c_str());
@@ -363,9 +362,9 @@ void nst_state_quicksave(int isvst) {
 }
 
 
-void nst_state_quickload(int isvst) {
+void nst_state_quickload(int slot) {
 	// Load State
-	std::string strFile = StrQuickSaveFile(isvst);
+	std::string strFile = StrQuickSaveFile(slot);
 	
 	struct stat qloadstat;
 	if (stat(strFile.c_str(), &qloadstat) == -1) {
@@ -418,17 +417,17 @@ void nst_schedule_quit() {
 void nst_set_dirs() {
 	// Set up system directories
 #ifdef _MINGW
-	snprintf(nstdir, sizeof(nstdir), "");
+	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "");
 #else
 	// create system directory if it doesn't exist
-	snprintf(nstdir, sizeof(nstdir), "%s/.nestopia/", getenv("HOME"));
-	if (mkdir(nstdir, 0755) && errno != EEXIST) {	
-		fprintf(stderr, "Failed to create %s: %d\n", nstdir, errno);
+	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/.nestopia/", getenv("HOME"));
+	if (mkdir(nstpaths.nstdir, 0755) && errno != EEXIST) {	
+		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.nstdir, errno);
 	}
 #endif
 	// create save and state directories if they don't exist
 	char dirstr[256];
-	snprintf(dirstr, sizeof(dirstr), "%ssave", nstdir);
+	snprintf(dirstr, sizeof(dirstr), "%ssave", nstpaths.nstdir);
 #ifdef _MINGW	
 	if (mkdir(dirstr) && errno != EEXIST) {
 #else
@@ -437,7 +436,7 @@ void nst_set_dirs() {
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 
-	snprintf(dirstr, sizeof(dirstr), "%sstate", nstdir);
+	snprintf(dirstr, sizeof(dirstr), "%sstate", nstpaths.nstdir);
 #ifdef _MINGW	
 	if (mkdir(dirstr) && errno != EEXIST) {
 #else
@@ -509,61 +508,55 @@ void SetupInput()
 	}
 }
 
-void configure_savename(const char* filename) {
-	
-	int i = 0;
+void nst_set_savepaths(const char *filename) {
 	
 	// Set up the save directory
-	snprintf(savedir, sizeof(savedir), "%ssave/", nstdir);
+	snprintf(nstpaths.savedir, sizeof(nstpaths.savedir), "%ssave/", nstpaths.nstdir);
 	
 	// Copy the full file path to the savename variable
-	snprintf(savename, sizeof(savename), "%s", filename);
+	snprintf(nstpaths.savename, sizeof(nstpaths.savename), "%s", filename);
 	
 	// strip the . and extention off the filename for saving
-	for (i = strlen(savename)-1; i > 0; i--) {
-		if (savename[i] == '.') {
-			savename[i] = '\0';
+	for (int i = strlen(nstpaths.savename)-1; i > 0; i--) {
+		if (nstpaths.savename[i] == '.') {
+			nstpaths.savename[i] = '\0';
 			break;
 		}
 	}
 	
 	// Get the name of the game minus file path and extension
-	snprintf(gamebasename, sizeof(gamebasename), "%s", basename(savename));
+	snprintf(nstpaths.gamename, sizeof(nstpaths.gamename), "%s", basename(nstpaths.savename));
 	
 	// Construct save path
-	snprintf(savename, sizeof(savename), "%s%s%s", savedir, gamebasename, ".sav");
+	snprintf(nstpaths.savename, sizeof(nstpaths.savename), "%s%s%s", nstpaths.savedir, nstpaths.gamename, ".sav");
 
 	// Construct root path for FDS save patches
-	snprintf(rootname, sizeof(rootname), "%s%s", savedir, gamebasename);
+	snprintf(nstpaths.fdssave, sizeof(nstpaths.fdssave), "%s%s", nstpaths.savedir, nstpaths.gamename);
 }
 
-// try and find a patch for the game being loaded
-static int find_patch(char *patchname)
-{
-	FILE *f;
-
-	// did the user turn off auto softpatching?
-	if (!conf.misc_soft_patching)
-	{
+bool nst_find_patch(char *filename) {
+	// Check for a patch in the same directory as the game
+	FILE *file;
+	
+	if (!conf.misc_soft_patching) {
 		return 0;
 	}
-
-	snprintf(patchname, 511, "%s.ips", gamebasename);
-	if ((f = fopen(patchname, "rb")) != NULL)
-	{
-		fclose(f);
+	
+	snprintf(filename, sizeof(nstpaths.savename), "%s.ips", nstpaths.gamename);
+	
+	if ((file = fopen(filename, "rb")) != NULL) {
+		fclose(file);
 		return 1;
 	}
-	else
-	{
-		snprintf(patchname, 511, "%s.ups", gamebasename);
-		if ((f = fopen(patchname, "rb")) != NULL)
-		{
-			fclose(f);
+	else {
+		snprintf(filename, sizeof(nstpaths.savename), "%s.ups", nstpaths.gamename);
+		
+		if ((file = fopen(filename, "rb")) != NULL) {
+			fclose(file);
 			return 1;
 		}
 	}
-
+	
 	return 0;
 }
 
@@ -572,7 +565,7 @@ void nst_load(const char *filename) {
 	Machine machine(emulator);
 	Sound sound(emulator);
 	Nes::Result result;
-	char gamename[512], patchname[512];
+	char patchname[512];
 	
 	// Pause play before pulling out a cartridge
 	if (playing) { nst_pause(); }
@@ -580,13 +573,13 @@ void nst_load(const char *filename) {
 	// Pull out any inserted cartridges
 	nst_unload();
 
-	// (re)configure savename
-	configure_savename(filename);
+	// Set the savefile paths
+	nst_set_savepaths(filename);
 
 	// C++ file stream
 	std::ifstream file(filename, std::ios::in|std::ios::binary);
 
-	if (find_patch(patchname)) {
+	if (nst_find_patch(patchname)) {
 		std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
 
 		Machine::Patch patch(pfile, false);

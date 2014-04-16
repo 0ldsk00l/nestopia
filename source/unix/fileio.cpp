@@ -40,12 +40,8 @@
 #include "audio.h"
 #include "main.h"
 
-#define MAX_ITEMS	(512)
-
 extern Nes::Api::Emulator emulator;
-extern char rootname[512];
-extern char msgbuf[512];
-extern char nstdir[256];
+extern nstpaths_t nstpaths;
 
 static std::ifstream *moviePlayFile, *fdsBiosFile, *nstDBFile;
 static std::fstream *movieRecFile;
@@ -69,7 +65,7 @@ void fileio_set_fds_bios(void) {
 	
 	if (fdsBiosFile) { return; }
 
-	snprintf(biospath, sizeof(biospath), "%sdisksys.rom", nstdir);
+	snprintf(biospath, sizeof(biospath), "%sdisksys.rom", nstpaths.nstdir);
 
 	fdsBiosFile = new std::ifstream(biospath, std::ifstream::in|std::ifstream::binary);
 
@@ -108,7 +104,7 @@ void fileio_load_db(void) {
 	if (nstDBFile) { return; }
 
 	// Try to open the database file
-	snprintf(dbpath, sizeof(dbpath), "%sNstDatabase.xml", nstdir);
+	snprintf(dbpath, sizeof(dbpath), "%sNstDatabase.xml", nstpaths.nstdir);
 	nstDBFile = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
 	
 	if (nstDBFile->is_open()) {
