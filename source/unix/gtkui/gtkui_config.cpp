@@ -463,6 +463,7 @@ GtkWidget *gtkui_config() {
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "22050Hz");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "44100Hz");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "48000Hz");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_samplerate), "96000Hz");
 	
 	switch (conf.audio_sample_rate) {
 		case 11025:
@@ -476,6 +477,9 @@ GtkWidget *gtkui_config() {
 			break;
 		case 48000:
 			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 3);
+			break;
+		case 96000:
+			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 4);
 			break;
 		default:
 			gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_samplerate), 2);
