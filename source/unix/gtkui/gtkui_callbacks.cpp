@@ -188,6 +188,9 @@ void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata) {
 		case 3:
 			conf.audio_sample_rate = 48000;
 			break;
+		case 4:
+			conf.audio_sample_rate = 96000;
+			break;
 		default:
 			conf.audio_sample_rate = 44100;
 			break;
