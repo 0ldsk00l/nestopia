@@ -228,9 +228,34 @@ void gtkui_cb_input_turbopulse(GtkRange *range, gpointer userdata) {
 
 //// Misc ////
 
+void gtkui_cb_misc_default_system(GtkComboBox *combobox, gpointer userdata) {
+	// Select the default system
+	conf.misc_default_system = gtk_combo_box_get_active(combobox);
+}
+
+void gtkui_cb_timing_vsync(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Toggle vsync
+	conf.timing_vsync = gtk_toggle_button_get_active(togglebutton);
+}
+
 void gtkui_cb_timing_limiter(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Set the limiter on or off
 	conf.timing_limiter = gtk_toggle_button_get_active(togglebutton);
+}
+
+void gtkui_cb_misc_soft_patching(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Enable or Disable automatic soft patching
+	conf.misc_soft_patching = gtk_toggle_button_get_active(togglebutton);
+}
+
+void gtkui_cb_misc_genie_distortion(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Enable or Disable Game Genie Sound Distortion
+	conf.misc_genie_distortion = gtk_toggle_button_get_active(togglebutton);
+}
+
+void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Enable or Disable the GUI
+	conf.misc_disable_gui = gtk_toggle_button_get_active(togglebutton);
 }
 
 //// Key Translation ////
