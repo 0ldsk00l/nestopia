@@ -560,6 +560,49 @@ GtkWidget *gtkui_config() {
 	// Misc //
 	GtkWidget *box_misc = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	
+	// Default System
+	GtkWidget *box_misc_default_system = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_misc_default_system = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "Default System:",
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	GtkWidget *combo_misc_default_system = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "NTSC");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "PAL");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "Famicom");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "Dendy");
+		
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_misc_default_system), conf.misc_default_system);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc_default_system), label_misc_default_system, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_misc_default_system), combo_misc_default_system, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_misc), box_misc_default_system, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_misc_default_system), "changed",
+		G_CALLBACK(gtkui_cb_misc_default_system), NULL);
+	
+	// Vsync
+	GtkWidget *check_timing_vsync = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Vsync",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_timing_vsync), conf.timing_vsync);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc), check_timing_vsync, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_timing_vsync), "toggled",
+		G_CALLBACK(gtkui_cb_timing_vsync), NULL);
+	
 	// Limiter
 	GtkWidget *check_timing_limiter = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
@@ -573,6 +616,48 @@ GtkWidget *gtkui_config() {
 	
 	g_signal_connect(G_OBJECT(check_timing_limiter), "toggled",
 		G_CALLBACK(gtkui_cb_timing_limiter), NULL);
+	
+	// Soft Patching
+	GtkWidget *check_misc_soft_patching = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Automatic Soft Patching",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_soft_patching), conf.misc_soft_patching);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc), check_misc_soft_patching, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_misc_soft_patching), "toggled",
+		G_CALLBACK(gtkui_cb_misc_soft_patching), NULL);
+	
+	// Game Genie Sound Distortion
+	GtkWidget *check_misc_genie_distortion = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Game Genie Sound Distortion",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_genie_distortion), conf.misc_genie_distortion);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc), check_misc_genie_distortion, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_misc_genie_distortion), "toggled",
+		G_CALLBACK(gtkui_cb_misc_genie_distortion), NULL);
+	
+	// Disable GUI
+	GtkWidget *check_misc_disable_gui = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Disable GUI",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_disable_gui), conf.misc_disable_gui);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc), check_misc_disable_gui, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_misc_disable_gui), "toggled",
+		G_CALLBACK(gtkui_cb_misc_disable_gui), NULL);
 	
 	// Structuring the notebook
 	GtkWidget *label_video = gtk_label_new("Video");
