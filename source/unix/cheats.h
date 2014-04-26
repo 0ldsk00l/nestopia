@@ -8,7 +8,11 @@
 
 using namespace Nes::Api;
 
+typedef Nes::Core::Xml Xml;
+
 void cheats_init();
 void cheats_code_gg_add(const wchar_t *data);
+void cheats_code_par_add(const wchar_t *data);
+void cheats_code_raw_add(Xml::Node node);
 
 #endif
