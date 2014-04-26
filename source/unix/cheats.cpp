@@ -32,8 +32,6 @@
 extern Emulator emulator;
 extern nstpaths_t nstpaths;
 
-typedef Nes::Core::Xml Xml;
-
 void cheats_init() {
 	// Initialize cheat engine
 	Cheats cheats(emulator);
@@ -49,7 +47,7 @@ void cheats_init() {
 		if (xml.GetRoot().IsType(L"cheats")) {
 			
 			Xml::Node root(xml.GetRoot());
-			Xml::Node node(xml.GetRoot().GetFirstChild());
+			Xml::Node node(root.GetFirstChild());
 			
 			for (int i = 0; i < root.NumChildren(L"cheat"); i++) {
 				
@@ -60,9 +58,11 @@ void cheats_init() {
 					}
 					
 					else if (node.GetChild(L"rocky")) { // Pro Action Rocky
+						cheats_code_par_add(node.GetChild(L"rocky").GetValue());
 					}
 					
 					else if (node.GetChild(L"address")) { // Raw
+						cheats_code_raw_add(node);
 					}
 					
 					fprintf(stderr, "Cheat: %ls\n", node.GetChild(L"description").GetValue());
@@ -72,8 +72,6 @@ void cheats_init() {
 		}
 		cheatfile.close();
 	}
-	
-	//printf("Numcodes: %d\n", cheats.NumCodes());
 }
 
 void cheats_code_gg_add(const wchar_t *data) {
@@ -85,5 +83,33 @@ void cheats_code_gg_add(const wchar_t *data) {
 	wcstombs(gg, data, sizeof(gg));
 	
 	cheats.GameGenieDecode(gg, code);
+	cheats.SetCode(code);
+}
+
+void cheats_code_par_add(const wchar_t *data) {
+	// Add a Pro Action Rocky code
+	Cheats cheats(emulator);
+	Cheats::Code code;
+	
+	char par[9];
+	wcstombs(par, data, sizeof(par));
+	
+	cheats.ProActionRockyDecode(par, code);
+	cheats.SetCode(code);
+}
+
+void cheats_code_raw_add(Xml::Node node) {
+	// Add a Raw code
+	Cheats cheats(emulator);
+	Cheats::Code code;
+	
+	code.address = node.GetChild(L"address").GetUnsignedValue();
+	if (node.GetChild(L"value")) {
+		code.value = node.GetChild(L"value").GetUnsignedValue();
+	}
+	if (node.GetChild(L"compare")) {
+		code.compare = node.GetChild(L"compare").GetUnsignedValue();
+		code.useCompare = true;
+	}
 	cheats.SetCode(code);
 }
