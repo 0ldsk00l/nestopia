@@ -314,9 +314,9 @@ static Machine::FavoredSystem nst_default_system() {
 }
 
 void nst_dipswitch() {
-	// Right now just print the info
+	// Print DIP switch information and call handler
 	DipSwitches dipswitches(emulator);
-	
+		
 	int numdips = dipswitches.NumDips();
 	
 	if (numdips > 0) {
@@ -328,9 +328,8 @@ void nst_dipswitch() {
 				fprintf(stderr, " %d: %s\n", j, dipswitches.GetValueName(i, j));
 			}
 		}
+		dip_handle();
 	}
-	//dipswitches.SetValue(0,15);
-	//dipswitches.SetValue(1,0);
 }
 
 void nst_state_save(char *filename) {
