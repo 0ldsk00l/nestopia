@@ -113,3 +113,33 @@ void cheats_code_raw_add(Xml::Node node) {
 	}
 	cheats.SetCode(code);
 }
+
+// DIP Switches
+void dip_handle() {
+	// Handle the DIP switch file
+	DipSwitches dipswitches(emulator);
+	Xml xml;
+	
+	char dippath[512];
+	snprintf(dippath, sizeof(dippath), "%s%s.dip", nstpaths.savedir, nstpaths.gamename);
+	
+	std::ifstream dipfile(dippath, std::ifstream::in|std::ifstream::binary);
+	
+	if (dipfile.is_open()) {
+		xml.Read(dipfile);
+		
+		if (xml.GetRoot().IsType(L"dipswitches")) {
+			Xml::Node root(xml.GetRoot());
+			Xml::Node node(root.GetFirstChild());
+			
+			for (int i = 0; i < root.NumChildren(L"dip"); i++) {
+				
+				if (node.GetChild(L"value")) {
+					dipswitches.SetValue(i, node.GetChild(L"value").GetUnsignedValue());
+				}
+				node = node.GetNextSibling();
+			}
+		}
+		dipfile.close();
+	}
+}
