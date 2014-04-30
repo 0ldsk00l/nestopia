@@ -1234,10 +1234,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="0C47946D" sha1="4BA89EF5E844CBE869B185F5806C9856B9EE7573">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-175" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
-                <chip type="163" />
+                <chip type="175" />
             </board>
         </cartridge>
     </game>
@@ -12952,10 +12952,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="808606F0" sha1="DF2ACBD6F6F89AEFF03881DD3F9FE5041DE05468">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-175" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
-                <chip type="163" />
+                <chip type="175" />
             </board>
         </cartridge>
     </game>
@@ -13078,10 +13078,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="81B7F1A8" sha1="DBC81F0BFC06E116C4AC2C05566B96769AB2F055">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-175" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
-                <chip type="163" />
+                <chip type="175" />
             </board>
         </cartridge>
     </game>
@@ -20313,11 +20313,11 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="C247CC80" sha1="1C476C795CFC17E987C22FFD6F09BAF1396ED2C9">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-175" mapper="210">
                 <prg size="512k" />
                 <chr size="128k" />
                 <wram size="8k" battery="1" />
-                <chip type="106" />
+                <chip type="175" />
                 <pad h="1" v="0" />
             </board>
         </cartridge>

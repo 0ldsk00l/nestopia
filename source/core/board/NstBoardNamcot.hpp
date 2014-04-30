@@ -30,6 +30,7 @@
 #endif
 
 #include "NstBoardNamcot163.hpp"
+#include "NstBoardNamcot175.hpp"
 #include "NstBoardNamcot34xx.hpp"
 
 namespace Nes
