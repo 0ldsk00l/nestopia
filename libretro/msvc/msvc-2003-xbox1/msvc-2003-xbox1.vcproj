@@ -760,6 +760,9 @@
 						RelativePath="..\..\..\source\core\board\NstBoardNamcot163.cpp">
 					</File>
 					<File
+						RelativePath="..\..\..\source\core\board\NstBoardNamcot175.cpp">
+					</File>
+					<File
 						RelativePath="..\..\..\source\core\board\NstBoardNamcot34xx.cpp">
 					</File>
 					<File

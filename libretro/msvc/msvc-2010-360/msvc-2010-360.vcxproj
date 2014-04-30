@@ -168,6 +168,7 @@
     <ClCompile Include="..\..\..\source\core\board\NstBoardMmc5.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardMmc6.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardNamcot163.cpp" />
+    <ClCompile Include="..\..\..\source\core\board\NstBoardNamcot175.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardNamcot34xx.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardNanjing.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardNihon.cpp" />

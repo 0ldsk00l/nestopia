@@ -106,6 +106,7 @@ OBJS += $(NST_DIR)/source/core/board/NstBoardBtl2708.cpp               $(NST_DIR
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtl6035052.cpp            $(NST_DIR)/source/core/board/NstBoardMmc5.cpp                   $(NST_DIR)/source/core/board/NstBoardWaixingSgzlz.cpp
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlAx5705.cpp             $(NST_DIR)/source/core/board/NstBoardMmc6.cpp                   $(NST_DIR)/source/core/board/NstBoardWaixingSh2.cpp
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlDragonNinja.cpp        $(NST_DIR)/source/core/board/NstBoardNamcot163.cpp              $(NST_DIR)/source/core/board/NstBoardWaixingZs.cpp
+OBJS += $(NST_DIR)/source/core/board/NstBoardNamcot175.cpp
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlGeniusMerioBros.cpp    $(NST_DIR)/source/core/board/NstBoardNamcot34xx.cpp             $(NST_DIR)/source/core/board/NstBoardWhirlwind.cpp
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlMarioBaby.cpp          $(NST_DIR)/source/core/board/NstBoardNanjing.cpp                $(NST_DIR)/source/core/board/NstBoardZz.cpp
 
