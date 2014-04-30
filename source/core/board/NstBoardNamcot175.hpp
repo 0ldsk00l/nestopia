@@ -44,102 +44,6 @@ namespace Nes
 
 					explicit N175(const Context&);
 
-					class Sound : public Apu::Channel
-					{
-					public:
-
-						explicit Sound(Apu&,bool=true);
-
-						enum
-						{
-							EXRAM_SIZE = 0x80
-						};
-
-						void WriteData(uint);
-						uint ReadData();
-						void WriteAddress(uint);
-
-						byte* GetExRam();
-						const byte* GetExRam() const;
-
-						void SaveState(State::Saver&,dword) const;
-						void LoadState(State::Loader&);
-
-					protected:
-
-						void Reset();
-						bool UpdateSettings();
-						Sample GetSample();
-
-					private:
-
-						inline void SetChannelState(uint);
-
-						inline void WriteWave(uint);
-						inline dword FetchFrequency(uint) const;
-
-						enum
-						{
-							NUM_CHANNELS     = 8,
-							EXRAM_INC        = 0x80,
-							REG_WAVELENGTH   = 0x1C,
-							REG_ENABLE_SHIFT = 5,
-							REG_VOLUME       = 0x0F,
-							PHASE_SHIFT      = 18,
-							SPEED_SHIFT      = 20
-						};
-
-						class BaseChannel
-						{
-						public:
-
-							void Reset();
-
-							inline dword GetSample(Cycle,Cycle,const byte (&)[0x100]);
-
-							inline void SetFrequency  (uint);
-							inline void SetWaveLength (uint);
-							inline void SetWaveOffset (uint);
-							inline void SetVolume     (uint);
-
-							inline void Validate();
-
-						private:
-
-							enum
-							{
-								VOLUME = OUTPUT_MUL / 16
-							};
-
-							inline bool CanOutput() const;
-
-							ibool enabled;
-							ibool active;
-							Cycle timer;
-							Cycle frequency;
-							Cycle phase;
-							dword waveLength;
-							uint  waveOffset;
-							uint  volume;
-						};
-
-						uint output;
-
-						Cycle rate;
-						Cycle frequency;
-
-						uint exAddress;
-						uint exIncrease;
-						uint startChannel;
-
-						byte wave[0x100];
-						byte exRam[0x80];
-
-						BaseChannel channels[NUM_CHANNELS];
-
-						DcBlocker dcBlocker;
-					};
-
 				private:
 
 					void SubReset(bool);
@@ -172,7 +76,6 @@ namespace Nes
 					NES_DECL_POKE( F800 );
 
 					Timer::M2<Irq> irq;
-					Sound sound;
 				};
 			}
 		}
