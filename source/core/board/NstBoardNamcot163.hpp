@@ -172,7 +172,6 @@ namespace Nes
 
 					Timer::M2<Irq> irq;
 					Sound sound;
-					bool namcot106;
 				};
 			}
 		}
