@@ -238,6 +238,7 @@ OBJS += $(NST_DIR)/source/core/board/NstBoardBtl2708.o               $(NST_DIR)/
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtl6035052.o            $(NST_DIR)/source/core/board/NstBoardMmc5.o                   $(NST_DIR)/source/core/board/NstBoardWaixingSgzlz.o
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlAx5705.o             $(NST_DIR)/source/core/board/NstBoardMmc6.o                   $(NST_DIR)/source/core/board/NstBoardWaixingSh2.o
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlDragonNinja.o        $(NST_DIR)/source/core/board/NstBoardNamcot163.o              $(NST_DIR)/source/core/board/NstBoardWaixingZs.o
+OBJS += $(NST_DIR)/source/core/board/NstBoardNamcot175.o
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlGeniusMerioBros.o    $(NST_DIR)/source/core/board/NstBoardNamcot34xx.o             $(NST_DIR)/source/core/board/NstBoardWhirlwind.o
 OBJS += $(NST_DIR)/source/core/board/NstBoardBtlMarioBaby.o          $(NST_DIR)/source/core/board/NstBoardNanjing.o                $(NST_DIR)/source/core/board/NstBoardZz.o
 
