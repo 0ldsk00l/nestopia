@@ -223,6 +223,7 @@ OBJS += objs/core/board/NstBoardMmc4.o
 OBJS += objs/core/board/NstBoardMmc5.o
 OBJS += objs/core/board/NstBoardMmc6.o
 OBJS += objs/core/board/NstBoardNamcot163.o
+OBJS += objs/core/board/NstBoardNamcot175.o
 OBJS += objs/core/board/NstBoardNamcot34xx.o
 OBJS += objs/core/board/NstBoardNanjing.o
 OBJS += objs/core/board/NstBoardNihon.o

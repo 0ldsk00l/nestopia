@@ -945,6 +945,7 @@ namespace Nes
 					{ "MLT-CALTRON6IN1",             Type::CALTRON_6IN1             },
 					{ "MLT-MAXI15",                  Type::AVE_D1012                },
 					{ "NAMCOT-163",                  Type::NAMCOT_163_0             },
+					{ "NAMCOT-175",                  Type::NAMCOT_175               },
 					{ "NAMCOT-3301",                 Type::STD_NROM                 },
 					{ "NAMCOT-3302",                 Type::STD_NROM                 },
 					{ "NAMCOT-3303",                 Type::STD_NROM                 },
@@ -1749,6 +1750,12 @@ namespace Nes
 							else
 								id = Type::NAMCOT_163_0;
 						}
+						break;
+
+					case 210:
+
+						name = "NAMCOT 175";
+						id = Type::NAMCOT_175;
 						break;
 
 					case 21:
@@ -3467,6 +3474,7 @@ namespace Nes
 					case Type::NAMCOT_163_1               :
 					case Type::NAMCOT_163_S_0             :
 					case Type::NAMCOT_163_S_1             : return new Namcot::N163(c);
+					case Type::NAMCOT_175                 : return new Namcot::N175(c);
 					case Type::NANJING_STD                : return new Nanjing::Standard(c);
 					case Type::UNL_UXROM_M5               :
 					case Type::NIHON_UNROM_M5             : return new Nihon::UnRomM5(c);
