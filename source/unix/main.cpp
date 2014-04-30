@@ -52,6 +52,7 @@
 #include "input.h"
 #include "fileio.h"
 #include "config.h"
+#include "cheats.h"
 #include "cursor.h"
 
 #ifdef _GTK
@@ -385,6 +386,7 @@ void nst_play() {
 	video_init();
 	audio_init();
 	SetupInput();
+	cheats_init();
 	
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
@@ -437,6 +439,16 @@ void nst_set_dirs() {
 	}
 
 	snprintf(dirstr, sizeof(dirstr), "%sstate", nstpaths.nstdir);
+#ifdef _MINGW	
+	if (mkdir(dirstr) && errno != EEXIST) {
+#else
+	if (mkdir(dirstr, 0755) && errno != EEXIST) {
+#endif
+		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
+	}
+	
+	// create cheats directory if it doesn't exist
+	snprintf(dirstr, sizeof(dirstr), "%scheats", nstpaths.nstdir);
 #ifdef _MINGW	
 	if (mkdir(dirstr) && errno != EEXIST) {
 #else
@@ -530,8 +542,11 @@ void nst_set_savepaths(const char *filename) {
 	// Construct save path
 	snprintf(nstpaths.savename, sizeof(nstpaths.savename), "%s%s%s", nstpaths.savedir, nstpaths.gamename, ".sav");
 
-	// Construct root path for FDS save patches
+	// Construct path for FDS save patches
 	snprintf(nstpaths.fdssave, sizeof(nstpaths.fdssave), "%s%s", nstpaths.savedir, nstpaths.gamename);
+	
+	// Construct the cheat path
+	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);
 }
 
 bool nst_find_patch(char *filename) {

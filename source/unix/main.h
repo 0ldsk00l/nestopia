@@ -9,6 +9,7 @@ typedef struct {
 	char gamename[256];
 	char savename[512];
 	char fdssave[512];
+	char cheatpath[512];
 } nstpaths_t;
 
 bool nst_find_patch(char *filename);
