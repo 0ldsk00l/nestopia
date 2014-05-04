@@ -946,6 +946,7 @@ namespace Nes
 					{ "MLT-MAXI15",                  Type::AVE_D1012                },
 					{ "NAMCOT-163",                  Type::NAMCOT_163_0             },
 					{ "NAMCOT-175",                  Type::NAMCOT_175               },
+					{ "NAMCOT-340",                  Type::NAMCOT_340               },
 					{ "NAMCOT-3301",                 Type::STD_NROM                 },
 					{ "NAMCOT-3302",                 Type::STD_NROM                 },
 					{ "NAMCOT-3303",                 Type::STD_NROM                 },
@@ -1754,8 +1755,16 @@ namespace Nes
 
 					case 210:
 
-						name = "NAMCOT 175";
-						id = Type::NAMCOT_175;
+						if (!this->chips.Has(L"175"))
+						{
+							name = "NAMCOT-340";
+							id = Type::NAMCOT_340;
+						}
+						else
+						{
+							name = "NAMCOT-175";
+							id = Type::NAMCOT_175;
+						}
 						break;
 
 					case 21:
@@ -3474,6 +3483,7 @@ namespace Nes
 					case Type::NAMCOT_163_1               :
 					case Type::NAMCOT_163_S_0             :
 					case Type::NAMCOT_163_S_1             : return new Namcot::N163(c);
+					case Type::NAMCOT_340                 :
 					case Type::NAMCOT_175                 : return new Namcot::N175(c);
 					case Type::NANJING_STD                : return new Nanjing::Standard(c);
 					case Type::UNL_UXROM_M5               :

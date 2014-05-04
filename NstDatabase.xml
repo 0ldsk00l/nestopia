@@ -2974,10 +2974,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="1DC0F740" sha1="97E7E61EECB73CB1EA0C15AE51E65EA56301A685">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="256k" />
                 <chr size="128k" />
-                <chip type="163" />
+                <chip type="340" />
             </board>
         </cartridge>
     </game>
@@ -3601,9 +3601,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="2447E03B" sha1="2185F8F3D0FD282C034DC397AE3301DE76139EB8">
-            <board mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
+                <chip type="340" />
                 <pad h="1" v="0" />
             </board>
         </cartridge>
@@ -6848,9 +6849,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="429103C9" sha1="0B5DD380A4656FDE916E5A5D99DAC64A7D9B71FB">
-            <board mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
+                <chip type="340" />
                 <pad h="1" v="0" />
             </board>
         </cartridge>
@@ -7215,9 +7217,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="46FD7843" sha1="E535C353C90C0866B8AFC681B938D3717D9EE049">
-            <board mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
+                <chip type="340" />
             </board>
         </cartridge>
     </game>
@@ -11217,10 +11220,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="6EC51DE5" sha1="8F8B117F837C0D8C84EFD678FB29346404E70BF6">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
-                <chip type="163" />
+                <chip type="340" />
                 <pad h="1" v="0" />
             </board>
         </cartridge>
@@ -18129,10 +18132,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="ADFFD64F" sha1="D8E653E5DDB20843B4220A4EBB8C9EAF7A72EA00">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="128k" />
                 <chr size="128k" />
-                <chip type="163" />
+                <chip type="340" />
                 <pad h="1" v="0" />
             </board>
         </cartridge>
@@ -19750,10 +19753,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="BD523011" sha1="7FA51058307DB50825C2D3A3A98C0DA554BC3C92">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="256k" />
                 <chr size="256k" />
-                <chip type="163" />
+                <chip type="340" />
                 <pad h="0" v="1" />
             </board>
         </cartridge>
@@ -22103,10 +22106,10 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="ok" crc="D323B806" sha1="3D554F55411AB2DDD1A87E7583E643970DB784F3">
-            <board type="NAMCOT-163" mapper="19">
+            <board type="NAMCOT-340" mapper="210">
                 <prg size="256k" />
                 <chr size="256k" />
-                <chip type="163" />
+                <chip type="340" />
                 <pad h="1" v="0" />
             </board>
         </cartridge>
