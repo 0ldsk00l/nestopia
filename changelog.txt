@@ -42,6 +42,7 @@ Core:
 
  Additions:
   - Game Genie sound distortion option
+  - Mapper 210 (NAMCOT-175, NAMCOT-340)
 
  Fixes:
   - Hard Drivin' now playable (dragon2snow)
