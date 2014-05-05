@@ -142,4 +142,36 @@ void dip_handle() {
 		}
 		dipfile.close();
 	}
+	else {
+		Xml::Node root(xml.GetRoot());
+		
+		root = xml.Create(L"dipswitches");
+		root.AddAttribute(L"version", L"1.0");
+		
+		wchar_t wbuf[32];
+		char buf[2];
+		
+		int numdips = dipswitches.NumDips();
+	
+		if (numdips > 0) {
+			for (int i = 0; i < numdips; i++) {
+				Xml::Node node(root.AddChild(L"dip"));
+				
+				mbstowcs(wbuf, dipswitches.GetDipName(i), sizeof(wbuf));
+				node.AddChild(L"description", wbuf);
+				
+				snprintf(buf, sizeof(buf), "%d", dipswitches.GetValue(i));
+				mbstowcs(wbuf, buf, sizeof(buf));
+				node.AddChild(L"value", wbuf);
+			}
+		}
+		
+		std::ofstream dipout(dippath, std::ifstream::out|std::ifstream::binary);
+
+		if (dipout.is_open()) {
+			xml.Write(root, dipout);
+		}
+		
+		dipout.close();
+	}
 }
