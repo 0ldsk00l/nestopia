@@ -44,6 +44,7 @@
 #include "core/api/NstApiDipSwitches.hpp"
 #include "core/api/NstApiRewinder.hpp"
 #include "core/api/NstApiCartridge.hpp"
+#include "core/api/NstApiMovie.hpp"
 
 #include "main.h"
 #include "cli.h"
@@ -79,6 +80,8 @@ static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
+
+static std::ifstream *moviefile;
 
 extern settings_t conf;
 extern bool altspeed;
@@ -376,6 +379,25 @@ void nst_state_quickload(int slot) {
 	std::ifstream is(strFile.c_str());
 	machine.LoadState(is);
 	fprintf(stderr, "State Loaded: %s\n", strFile.c_str());
+}
+
+void nst_movie_save(char *filename) {
+	// Save/Record a movie
+}
+
+void nst_movie_load(char *filename) {
+	// Load and play a movie
+}
+
+void nst_movie_stop() {
+	// Stop any movie that is playing or recording
+	Movie movie(emulator);
+	
+	if (movie.IsPlaying() || movie.IsRecording()) {
+		movie.Stop();
+		moviefile = NULL;
+		delete moviefile;
+	}
 }
 
 void nst_play() {
@@ -762,6 +784,7 @@ int main(int argc, char *argv[]) {
 					case SDL_MOUSEBUTTONUP:
 						input_process(cNstPads, event);
 						break;
+					default: break;
 				}	
 			}
 			

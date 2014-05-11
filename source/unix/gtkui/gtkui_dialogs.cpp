@@ -69,7 +69,7 @@ void gtkui_file_open() {
 
 void gtkui_state_save() {
 	// Save a state from the GUI
-	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save state (.nst)",
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save State (.nst)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_SAVE,
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -81,7 +81,7 @@ void gtkui_state_save() {
 	if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 		nst_state_save(filename);
-		g_free (filename);
+		g_free(filename);
 	}
 	
 	gtk_widget_destroy(dialog);
@@ -89,7 +89,7 @@ void gtkui_state_save() {
 
 void gtkui_state_load() {
 	// Load a state from the GUI
-	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load state (.nst)",
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load State (.nst)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_OPEN,
 				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
@@ -97,7 +97,7 @@ void gtkui_state_load() {
 				NULL);
 
 	GtkFileFilter *filter = gtk_file_filter_new();
-	gtk_file_filter_set_name(filter, "Nestopia save states");
+	gtk_file_filter_set_name(filter, "Nestopia Save States");
 	gtk_file_filter_add_pattern(filter, "*.nst");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	
@@ -108,4 +108,51 @@ void gtkui_state_load() {
 	}
 	
 	gtk_widget_destroy(dialog);
+}
+
+void gtkui_movie_save() {
+	// Save a movie from the GUI
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save movie (.nsv)",
+				GTK_WINDOW(gtkwindow),
+				GTK_FILE_CHOOSER_ACTION_SAVE,
+				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+				NULL);
+	
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "movie.nsv");
+	
+	if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+		nst_movie_save(filename);
+		g_free(filename);
+	}
+	
+	gtk_widget_destroy(dialog);
+}
+
+void gtkui_movie_load() {
+	// Load a movie from the GUI
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load movie (.nsv)",
+				GTK_WINDOW(gtkwindow),
+				GTK_FILE_CHOOSER_ACTION_OPEN,
+				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				NULL);
+
+	GtkFileFilter *filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(filter, "Nestopia movies");
+	gtk_file_filter_add_pattern(filter, "*.nsv");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+		nst_movie_load(filename);
+		g_free(filename);
+	}
+	
+	gtk_widget_destroy(dialog);
+}
+
+void gtkui_movie_stop() {
+	nst_movie_stop();
 }

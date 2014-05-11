@@ -81,6 +81,9 @@ void gtkui_create() {
 	GtkWidget *open = gtk_menu_item_new_with_label("Open...");
 	GtkWidget *statesave = gtk_menu_item_new_with_label("Save State...");
 	GtkWidget *stateload = gtk_menu_item_new_with_label("Load State...");
+	GtkWidget *moviesave = gtk_menu_item_new_with_label("Movie Save");
+	GtkWidget *movieload = gtk_menu_item_new_with_label("Movie Load");
+	GtkWidget *moviestop = gtk_menu_item_new_with_label("Movie Stop");
 	GtkWidget *quit = gtk_menu_item_new_with_label("Quit");
 	
 	// Populate the File menu
@@ -88,6 +91,9 @@ void gtkui_create() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), statesave);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), stateload);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviesave);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movieload);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviestop);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
 	
 	// Define the Emulator menu
@@ -160,6 +166,15 @@ void gtkui_create() {
 	
 	g_signal_connect(G_OBJECT(stateload), "activate",
 		G_CALLBACK(gtkui_state_load), NULL);
+	
+	g_signal_connect(G_OBJECT(moviesave), "activate",
+		G_CALLBACK(gtkui_movie_save), NULL);
+	
+	g_signal_connect(G_OBJECT(movieload), "activate",
+		G_CALLBACK(gtkui_movie_load), NULL);
+	
+	g_signal_connect(G_OBJECT(moviestop), "activate",
+		G_CALLBACK(gtkui_movie_stop), NULL);
 	
 	g_signal_connect(G_OBJECT(quit), "activate",
 		G_CALLBACK(nst_schedule_quit), NULL);
