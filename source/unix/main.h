@@ -29,6 +29,10 @@ void nst_state_load(char *filename);
 void nst_state_quicksave(int isvst);
 void nst_state_quickload(int isvst);
 
+void nst_movie_save(char *filename);
+void nst_movie_load(char *filename);
+void nst_movie_stop();
+
 void nst_fds_info();
 void nst_flip_disk();
 void nst_switch_disk();

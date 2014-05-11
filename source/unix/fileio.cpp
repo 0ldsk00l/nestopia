@@ -34,7 +34,6 @@
 #include "core/api/NstApiMachine.hpp"
 #include "core/api/NstApiUser.hpp"
 #include "core/api/NstApiNsf.hpp"
-#include "core/api/NstApiMovie.hpp"
 #include "core/api/NstApiFds.hpp"
 #include "core/api/NstApiCartridge.hpp"
 #include "audio.h"
@@ -43,17 +42,10 @@
 extern Nes::Api::Emulator emulator;
 extern nstpaths_t nstpaths;
 
-static std::ifstream *moviePlayFile, *fdsBiosFile, *nstDBFile;
-static std::fstream *movieRecFile;
-
-struct archive *a;
-struct archive_entry *entry;
-int r;
+static std::ifstream *fdsBiosFile, *nstDBFile;
 
 void fileio_init(void)
 {
-	moviePlayFile = NULL;
-	movieRecFile = NULL;
 	fdsBiosFile = NULL;
 	nstDBFile = NULL;
 }
