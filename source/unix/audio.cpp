@@ -50,6 +50,7 @@ int16_t audiobuf[96000];
 int framerate, channels;
 
 bool libao_hack = false;
+bool underflow = false;
 bool altspeed = false;
 int framepulse = 2;
 int framecounter = 0;
@@ -90,7 +91,7 @@ void audio_fill_buffer(int bufnum) {
 
 void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
 	int temp;
-	static int ufnum = 0;
+	//static int ufnum = 0;
 	curpos = stream;
 	bytes_left = len;
 	
@@ -112,7 +113,8 @@ void audio_sdl_callback(void *userdata, Uint8 *stream, int len) {
 				playbuf = temp;
 			}
 			else {
-				ufnum++;
+				underflow = true;
+				//ufnum++;
 				//fprintf(stderr, "\rBuffer Underflows: %d", ufnum);
 				memset(curpos, 0, bytes_left);
 				bytes_left = 0;
@@ -332,9 +334,12 @@ void audio_output_frame(unsigned long numsamples, int16_t *out) {
 
 bool timing_frameskip() {
 	// Calculate whether to skip a frame or not
+	
 	static int flipper = 1;
 	
 	framecounter++;
+	
+	if (underflow) { underflow = false; return true; }
 	
 	if (libao_hack) {
 		if (framecounter == 600) {
