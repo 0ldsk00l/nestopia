@@ -65,7 +65,7 @@ void cheats_init() {
 						cheats_code_raw_add(node);
 					}
 					
-					fprintf(stderr, "Cheat: %ls\n", node.GetChild(L"description").GetValue());
+					//fprintf(stderr, "Cheat: %ls\n", node.GetChild(L"description").GetValue());
 				}
 				node = node.GetNextSibling();
 			}
@@ -73,6 +73,21 @@ void cheats_init() {
 		cheatfile.close();
 	}
 }
+
+/*void cheats_list() {
+	// List the active cheats
+	Cheats cheats(emulator);
+	Cheats::Code code;
+	
+	char gg[9];
+	
+	for (int i = 0; i < cheats.NumCodes(); i++) {
+		cheats.GetCode(i, code);
+		cheats.GameGenieEncode(code, gg);
+	
+		fprintf(stderr, "Cheat: %s\n", gg);
+	}
+}*/
 
 void cheats_code_gg_add(const wchar_t *data) {
 	// Add a Game Genie code
@@ -102,6 +117,8 @@ void cheats_code_raw_add(Xml::Node node) {
 	// Add a Raw code
 	Cheats cheats(emulator);
 	Cheats::Code code;
+	
+	code.useCompare = false;
 	
 	code.address = node.GetChild(L"address").GetUnsignedValue();
 	if (node.GetChild(L"value")) {
