@@ -246,7 +246,7 @@ void video_init() {
 		video.SetBlend(conf.video_xbr_pixel_blending);
 	}
 	
-	video.ClearFilterUpdateFlag();
+	//video.ClearFilterUpdateFlag();
 	
 	// set the render state
 	if (NES_FAILED(video.SetRenderState(renderstate))) {
