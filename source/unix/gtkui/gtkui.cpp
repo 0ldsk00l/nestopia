@@ -31,6 +31,7 @@
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_config.h"
+#include "gtkui_cheats.h"
 #include "gtkui_dialogs.h"
 #include "gtk_opengl.h"
 
@@ -103,6 +104,7 @@ void gtkui_create() {
 	GtkWidget *pause = gtk_menu_item_new_with_label("Pause");
 	GtkWidget *resetsoft = gtk_menu_item_new_with_label("Reset (Soft)");
 	GtkWidget *resethard = gtk_menu_item_new_with_label("Reset (Hard)");
+	GtkWidget *cheats = gtk_menu_item_new_with_label("Cheats");
 	GtkWidget *configuration = gtk_menu_item_new_with_label("Configuration");
 	
 	// Populate the Emulator menu
@@ -111,6 +113,7 @@ void gtkui_create() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), pause);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resetsoft);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resethard);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), configuration);
 	
 	// Define the Help menu
@@ -191,6 +194,9 @@ void gtkui_create() {
 	
 	g_signal_connect(G_OBJECT(resethard), "activate",
 		G_CALLBACK(gtkui_cb_reset), gpointer(1));
+	
+	g_signal_connect(G_OBJECT(cheats), "activate",
+		G_CALLBACK(gtkui_cheats), NULL);
 	
 	g_signal_connect(G_OBJECT(configuration), "activate",
 		G_CALLBACK(gtkui_config), NULL);

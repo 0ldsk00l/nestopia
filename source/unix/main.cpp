@@ -669,7 +669,7 @@ void nst_load(const char *filename) {
 	}
 	
 	// Check if sound distortion should be enabled
-	conf.misc_genie_distortion ? sound.SetGenie(true) : sound.SetGenie(false);
+	sound.SetGenie(conf.misc_genie_distortion);
 	
 	// note that something is loaded
 	loaded = 1;
