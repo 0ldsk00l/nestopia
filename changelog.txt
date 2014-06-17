@@ -20,6 +20,7 @@ Unix Shell:
   - Ported to SDL 2.0
   - Completely rewrote config file handling
   - Completely rewrote input config and input handling
+  - Completely rewrote cheats
   - Removed ALSA and OSS audio output
 
 Windows Shell:
@@ -46,6 +47,7 @@ Core:
 
  Fixes:
   - Hard Drivin' now playable (dragon2snow)
+  - Kaettekita Mario Bros. fix (dragon2snow)
 
 ----------------------------------------------------------------
 1.45
