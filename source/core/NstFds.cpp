@@ -780,6 +780,8 @@ namespace Nes
 				count = latch;
 			else
 				ctrl &= ~uint(CTRL_ENABLED);
+			
+			latch = 0; // Fixes Kaettekita Mario Bros - FHorse/dragon2snow
 		}
 
 		NST_SINGLE_CALL bool Fds::Unit::Timer::Clock()
