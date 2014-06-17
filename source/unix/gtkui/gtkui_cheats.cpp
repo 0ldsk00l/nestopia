@@ -237,6 +237,9 @@ GtkWidget *gtkui_cheats() {
 	g_signal_connect(G_OBJECT(genieadd), "clicked",
 		G_CALLBACK(gtkui_cheats_gg_add), NULL);
 	
+	g_signal_connect(G_OBJECT(paradd), "clicked",
+		G_CALLBACK(gtkui_cheats_par_add), NULL);
+	
 	g_signal_connect(G_OBJECT(cheatok), "clicked",
 		G_CALLBACK(gtkui_cheats_ok), NULL);	
 	
