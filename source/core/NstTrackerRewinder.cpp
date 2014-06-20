@@ -589,7 +589,7 @@ namespace Nes
 
 			if (!buffer || (bits ^ apu.GetSampleBits()) | (rate ^ apu.GetSampleRate()) | (stereo ^ uint(bool(apu.InStereo()))))
 			{
-				if (!enabled || !good || !Update())
+				if (!good || !Update() || !enabled)
 					return NULL;
 			}
 
