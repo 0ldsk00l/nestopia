@@ -84,7 +84,10 @@ void opengl_init_structures() {
 	glMatrixMode( GL_PROJECTION );
 	glLoadIdentity();
 	
-	if (conf.video_mask_overscan) {
+	if (conf.video_unmask_overscan) {
+		glOrtho(0.0, (GLdouble)rendersize.w, (GLdouble)rendersize.h, 0.0, -1.0, 1.0);
+	}
+	else {
 		glOrtho(
 			0.0,
 			(GLdouble)rendersize.w,
@@ -92,9 +95,6 @@ void opengl_init_structures() {
 			(GLdouble)(OVERSCAN_TOP * scalefactor) - fencepost,
 			-1.0, 1.0
 		);
-	}
-	else {
-		glOrtho(0.0, (GLdouble)rendersize.w, (GLdouble)rendersize.h, 0.0, -1.0, 1.0);
 	}
 	glMatrixMode(GL_MODELVIEW);
 	glLoadIdentity();
@@ -486,14 +486,14 @@ void video_set_params() {
 			break;
 	}
 
-	if (conf.video_mask_overscan) {
+	if (!conf.video_unmask_overscan) {
 		rendersize.h -= (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
 	}
 	
 	// Calculate the aspect from the height because it's smaller
 	float aspect = (float)displaymode.h / (float)rendersize.h;
 	
-	if (conf.video_preserve_aspect && conf.video_fullscreen && sdlwindow) {
+	if (!conf.video_stretch_aspect && conf.video_fullscreen && sdlwindow) {
 		rendersize.h *= aspect;
 		rendersize.w *= aspect;
 	}

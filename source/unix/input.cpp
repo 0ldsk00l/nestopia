@@ -116,11 +116,11 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 			break;
 			
 		case SDL_MOUSEBUTTONDOWN:
-			if (conf.video_mask_overscan) {
-				controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
+			if (conf.video_unmask_overscan) {
+				controllers->zapper.y = y / conf.video_scale_factor;
 			}
 			else {
-				controllers->zapper.y = y / conf.video_scale_factor;
+				controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
 			}
 
 			controllers->zapper.x = x / conf.video_scale_factor;

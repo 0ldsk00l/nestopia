@@ -207,32 +207,32 @@ GtkWidget *gtkui_config() {
 		G_CALLBACK(gtkui_cb_video_tv_aspect), NULL);
 	
 	// Mask Overscan
-	GtkWidget *check_video_mask_overscan = gtk_widget_new(
+	GtkWidget *check_video_unmask_overscan = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
-				"label", "Mask Overscan",
+				"label", "Unmask Overscan",
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
 				NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_video_mask_overscan), conf.video_mask_overscan);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_video_unmask_overscan), conf.video_unmask_overscan);
 	
-	gtk_box_pack_start(GTK_BOX(box_video_l), check_video_mask_overscan, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_video_l), check_video_unmask_overscan, FALSE, FALSE, 0);
 	
-	g_signal_connect(G_OBJECT(check_video_mask_overscan), "toggled",
-		G_CALLBACK(gtkui_cb_video_mask_overscan), NULL);
+	g_signal_connect(G_OBJECT(check_video_unmask_overscan), "toggled",
+		G_CALLBACK(gtkui_cb_video_unmask_overscan), NULL);
 		
-	// Preserve Aspect
-	GtkWidget *check_video_preserve_aspect = gtk_widget_new(
+	// Stretch Aspect
+	GtkWidget *check_video_stretch_aspect = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
-				"label", "Preserve Aspect Ratio",
+				"label", "Stretch Aspect Ratio",
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
 				NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_video_preserve_aspect), conf.video_preserve_aspect);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_video_stretch_aspect), conf.video_stretch_aspect);
 	
-	gtk_box_pack_start(GTK_BOX(box_video_l), check_video_preserve_aspect, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_video_l), check_video_stretch_aspect, FALSE, FALSE, 0);
 	
-	g_signal_connect(G_OBJECT(check_video_preserve_aspect), "toggled",
-		G_CALLBACK(gtkui_cb_video_preserve_aspect), NULL);
+	g_signal_connect(G_OBJECT(check_video_stretch_aspect), "toggled",
+		G_CALLBACK(gtkui_cb_video_stretch_aspect), NULL);
 	
 	// Unlimited Sprites
 	GtkWidget *check_video_unlimited_sprites = gtk_widget_new(

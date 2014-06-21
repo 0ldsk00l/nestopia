@@ -16,9 +16,9 @@ typedef struct {
 	int video_xbr_corner_rounding;
 	bool video_linear_filter;
 	bool video_tv_aspect;
-	bool video_mask_overscan;
+	bool video_unmask_overscan;
 	bool video_fullscreen;
-	bool video_preserve_aspect;
+	bool video_stretch_aspect;
 	bool video_unlimited_sprites;
 	bool video_xbr_pixel_blending;
 	
