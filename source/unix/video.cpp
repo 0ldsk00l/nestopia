@@ -346,7 +346,7 @@ void video_create() {
 	if(sdlwindow == NULL) {
 		fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
 	}
-
+	
 	displayindex = SDL_GetWindowDisplayIndex(sdlwindow);
 	SDL_GetDesktopDisplayMode(displayindex, &displaymode);
 	//printf("w: %d\th: %d\n", displaymode.w, displaymode.h);

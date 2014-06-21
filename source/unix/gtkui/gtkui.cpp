@@ -51,7 +51,8 @@ GtkWidget *gtkwindow;
 GtkWidget *statusbar;
 GtkWidget *drawingarea;
 
-GdkRGBA bg = {0, 0, 0, 0};
+char iconpath[512];
+char padpath[512];
 
 extern dimensions_t basesize, rendersize;
 extern settings_t conf;
@@ -59,14 +60,17 @@ extern settings_t conf;
 void gtkui_init(int argc, char *argv[]) {
 	// Initialize the GTK+ GUI
 	gtk_init(&argc, &argv);
-	
 	gtkui_create();
 }
 
 void gtkui_create() {
 	// Create the GTK+ Window
-		
+	
+	gtkui_image_paths();
+	GdkPixbuf *icon = gdk_pixbuf_new_from_file(iconpath, NULL);
+	
 	gtkwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
+	gtk_window_set_icon(GTK_WINDOW(gtkwindow), icon);
 	gtk_window_set_title(GTK_WINDOW(gtkwindow), "Nestopia");
 	gtk_window_set_resizable(GTK_WINDOW(gtkwindow), FALSE);
 	
@@ -213,8 +217,6 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_cb_convert_key), NULL);
 	
 	gtk_widget_show_all(gtkwindow);
-	
-	gtk_widget_override_background_color(drawingarea, GTK_STATE_FLAG_NORMAL, &bg);
 }
 
 void gtkui_toggle_fullscreen() {
@@ -234,7 +236,6 @@ void gtkui_toggle_fullscreen() {
 void gtkui_resize() {
 	// Resize the GTK+ window
 	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
-	gtk_widget_override_background_color(drawingarea, GTK_STATE_FLAG_NORMAL, &bg);
 }
 
 void gtkui_set_title(const char *title) {
@@ -242,18 +243,8 @@ void gtkui_set_title(const char *title) {
 }
 
 GtkWidget *gtkui_about() {
-
-	char svgpath[1024];
-	snprintf(svgpath, sizeof(svgpath), "%s/icons/nestopia.svg", DATADIR);
-	
-	// Load the SVG from local source dir if make install hasn't been done
-	struct stat svgstat;
-	if (stat(svgpath, &svgstat) == -1) {
-		snprintf(svgpath, sizeof(svgpath), "source/unix/icons/nestopia.svg");
-	}
-	
-	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(svgpath, 192, 192, NULL);
-	
+	// Pull up the About dialog
+	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(iconpath, 192, 192, NULL);
 	GtkWidget *aboutdialog = gtk_about_dialog_new();
 	
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
@@ -266,6 +257,21 @@ GtkWidget *gtkui_about() {
 	gtk_widget_destroy(aboutdialog);
 	
 	return aboutdialog;
+}
+
+void gtkui_image_paths() {
+	// Set paths to SVG icons/images
+	snprintf(iconpath, sizeof(iconpath), "%s/icons/nestopia.svg", DATADIR);
+	snprintf(padpath, sizeof(padpath), "%s/icons/nespad.svg", DATADIR);
+	
+	// Load the SVG from local source dir if make install hasn't been done
+	struct stat svgstat;
+	if (stat(iconpath, &svgstat) == -1) {
+		snprintf(iconpath, sizeof(iconpath), "source/unix/icons/nestopia.svg");
+	}
+	if (stat(padpath, &svgstat) == -1) {
+		snprintf(padpath, sizeof(padpath), "source/unix/icons/nespad.svg");
+	}
 }
 
 void gtkui_opengl_start() {
