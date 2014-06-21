@@ -13,6 +13,8 @@ typedef struct {
 } nstpaths_t;
 
 bool nst_find_patch(char *filename);
+void nst_load_db();
+void nst_load_fds_bios();
 void nst_load(const char *filename);
 void nst_play();
 void nst_pause();
@@ -22,7 +24,7 @@ void nst_set_dirs();
 void nst_set_region();
 void nst_set_rewind(int direction);
 
-void nst_set_savepaths(const char *filename);
+void nst_set_paths(const char *filename);
 
 void nst_state_save(char *filename);
 void nst_state_load(char *filename);

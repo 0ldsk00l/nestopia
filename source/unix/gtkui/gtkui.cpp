@@ -154,8 +154,8 @@ void gtkui_create() {
 	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
 	
 	// Connect the signals
-	g_signal_connect(drawingarea, "realize",
-		G_CALLBACK(area_start), gtkwindow);
+	//g_signal_connect(drawingarea, "realize",
+	//	G_CALLBACK(area_start), gtkwindow);
 	
 	g_signal_connect(G_OBJECT(gtkwindow), "delete_event",
 		G_CALLBACK(nst_schedule_quit), NULL);
@@ -237,6 +237,10 @@ void gtkui_resize() {
 	gtk_widget_override_background_color(drawingarea, GTK_STATE_FLAG_NORMAL, &bg);
 }
 
+void gtkui_set_title(const char *title) {
+	gtk_window_set_title(GTK_WINDOW(gtkwindow), title);
+}
+
 GtkWidget *gtkui_about() {
 
 	char svgpath[1024];
@@ -264,20 +268,8 @@ GtkWidget *gtkui_about() {
 	return aboutdialog;
 }
 
-int area_start(GtkWidget *widget, void *data) {
-	
-	GtkWidget *window = (GtkWidget *) data;
-	GtkWidget *area = (GtkWidget *) g_object_get_data (G_OBJECT (window), "area");
-	GLXContext context = (GLXContext) g_object_get_data (G_OBJECT (window), "context");
-
-	if (gtk_opengl_current(area, context) == TRUE) {
-		glEnable (GL_DEPTH_TEST);
-		glDepthFunc (GL_LEQUAL);
-		glEnable (GL_CULL_FACE);
-		glCullFace (GL_BACK);
-		glDisable (GL_DITHER);
-		glShadeModel (GL_SMOOTH);
-	}
+void gtkui_opengl_start() {
+	gtk_opengl_area_start(drawingarea, gtkwindow);
 }
 
 void gtkui_swapbuffers() {

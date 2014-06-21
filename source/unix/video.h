@@ -24,6 +24,7 @@ void video_toggle_filter();
 void video_toggle_scalefactor();
 void video_set_filter();
 void video_set_params();
+void video_set_title(const char *title);
 
 long video_lock_screen(void*& ptr);
 void video_unlock_screen(void*);

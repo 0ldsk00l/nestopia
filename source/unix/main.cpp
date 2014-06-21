@@ -51,7 +51,6 @@
 #include "audio.h"
 #include "video.h"
 #include "input.h"
-#include "fileio.h"
 #include "config.h"
 #include "cheats.h"
 #include "cursor.h"
@@ -80,6 +79,9 @@ static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
+
+static std::ifstream *nstdb;
+static std::ifstream *fdsbios;
 
 static std::ifstream *moviefile;
 
@@ -541,7 +543,7 @@ void SetupInput()
 	}
 }
 
-void nst_set_savepaths(const char *filename) {
+void nst_set_paths(const char *filename) {
 	
 	// Set up the save directory
 	snprintf(nstpaths.savedir, sizeof(nstpaths.savedir), "%ssave/", nstpaths.nstdir);
@@ -596,6 +598,71 @@ bool nst_find_patch(char *filename) {
 	return 0;
 }
 
+void nst_load_db() {
+	Nes::Api::Cartridge::Database database(emulator);
+	char dbpath[512];
+
+	if (nstdb) { return; }
+
+	// Try to open the database file
+	snprintf(dbpath, sizeof(dbpath), "%sNstDatabase.xml", nstpaths.nstdir);
+	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
+	
+	if (nstdb->is_open()) {
+		database.Load(*nstdb);
+		database.Enable(true);
+		return;
+	}
+#ifndef _MINGW
+	// If it fails, try looking in the data directory
+	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", DATADIR);
+	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
+	
+	if (nstdb->is_open()) {
+		database.Load(*nstdb);
+		database.Enable(true);
+		return;
+	}
+	
+	// If that fails, try looking in the working directory
+	char *pwd = getenv("PWD");
+	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", pwd);
+	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
+	
+	if (nstdb->is_open()) {
+		database.Load(*nstdb);
+		database.Enable(true);
+		return;
+	}
+#endif
+	else {
+		fprintf(stderr, "NstDatabase.xml not found!\n");
+		delete nstdb;
+		nstdb = NULL;
+	}
+}
+
+void nst_load_fds_bios() {
+	// Load the Famicom Disk System BIOS
+	Nes::Api::Fds fds(emulator);
+	char biospath[512];
+	
+	if (fdsbios) { return; }
+
+	snprintf(biospath, sizeof(biospath), "%sdisksys.rom", nstpaths.nstdir);
+
+	fdsbios = new std::ifstream(biospath, std::ifstream::in|std::ifstream::binary);
+
+	if (fdsbios->is_open())	{
+		fds.SetBIOS(fdsbios);
+	}
+	else {
+		fprintf(stderr, "%s not found, Disk System games will not work.\n", biospath);
+		delete fdsbios;
+		fdsbios = NULL;
+	}
+}
+
 void nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
@@ -609,8 +676,8 @@ void nst_load(const char *filename) {
 	// Pull out any inserted cartridges
 	nst_unload();
 
-	// Set the savefile paths
-	nst_set_savepaths(filename);
+	// Set the file paths
+	nst_set_paths(filename);
 
 	// C++ file stream
 	std::ifstream file(filename, std::ios::in|std::ios::binary);
@@ -673,6 +740,12 @@ void nst_load(const char *filename) {
 	
 	// note that something is loaded
 	loaded = 1;
+	
+	// Set the title
+	video_set_title(nstpaths.gamename);
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) { gtkui_opengl_start(); gtkui_set_title(nstpaths.gamename); }
+	#endif
 
 	// power on
 	machine.Power(true); // false = power off
@@ -689,23 +762,24 @@ int main(int argc, char *argv[]) {
 	// Set up directories
 	nst_set_dirs();
 	
-	if (argc == 1 && conf.misc_disable_gui) {
-		// Show usage and free config 
-		cli_show_usage();
-		return 0;
-	}
-	
 	// Set default config options
 	config_set_default();
 	
 	// Read the config file and override defaults
 	config_file_read();
 	
+	// Exit if there is no CLI argument
+	#ifdef _GTK
+	if (argc == 1 && conf.misc_disable_gui) {
+	#else
+	if (argc == 1) {
+	#endif
+		cli_show_usage();
+		return 0;
+	}
+	
 	// Handle command line arguments
 	cli_handle_command(argc, argv);
-	
-	// Initialize File input/output routines
-	fileio_init();
 	
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
@@ -743,10 +817,12 @@ int main(int argc, char *argv[]) {
 	User::fileIoCallback.Set(nst_cb_file, userData);
 	User::logCallback.Set(nst_cb_log, userData);
 	User::eventCallback.Set(nst_cb_event, userData);
-
-	// Load the FDS BIOS and NstDatabase.xml
-	fileio_set_fds_bios();
-	fileio_load_db();
+	
+	// Initialize and load FDS BIOS and NstDatabase.xml
+	nstdb = NULL;
+	fdsbios = NULL;
+	nst_load_db();
+	nst_load_fds_bios();
 
 	// Load a rom from the command line
 	if (argc > 1) {
@@ -819,8 +895,9 @@ int main(int argc, char *argv[]) {
 	// Remove the cartridge and shut down the NES
 	nst_unload();
 	
-	// Unload the FDS BIOS and game database
-	fileio_shutdown();
+	// Unload the FDS BIOS and NstDatabase.xml
+	if (nstdb) { delete nstdb; nstdb = NULL; }
+	if (fdsbios) { delete fdsbios; fdsbios = NULL; }
 	
 	// Deinitialize audio
 	audio_deinit();
