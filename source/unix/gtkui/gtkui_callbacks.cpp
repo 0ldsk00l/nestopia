@@ -106,15 +106,15 @@ void gtkui_cb_video_tv_aspect(GtkToggleButton *togglebutton, gpointer userdata) 
 	gtkui_cb_video_refresh();
 }
 
-void gtkui_cb_video_mask_overscan(GtkToggleButton *togglebutton, gpointer userdata) {
+void gtkui_cb_video_unmask_overscan(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Set overscan mask
-	conf.video_mask_overscan = gtk_toggle_button_get_active(togglebutton);
+	conf.video_unmask_overscan = gtk_toggle_button_get_active(togglebutton);
 	gtkui_cb_video_refresh();
 }
 
-void gtkui_cb_video_preserve_aspect(GtkToggleButton *togglebutton, gpointer userdata) {
-	// Set aspect ratio preservation
-	conf.video_preserve_aspect = gtk_toggle_button_get_active(togglebutton);
+void gtkui_cb_video_stretch_aspect(GtkToggleButton *togglebutton, gpointer userdata) {
+	// Set aspect ratio stretching/preservation
+	conf.video_stretch_aspect = gtk_toggle_button_get_active(togglebutton);
 	gtkui_cb_video_refresh();
 }
 

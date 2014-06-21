@@ -71,9 +71,9 @@ void config_file_write() {
 		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "linear_filter=%d\n", conf.video_linear_filter);
 		fprintf(fp, "tv_aspect=%d\n", conf.video_tv_aspect);
-		fprintf(fp, "mask_overscan=%d\n", conf.video_mask_overscan);
+		fprintf(fp, "unmask_overscan=%d\n", conf.video_unmask_overscan);
 		fprintf(fp, "fullscreen=%d\n", conf.video_fullscreen);
-		fprintf(fp, "preserve_aspect=%d\n", conf.video_preserve_aspect);
+		fprintf(fp, "stretch_aspect=%d\n", conf.video_stretch_aspect);
 		fprintf(fp, "unlimited_sprites=%d\n", conf.video_unlimited_sprites);
 		fprintf(fp, "xbr_pixel_blending=%d\n", conf.video_xbr_pixel_blending);
 		fprintf(fp, "\n"); // End of Section
@@ -147,11 +147,11 @@ void config_set_default() {
 	conf.video_xbr_corner_rounding = 0;
 	conf.video_linear_filter = false;
 	conf.video_tv_aspect = false;
-	conf.video_mask_overscan = true;
+	conf.video_unmask_overscan = false;
 	conf.video_fullscreen = false;
-	conf.video_preserve_aspect = true;
-	conf.video_unlimited_sprites = true;
-	conf.video_xbr_pixel_blending = true;
+	conf.video_stretch_aspect = false;
+	conf.video_unlimited_sprites = false;
+	conf.video_xbr_pixel_blending = false;
 	
 	// Audio
 	conf.audio_api = 0;
@@ -203,9 +203,9 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("video", "xbr_corner_rounding")) { pconfig->video_xbr_corner_rounding = atoi(value); }
 	else if (MATCH("video", "linear_filter")) { pconfig->video_linear_filter = atoi(value); }
 	else if (MATCH("video", "tv_aspect")) { pconfig->video_tv_aspect = atoi(value); }
-	else if (MATCH("video", "mask_overscan")) { pconfig->video_mask_overscan = atoi(value); }
+	else if (MATCH("video", "unmask_overscan")) { pconfig->video_unmask_overscan = atoi(value); }
 	else if (MATCH("video", "fullscreen")) { pconfig->video_fullscreen = atoi(value); }
-	else if (MATCH("video", "preserve_aspect")) { pconfig->video_preserve_aspect = atoi(value); }
+	else if (MATCH("video", "stretch_aspect")) { pconfig->video_stretch_aspect = atoi(value); }
 	else if (MATCH("video", "unlimited_sprites")) { pconfig->video_unlimited_sprites = atoi(value); }
 	else if (MATCH("video", "xbr_pixel_blending")) { pconfig->video_xbr_pixel_blending = atoi(value); }
 	

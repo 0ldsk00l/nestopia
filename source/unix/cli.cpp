@@ -128,19 +128,19 @@ void cli_handle_command(int argc, char *argv[]) {
 				break;
 			
 			case 'm':
-				conf.video_mask_overscan = true;
+				conf.video_unmask_overscan = false;
 				break;
 			
 			case 'n':
-				conf.video_mask_overscan = false;
+				conf.video_unmask_overscan = true;
 				break;
 			
 			case 'o':
-				conf.video_preserve_aspect = false;
+				conf.video_stretch_aspect = true;
 				break;
 			
 			case 'p':
-				conf.video_preserve_aspect = true;
+				conf.video_stretch_aspect = false;
 				break;
 			
 			case 's':
