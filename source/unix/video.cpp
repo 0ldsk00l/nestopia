@@ -246,8 +246,6 @@ void video_init() {
 		video.SetBlend(conf.video_xbr_pixel_blending);
 	}
 	
-	//video.ClearFilterUpdateFlag();
-	
 	// set the render state
 	if (NES_FAILED(video.SetRenderState(renderstate))) {
 		fprintf(stderr, "Nestopia core rejected render state\n");
@@ -299,6 +297,12 @@ void video_toggle_filter() {
 	#ifdef _GTK
 	if (!conf.misc_disable_gui) { gtkui_resize(); }
 	#endif
+}
+
+void video_toggle_filterupdate() {
+	// Clear the filter update flag
+	Video video(emulator);
+	video.ClearFilterUpdateFlag();
 }
 
 void video_toggle_scalefactor() {

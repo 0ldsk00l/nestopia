@@ -86,12 +86,14 @@ void gtkui_cb_video_xbrrounding(GtkComboBox *combobox, gpointer userdata) {
 	// Set xBR corner rounding parameters
 	conf.video_xbr_corner_rounding = gtk_combo_box_get_active(combobox);
 	gtkui_cb_video_refresh();
+	video_toggle_filterupdate();
 }
 
 void gtkui_cb_video_xbrpixblend(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Set xBR pixel blending parameters
 	conf.video_xbr_pixel_blending = gtk_toggle_button_get_active(togglebutton);
 	gtkui_cb_video_refresh();
+	video_toggle_filterupdate();
 }
 
 void gtkui_cb_video_linear_filter(GtkToggleButton *togglebutton, gpointer userdata) {
