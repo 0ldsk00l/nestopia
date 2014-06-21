@@ -43,3 +43,5 @@ void gtk_opengl_set_swap (GtkWidget *area, int vsync);
 void gtk_opengl_wait_gl (void);
 
 void gtk_opengl_wait_x (void);
+
+int gtk_opengl_area_start(GtkWidget *widget, void *data);

@@ -330,7 +330,6 @@ IOBJS += objs/unix/cli.o
 IOBJS += objs/unix/audio.o
 IOBJS += objs/unix/video.o
 IOBJS += objs/unix/input.o
-IOBJS += objs/unix/fileio.o
 IOBJS += objs/unix/config.o
 IOBJS += objs/unix/cheats.o
 IOBJS += objs/unix/cursor.o

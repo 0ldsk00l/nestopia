@@ -202,3 +202,23 @@ void gtk_opengl_wait_x (void)
 
 glXWaitX();
 }
+
+/*************************
+ * GTK_OPENGL_AREA_START *
+ * ***********************/
+ 
+int gtk_opengl_area_start(GtkWidget *widget, void *data)
+{
+	GtkWidget *window = (GtkWidget *) data;
+	GtkWidget *area = (GtkWidget *) g_object_get_data (G_OBJECT (window), "area");
+	GLXContext context = (GLXContext) g_object_get_data (G_OBJECT (window), "context");
+
+	if (gtk_opengl_current(area, context) == TRUE) {
+		glEnable (GL_DEPTH_TEST);
+		glDepthFunc (GL_LEQUAL);
+		glEnable (GL_CULL_FACE);
+		glCullFace (GL_BACK);
+		glDisable (GL_DITHER);
+		glShadeModel (GL_SMOOTH);
+	}
+}

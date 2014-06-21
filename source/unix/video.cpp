@@ -505,6 +505,11 @@ void video_set_params() {
 	opengl_cleanup();
 }
 
+void video_set_title(const char *title) {
+	// Set the window title
+	SDL_SetWindowTitle(sdlwindow, title);
+}
+
 long video_lock_screen(void*& ptr) {
 	ptr = videobuf;
 	return basesize.w * 4;
