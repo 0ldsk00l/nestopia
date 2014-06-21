@@ -21,6 +21,7 @@ void video_create();
 void video_destroy();
 void video_toggle_fullscreen();
 void video_toggle_filter();
+void video_toggle_filterupdate();
 void video_toggle_scalefactor();
 void video_set_filter();
 void video_set_params();
