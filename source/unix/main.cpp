@@ -250,19 +250,6 @@ void nst_pause() {
 	#endif
 }
 
-// generate the filename for quicksave files
-std::string StrQuickSaveFile(int slot) {
-	
-	std::ostringstream ossFile;
-	ossFile << nstpaths.nstdir;
-	ossFile << "state";
-	
-	ossFile << "/" << std::setbase(16) << std::setfill('0') << std::setw(8)
-		<< basename(nstpaths.gamename) << std::string("_") << slot << ".nst";
-	
-	return ossFile.str();
-}
-
 void nst_fds_info() {
 	Fds fds(emulator);
 
@@ -347,6 +334,7 @@ void nst_state_save(char *filename) {
 	std::ofstream statefile(filename, std::ifstream::out|std::ifstream::binary);
 	
 	if (statefile.is_open()) { machine.SaveState(statefile, Nes::Api::Machine::NO_COMPRESSION); }
+	fprintf(stderr, "State Saved: %s\n", filename);
 }
 
 void nst_state_load(char *filename) {
@@ -356,34 +344,29 @@ void nst_state_load(char *filename) {
 	std::ifstream statefile(filename, std::ifstream::in|std::ifstream::binary);
 	
 	if (statefile.is_open()) { machine.LoadState(statefile); }
+	fprintf(stderr, "State Loaded: %s\n", filename);
 }
 
 void nst_state_quicksave(int slot) {
-	// Save State
-	std::string strFile = StrQuickSaveFile(slot);
-	
-	Machine machine( emulator );
-	std::ofstream os(strFile.c_str());
-	
-	machine.SaveState(os, Nes::Api::Machine::NO_COMPRESSION);
-	fprintf(stderr, "State Saved: %s\n", strFile.c_str());
+	// Quick Save State
+	char slotpath[520];
+	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.quicksave, slot);
+	nst_state_save(slotpath);
 }
 
 
 void nst_state_quickload(int slot) {
-	// Load State
-	std::string strFile = StrQuickSaveFile(slot);
-	
+	// Quick Load State
+	char slotpath[520];
+	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.quicksave, slot);
+		
 	struct stat qloadstat;
-	if (stat(strFile.c_str(), &qloadstat) == -1) {
+	if (stat(slotpath, &qloadstat) == -1) {
 		fprintf(stderr, "No State to Load\n");
 		return;
 	}
-
-	Machine machine( emulator );
-	std::ifstream is(strFile.c_str());
-	machine.LoadState(is);
-	fprintf(stderr, "State Loaded: %s\n", strFile.c_str());
+	
+	nst_state_load(slotpath);
 }
 
 void nst_movie_save(char *filename) {
@@ -574,6 +557,9 @@ void nst_set_paths(const char *filename) {
 
 	// Construct path for FDS save patches
 	snprintf(nstpaths.fdssave, sizeof(nstpaths.fdssave), "%s%s", nstpaths.savedir, nstpaths.gamename);
+	
+	// Construct the quicksave path
+	snprintf(nstpaths.quicksave, sizeof(nstpaths.quicksave), "%sstate/%s", nstpaths.nstdir, nstpaths.gamename);
 	
 	// Construct the cheat path
 	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);
