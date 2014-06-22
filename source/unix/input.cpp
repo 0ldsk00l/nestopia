@@ -95,7 +95,15 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 	// Process input events
 	
 	int x, y;
+	#ifdef _GTK
+	if (conf.misc_disable_gui) { SDL_GetMouseState(&x, &y); }
+	else {
+		x = event.button.x;
+		y = event.button.y;
+	}
+	#else
 	SDL_GetMouseState(&x, &y);
+	#endif
 	
 	// Match keyboard and joystick input
 	switch(event.type) {

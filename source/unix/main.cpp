@@ -245,6 +245,9 @@ void nst_pause() {
 	
 	playing = false;
 	cursor_set_default();
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) { gtkui_cursor_set_default(); }
+	#endif
 }
 
 // generate the filename for quicksave files
@@ -539,7 +542,11 @@ void SetupInput()
 	// Use the crosshair if a Zapper is present
 	if (Input(emulator).GetConnectedController(0) == 5 ||
 		Input(emulator).GetConnectedController(1) == 5) {
+		
 		cursor_set_crosshair();
+		#ifdef _GTK
+		gtkui_cursor_set_crosshair();
+		#endif
 	}
 }
 

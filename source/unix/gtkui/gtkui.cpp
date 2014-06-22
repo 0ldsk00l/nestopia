@@ -210,11 +210,21 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_about), NULL);
 	
 	// Key translation
-	g_signal_connect(G_OBJECT(gtkwindow), "key_press_event",
+	g_signal_connect(G_OBJECT(gtkwindow), "key-press-event",
 		G_CALLBACK(gtkui_cb_convert_key), NULL);
 	
-	g_signal_connect(G_OBJECT(gtkwindow), "key_release_event",
+	g_signal_connect(G_OBJECT(gtkwindow), "key-release-event",
 		G_CALLBACK(gtkui_cb_convert_key), NULL);
+	
+	// Mouse translation
+	gtk_widget_add_events(GTK_WIDGET(drawingarea), GDK_BUTTON_PRESS_MASK);
+	gtk_widget_add_events(GTK_WIDGET(drawingarea), GDK_BUTTON_RELEASE_MASK);
+	
+	g_signal_connect(G_OBJECT(drawingarea), "button-press-event",
+		G_CALLBACK(gtkui_cb_convert_mouse), NULL);
+	
+	g_signal_connect(G_OBJECT(drawingarea), "button-release-event",
+		G_CALLBACK(gtkui_cb_convert_mouse), NULL);
 	
 	gtk_widget_show_all(gtkwindow);
 }
@@ -280,4 +290,28 @@ void gtkui_opengl_start() {
 
 void gtkui_swapbuffers() {
 	gtk_opengl_swap(drawingarea);
+}
+
+void gtkui_cursor_set_crosshair() {
+	// Set the cursor to a crosshair
+	GdkCursor *cursor;
+	cursor = gdk_cursor_new(GDK_CROSSHAIR);
+	
+	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
+	
+	gdk_window_set_cursor(gdkwindow, cursor);
+	gdk_flush();
+	gdk_cursor_unref(cursor);
+}
+
+void gtkui_cursor_set_default() {
+	// Set the cursor to the default
+	GdkCursor *cursor;
+	cursor = gdk_cursor_new(GDK_LEFT_PTR);
+	
+	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
+	
+	gdk_window_set_cursor(gdkwindow, cursor);
+	gdk_flush();
+	gdk_cursor_unref(cursor);
 }
