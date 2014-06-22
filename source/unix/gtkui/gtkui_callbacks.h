@@ -38,6 +38,7 @@ void gtkui_cb_misc_genie_distortion(GtkToggleButton *togglebutton, gpointer user
 void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata);
 
 unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval);
-int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer user_data);
+int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer userdata);
+int gtkui_cb_convert_mouse(GtkDrawingArea *area, GdkEventButton *event, gpointer userdata);
 
 #endif

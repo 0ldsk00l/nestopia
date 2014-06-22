@@ -379,7 +379,7 @@ unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval) {
 	return sdl_keycode;
 }
 
-int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer user_data) {
+int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer userdata) {
 	// Convert GDK events to SDL events
 	
 	SDL_Event sdlevent;
@@ -418,5 +418,32 @@ int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer user_data
 		state[SDL_GetScancodeFromKey(sdlkeycode)] = keystate;
 	}
 	// Allow GTK+ to process this key.
+	return FALSE;
+}
+
+int gtkui_cb_convert_mouse(GtkDrawingArea *area, GdkEventButton *event, gpointer userdata) {
+	// Convert GDK mouse clicks to SDL mouse clicks
+	SDL_Event sdlevent;
+	
+	switch(event->type) {
+		case GDK_BUTTON_PRESS:
+			sdlevent.type = SDL_MOUSEBUTTONDOWN;
+			sdlevent.button.state = SDL_PRESSED;
+			break;
+		
+		case GDK_BUTTON_RELEASE:
+			sdlevent.type = SDL_MOUSEBUTTONUP;
+			sdlevent.button.state = SDL_RELEASED;
+			break;
+		
+		default: break;
+	}
+	
+	sdlevent.button.button = event->button == 1 ? SDL_BUTTON_LEFT : SDL_BUTTON_RIGHT;
+	sdlevent.button.x = (int)event->x;
+	sdlevent.button.y = (int)event->y;
+	
+	SDL_PushEvent(&sdlevent);
+	
 	return FALSE;
 }

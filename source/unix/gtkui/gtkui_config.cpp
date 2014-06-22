@@ -28,6 +28,7 @@
 #include "gtkui_config.h"
 
 extern settings_t conf;
+extern char padpath[512];
 
 GtkWidget *configwindow;
 
@@ -529,6 +530,41 @@ GtkWidget *gtkui_config() {
 	
 	// Input //
 	GtkWidget *box_input = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	GtkWidget *box_input_upper = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *box_input_lower = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_upper, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_lower, FALSE, FALSE, 0);
+	
+	// NES Controller
+	/*GtkWidget *box_input_pad = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin", 10, NULL);
+	GtkWidget *nespad = gtk_widget_new(GTK_TYPE_IMAGE, "halign", GTK_ALIGN_CENTER, "expand", TRUE, "file", padpath, "margin", 10, NULL);
+	gtk_box_pack_start(GTK_BOX(box_input_pad), nespad, TRUE, TRUE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_pad, FALSE, FALSE, 0);*/
+	
+	// Entry Box
+	GtkWidget *box_input_entry_left = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_entry_left, FALSE, FALSE, 0);
+	
+	GtkWidget *box_input_entry_right = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_entry_right, FALSE, FALSE, 0);
+	
+	GtkWidget *inputsep1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+	gtk_box_pack_start(GTK_BOX(box_input_lower), inputsep1, FALSE, FALSE, 0);
+	
+	// Player Select
+	GtkWidget *combo_input_player = gtk_widget_new(
+					GTK_TYPE_COMBO_BOX_TEXT,
+					"halign", GTK_ALIGN_START,
+					"margin-top", 5,
+					"margin-bottom", 5,
+					"margin-left", 10,
+					"margin-right", 10,
+					NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 1");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 2");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_input_player), 0);
+	gtk_box_pack_start(GTK_BOX(box_input_lower), combo_input_player, FALSE, FALSE, 0);
 	
 	// Turbo Pulse
 	GtkAdjustment *adj_input_turbopulse = gtk_adjustment_new(conf.timing_turbopulse, 2, 9, 1, 5, 0);
@@ -552,7 +588,7 @@ GtkWidget *gtkui_config() {
 				NULL);
 	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), label_input_turbopulse, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), scale_input_turbopulse, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_input), box_input_turbopulse, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_lower), box_input_turbopulse, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(scale_input_turbopulse), "value-changed",
 		G_CALLBACK(gtkui_cb_input_turbopulse), NULL);

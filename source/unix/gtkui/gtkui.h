@@ -10,8 +10,11 @@ void gtkui_resize();
 void gtkui_set_title(const char *title);
 GtkWidget *gtkui_about();
 void gtkui_image_paths();
-void gtkui_opengl_start();
 
+void gtkui_opengl_start();
 void gtkui_swapbuffers();
+
+void gtkui_cursor_set_crosshair();
+void gtkui_cursor_set_default();
 
 #endif
