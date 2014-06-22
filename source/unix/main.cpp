@@ -115,13 +115,13 @@ static void NST_CALLBACK nst_cb_event(void *userData, User::Event event, const v
 	// Handle special events
 	switch (event) {
 		case User::EVENT_CPU_JAM:
-			fprintf(stderr, "Cpu: Jammed\n", data);
+			fprintf(stderr, "Cpu: Jammed\n");
 			break;
 		case User::EVENT_CPU_UNOFFICIAL_OPCODE:
-			fprintf(stderr, "Cpu: Unofficial Opcode %s\n", data);
+			fprintf(stderr, "Cpu: Unofficial Opcode %s\n", (const char*)data);
 			break;
 		case User::EVENT_DISPLAY_TIMER:
-			fprintf(stderr, "\r%s", data);
+			fprintf(stderr, "\r%s", (const char*)data);
 			break;
 		default: break;
 	}
