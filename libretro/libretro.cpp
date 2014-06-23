@@ -134,6 +134,12 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
    }
 }
 
+static void check_system_specs(void)
+{
+   unsigned level = 6;
+   environ_cb(RETRO_ENVIRONMENT_SET_PERFORMANCE_LEVEL, &level);
+}
+
 void retro_init(void)
 {
    struct retro_log_callback log;
@@ -146,6 +152,8 @@ void retro_init(void)
       log_cb = log.log;
    else
       log_cb = NULL;
+
+   check_system_specs();
 }
 
 void retro_deinit(void)
