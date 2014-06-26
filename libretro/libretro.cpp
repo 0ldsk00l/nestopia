@@ -539,10 +539,13 @@ bool retro_load_game(const struct retro_game_info *info)
          log_cb(RETRO_LOG_WARN, "NstDatabase.xml required to detect region and some mappers.\n");
       delete db_file;
    }
-
-   extract_basename(g_basename, info->path, sizeof(g_basename));
-   extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
-
+   
+   if (info->path != NULL)
+   {
+      extract_basename(g_basename, info->path, sizeof(g_basename));
+      extract_directory(g_rom_dir, info->path, sizeof(g_rom_dir));
+   }
+   
    enum retro_pixel_format fmt = RETRO_PIXEL_FORMAT_XRGB8888;
    if (!environ_cb(RETRO_ENVIRONMENT_SET_PIXEL_FORMAT, &fmt))
    {
