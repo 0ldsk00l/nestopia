@@ -41,6 +41,7 @@ GtkWidget *cheatwindow;
 GtkTreeStore *treestore;
 GtkWidget *treeview;
 GtkWidget *descedit, *ggedit, *paredit;
+GtkWidget *infobar, *infolabel;
 
 Xml savexml;
 Xml::Node saveroot;
@@ -60,6 +61,13 @@ GtkWidget *gtkui_cheats() {
 	
 	treeview = gtk_tree_view_new();
 	gtk_container_add(GTK_CONTAINER (scrolledwindow), treeview);
+	
+	infobar = gtk_info_bar_new();
+	infolabel = gtk_widget_new(GTK_TYPE_LABEL,"label", "", NULL);
+	gtk_box_pack_start(GTK_BOX(cheatbox), infobar, TRUE, TRUE, 0);
+	
+	GtkWidget *content_area = gtk_info_bar_get_content_area(GTK_INFO_BAR(infobar));
+	gtk_box_pack_start(GTK_BOX(content_area), infolabel, TRUE, TRUE, 0);
 	
 	GtkWidget *opensavebox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_END, NULL);
 	gtk_box_pack_start(GTK_BOX(cheatbox), opensavebox, FALSE, FALSE, 0);
@@ -247,6 +255,7 @@ GtkWidget *gtkui_cheats() {
 		G_CALLBACK(gtkui_cheats_ok), NULL);
 	
 	gtk_widget_show_all(cheatwindow);
+	gtk_widget_hide(infobar);
 
 	return cheatwindow;
 }
@@ -395,27 +404,42 @@ void gtkui_cheats_gg_add(GtkWidget *widget, gpointer userdata) {
 	// Add a Game Genie code to the list
 	GtkTreeIter iter;
 	
+	Cheats cheats(emulator);
+	Cheats::Code code;
+	
 	char codebuf[9];
 	char descbuf[512];
 	
 	snprintf(codebuf, sizeof(codebuf), "%.8s", gtk_entry_get_text(GTK_ENTRY(ggedit)));
 	snprintf(descbuf, sizeof(descbuf), "%s", gtk_entry_get_text(GTK_ENTRY(descedit)));
 	
-	gtk_tree_store_append(treestore, &iter, NULL);
-	
-	gtk_tree_store_set(treestore, &iter,
-				0, true,
-				1, codebuf,
-				4, descbuf,
-				-1);
-	gtk_entry_set_text(GTK_ENTRY(descedit), "");
-	gtk_entry_set_text(GTK_ENTRY(ggedit), "");
-	gtk_entry_set_text(GTK_ENTRY(paredit), "");
+	if (cheats.GameGenieDecode(codebuf, code) == Nes::RESULT_OK) {
+		gtk_tree_store_append(treestore, &iter, NULL);
+		gtk_tree_store_set(treestore, &iter,
+					0, true,
+					1, codebuf,
+					4, descbuf,
+					-1);
+		gtk_entry_set_text(GTK_ENTRY(descedit), "");
+		gtk_entry_set_text(GTK_ENTRY(ggedit), "");
+		gtk_entry_set_text(GTK_ENTRY(paredit), "");
+		gtk_widget_hide(infobar);
+		gtk_label_set_text(GTK_LABEL(infolabel), "");
+		cheats.SetCode(code);
+	}
+	else {
+		gtk_info_bar_set_message_type(GTK_INFO_BAR(infobar), GTK_MESSAGE_ERROR);
+		gtk_label_set_text(GTK_LABEL(infolabel), "Error: Invalid Game Genie code");
+		gtk_widget_show(infobar);
+	}
 }
 
 void gtkui_cheats_par_add(GtkWidget *widget, gpointer userdata) {
 	// Add a Pro Action Rocky code to the list
 	GtkTreeIter iter;
+	
+	Cheats cheats(emulator);
+	Cheats::Code code;
 	
 	char codebuf[9];
 	char descbuf[512];
@@ -423,16 +447,25 @@ void gtkui_cheats_par_add(GtkWidget *widget, gpointer userdata) {
 	snprintf(codebuf, sizeof(codebuf), "%.8s", gtk_entry_get_text(GTK_ENTRY(paredit)));
 	snprintf(descbuf, sizeof(descbuf), "%s", gtk_entry_get_text(GTK_ENTRY(descedit)));
 	
-	gtk_tree_store_append(treestore, &iter, NULL);
-	
-	gtk_tree_store_set(treestore, &iter,
-				0, true,
-				2, codebuf,
-				4, descbuf,
-				-1);
-	gtk_entry_set_text(GTK_ENTRY(descedit), "");
-	gtk_entry_set_text(GTK_ENTRY(ggedit), "");
-	gtk_entry_set_text(GTK_ENTRY(paredit), "");
+	if (cheats.ProActionRockyDecode(codebuf, code) == Nes::RESULT_OK) {
+		gtk_tree_store_append(treestore, &iter, NULL);
+		gtk_tree_store_set(treestore, &iter,
+					0, true,
+					1, codebuf,
+					4, descbuf,
+					-1);
+		gtk_entry_set_text(GTK_ENTRY(descedit), "");
+		gtk_entry_set_text(GTK_ENTRY(ggedit), "");
+		gtk_entry_set_text(GTK_ENTRY(paredit), "");
+		gtk_widget_hide(infobar);
+		gtk_label_set_text(GTK_LABEL(infolabel), "");
+		cheats.SetCode(code);
+	}
+	else {
+		gtk_info_bar_set_message_type(GTK_INFO_BAR(infobar), GTK_MESSAGE_ERROR);
+		gtk_label_set_text(GTK_LABEL(infolabel), "Error: Invalid PAR code");
+		gtk_widget_show(infobar);
+	}
 }
 
 void gtkui_cheats_remove(GtkWidget *widget, gpointer userdata) {
@@ -446,7 +479,9 @@ void gtkui_cheats_remove(GtkWidget *widget, gpointer userdata) {
 	gtk_tree_selection_get_selected(selection, &model, &iter);
 
 	// Remove the cheat
-	gtk_tree_store_remove(treestore, &iter);
+	if (gtk_tree_store_iter_is_valid(treestore, &iter)) {
+		gtk_tree_store_remove(treestore, &iter);
+	}
 	
 	//Re-initialize the cheats
 	Cheats cheats(emulator);
