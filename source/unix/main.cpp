@@ -351,7 +351,7 @@ void nst_state_load(char *filename) {
 void nst_state_quicksave(int slot) {
 	// Quick Save State
 	char slotpath[520];
-	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.quicksave, slot);
+	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
 	nst_state_save(slotpath);
 }
 
@@ -359,7 +359,7 @@ void nst_state_quicksave(int slot) {
 void nst_state_quickload(int slot) {
 	// Quick Load State
 	char slotpath[520];
-	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.quicksave, slot);
+	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
 		
 	struct stat qloadstat;
 	if (stat(slotpath, &qloadstat) == -1) {
@@ -583,8 +583,8 @@ void nst_set_paths(const char *filename) {
 	// Construct path for FDS save patches
 	snprintf(nstpaths.fdssave, sizeof(nstpaths.fdssave), "%s%s", nstpaths.savedir, nstpaths.gamename);
 	
-	// Construct the quicksave path
-	snprintf(nstpaths.quicksave, sizeof(nstpaths.quicksave), "%sstate/%s", nstpaths.nstdir, nstpaths.gamename);
+	// Construct the save state path
+	snprintf(nstpaths.statepath, sizeof(nstpaths.statepath), "%sstate/%s", nstpaths.nstdir, nstpaths.gamename);
 	
 	// Construct the cheat path
 	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);

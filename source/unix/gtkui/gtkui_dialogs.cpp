@@ -21,9 +21,10 @@
  */
 
 #include "../main.h"
- 
+
 #include "gtkui.h"
- 
+
+extern nstpaths_t nstpaths;
 extern GtkWidget *gtkwindow;
 
 void gtkui_file_open() {
@@ -76,7 +77,10 @@ void gtkui_state_save() {
 				GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 				NULL);
 	
-	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "savestate.nst");
+	char statepath[512];
+	snprintf(statepath, sizeof(statepath), "%s.nst", nstpaths.statepath);
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), statepath);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), nstpaths.statepath);
 	
 	if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
@@ -100,6 +104,7 @@ void gtkui_state_load() {
 	gtk_file_filter_set_name(filter, "Nestopia Save States");
 	gtk_file_filter_add_pattern(filter, "*.nst");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), nstpaths.statepath);
 	
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
@@ -119,7 +124,10 @@ void gtkui_movie_save() {
 				GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
 				NULL);
 	
-	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), "movie.nsv");
+	char moviepath[512];
+	snprintf(moviepath, sizeof(moviepath), "%s%s.nsv", nstpaths.nstdir, nstpaths.gamename);
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), moviepath);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), nstpaths.nstdir);
 	
 	if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
@@ -143,6 +151,7 @@ void gtkui_movie_load() {
 	gtk_file_filter_set_name(filter, "Nestopia movies");
 	gtk_file_filter_add_pattern(filter, "*.nsv");
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), nstpaths.nstdir);
 	
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
