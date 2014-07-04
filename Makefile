@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 CXXFLAGS ?= -O3 -g3
-CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
+CPPFLAGS += -DNST_PRAGMA_ONCE
 CFLAGS = $(shell sdl2-config --cflags)
 
 INCLUDES = -Isource
