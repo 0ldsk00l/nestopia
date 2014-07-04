@@ -84,6 +84,7 @@ static std::ifstream *nstdb;
 static std::ifstream *fdsbios;
 
 static std::ifstream *moviefile;
+static std::fstream *movierecfile;
 
 extern settings_t conf;
 extern bool altspeed;
@@ -371,10 +372,32 @@ void nst_state_quickload(int slot) {
 
 void nst_movie_save(char *filename) {
 	// Save/Record a movie
+	Movie movie(emulator);
+	
+	movierecfile = new std::fstream(filename, std::ifstream::out|std::ifstream::binary); 
+
+	if (movierecfile->is_open()) {
+		movie.Record((std::iostream&)*movierecfile, Nes::Api::Movie::CLEAN);
+	}
+	else {
+		delete movierecfile;
+		movierecfile = NULL;
+	}
 }
 
 void nst_movie_load(char *filename) {
 	// Load and play a movie
+	Movie movie(emulator);
+	
+	moviefile = new std::ifstream(filename, std::ifstream::in|std::ifstream::binary); 
+
+	if (moviefile->is_open()) {
+		movie.Play(*moviefile);
+	}
+	else {
+		delete moviefile;
+		moviefile = NULL;
+	}
 }
 
 void nst_movie_stop() {
@@ -383,6 +406,8 @@ void nst_movie_stop() {
 	
 	if (movie.IsPlaying() || movie.IsRecording()) {
 		movie.Stop();
+		movierecfile = NULL;
+		delete movierecfile;
 		moviefile = NULL;
 		delete moviefile;
 	}
