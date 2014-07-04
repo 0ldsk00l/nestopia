@@ -447,3 +447,19 @@ int gtkui_cb_convert_mouse(GtkDrawingArea *area, GdkEventButton *event, gpointer
 	
 	return FALSE;
 }
+
+void gtkui_drag_data(GtkWidget *widget, GdkDragContext *dragcontext, gint x, gint y, GtkSelectionData *seldata, guint info, guint time, gpointer data) {
+	// Handle the Drag and Drop
+	if ((widget == NULL) || (dragcontext == NULL) || (seldata == NULL)) {	return;	}
+	
+	if (info == 0) {
+		gchar *fileuri = (gchar*)gtk_selection_data_get_data(seldata);
+		gchar *filename = g_filename_from_uri(fileuri, NULL, NULL);
+		
+		// Dirty hack. g_filename_from_uri adds a \r\n to the string
+		size_t ln = strlen(filename) - 2;
+		if (filename[ln] == '\r') { filename[ln] = '\0'; }
+		
+		nst_load(filename);
+	}
+}
