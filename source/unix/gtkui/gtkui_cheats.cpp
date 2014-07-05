@@ -32,6 +32,7 @@
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_cheats.h"
+#include "gtkui_dialogs.h"
 
 extern settings_t conf;
 extern nstpaths_t nstpaths;
@@ -72,7 +73,7 @@ GtkWidget *gtkui_cheats() {
 	GtkWidget *opensavebox = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_END, NULL);
 	gtk_box_pack_start(GTK_BOX(cheatbox), opensavebox, FALSE, FALSE, 0);
 	
-	/*GtkWidget *cheatopen = gtk_widget_new(
+	GtkWidget *cheatopen = gtk_widget_new(
 				GTK_TYPE_BUTTON,
 				"label", GTK_STOCK_OPEN,
 				"halign", GTK_ALIGN_END,
@@ -81,7 +82,18 @@ GtkWidget *gtkui_cheats() {
 				"margin-right", 8,
 				NULL);
 	gtk_button_set_use_stock(GTK_BUTTON(cheatopen), TRUE);
-	gtk_box_pack_start(GTK_BOX(opensavebox), cheatopen, FALSE, FALSE, 0);*/
+	gtk_box_pack_start(GTK_BOX(opensavebox), cheatopen, FALSE, FALSE, 0);
+	
+	GtkWidget *cheatclear = gtk_widget_new(
+				GTK_TYPE_BUTTON,
+				"label", GTK_STOCK_CLEAR,
+				"halign", GTK_ALIGN_END,
+				"margin-top", 8,
+				"margin-bottom", 8,
+				"margin-right", 8,
+				NULL);
+	gtk_button_set_use_stock(GTK_BUTTON(cheatclear), TRUE);
+	gtk_box_pack_start(GTK_BOX(opensavebox), cheatclear, FALSE, FALSE, 0);
 	
 	GtkWidget *cheatremove = gtk_widget_new(
 				GTK_TYPE_BUTTON,
@@ -228,7 +240,7 @@ GtkWidget *gtkui_cheats() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column[3]);
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column[4]);
 
-	gtkui_cheats_fill_tree();
+	gtkui_cheats_fill_tree(nstpaths.cheatpath);
 	
 	/*g_signal_connect(G_OBJECT(checkbox), "toggled",
 		G_CALLBACK(gtkui_cheats_check), NULL);*/
@@ -236,11 +248,14 @@ GtkWidget *gtkui_cheats() {
 	g_signal_connect(G_OBJECT(treeview), "row-activated",
 		G_CALLBACK(gtkui_cheats_toggle), NULL);
 	
+	g_signal_connect(G_OBJECT(cheatopen), "clicked",
+		G_CALLBACK(gtkui_cheats_load), NULL);
+	
+	g_signal_connect(G_OBJECT(cheatclear), "clicked",
+		G_CALLBACK(gtkui_cheats_clear), NULL);
+	
 	g_signal_connect(G_OBJECT(cheatremove), "clicked",
 		G_CALLBACK(gtkui_cheats_remove), NULL);
-	
-	/*g_signal_connect(G_OBJECT(cheatopen), "clicked",
-		G_CALLBACK(gtkui_cheats_open), NULL);*/
 	
 	g_signal_connect(G_OBJECT(genieadd), "clicked",
 		G_CALLBACK(gtkui_cheats_gg_add), NULL);
@@ -300,9 +315,8 @@ void gtkui_cheats_toggle(GtkWidget *widget, gpointer userdata) {
 	gtk_tree_model_foreach(GTK_TREE_MODEL(model), gtkui_cheats_scan_list, NULL);
 }
 
-void gtkui_cheats_fill_tree() {
+void gtkui_cheats_fill_tree(char *filename) {
 	// Fill the cheat list
-	Cheats cheats(emulator);
 	Xml xml;
 	
 	GtkTreeIter iter;
@@ -312,9 +326,9 @@ void gtkui_cheats_fill_tree() {
 	char codebuf[9];
 	char descbuf[512];
 	
-	cheats.ClearCodes();
+	gtkui_cheats_clear();
 	
-	std::ifstream cheatfile(nstpaths.cheatpath, std::ifstream::in|std::ifstream::binary);
+	std::ifstream cheatfile(filename, std::ifstream::in|std::ifstream::binary);
 	
 	if (cheatfile.is_open()) {
 		xml.Read(cheatfile);
@@ -494,6 +508,13 @@ void gtkui_cheats_ok() {
 	// Save the cheats and close the window
 	gtkui_cheats_save();
 	gtk_widget_destroy(cheatwindow);
+}
+
+void gtkui_cheats_clear() {
+	// Clear the list
+	gtk_tree_store_clear(treestore);
+	Cheats cheats(emulator);
+	cheats.ClearCodes();
 }
 
 gboolean gtkui_cheats_scan_list(GtkTreeModel *model, GtkTreePath *path, GtkTreeIter *iter, gpointer userdata) {

@@ -9,4 +9,6 @@ void gtkui_movie_save();
 void gtkui_movie_load();
 void gtkui_movie_stop();
 
+void gtkui_cheats_load();
+
 #endif
