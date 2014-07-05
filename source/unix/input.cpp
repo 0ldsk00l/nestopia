@@ -33,6 +33,9 @@
 
 extern settings_t conf;
 extern nstpaths_t nstpaths;
+extern dimensions_t rendersize;
+extern SDL_DisplayMode displaymode;
+extern Emulator emulator;
 
 inputsettings_t inputconf;
 gamepad_t player[NUMGAMEPADS];
@@ -68,7 +71,14 @@ static unsigned char nescodes[TOTALBUTTONS] = {
 };
 
 void input_init() {
-	// Initialize any joysticks and set default values
+	// Initialize input
+	Input(emulator).AutoSelectController(0);
+	Input(emulator).AutoSelectController(1);
+	video_set_cursor();
+}
+
+void input_joysticks_detect() {
+	// Initialize any joysticks
 	printf("%i joystick(s) found:\n", SDL_NumJoysticks());
 	
 	int i;
@@ -86,24 +96,13 @@ void input_init() {
 	turbostate.p2b = turbotoggle.p2b = 0;
 }
 
-void input_deinit() {
+void input_joysticks_close() {
 	// Deinitialize any joysticks
 	SDL_JoystickClose(joystick);
 }
 
 void input_process(Input::Controllers *controllers, SDL_Event event) {
 	// Process input events
-	
-	int x, y;
-	#ifdef _GTK
-	if (conf.misc_disable_gui) { SDL_GetMouseState(&x, &y); }
-	else {
-		x = event.button.x;
-		y = event.button.y;
-	}
-	#else
-	SDL_GetMouseState(&x, &y);
-	#endif
 	
 	// Match keyboard and joystick input
 	switch(event.type) {
@@ -120,23 +119,8 @@ void input_process(Input::Controllers *controllers, SDL_Event event) {
 			break;
 
 		case SDL_MOUSEBUTTONUP:
-			controllers->zapper.fire = false;
-			break;
-			
 		case SDL_MOUSEBUTTONDOWN:
-			if (conf.video_unmask_overscan) {
-				controllers->zapper.y = y / conf.video_scale_factor;
-			}
-			else {
-				controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
-			}
-
-			controllers->zapper.x = x / conf.video_scale_factor;
-
-			// Offscreen
-			if(event.button.button != SDL_BUTTON_LEFT) { controllers->zapper.x = ~1U; }
-			
-			controllers->zapper.fire = true;
+			input_match_mouse(controllers, event);
 			break;
 			
 		default: break;
@@ -438,6 +422,73 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[SDL_SCANCODE_F]) { video_toggle_fullscreen(); }
 	if (keys[SDL_SCANCODE_T]) { video_toggle_filter(); }
 	if (keys[SDL_SCANCODE_G]) { video_toggle_scalefactor(); }
+}
+
+void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
+	// Match mouse input to NES input
+	int x, y;
+	double xaspect;
+	double yaspect;
+	#ifdef _GTK
+	if (conf.misc_disable_gui) { SDL_GetMouseState(&x, &y); }
+	else {
+		x = event.button.x;
+		y = event.button.y;
+	}
+	#else
+	SDL_GetMouseState(&x, &y);
+	#endif
+	
+	switch(event.type) {
+		case SDL_MOUSEBUTTONUP:
+			controllers->zapper.fire = false;
+			break;
+			
+		case SDL_MOUSEBUTTONDOWN:
+			// Get X coords
+			if (conf.video_filter == 1) { // NTSC
+				xaspect = (double)(Video::Output::WIDTH) / (double)(Video::Output::NTSC_WIDTH / 2);
+			}
+			else if (conf.video_tv_aspect) {
+				xaspect = (double)(Video::Output::WIDTH) / (double)(TV_WIDTH);
+			}
+			else { xaspect = 1.0; }
+			
+			// Calculate fullscreen X coords
+			if (conf.video_fullscreen) {
+				if (conf.video_stretch_aspect) {
+					xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(displaymode.w);
+				}
+				else {
+					// Remove the same amount of pixels as the black area to the left of the screen
+					x -= displaymode.w / 2.0f - rendersize.w / 2.0f;
+					xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(rendersize.w);
+				}
+			}
+			controllers->zapper.x = (int)(x * xaspect) / conf.video_scale_factor;
+			
+			// Get Y coords
+			if (conf.video_unmask_overscan) {
+				controllers->zapper.y = y / conf.video_scale_factor;
+			}
+			else {
+				controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
+			}
+			
+			// Calculate fullscreen Y coords
+			if (conf.video_fullscreen) {
+				yaspect = (double)(conf.video_scale_factor * Video::Output::HEIGHT) / (double)(displaymode.h);
+				controllers->zapper.y = (y * yaspect) / conf.video_scale_factor;
+			}
+			
+			// Offscreen
+			if(event.button.button != SDL_BUTTON_LEFT) { controllers->zapper.x = ~1U; }
+			
+			controllers->zapper.fire = true;
+			break;
+			
+		default: break;
+	}
 }
 
 char* input_translate_event(SDL_Event event) {

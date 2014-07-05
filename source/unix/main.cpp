@@ -53,7 +53,6 @@
 #include "input.h"
 #include "config.h"
 #include "cheats.h"
-#include "cursor.h"
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
@@ -245,10 +244,7 @@ void nst_pause() {
 	}
 	
 	playing = false;
-	cursor_set_default();
-	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_cursor_set_default(); }
-	#endif
+	video_set_cursor();
 }
 
 void nst_fds_info() {
@@ -419,12 +415,14 @@ void nst_play() {
 	
 	video_init();
 	audio_init();
-	SetupInput();
+	input_init();
 	cheats_init();
 	
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
+	
+	video_set_cursor();
 	
 	audio_set_params(cNstSound);
 	audio_unpause();
@@ -529,32 +527,6 @@ void nst_set_rewind(int direction) {
 			break;
 			
 		default: break;
-	}
-}
-
-// initialize input going into the game
-void SetupInput()
-{
-	// connect a standard NES pad onto the first port
-	//Input(emulator).ConnectController( 0, Input::PAD1 );
-	
-	// connect a standard NES pad onto the second port too
-	//Input(emulator).ConnectController( 1, Input::PAD2 );
-	
-	// connect the Zapper to port 2
-	//Input(emulator).ConnectController( 1, Input::ZAPPER );
-	
-	Input(emulator).AutoSelectController(0);
-	Input(emulator).AutoSelectController(1);
-	
-	// Use the crosshair if a Zapper is present
-	if (Input(emulator).GetConnectedController(0) == 5 ||
-		Input(emulator).GetConnectedController(1) == 5) {
-		
-		cursor_set_crosshair();
-		#ifdef _GTK
-		gtkui_cursor_set_crosshair();
-		#endif
 	}
 }
 
@@ -805,8 +777,8 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	
-	// Initialize input
-	input_init();
+	// Detect Joysticks
+	input_joysticks_detect();
 	
 	// Set default input keys
 	input_set_default();
@@ -920,8 +892,8 @@ int main(int argc, char *argv[]) {
 	// Deinitialize audio
 	audio_deinit();
 	
-	// Deinitialize input
-	input_deinit();
+	// Deinitialize joysticks
+	input_joysticks_close();
 	
 	// Write the input config file
 	input_config_write();

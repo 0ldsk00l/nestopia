@@ -8,6 +8,7 @@
 
 #include <SDL.h>
 #include "core/api/NstApiInput.hpp"
+#include "core/api/NstApiVideo.hpp"
 
 using namespace Nes::Api;
 
@@ -99,12 +100,14 @@ typedef struct {
 } turbo_t;
 
 void input_init();
-void input_deinit();
+void input_joysticks_detect();
+void input_joysticks_close();
 void input_process(Input::Controllers *controllers, SDL_Event event);
 void input_pulse_turbo(Input::Controllers *controllers);
 void input_inject(Input::Controllers *controllers, nesinput_t input);
-void input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
 void input_match_joystick(Input::Controllers *controllers, SDL_Event event);
+void input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
+void input_match_mouse(Input::Controllers *controllers, SDL_Event event);
 char* input_translate_event(SDL_Event event);
 SDL_Event input_translate_string(char *string);
 int input_checksign(int axisvalue);
