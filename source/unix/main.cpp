@@ -33,6 +33,10 @@
 #ifdef _MINGW
 #include <io.h>
 #endif
+#ifndef _MINGW
+#include <archive.h>
+#include <archive_entry.h>
+#endif
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -56,6 +60,7 @@
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
+#include "gtkui/gtkui_archive.h"
 #endif
 
 using namespace Nes::Api;
@@ -562,6 +567,78 @@ void nst_set_paths(const char *filename) {
 	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);
 }
 
+bool nst_archive_checkext(const char *filename) {
+	// Check if the file extension is valid
+	int len = strlen(filename);
+
+	if ((!strcasecmp(&filename[len-4], ".nes")) ||
+	    (!strcasecmp(&filename[len-4], ".fds")) ||
+	    (!strcasecmp(&filename[len-4], ".nsf")) ||
+	    (!strcasecmp(&filename[len-4], ".unf")) ||
+	    (!strcasecmp(&filename[len-5], ".unif"))||
+	    (!strcasecmp(&filename[len-4], ".xml"))) {
+		return true;
+	}
+	return false;
+}
+
+bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile) {
+	// Handle archives
+#ifndef _MINGW
+	struct archive *a;
+	struct archive_entry *entry;
+	int r;
+	int64_t entrysize;
+	
+	a = archive_read_new();
+	archive_read_support_filter_all(a);
+	archive_read_support_format_all(a);
+	r = archive_read_open_filename(a, filename, 10240);
+	
+	// Test if it's actually an archive
+	if (r != ARCHIVE_OK) {
+		r = archive_read_free(a);
+		return false;
+	}
+	
+	// Scan through the archive for files
+	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+		char *rombuf;
+		const char *currentfile = archive_entry_pathname(entry);
+		
+		if (nst_archive_checkext(currentfile)) {
+			nst_set_paths(currentfile);
+			
+			// If there's a specific file we want, load it
+			if (reqfile != NULL) {
+				if (!strcmp(currentfile, reqfile)) {
+					entrysize = archive_entry_size(entry);
+					rombuf = (char*)malloc(entrysize);
+					archive_read_data(a, rombuf, entrysize);
+					archive_read_data_skip(a);
+					r = archive_read_free(a);
+					*romsize = entrysize;
+					*rom = rombuf;
+					return true;
+				}
+			}
+			// Otherwise just take the first file in the archive
+			else {
+				entrysize = archive_entry_size(entry);
+				rombuf = (char*)malloc(entrysize);
+				archive_read_data(a, rombuf, entrysize);
+				archive_read_data_skip(a);
+				r = archive_read_free(a);
+				*romsize = entrysize;
+				*rom = rombuf;
+				return true;
+			}
+		}
+	}
+#endif
+	return false;
+}
+
 bool nst_find_patch(char *filename) {
 	// Check for a patch in the same directory as the game
 	FILE *file;
@@ -658,6 +735,8 @@ void nst_load(const char *filename) {
 	Machine machine(emulator);
 	Sound sound(emulator);
 	Nes::Result result;
+	char *rom;
+	int romsize;
 	char patchname[512];
 	
 	// Pause play before pulling out a cartridge
@@ -665,23 +744,35 @@ void nst_load(const char *filename) {
 	
 	// Pull out any inserted cartridges
 	nst_unload();
+	
+	// Handle the file as an archive if it is one
+	#ifdef _GTK
+	char reqname[256];
+	bool isarchive = gtkui_archive_handle(filename, reqname, sizeof(reqname));
 
-	// Set the file paths
-	nst_set_paths(filename);
-
-	// C++ file stream
-	std::ifstream file(filename, std::ios::in|std::ios::binary);
-
-	if (nst_find_patch(patchname)) {
-		std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
-
-		Machine::Patch patch(pfile, false);
-
-		// Soft Patch
-		result = machine.Load(file, nst_default_system(), patch);
-	}
-	else {
+	if (isarchive) {
+		nst_archive_handle(filename, &rom, &romsize, reqname);
+	#else
+	if (nst_archive_handle(filename, &rom, &romsize, NULL)) {
+	#endif
+		// Convert the malloc'd char* to an istream
+		std::string rombuf(rom, romsize);
+		std::istringstream file(rombuf);
 		result = machine.Load(file, nst_default_system());
+	}
+	// Otherwise just load the file
+	else {
+		std::ifstream file(filename, std::ios::in|std::ios::binary);
+		
+		// Set the file paths
+		nst_set_paths(filename);
+		
+		if (nst_find_patch(patchname)) { // Load with a patch if there is one
+			std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
+			Machine::Patch patch(pfile, false);
+			result = machine.Load(file, nst_default_system(), patch);
+		}
+		else { result = machine.Load(file, nst_default_system()); }
 	}
 	
 	if (NES_FAILED(result)) {
