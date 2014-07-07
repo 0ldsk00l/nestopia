@@ -13,6 +13,8 @@ typedef struct {
 	char cheatpath[512];
 } nstpaths_t;
 
+bool nst_archive_checkext(const char *filename);
+bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile);
 bool nst_find_patch(char *filename);
 void nst_load_db();
 void nst_load_fds_bios();

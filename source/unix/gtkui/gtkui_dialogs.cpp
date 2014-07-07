@@ -42,12 +42,12 @@ void gtkui_file_open() {
 	
 	GtkFileFilter *filter = gtk_file_filter_new();
 	
-	gtk_file_filter_set_name(filter, "NES ROMs");
+	gtk_file_filter_set_name(filter, "NES ROMs and Archives");
 	gtk_file_filter_add_pattern(filter, "*.nes");
 	gtk_file_filter_add_pattern(filter, "*.fds");
 	gtk_file_filter_add_pattern(filter, "*.unf");
 	gtk_file_filter_add_pattern(filter, "*.unif");
-	/*gtk_file_filter_add_pattern(filter, "*.nsf");
+	//gtk_file_filter_add_pattern(filter, "*.nsf");
 	gtk_file_filter_add_pattern(filter, "*.zip");
 	gtk_file_filter_add_pattern(filter, "*.7z");
 	gtk_file_filter_add_pattern(filter, "*.txz");
@@ -55,7 +55,7 @@ void gtkui_file_open() {
 	gtk_file_filter_add_pattern(filter, "*.tgz");
 	gtk_file_filter_add_pattern(filter, "*.tar.gz");
 	gtk_file_filter_add_pattern(filter, "*.tbz");
-	gtk_file_filter_add_pattern(filter, "*.tar.bz2");*/
+	gtk_file_filter_add_pattern(filter, "*.tar.bz2");
 	
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	
