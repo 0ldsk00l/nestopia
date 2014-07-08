@@ -45,7 +45,12 @@ GtkWidget *gtkui_config() {
 	gtk_container_add(GTK_CONTAINER(configwindow), box_upper);
 	
 	// Video //
-	GtkWidget *box_video = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *box_video = gtk_widget_new(
+				GTK_TYPE_BOX,
+				"orientation", GTK_ORIENTATION_HORIZONTAL,
+				"margin-top", MARGIN_TB,
+				"margin-bottom", MARGIN_TB,
+				NULL);
 	GtkWidget *box_video_l = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	GtkWidget *box_video_r = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	
@@ -256,7 +261,6 @@ GtkWidget *gtkui_config() {
 				"label", "Palette Mode:",
 				"halign", GTK_ALIGN_START,
 				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
 				NULL);
 	GtkWidget *combo_video_palette = gtk_widget_new(
 				GTK_TYPE_COMBO_BOX_TEXT,
@@ -283,7 +287,6 @@ GtkWidget *gtkui_config() {
 				"label", "YUV Decoder:",
 				"halign", GTK_ALIGN_START,
 				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
 				NULL);
 	GtkWidget *combo_video_decoder = gtk_widget_new(
 				GTK_TYPE_COMBO_BOX_TEXT,
@@ -306,117 +309,94 @@ GtkWidget *gtkui_config() {
 	
 	// Brightness
 	GtkAdjustment *adj_video_brightness = gtk_adjustment_new(conf.video_brightness, -100, 100, 1, 5, 0);
-	GtkWidget *box_video_brightness = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *label_video_brightness = gtk_widget_new(
-				GTK_TYPE_LABEL,
-				"label", "Brightness:",
-				"halign", GTK_ALIGN_START,
-				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
-				NULL);
+	GtkWidget *frame_video_brightness = gtk_frame_new("Brightness");
 	GtkWidget *scale_video_brightness = gtk_widget_new(
 				GTK_TYPE_SCALE,
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
 				"orientation", GTK_ORIENTATION_HORIZONTAL,
 				"adjustment", adj_video_brightness,
 				"width-request", 201,
 				"height-request", 32,
 				"digits", 0,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_video_brightness), label_video_brightness, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_brightness), scale_video_brightness, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_r), box_video_brightness, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame_video_brightness), scale_video_brightness);
+	gtk_box_pack_start(GTK_BOX(box_video_r), frame_video_brightness, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(scale_video_brightness), "value-changed",
 		G_CALLBACK(gtkui_cb_video_brightness), NULL);
 	
 	// Saturation
 	GtkAdjustment *adj_video_saturation = gtk_adjustment_new(conf.video_saturation, -100, 100, 1, 5, 0);
-	GtkWidget *box_video_saturation = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *label_video_saturation = gtk_widget_new(
-				GTK_TYPE_LABEL,
-				"label", "Saturation:",
-				"halign", GTK_ALIGN_START,
-				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
-				NULL);
+	GtkWidget *frame_video_saturation = gtk_frame_new("Saturation");
 	GtkWidget *scale_video_saturation = gtk_widget_new(
 				GTK_TYPE_SCALE,
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
 				"orientation", GTK_ORIENTATION_HORIZONTAL,
 				"adjustment", adj_video_saturation,
 				"width-request", 201,
 				"height-request", 32,
 				"digits", 0,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_video_saturation), label_video_saturation, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_saturation), scale_video_saturation, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_r), box_video_saturation, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame_video_saturation), scale_video_saturation);
+	gtk_box_pack_start(GTK_BOX(box_video_r), frame_video_saturation, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(scale_video_saturation), "value-changed",
 		G_CALLBACK(gtkui_cb_video_saturation), NULL);
 	
 	// Contrast
 	GtkAdjustment *adj_video_contrast = gtk_adjustment_new(conf.video_contrast, -100, 100, 1, 5, 0);
-	GtkWidget *box_video_contrast = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *label_video_contrast = gtk_widget_new(
-				GTK_TYPE_LABEL,
-				"label", "Contrast:",
-				"halign", GTK_ALIGN_START,
-				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
-				NULL);
+	GtkWidget *frame_video_contrast = gtk_frame_new("Contrast");
 	GtkWidget *scale_video_contrast = gtk_widget_new(
 				GTK_TYPE_SCALE,
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
 				"orientation", GTK_ORIENTATION_HORIZONTAL,
 				"adjustment", adj_video_contrast,
 				"width-request", 201,
 				"height-request", 32,
 				"digits", 0,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_video_contrast), label_video_contrast, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_contrast), scale_video_contrast, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_r), box_video_contrast, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame_video_contrast), scale_video_contrast);
+	gtk_box_pack_start(GTK_BOX(box_video_r), frame_video_contrast, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(scale_video_contrast), "value-changed",
 		G_CALLBACK(gtkui_cb_video_contrast), NULL);
 	
 	// Hue
 	GtkAdjustment *adj_video_hue = gtk_adjustment_new(conf.video_hue, -45, 45, 1, 5, 0);
-	GtkWidget *box_video_hue = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *label_video_hue = gtk_widget_new(
-				GTK_TYPE_LABEL,
-				"label", "Hue:",
-				"halign", GTK_ALIGN_START,
-				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
-				NULL);
+	GtkWidget *frame_video_hue = gtk_frame_new("Hue");
 	GtkWidget *scale_video_hue = gtk_widget_new(
 				GTK_TYPE_SCALE,
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
 				"orientation", GTK_ORIENTATION_HORIZONTAL,
 				"adjustment", adj_video_hue,
 				"width-request", 91,
 				"height-request", 32,
 				"digits", 0,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_video_hue), label_video_hue, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_hue), scale_video_hue, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video_r), box_video_hue, FALSE, FALSE, 0);
+	gtk_container_add(GTK_CONTAINER(frame_video_hue), scale_video_hue);
+	gtk_box_pack_start(GTK_BOX(box_video_r), frame_video_hue, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(scale_video_hue), "value-changed",
 		G_CALLBACK(gtkui_cb_video_hue), NULL);
 	
 	gtk_box_pack_start(GTK_BOX(box_video), box_video_l, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_video), box_video_r, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_video), box_video_r, FALSE, FALSE, MARGIN_LR);
 	
 	// Audio //
-	GtkWidget *box_audio = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	GtkWidget *box_audio = gtk_widget_new(
+				GTK_TYPE_BOX,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"margin-top", MARGIN_TB,
+				"margin-bottom", MARGIN_TB,
+				NULL);
 	
 	// Audio API
 	GtkWidget *box_audio_api = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
@@ -510,11 +490,11 @@ GtkWidget *gtkui_config() {
 	
 	// Volume
 	GtkAdjustment *adj_audio_volume = gtk_adjustment_new(conf.audio_volume, 0, 100, 1, 5, 0);
-	GtkWidget *box_audio_volume = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *frame_audio_volume = gtk_frame_new("Volume");
 	GtkWidget *scale_audio_volume = gtk_widget_new(
 				GTK_TYPE_SCALE,
 				"halign", GTK_ALIGN_START,
-				"margin-left", MARGIN_LR,
+				//"margin-left", MARGIN_LR,
 				"orientation", GTK_ORIENTATION_VERTICAL,
 				"adjustment", adj_audio_volume,
 				"width-request", 32,
@@ -522,14 +502,19 @@ GtkWidget *gtkui_config() {
 				"inverted", TRUE,
 				"digits", 0,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_audio_volume), scale_audio_volume, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_audio), box_audio_volume, FALSE, FALSE, 0);
-	
+	gtk_container_add(GTK_CONTAINER(frame_audio_volume), scale_audio_volume);
+	gtk_box_pack_start(GTK_BOX(box_audio), frame_audio_volume, FALSE, FALSE, 0);
+		
 	g_signal_connect(G_OBJECT(scale_audio_volume), "value-changed",
 		G_CALLBACK(gtkui_cb_audio_volume), NULL);
 	
 	// Input //
-	GtkWidget *box_input = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	GtkWidget *box_input = gtk_widget_new(
+				GTK_TYPE_BOX,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"margin-top", MARGIN_TB,
+				"margin-bottom", MARGIN_TB,
+				NULL);
 	GtkWidget *box_input_upper = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	GtkWidget *box_input_lower = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	
@@ -594,7 +579,12 @@ GtkWidget *gtkui_config() {
 		G_CALLBACK(gtkui_cb_input_turbopulse), NULL);
 	
 	// Misc //
-	GtkWidget *box_misc = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	GtkWidget *box_misc = gtk_widget_new(
+				GTK_TYPE_BOX,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"margin-top", MARGIN_TB,
+				"margin-bottom", MARGIN_TB,
+				NULL);
 	
 	// Default System
 	GtkWidget *box_misc_default_system = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
