@@ -39,7 +39,7 @@ else ifeq ($(platform), osx)
    fpic := -fPIC
    SHARED := -dynamiclib
 OSXVER = `sw_vers -productVersion | cut -c 4`
-ifneq ($(OSXVER),9)
+ifneq ($(shell sw_vers | grep -c 10.9),1)
    fpic += -mmacosx-version-min=10.5
 endif
 else ifeq ($(platform), ios)
