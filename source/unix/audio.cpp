@@ -47,7 +47,7 @@ SDL_AudioDeviceID dev;
 
 int16_t audiobuf[96000];
 
-int framerate, channels, bufsize;
+int framerate, channels;
 
 bool libao_hack = false;
 bool underflow = false;
@@ -156,6 +156,8 @@ void audio_set_samples(uint32_t samples_per_frame) {
 
 void audio_play() {
 	
+	int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
+	
 	if (conf.audio_api == 0) { // SDL
 		while ((bufstat[writebuf] == 0) && (writebuf != playbuf)) {
 			audio_output_frame((conf.audio_sample_rate / framerate), (int16_t *)buffer[writebuf]);
@@ -185,8 +187,6 @@ void audio_init() {
 	channels = conf.audio_stereo ? 2 : 1;
 	
 	memset(audiobuf, 0, sizeof(audiobuf));
-	
-	bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
 	libao_hack = false;
 	
