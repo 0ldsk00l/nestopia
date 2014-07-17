@@ -50,6 +50,8 @@ Xml::Node saveroot;
 GtkWidget *gtkui_cheats() {
 	// Create the Cheats window
 	
+	if (cheatwindow) { return NULL; }
+	
 	cheatwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW (cheatwindow), "Cheat Manager");
 	
@@ -508,6 +510,7 @@ void gtkui_cheats_ok() {
 	// Save the cheats and close the window
 	gtkui_cheats_save();
 	gtk_widget_destroy(cheatwindow);
+	cheatwindow = NULL;
 }
 
 void gtkui_cheats_clear() {

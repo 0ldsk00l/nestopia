@@ -62,11 +62,11 @@ void gtkui_file_open() {
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename;
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+		gtk_widget_destroy(dialog);
 		nst_load(filename);
 		g_free(filename);
 	}
-	
-	gtk_widget_destroy(dialog);
+	else { gtk_widget_destroy(dialog); }
 }
 
 void gtkui_state_save() {
