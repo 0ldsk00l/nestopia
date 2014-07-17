@@ -35,6 +35,8 @@ GtkWidget *configwindow;
 GtkWidget *gtkui_config() {
 	// Create the Configuration window
 	
+	if (configwindow) { return NULL; }
+	
 	configwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(configwindow), "Configuration");
 	
@@ -716,7 +718,7 @@ GtkWidget *gtkui_config() {
 	gtk_box_pack_start(GTK_BOX(box_lower), okbutton, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(configwindow), "destroy",
-		G_CALLBACK(gtkui_cb_destroy_config), NULL);
+		G_CALLBACK(gtkui_config_ok), NULL);
 	
 	gtk_widget_show_all(configwindow);
 	
@@ -725,4 +727,5 @@ GtkWidget *gtkui_config() {
 
 void gtkui_config_ok() {
 	gtk_widget_destroy(configwindow);
+	configwindow = NULL;
 }
