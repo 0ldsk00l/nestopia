@@ -9,10 +9,12 @@ typedef struct {
 	char gamename[256];
 	char savename[512];
 	char fdssave[512];
-	char quicksave[512];
+	char statepath[512];
 	char cheatpath[512];
 } nstpaths_t;
 
+bool nst_archive_checkext(const char *filename);
+bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile);
 bool nst_find_patch(char *filename);
 void nst_load_db();
 void nst_load_fds_bios();

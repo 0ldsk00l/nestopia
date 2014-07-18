@@ -1,7 +1,7 @@
 CC = gcc
 CXX = g++
 CXXFLAGS ?= -O3 -g3
-CPPFLAGS += -DNST_PRAGMA_ONCE -DNST_NO_ZLIB
+CPPFLAGS += -DNST_PRAGMA_ONCE
 CFLAGS = $(shell sdl2-config --cflags)
 
 INCLUDES = -Isource
@@ -25,7 +25,7 @@ ifneq ($(findstring MINGW,$(UNAME)),)
 	LIBS += -lopengl32
 else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
-	#LIBS += -larchive
+	LIBS += -larchive
 	LIBS += -lGL -lGLU -lao
 endif
 
@@ -344,6 +344,7 @@ CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
 LIBS += $(shell pkg-config --libs gtk+-3.0)
 DEFINES += -D_GTK
 IOBJS += objs/unix/gtkui/gtkui.o
+IOBJS += objs/unix/gtkui/gtkui_archive.o
 IOBJS += objs/unix/gtkui/gtkui_callbacks.o
 IOBJS += objs/unix/gtkui/gtkui_cheats.o
 IOBJS += objs/unix/gtkui/gtkui_config.o

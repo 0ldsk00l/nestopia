@@ -157,9 +157,22 @@ void gtkui_create() {
 	GtkSettings *gtksettings = gtk_settings_get_default();
 	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
 	
+	// Set up the Drag and Drop target
+	GtkTargetEntry target_entry[1];
+
+	target_entry[0].target = (gchar*)"text/uri-list";
+	target_entry[0].flags = 0;
+	target_entry[0].info = 0;
+	
+	gtk_drag_dest_set(drawingarea, (GtkDestDefaults)(GTK_DEST_DEFAULT_MOTION | GTK_DEST_DEFAULT_HIGHLIGHT | GTK_DEST_DEFAULT_DROP), 
+		target_entry, sizeof(target_entry) / sizeof(GtkTargetEntry), (GdkDragAction)(GDK_ACTION_MOVE | GDK_ACTION_COPY));
+	
 	// Connect the signals
 	//g_signal_connect(drawingarea, "realize",
 	//	G_CALLBACK(area_start), gtkwindow);
+	
+	g_signal_connect(G_OBJECT(drawingarea), "drag-data-received",
+		G_CALLBACK(gtkui_drag_data), NULL);
 	
 	g_signal_connect(G_OBJECT(gtkwindow), "delete_event",
 		G_CALLBACK(nst_schedule_quit), NULL);
