@@ -33,6 +33,10 @@
 #ifdef _MINGW
 #include <io.h>
 #endif
+#ifndef _MINGW
+#include <archive.h>
+#include <archive_entry.h>
+#endif
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -53,10 +57,10 @@
 #include "input.h"
 #include "config.h"
 #include "cheats.h"
-#include "cursor.h"
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
+#include "gtkui/gtkui_archive.h"
 #endif
 
 using namespace Nes::Api;
@@ -84,6 +88,7 @@ static std::ifstream *nstdb;
 static std::ifstream *fdsbios;
 
 static std::ifstream *moviefile;
+static std::fstream *movierecfile;
 
 extern settings_t conf;
 extern bool altspeed;
@@ -244,10 +249,7 @@ void nst_pause() {
 	}
 	
 	playing = false;
-	cursor_set_default();
-	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_cursor_set_default(); }
-	#endif
+	video_set_cursor();
 }
 
 void nst_fds_info() {
@@ -350,7 +352,7 @@ void nst_state_load(char *filename) {
 void nst_state_quicksave(int slot) {
 	// Quick Save State
 	char slotpath[520];
-	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.quicksave, slot);
+	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
 	nst_state_save(slotpath);
 }
 
@@ -358,7 +360,7 @@ void nst_state_quicksave(int slot) {
 void nst_state_quickload(int slot) {
 	// Quick Load State
 	char slotpath[520];
-	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.quicksave, slot);
+	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
 		
 	struct stat qloadstat;
 	if (stat(slotpath, &qloadstat) == -1) {
@@ -371,10 +373,32 @@ void nst_state_quickload(int slot) {
 
 void nst_movie_save(char *filename) {
 	// Save/Record a movie
+	Movie movie(emulator);
+	
+	movierecfile = new std::fstream(filename, std::ifstream::out|std::ifstream::binary); 
+
+	if (movierecfile->is_open()) {
+		movie.Record((std::iostream&)*movierecfile, Nes::Api::Movie::CLEAN);
+	}
+	else {
+		delete movierecfile;
+		movierecfile = NULL;
+	}
 }
 
 void nst_movie_load(char *filename) {
 	// Load and play a movie
+	Movie movie(emulator);
+	
+	moviefile = new std::ifstream(filename, std::ifstream::in|std::ifstream::binary); 
+
+	if (moviefile->is_open()) {
+		movie.Play(*moviefile);
+	}
+	else {
+		delete moviefile;
+		moviefile = NULL;
+	}
 }
 
 void nst_movie_stop() {
@@ -383,6 +407,8 @@ void nst_movie_stop() {
 	
 	if (movie.IsPlaying() || movie.IsRecording()) {
 		movie.Stop();
+		movierecfile = NULL;
+		delete movierecfile;
 		moviefile = NULL;
 		delete moviefile;
 	}
@@ -394,12 +420,14 @@ void nst_play() {
 	
 	video_init();
 	audio_init();
-	SetupInput();
+	input_init();
 	cheats_init();
 	
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
+	
+	video_set_cursor();
 	
 	audio_set_params(cNstSound);
 	audio_unpause();
@@ -507,32 +535,6 @@ void nst_set_rewind(int direction) {
 	}
 }
 
-// initialize input going into the game
-void SetupInput()
-{
-	// connect a standard NES pad onto the first port
-	//Input(emulator).ConnectController( 0, Input::PAD1 );
-	
-	// connect a standard NES pad onto the second port too
-	//Input(emulator).ConnectController( 1, Input::PAD2 );
-	
-	// connect the Zapper to port 2
-	//Input(emulator).ConnectController( 1, Input::ZAPPER );
-	
-	Input(emulator).AutoSelectController(0);
-	Input(emulator).AutoSelectController(1);
-	
-	// Use the crosshair if a Zapper is present
-	if (Input(emulator).GetConnectedController(0) == 5 ||
-		Input(emulator).GetConnectedController(1) == 5) {
-		
-		cursor_set_crosshair();
-		#ifdef _GTK
-		gtkui_cursor_set_crosshair();
-		#endif
-	}
-}
-
 void nst_set_paths(const char *filename) {
 	
 	// Set up the save directory
@@ -558,11 +560,83 @@ void nst_set_paths(const char *filename) {
 	// Construct path for FDS save patches
 	snprintf(nstpaths.fdssave, sizeof(nstpaths.fdssave), "%s%s", nstpaths.savedir, nstpaths.gamename);
 	
-	// Construct the quicksave path
-	snprintf(nstpaths.quicksave, sizeof(nstpaths.quicksave), "%sstate/%s", nstpaths.nstdir, nstpaths.gamename);
+	// Construct the save state path
+	snprintf(nstpaths.statepath, sizeof(nstpaths.statepath), "%sstate/%s", nstpaths.nstdir, nstpaths.gamename);
 	
 	// Construct the cheat path
 	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);
+}
+
+bool nst_archive_checkext(const char *filename) {
+	// Check if the file extension is valid
+	int len = strlen(filename);
+
+	if ((!strcasecmp(&filename[len-4], ".nes")) ||
+	    (!strcasecmp(&filename[len-4], ".fds")) ||
+	    (!strcasecmp(&filename[len-4], ".nsf")) ||
+	    (!strcasecmp(&filename[len-4], ".unf")) ||
+	    (!strcasecmp(&filename[len-5], ".unif"))||
+	    (!strcasecmp(&filename[len-4], ".xml"))) {
+		return true;
+	}
+	return false;
+}
+
+bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile) {
+	// Handle archives
+#ifndef _MINGW
+	struct archive *a;
+	struct archive_entry *entry;
+	int r;
+	int64_t entrysize;
+	
+	a = archive_read_new();
+	archive_read_support_filter_all(a);
+	archive_read_support_format_all(a);
+	r = archive_read_open_filename(a, filename, 10240);
+	
+	// Test if it's actually an archive
+	if (r != ARCHIVE_OK) {
+		r = archive_read_free(a);
+		return false;
+	}
+	
+	// Scan through the archive for files
+	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+		char *rombuf;
+		const char *currentfile = archive_entry_pathname(entry);
+		
+		if (nst_archive_checkext(currentfile)) {
+			nst_set_paths(currentfile);
+			
+			// If there's a specific file we want, load it
+			if (reqfile != NULL) {
+				if (!strcmp(currentfile, reqfile)) {
+					entrysize = archive_entry_size(entry);
+					rombuf = (char*)malloc(entrysize);
+					archive_read_data(a, rombuf, entrysize);
+					archive_read_data_skip(a);
+					r = archive_read_free(a);
+					*romsize = entrysize;
+					*rom = rombuf;
+					return true;
+				}
+			}
+			// Otherwise just take the first file in the archive
+			else {
+				entrysize = archive_entry_size(entry);
+				rombuf = (char*)malloc(entrysize);
+				archive_read_data(a, rombuf, entrysize);
+				archive_read_data_skip(a);
+				r = archive_read_free(a);
+				*romsize = entrysize;
+				*rom = rombuf;
+				return true;
+			}
+		}
+	}
+#endif
+	return false;
 }
 
 bool nst_find_patch(char *filename) {
@@ -661,6 +735,8 @@ void nst_load(const char *filename) {
 	Machine machine(emulator);
 	Sound sound(emulator);
 	Nes::Result result;
+	char *rom;
+	int romsize;
 	char patchname[512];
 	
 	// Pause play before pulling out a cartridge
@@ -668,23 +744,35 @@ void nst_load(const char *filename) {
 	
 	// Pull out any inserted cartridges
 	nst_unload();
+	
+	// Handle the file as an archive if it is one
+	#ifdef _GTK
+	char reqname[256];
+	bool isarchive = gtkui_archive_handle(filename, reqname, sizeof(reqname));
 
-	// Set the file paths
-	nst_set_paths(filename);
-
-	// C++ file stream
-	std::ifstream file(filename, std::ios::in|std::ios::binary);
-
-	if (nst_find_patch(patchname)) {
-		std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
-
-		Machine::Patch patch(pfile, false);
-
-		// Soft Patch
-		result = machine.Load(file, nst_default_system(), patch);
-	}
-	else {
+	if (isarchive) {
+		nst_archive_handle(filename, &rom, &romsize, reqname);
+	#else
+	if (nst_archive_handle(filename, &rom, &romsize, NULL)) {
+	#endif
+		// Convert the malloc'd char* to an istream
+		std::string rombuf(rom, romsize);
+		std::istringstream file(rombuf);
 		result = machine.Load(file, nst_default_system());
+	}
+	// Otherwise just load the file
+	else {
+		std::ifstream file(filename, std::ios::in|std::ios::binary);
+		
+		// Set the file paths
+		nst_set_paths(filename);
+		
+		if (nst_find_patch(patchname)) { // Load with a patch if there is one
+			std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
+			Machine::Patch patch(pfile, false);
+			result = machine.Load(file, nst_default_system(), patch);
+		}
+		else { result = machine.Load(file, nst_default_system()); }
 	}
 	
 	if (NES_FAILED(result)) {
@@ -780,8 +868,8 @@ int main(int argc, char *argv[]) {
 		return 1;
 	}
 	
-	// Initialize input
-	input_init();
+	// Detect Joysticks
+	input_joysticks_detect();
 	
 	// Set default input keys
 	input_set_default();
@@ -895,8 +983,8 @@ int main(int argc, char *argv[]) {
 	// Deinitialize audio
 	audio_deinit();
 	
-	// Deinitialize input
-	input_deinit();
+	// Deinitialize joysticks
+	input_joysticks_close();
 	
 	// Write the input config file
 	input_config_write();

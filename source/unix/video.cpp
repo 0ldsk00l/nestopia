@@ -30,12 +30,14 @@
 #include "GL/glu.h"
 
 #include "core/api/NstApiEmulator.hpp"
+#include "core/api/NstApiInput.hpp"
 #include "core/api/NstApiVideo.hpp"
 
 #include "main.h"
 #include "audio.h"
 #include "video.h"
 #include "config.h"
+#include "cursor.h"
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
@@ -256,25 +258,23 @@ void video_init() {
 void video_toggle_fullscreen() {
 	// Toggle between fullscreen and window mode
 	Uint32 flags;
-	int cursor;
 	
 	conf.video_fullscreen ^= 1;
 	
 	if (conf.video_fullscreen) {
-		cursor = 0;
 		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
-	else { flags = 0; cursor = 1; }
+	else { flags = 0;}
 	
 	video_set_params();
 	video_init();
 	
-	SDL_ShowCursor(cursor);
 	SDL_SetWindowFullscreen(sdlwindow, flags);
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 	
 	#ifdef _GTK
 	if (!conf.misc_disable_gui) { gtkui_toggle_fullscreen(); }
+	video_set_cursor();
 	#endif
 }
 
@@ -507,6 +507,33 @@ void video_set_params() {
 	}
 	
 	opengl_cleanup();
+}
+
+void video_set_cursor() {
+	// Set the cursor to what it needs to be
+	int cursor;
+	bool zapper;
+
+	if (Input(emulator).GetConnectedController(0) == 5 ||
+		Input(emulator).GetConnectedController(1) == 5) {
+		zapper = true;
+		cursor_set_crosshair();
+		#ifdef _GTK
+		if (!conf.misc_disable_gui) { gtkui_cursor_set_crosshair(); }
+		#endif
+	}
+	else {
+		zapper = false;
+		cursor_set_default();
+		#ifdef _GTK
+		if (!conf.misc_disable_gui) { gtkui_cursor_set_default(); }
+		#endif
+	}
+	
+	if (conf.video_fullscreen) { cursor = zapper; }
+	else { cursor = true; }
+		
+	SDL_ShowCursor(cursor);
 }
 
 void video_set_title(const char *title) {

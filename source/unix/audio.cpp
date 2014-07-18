@@ -78,7 +78,7 @@ void audio_fill_buffer(int bufnum) {
 	
 	// copy from the buffer's current position
 	bufptr = (uint8_t*)buffer[bufnum];
-	bufpos = ((conf.audio_sample_rate / framerate) * 2 * sizeof(int16_t)) - bufstat[bufnum];
+	bufpos = ((conf.audio_sample_rate / framerate) * channels * sizeof(int16_t)) - bufstat[bufnum];
 	if (bufpos < 0) { bufpos = 0; }
 	bufptr += bufpos;
 	memcpy(curpos, bufptr, bytes_to_fill);
@@ -232,8 +232,8 @@ void audio_init() {
 		
 		// libao's ALSA plugin causes buffer underflows when vsync is enabled
 		if (ao_default_driver_id() == ao_driver_id("alsa")) {
-			fprintf(stderr, "Warning: libao's ALSA plugin is buggy. Hack enabled, but no promises!\n");
-			libao_hack = true;
+			//fprintf(stderr, "Warning: libao's ALSA plugin is buggy. Hack enabled, but no promises!\n");
+			//libao_hack = true;
 		}
 	}
 #endif
@@ -312,19 +312,12 @@ void audio_adj_volume() {
 }
 
 void audio_output_frame(unsigned long numsamples, int16_t *out) {
+	// Write a frame of audio data to the audio buffer
 	int16_t *pbufL = (int16_t *)audiobuf;
 	
-	if (conf.audio_stereo) {
-		for (int s = 0; s < numsamples; s++) {
-			*out++ = *pbufL++;
-			*out++ = *pbufL++;
-		}
-	}
-	else {
-		for (int s = 0; s < numsamples; s++) {
-			*out++ = *pbufL;
-			*out++ = *pbufL++;
-		}
+	for (int s = 0; s < numsamples; s++) {
+		*out++ = *pbufL++;
+		*out++ = *pbufL++;
 	}
 	
 	updateok = true;
