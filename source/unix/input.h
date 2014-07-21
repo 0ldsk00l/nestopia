@@ -117,4 +117,7 @@ void input_config_write();
 void input_set_default();
 static int input_config_match(void* user, const char* section, const char* name, const char* value);
 
+int input_configure(int pnum, int type);
+void input_set_item(SDL_Event event, int type, int pnum, int counter);
+
 #endif

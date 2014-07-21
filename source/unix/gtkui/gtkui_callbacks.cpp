@@ -40,6 +40,10 @@ void gtkui_cb_reset(GtkWidget *reset, int hard) {
 	nst_reset(hard);
 }
 
+void gtkui_cb_nothing() {
+	// Do nothing
+}
+
 void gtkui_cb_video_refresh() {
 	// Refresh the Video output after changes
 	if (playing) {
