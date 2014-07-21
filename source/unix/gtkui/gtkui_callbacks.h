@@ -2,7 +2,7 @@
 #define _GTKUI_CALLBACKS_H_
 
 void gtkui_cb_reset(GtkWidget *reset, int hard);
-
+void gtkui_cb_nothing();
 void gtkui_cb_video_refresh();
 
 void gtkui_cb_video_filter(GtkComboBox *combobox, gpointer userdata);

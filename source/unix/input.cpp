@@ -24,6 +24,11 @@
 #include <stdlib.h>
 #include <string.h>
 
+#ifdef _GTK
+#include "gtkui/gtkui.h"
+#include "gtkui/gtkui_config.h"
+#endif
+
 #include "main.h"
 #include "config.h"
 #include "audio.h"
@@ -36,6 +41,8 @@ extern nstpaths_t nstpaths;
 extern dimensions_t rendersize;
 extern SDL_DisplayMode displaymode;
 extern Emulator emulator;
+
+bool confrunning = false;
 
 inputsettings_t inputconf;
 gamepad_t player[NUMGAMEPADS];
@@ -771,4 +778,119 @@ static int input_config_match(void* user, const char* section, const char* name,
 	
 	else { return 0; }
     return 1;
+}
+
+int input_configure(int pnum, int type) {
+	// Configure the input
+	
+	if (confrunning) { return 0; }
+	
+	SDL_Event event, eventbuf;
+	
+	int axis = 0, axisnoise = 0, counter = 0;
+	
+	confrunning = true;
+	while (confrunning) {
+		#ifdef _GTK
+		while (gtk_events_pending()) {
+			gtk_main_iteration_do(FALSE);
+		}
+		#endif
+		while(SDL_PollEvent(&event)) {
+			// Time to quit?
+			switch (event.key.keysym.sym) {
+				case SDLK_ESCAPE:
+					confrunning = false;
+					break;
+			
+				default: break;
+			}
+			// Process the event
+			if (type == 0) { // Keyboard
+				switch(event.type) {
+					case SDL_KEYUP:
+						input_set_item(event, type, pnum, counter);
+						counter++;
+						break;
+					default: break;
+				}
+			}
+			else if (type == 1) { // Joystick
+				switch(event.type) {
+					case SDL_JOYBUTTONDOWN:
+						input_set_item(event, type, pnum, counter);
+						counter++;
+						break;
+					
+					case SDL_JOYHATMOTION:
+						if (event.jhat.value != SDL_HAT_CENTERED) {
+							input_set_item(event, type, pnum, counter);
+							counter++;
+						}
+						break;
+					
+					case SDL_JOYAXISMOTION:
+						if (abs(event.jaxis.value) >= DEADZONE) {
+							eventbuf = event;
+							axisnoise = 1;
+							axis = event.jaxis.axis;
+						}
+						
+						else if (abs(event.jaxis.value) < DEADZONE && axisnoise && event.jaxis.axis == axis) {
+							input_set_item(eventbuf, type, pnum, counter);
+							axisnoise = 0;
+							counter++;
+						}						
+						break;
+					
+					default: break;
+				}
+			}
+			
+			if (counter >= NUMBUTTONS) { confrunning = false; }
+		}
+	}
+	
+	return 1;
+}
+
+void input_set_item(SDL_Event event, int type, int pnum, int counter) {
+	
+	#ifdef _GTK
+	gtkui_config_input_focus(counter);
+	#endif
+	
+	if (type == 0) { // Keyboard
+		switch(counter) {
+			case 0: player[pnum].u = event.key.keysym.scancode; break;
+			case 1: player[pnum].d = event.key.keysym.scancode; break;
+			case 2: player[pnum].l = event.key.keysym.scancode; break;
+			case 3: player[pnum].r = event.key.keysym.scancode; break;
+			case 4: player[pnum].select = event.key.keysym.scancode; break;
+			case 5: player[pnum].start = event.key.keysym.scancode; break;
+			case 6: player[pnum].a = event.key.keysym.scancode; break;
+			case 7: player[pnum].b = event.key.keysym.scancode; break;
+			case 8: player[pnum].ta = event.key.keysym.scancode; break;
+			case 9: player[pnum].tb = event.key.keysym.scancode; break;
+			default: break;
+		}
+	}
+	else if (type == 1) { // Joystick
+		switch(counter) {
+			case 0: player[pnum].ju = input_translate_string(input_translate_event(event)); break;
+			case 1: player[pnum].jd = input_translate_string(input_translate_event(event)); break;
+			case 2: player[pnum].jl = input_translate_string(input_translate_event(event)); break;
+			case 3: player[pnum].jr = input_translate_string(input_translate_event(event)); break;
+			case 4: player[pnum].jselect = input_translate_string(input_translate_event(event)); break;
+			case 5: player[pnum].jstart = input_translate_string(input_translate_event(event)); break;
+			case 6: player[pnum].ja = input_translate_string(input_translate_event(event)); break;
+			case 7: player[pnum].jb = input_translate_string(input_translate_event(event)); break;
+			case 8: player[pnum].jta = input_translate_string(input_translate_event(event)); break;
+			case 9: player[pnum].jtb = input_translate_string(input_translate_event(event)); break;
+			default: break;
+		}
+	}
+	#ifdef _GTK
+	gtkui_config_input_fields(type, pnum);
+	#endif
 }

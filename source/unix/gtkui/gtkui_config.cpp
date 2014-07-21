@@ -22,15 +22,23 @@
 
 #include "../main.h"
 #include "../config.h"
+#include "../input.h"
 
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_config.h"
 
 extern settings_t conf;
+extern gamepad_t player[NUMGAMEPADS];
 extern char padpath[512];
 
 GtkWidget *configwindow;
+
+// Input
+GtkWidget *combo_input_player;
+GtkWidget *combo_input_type;
+GtkWidget *inputconfbutton;
+GtkWidget *entry_input[NUMBUTTONS];
 
 GtkWidget *gtkui_config() {
 	// Create the Configuration window
@@ -518,40 +526,22 @@ GtkWidget *gtkui_config() {
 				"margin-bottom", MARGIN_TB,
 				NULL);
 	GtkWidget *box_input_upper = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *box_input_lower = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	GtkWidget *box_input_lower = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	
 	gtk_box_pack_start(GTK_BOX(box_input), box_input_upper, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box_input), box_input_lower, FALSE, FALSE, 0);
 	
 	// NES Controller
-	/*GtkWidget *box_input_pad = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "margin", 10, NULL);
-	GtkWidget *nespad = gtk_widget_new(GTK_TYPE_IMAGE, "halign", GTK_ALIGN_CENTER, "expand", TRUE, "file", padpath, "margin", 10, NULL);
+	GtkWidget *box_input_pad = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "orientation", GTK_ORIENTATION_VERTICAL, NULL);
+	GtkWidget *nespad = gtk_widget_new(
+				GTK_TYPE_IMAGE,
+				"halign", GTK_ALIGN_CENTER,
+				"expand", FALSE,
+				"file",	padpath,
+				"margin", MARGIN_TB,
+				NULL);
 	gtk_box_pack_start(GTK_BOX(box_input_pad), nespad, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box_input), box_input_pad, FALSE, FALSE, 0);*/
-	
-	// Entry Box
-	GtkWidget *box_input_entry_left = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_entry_left, FALSE, FALSE, 0);
-	
-	GtkWidget *box_input_entry_right = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_entry_right, FALSE, FALSE, 0);
-	
-	GtkWidget *inputsep1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-	gtk_box_pack_start(GTK_BOX(box_input_lower), inputsep1, FALSE, FALSE, 0);
-	
-	// Player Select
-	GtkWidget *combo_input_player = gtk_widget_new(
-					GTK_TYPE_COMBO_BOX_TEXT,
-					"halign", GTK_ALIGN_START,
-					"margin-top", 5,
-					"margin-bottom", 5,
-					"margin-left", 10,
-					"margin-right", 10,
-					NULL);
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 1");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 2");
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_input_player), 0);
-	gtk_box_pack_start(GTK_BOX(box_input_lower), combo_input_player, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_pad, FALSE, FALSE, 0);
 	
 	// Turbo Pulse
 	GtkAdjustment *adj_input_turbopulse = gtk_adjustment_new(conf.timing_turbopulse, 2, 9, 1, 5, 0);
@@ -560,8 +550,10 @@ GtkWidget *gtkui_config() {
 				GTK_TYPE_LABEL,
 				"label", "Turbo Pulse",
 				"halign", GTK_ALIGN_START,
+				"margin-top", MARGIN_TB,
 				"margin-bottom", MARGIN_TB,
 				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
 				NULL);
 	GtkWidget *scale_input_turbopulse = gtk_widget_new(
 				GTK_TYPE_SCALE,
@@ -575,10 +567,147 @@ GtkWidget *gtkui_config() {
 				NULL);
 	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), label_input_turbopulse, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), scale_input_turbopulse, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_input_lower), box_input_turbopulse, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_pad), box_input_turbopulse, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(scale_input_turbopulse), "value-changed",
 		G_CALLBACK(gtkui_cb_input_turbopulse), NULL);
+	
+	// Options Box
+	GtkWidget *box_input_options = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_options, FALSE, FALSE, 0);
+	
+	GtkWidget *inputsep1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
+	gtk_box_pack_start(GTK_BOX(box_input_lower), inputsep1, FALSE, FALSE, 0);
+	
+	// Player Select
+	combo_input_player = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-top", MARGIN_TB,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR * 2,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 1");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 2");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_input_player), 0);
+	gtk_box_pack_start(GTK_BOX(box_input_options), combo_input_player, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_input_player), "changed",
+		G_CALLBACK(gtkui_config_input_refresh), NULL);
+	
+	// Device Type Select
+	combo_input_type = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-top", MARGIN_TB,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR * 2,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Keyboard");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Joysick");
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_input_type), 0);
+	gtk_box_pack_start(GTK_BOX(box_input_options), combo_input_type, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_input_type), "changed",
+		G_CALLBACK(gtkui_config_input_refresh), NULL);
+	
+	// The Input Config button
+	inputconfbutton = gtk_widget_new(
+				GTK_TYPE_BUTTON,
+				"label", "Configure",
+				"halign", GTK_ALIGN_START,
+				"margin-top", MARGIN_TB,
+				"margin-left", MARGIN_LR * 2,
+				NULL);
+	gtk_box_pack_start(GTK_BOX(box_input_options), inputconfbutton, FALSE, FALSE, 0);
+	
+	// Connect the button to a callback
+	g_signal_connect(G_OBJECT(inputconfbutton), "clicked",
+		G_CALLBACK(gtkui_config_input), NULL);
+	
+	// Key translation only needs to be done for release events
+	g_signal_connect(G_OBJECT(configwindow), "key-release-event",
+		G_CALLBACK(gtkui_cb_convert_key), NULL);
+	
+	// The Grid
+	GtkWidget *grid_input_lower = gtk_widget_new(
+				GTK_TYPE_GRID,
+				"column-spacing", MARGIN_LR,
+				"row-spacing", MARGIN_TB,
+				"margin", MARGIN_TB,
+				NULL);
+	
+	GtkWidget *label_input_up = gtk_widget_new(GTK_TYPE_LABEL, "label", "Up:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_up, 0, 0, 1, 1);
+	
+	GtkWidget *label_input_down = gtk_widget_new(GTK_TYPE_LABEL, "label", "Down:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_down, 0, 1, 1, 1);
+	
+	GtkWidget *label_input_left = gtk_widget_new(GTK_TYPE_LABEL, "label", "Left:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_left, 0, 2, 1, 1);
+	
+	GtkWidget *label_input_right = gtk_widget_new(GTK_TYPE_LABEL, "label", "Right:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_right, 0, 3, 1, 1);
+	
+	GtkWidget *label_input_select = gtk_widget_new(GTK_TYPE_LABEL, "label", "Select:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_select, 0, 4, 1, 1);
+	
+	entry_input[0] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[0]), SDL_GetScancodeName(player[0].u));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[0], 1, 0, 1, 1);
+	
+	entry_input[1] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[1]), SDL_GetScancodeName(player[0].d));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[1], 1, 1, 1, 1);
+	
+	entry_input[2] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[2]), SDL_GetScancodeName(player[0].l));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[2], 1, 2, 1, 1);
+	
+	entry_input[3] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[3]), SDL_GetScancodeName(player[0].r));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[3], 1, 3, 1, 1);
+	
+	entry_input[4] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[4]), SDL_GetScancodeName(player[0].select));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[4], 1, 4, 1, 1);
+	
+	GtkWidget *label_input_start = gtk_widget_new(GTK_TYPE_LABEL, "label", "Start:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_start, 2, 0, 1, 1);
+	
+	GtkWidget *label_input_a = gtk_widget_new(GTK_TYPE_LABEL, "label", "A:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_a, 2, 1, 1, 1);
+	
+	GtkWidget *label_input_b = gtk_widget_new(GTK_TYPE_LABEL, "label", "B:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_b, 2, 2, 1, 1);
+	
+	GtkWidget *label_input_ta = gtk_widget_new(GTK_TYPE_LABEL, "label", "Turbo A:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_ta, 2, 3, 1, 1);
+	
+	GtkWidget *label_input_tb = gtk_widget_new(GTK_TYPE_LABEL, "label", "Turbo B:", "halign", GTK_ALIGN_START, NULL);
+	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_tb, 2, 4, 1, 1);
+	
+	entry_input[5] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[5]), SDL_GetScancodeName(player[0].start));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[5], 3, 0, 1, 1);
+	
+	entry_input[6] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[6]), SDL_GetScancodeName(player[0].a));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[6], 3, 1, 1, 1);
+	
+	entry_input[7] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[7]), SDL_GetScancodeName(player[0].b));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[7], 3, 2, 1, 1);
+	
+	entry_input[8] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[8]), SDL_GetScancodeName(player[0].ta));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[8], 3, 3, 1, 1);
+	
+	entry_input[9] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
+	gtk_entry_set_text(GTK_ENTRY(entry_input[9]), SDL_GetScancodeName(player[0].tb));
+	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[9], 3, 4, 1, 1);
+	
+	gtk_box_pack_start(GTK_BOX(box_input_lower), grid_input_lower, FALSE, FALSE, 0);
 	
 	// Misc //
 	GtkWidget *box_misc = gtk_widget_new(
@@ -728,4 +857,63 @@ GtkWidget *gtkui_config() {
 void gtkui_config_ok() {
 	gtk_widget_destroy(configwindow);
 	configwindow = NULL;
+}
+
+void gtkui_config_input() {
+	// Start the input configuration routine
+	gtk_widget_grab_focus(entry_input[0]);
+	int pnum = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_input_player));
+	int type = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_input_type));
+	input_configure(pnum, type);
+}
+
+void gtkui_config_input_refresh() {
+	// Refresh the input fields
+	int pnum = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_input_player));
+	int type = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_input_type));
+	gtkui_config_input_fields(type, pnum);
+}
+
+void gtkui_config_input_fields(int type, int pnum) {
+	// Set the text in the input fields based on the current settings
+	if (type == 0) {
+		gtk_entry_set_text(GTK_ENTRY(entry_input[0]), SDL_GetScancodeName(player[pnum].u));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[1]), SDL_GetScancodeName(player[pnum].d));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[2]), SDL_GetScancodeName(player[pnum].l));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[3]), SDL_GetScancodeName(player[pnum].r));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[4]), SDL_GetScancodeName(player[pnum].select));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[5]), SDL_GetScancodeName(player[pnum].start));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[6]), SDL_GetScancodeName(player[pnum].a));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[7]), SDL_GetScancodeName(player[pnum].b));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[8]), SDL_GetScancodeName(player[pnum].ta));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[9]), SDL_GetScancodeName(player[pnum].tb));
+	}
+	if (type == 1) {
+		gtk_entry_set_text(GTK_ENTRY(entry_input[0]), input_translate_event(player[pnum].ju));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[1]), input_translate_event(player[pnum].jd));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[2]), input_translate_event(player[pnum].jl));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[3]), input_translate_event(player[pnum].jr));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[4]), input_translate_event(player[pnum].jselect));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[5]), input_translate_event(player[pnum].jstart));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[6]), input_translate_event(player[pnum].ja));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[7]), input_translate_event(player[pnum].jb));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[8]), input_translate_event(player[pnum].jta));
+		gtk_entry_set_text(GTK_ENTRY(entry_input[9]), input_translate_event(player[pnum].jtb));
+	}
+}
+
+void gtkui_config_input_focus(int counter) {
+	// Set focus on the proper input field
+	switch(counter) {
+		case 0: gtk_widget_grab_focus(entry_input[1]); break;
+		case 1: gtk_widget_grab_focus(entry_input[2]); break;
+		case 2: gtk_widget_grab_focus(entry_input[3]); break;
+		case 3: gtk_widget_grab_focus(entry_input[4]); break;
+		case 4: gtk_widget_grab_focus(entry_input[5]); break;
+		case 5: gtk_widget_grab_focus(entry_input[6]); break;
+		case 6: gtk_widget_grab_focus(entry_input[7]); break;
+		case 7: gtk_widget_grab_focus(entry_input[8]); break;
+		case 8: gtk_widget_grab_focus(entry_input[9]); break;
+		default: gtk_widget_grab_focus(entry_input[0]); break;
+	}
 }
