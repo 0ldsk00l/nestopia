@@ -151,7 +151,7 @@ void gtkui_create() {
 	// Pack the box with the menubar, drawingarea, and statusbar
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), drawingarea, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
+	//gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
 	
 	// Make it dark if there's a dark theme
 	GtkSettings *gtksettings = gtk_settings_get_default();
