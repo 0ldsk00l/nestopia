@@ -849,7 +849,7 @@ namespace Nes
 
 				header[11] |= i;
 
-				for (i=0, data=setup.chrNvRam >> 7; data; data >>= 1, ++i);
+				for (i=0, data=setup.chrNvRam >> 7; data; data >>= 1, ++i)
 				{
 					if (i > 0xF)
 						return RESULT_ERR_INVALID_PARAM;
