@@ -779,22 +779,37 @@ void nst_load(const char *filename) {
 		switch (result) {
 			case Nes::RESULT_ERR_INVALID_FILE:
 				fprintf(stderr, "Error: Invalid file\n");
+				#ifdef _GTK
+				gtkui_message("Error: Invalid file");
+				#endif
 				break;
 
 			case Nes::RESULT_ERR_OUT_OF_MEMORY:
 				fprintf(stderr, "Error: Out of Memory\n");
+				#ifdef _GTK
+				gtkui_message("Error: Out of Memory");
+				#endif
 				break;
 
 			case Nes::RESULT_ERR_CORRUPT_FILE:
-				fprintf(stderr, "Error: Corrupt or Missing File\n");
+				fprintf(stderr, "Error: Corrupt or Missing file\n");
+				#ifdef _GTK
+				gtkui_message("Error: Corrupt or Missing file");
+				#endif
 				break;
 
 			case Nes::RESULT_ERR_UNSUPPORTED_MAPPER:
 				fprintf(stderr, "Error: Unsupported Mapper\n");
+				#ifdef _GTK
+				gtkui_message("Error: Unsupported Mapper");
+				#endif
 				break;
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
 				fprintf(stderr, "Error: Missing Fds BIOS\n");
+				#ifdef _GTK
+				gtkui_message("Error: Missing Fds BIOS");
+				#endif
 				break;
 
 			default:
