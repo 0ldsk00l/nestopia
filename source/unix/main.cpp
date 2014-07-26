@@ -922,12 +922,25 @@ int main(int argc, char *argv[]) {
 
 	// Load a rom from the command line
 	if (argc > 1) {
+		#ifdef _GTK // This is a dirty hack
+		if (conf.misc_disable_gui) {
+			nst_load(argv[argc - 1]);
+			if (!loaded) {
+				fprintf(stderr, "Fatal: Could not load ROM\n");
+				exit(1);
+			}
+		}
+		else {
+			if (strcmp(argv[argc - 1], "-e")) { nst_load(argv[argc - 1]); }
+		}
+		#else
+		conf.misc_disable_gui = true;
 		nst_load(argv[argc - 1]);
-		
 		if (!loaded) {
 			fprintf(stderr, "Fatal: Could not load ROM\n");
 			exit(1);
 		}
+		#endif
 	}
 	
 	// Start the main loop

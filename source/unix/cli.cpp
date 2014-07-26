@@ -53,7 +53,7 @@ void cli_show_usage() {
 	printf("  -t, --tvaspect          TV aspect ratio\n");
 	printf("  -r, --no-tvaspect       Regular aspect ratio\n\n");
 	printf("  -u, --unlimitedsprites  Remove sprite limit\n");
-	printf("  -q, --limitedsprites    Enable sprite limit\n\n");
+	printf("  -q, --spritelimit       Enable sprite limit\n\n");
 	printf("  -v, --version           Show version information\n\n");
 	printf("More options can be set in the configuration file.\n");
 	printf("Options are saved, and do not need to be set on future invocations.\n\n");
@@ -83,7 +83,7 @@ void cli_handle_command(int argc, char *argv[]) {
 			{"tvaspect", no_argument, 0, 't'},
 			{"no-tvaspect", no_argument, 0, 'r'},
 			{"unlimitedsprites", no_argument, 0, 'u'},
-			{"limitedsprites", no_argument, 0, 'q'},
+			{"spritelimit", no_argument, 0, 'q'},
 			{"version", no_argument, 0, 'v'},
 			{0, 0, 0, 0}
 		};
@@ -123,7 +123,7 @@ void cli_handle_command(int argc, char *argv[]) {
 					conf.video_filter = optint;
 				}
 				else {
-					cli_error("error: invalid filter");
+					cli_error("Error: Invalid filter");
 				}
 				break;
 			
@@ -149,7 +149,7 @@ void cli_handle_command(int argc, char *argv[]) {
 					conf.video_scale_factor = optint;
 				}
 				else {
-					cli_error("error: invalid scale factor");
+					cli_error("Error: Invalid scale factor");
 				}
 				break;
 			
@@ -175,7 +175,7 @@ void cli_handle_command(int argc, char *argv[]) {
 				break;
 			
 			default:
-				cli_error("error: invalid option");
+				cli_error("Error: Invalid option");
 				break;
 		}
 	}
