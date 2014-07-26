@@ -30,7 +30,7 @@
 #include "gtkui.h"
 #include "gtkui_archive.h"
 
-bool windowopen;
+bool windowopen, cancelled;
 
 GtkWidget *archivewindow;
 
@@ -40,7 +40,9 @@ bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 	// Select a filename to pull out of the archive
 	struct archive *a;
 	struct archive_entry *entry;
-	int r;
+	int r, numarchives = 0;
+	
+	cancelled = false;
 	
 	a = archive_read_new();
 	archive_read_support_filter_all(a);
@@ -107,11 +109,18 @@ bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 			if (nst_archive_checkext(currentfile)) {
 				gtk_tree_store_append(treestore, &iter, NULL);
 				gtk_tree_store_set(treestore, &iter, 0, currentfile, -1);
+				numarchives++;
+				snprintf(reqfile, reqsize, "%s", currentfile);
 			}
 			archive_read_data_skip(a);
 		}
 		// Free the archive
 		r = archive_read_free(a);
+		
+		// If there are no valid files in the archive, return
+		if (numarchives == 0) {	return false; }
+		// If there's only one file, don't bring up the selector
+		else if (numarchives == 1) { return true; }
 		
 		GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
 		
@@ -134,7 +143,7 @@ bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 		gtk_button_set_use_stock(GTK_BUTTON(cancelbutton), TRUE);
 		gtk_box_pack_start(GTK_BOX(buttonbox), cancelbutton, FALSE, FALSE, 0);
 		gtk_widget_show(cancelbutton);
-
+		
 		GtkWidget *okbutton = gtk_widget_new(
 					GTK_TYPE_BUTTON,
 					"label", GTK_STOCK_OK,
@@ -146,7 +155,7 @@ bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 		gtk_button_set_use_stock(GTK_BUTTON(okbutton), TRUE);
 		gtk_box_pack_start(GTK_BOX(buttonbox), okbutton, FALSE, FALSE, 0);
 		gtk_widget_show(okbutton);
-
+		
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
 		
 		g_signal_connect(G_OBJECT(okbutton), "clicked",
@@ -165,7 +174,10 @@ bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 		
 		// Freeze the rest of the program until a selection is made
 		windowopen = true;
-		while (windowopen) { gtk_main_iteration_do(TRUE); }
+		while (windowopen) {
+			gtk_main_iteration_do(TRUE);
+			if (cancelled) { return false; }
+		}
 		
 		gchar *reqbuf;
 		selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(treeview));
@@ -185,5 +197,6 @@ void gtkui_archive_ok() {
 }
 
 void gtkui_archive_cancel() {
+	cancelled = true;
 	gtk_widget_destroy(archivewindow);
 }
