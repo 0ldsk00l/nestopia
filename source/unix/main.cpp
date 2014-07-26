@@ -749,7 +749,7 @@ void nst_load(const char *filename) {
 	#ifdef _GTK
 	char reqname[256];
 	bool isarchive = gtkui_archive_handle(filename, reqname, sizeof(reqname));
-
+	
 	if (isarchive) {
 		nst_archive_handle(filename, &rom, &romsize, reqname);
 	#else
