@@ -333,6 +333,17 @@ void gtkui_image_paths() {
 	}
 }
 
+void gtkui_message(const char* message) {    
+	GtkWidget *messagewindow = gtk_message_dialog_new(
+				GTK_WINDOW(gtkwindow),
+				GTK_DIALOG_DESTROY_WITH_PARENT,
+				GTK_MESSAGE_INFO,
+				GTK_BUTTONS_OK,
+				message);
+	gtk_dialog_run(GTK_DIALOG(messagewindow));
+	gtk_widget_destroy(messagewindow);
+}
+
 void gtkui_opengl_start() {
 	gtk_opengl_area_start(drawingarea, gtkwindow);
 }

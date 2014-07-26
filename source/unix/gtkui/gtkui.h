@@ -10,6 +10,7 @@ void gtkui_resize();
 void gtkui_set_title(const char *title);
 GtkWidget *gtkui_about();
 void gtkui_image_paths();
+void gtkui_message(const char* message);
 
 void gtkui_opengl_start();
 void gtkui_swapbuffers();
