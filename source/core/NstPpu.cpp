@@ -661,7 +661,11 @@ namespace Nes
 		NST_FORCE_INLINE void Ppu::UpdateScrollAddressLine()
 		{
 			if (io.line)
-				io.line.Toggle( scroll.address & 0x3FFF, cpu.GetCycles() );
+			{
+				//io.line.Toggle( scroll.address & 0x3FFF, cpu.GetCycles() ); // Original
+				int a12_mask = ~((scroll.address & 0x2000) >> 1);
+				io.line.Toggle( (scroll.address & a12_mask) & 0x3FFF, cpu.GetCycles() );
+			}
 		}
 
 		NST_FORCE_INLINE void Ppu::UpdateVramAddress()
