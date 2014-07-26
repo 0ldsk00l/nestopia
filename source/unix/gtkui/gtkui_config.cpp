@@ -1024,7 +1024,7 @@ GtkWidget *gtkui_config() {
 				NULL);
 	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_disable_gui), conf.misc_disable_gui);
 	
-	gtk_box_pack_start(GTK_BOX(box_misc), check_misc_disable_gui, FALSE, FALSE, 0);
+	//gtk_box_pack_start(GTK_BOX(box_misc), check_misc_disable_gui, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(check_misc_disable_gui), "toggled",
 		G_CALLBACK(gtkui_cb_misc_disable_gui), NULL);
