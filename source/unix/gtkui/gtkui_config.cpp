@@ -22,6 +22,7 @@
 
 #include "../main.h"
 #include "../config.h"
+#include "../audio.h"
 #include "../input.h"
 
 #include "gtkui.h"
@@ -33,6 +34,10 @@ extern gamepad_t player[NUMGAMEPADS];
 extern char padpath[512];
 
 GtkWidget *configwindow;
+
+// Audio
+GtkWidget *scale_audio_volume[NUMCHANNELS];
+GtkAdjustment *adj_audio_volume[NUMCHANNELS];
 
 // Input
 GtkWidget *combo_input_player;
@@ -499,24 +504,232 @@ GtkWidget *gtkui_config() {
 		G_CALLBACK(gtkui_cb_audio_stereo), NULL);
 	
 	// Volume
-	GtkAdjustment *adj_audio_volume = gtk_adjustment_new(conf.audio_volume, 0, 100, 1, 5, 0);
-	GtkWidget *frame_audio_volume = gtk_frame_new("Volume");
-	GtkWidget *scale_audio_volume = gtk_widget_new(
+	GtkWidget *label_audio_volume[NUMCHANNELS];
+	
+	// The Grid
+	GtkWidget *grid_audio_volume = gtk_widget_new(
+				GTK_TYPE_GRID,
+				"column-homogeneous", TRUE,
+				"column-spacing", MARGIN_LR,
+				"row-spacing", MARGIN_TB,
+				"margin", MARGIN_TB,
+				NULL);
+	
+	// Master
+	label_audio_volume[0] = gtk_widget_new(GTK_TYPE_LABEL, "label", "Master", NULL);
+	adj_audio_volume[0] = gtk_adjustment_new(conf.audio_volume, 0, 100, 1, 5, 0);
+	scale_audio_volume[0] = gtk_widget_new(
 				GTK_TYPE_SCALE,
-				"halign", GTK_ALIGN_START,
-				//"margin-left", MARGIN_LR,
+				"halign", GTK_ALIGN_CENTER,
 				"orientation", GTK_ORIENTATION_VERTICAL,
-				"adjustment", adj_audio_volume,
+				"adjustment", adj_audio_volume[0],
 				"width-request", 32,
 				"height-request", 100,
 				"inverted", TRUE,
 				"digits", 0,
 				NULL);
-	gtk_container_add(GTK_CONTAINER(frame_audio_volume), scale_audio_volume);
-	gtk_box_pack_start(GTK_BOX(box_audio), frame_audio_volume, FALSE, FALSE, 0);
-		
-	g_signal_connect(G_OBJECT(scale_audio_volume), "value-changed",
-		G_CALLBACK(gtkui_cb_audio_volume), NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[0], 0, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[0], 0, 1, 1, 1);
+	
+	g_signal_connect(G_OBJECT(scale_audio_volume[0]), "value-changed",
+		G_CALLBACK(gtkui_audio_volume_master), NULL);
+	
+	// Square1
+	label_audio_volume[1] = gtk_widget_new(GTK_TYPE_LABEL, "label", "Square1", NULL);
+	adj_audio_volume[1] = gtk_adjustment_new(conf.audio_vol_sq1, 0, 100, 1, 5, 0);
+	scale_audio_volume[1] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[1],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[1], 1, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[1], 1, 1, 1, 1);
+	
+	// Square2
+	label_audio_volume[2] = gtk_widget_new(GTK_TYPE_LABEL, "label", "Square2", NULL);
+	adj_audio_volume[2] = gtk_adjustment_new(conf.audio_vol_sq2, 0, 100, 1, 5, 0);
+	scale_audio_volume[2] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[2],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[2], 2, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[2], 2, 1, 1, 1);
+	
+	// Triangle
+	label_audio_volume[3] = gtk_widget_new(GTK_TYPE_LABEL, "label", "Triangle", NULL);
+	adj_audio_volume[3] = gtk_adjustment_new(conf.audio_vol_tri, 0, 100, 1, 5, 0);
+	scale_audio_volume[3] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[3],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[3], 3, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[3], 3, 1, 1, 1);
+	
+	// Noise
+	label_audio_volume[4] = gtk_widget_new(GTK_TYPE_LABEL, "label", "Noise", NULL);
+	adj_audio_volume[4] = gtk_adjustment_new(conf.audio_vol_noise, 0, 100, 1, 5, 0);
+	scale_audio_volume[4] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[4],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[4], 4, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[4], 4, 1, 1, 1);
+	
+	// Noise
+	label_audio_volume[5] = gtk_widget_new(GTK_TYPE_LABEL, "label", "DPCM", NULL);
+	adj_audio_volume[5] = gtk_adjustment_new(conf.audio_vol_dpcm, 0, 100, 1, 5, 0);
+	scale_audio_volume[5] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[5],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[5], 5, 0, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[5], 5, 1, 1, 1);
+	
+	// FDS
+	label_audio_volume[6] = gtk_widget_new(GTK_TYPE_LABEL, "label", "FDS", NULL);
+	adj_audio_volume[6] = gtk_adjustment_new(conf.audio_vol_fds, 0, 100, 1, 5, 0);
+	scale_audio_volume[6] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[6],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[6], 0, 2, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[6], 0, 3, 1, 1);
+	
+	// MMC5
+	label_audio_volume[7] = gtk_widget_new(GTK_TYPE_LABEL, "label", "MMC5", NULL);
+	adj_audio_volume[7] = gtk_adjustment_new(conf.audio_vol_mmc5, 0, 100, 1, 5, 0);
+	scale_audio_volume[7] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[7],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[7], 1, 2, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[7], 1, 3, 1, 1);
+	
+	// VRC6
+	label_audio_volume[8] = gtk_widget_new(GTK_TYPE_LABEL, "label", "VRC6", NULL);
+	adj_audio_volume[8] = gtk_adjustment_new(conf.audio_vol_vrc6, 0, 100, 1, 5, 0);
+	scale_audio_volume[8] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[8],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[8], 2, 2, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[8], 2, 3, 1, 1);
+	
+	// VRC7
+	label_audio_volume[9] = gtk_widget_new(GTK_TYPE_LABEL, "label", "VRC7", NULL);
+	adj_audio_volume[9] = gtk_adjustment_new(conf.audio_vol_vrc7, 0, 100, 1, 5, 0);
+	scale_audio_volume[9] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[9],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[9], 3, 2, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[9], 3, 3, 1, 1);
+	
+	// N163
+	label_audio_volume[10] = gtk_widget_new(GTK_TYPE_LABEL, "label", "N163", NULL);
+	adj_audio_volume[10] = gtk_adjustment_new(conf.audio_vol_n163, 0, 100, 1, 5, 0);
+	scale_audio_volume[10] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[10],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[10], 4, 2, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[10], 4, 3, 1, 1);
+	
+	// S5B
+	label_audio_volume[11] = gtk_widget_new(GTK_TYPE_LABEL, "label", "S5B", NULL);
+	adj_audio_volume[11] = gtk_adjustment_new(conf.audio_vol_s5b, 0, 100, 1, 5, 0);
+	scale_audio_volume[11] = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_CENTER,
+				"orientation", GTK_ORIENTATION_VERTICAL,
+				"adjustment", adj_audio_volume[11],
+				"width-request", 32,
+				"height-request", 100,
+				"inverted", TRUE,
+				"digits", 0,
+				NULL);
+	
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), label_audio_volume[11], 5, 2, 1, 1);
+	gtk_grid_attach(GTK_GRID(grid_audio_volume), scale_audio_volume[11], 5, 3, 1, 1);
+	
+	// Set the callbacks for every control but master
+	for (int i = 1; i < NUMCHANNELS; i++) {
+		g_signal_connect(G_OBJECT(scale_audio_volume[i]), "value-changed",
+			G_CALLBACK(gtkui_audio_volume), NULL);
+	}
+	
+	// Pack the grid into the box	
+	gtk_box_pack_start(GTK_BOX(box_audio), grid_audio_volume, FALSE, FALSE, 0);
 	
 	// Input //
 	GtkWidget *box_input = gtk_widget_new(
@@ -857,6 +1070,33 @@ GtkWidget *gtkui_config() {
 void gtkui_config_ok() {
 	gtk_widget_destroy(configwindow);
 	configwindow = NULL;
+}
+
+void gtkui_audio_volume() {
+	// Set the audio volume on specific channels
+	conf.audio_vol_sq1 = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[1]);
+	conf.audio_vol_sq2 = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[2]);
+	conf.audio_vol_tri = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[3]);
+	conf.audio_vol_noise = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[4]);
+	conf.audio_vol_dpcm = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[5]);
+	conf.audio_vol_fds = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[6]);
+	conf.audio_vol_mmc5 = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[7]);
+	conf.audio_vol_vrc6 = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[8]);
+	conf.audio_vol_vrc7 = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[9]);
+	conf.audio_vol_n163 = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[10]);
+	conf.audio_vol_s5b = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[11]);
+	audio_adj_volume();
+}
+
+void gtkui_audio_volume_master() {
+	// Set the audio volume on all channels
+	conf.audio_volume = (int)gtk_range_get_value((GtkRange*)scale_audio_volume[0]);
+	
+	for (int i = 1; i < NUMCHANNELS; i++) {
+		gtk_adjustment_set_value(adj_audio_volume[i], gtk_range_get_value((GtkRange*)scale_audio_volume[0]));
+	}
+	
+	gtkui_audio_volume();
 }
 
 void gtkui_config_input() {

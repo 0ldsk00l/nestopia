@@ -24,7 +24,6 @@
 
 #include "../main.h"
 #include "../config.h"
-#include "../audio.h"
 #include "../video.h"
 
 #include "gtkui.h"
@@ -212,18 +211,11 @@ void gtkui_cb_audio_stereo(GtkToggleButton *togglebutton, gpointer userdata) {
 	}
 }
 
-void gtkui_cb_audio_volume(GtkRange *range, gpointer userdata) {
-	// Change master volume
-	conf.audio_volume = (int)gtk_range_get_value(range);
-	audio_adj_volume();
-}
-
 //// Input ////
 
 void gtkui_cb_input_turbopulse(GtkRange *range, gpointer userdata) {
-	// Change master volume
+	// Change turbo pulse
 	conf.timing_turbopulse = (int)gtk_range_get_value(range);
-	audio_adj_volume();
 }
 
 //// Misc ////
