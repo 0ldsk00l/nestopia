@@ -25,7 +25,6 @@ void gtkui_cb_video_hue(GtkRange *range, gpointer userdata);
 void gtkui_cb_audio_api(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_audio_stereo(GtkToggleButton *togglebutton, gpointer userdata);
-void gtkui_cb_audio_volume(GtkRange *range, gpointer userdata);
 
 void gtkui_cb_input_turbopulse(GtkRange *range, gpointer userdata);
 

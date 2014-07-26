@@ -298,7 +298,7 @@ void audio_adj_volume() {
 	// Adjust the audio volume to the current settings
 	Sound sound(emulator);
 	sound.SetVolume(Sound::ALL_CHANNELS, conf.audio_volume);
-	/*sound.SetVolume(Sound::CHANNEL_SQUARE1, conf.audio_vol_sq1);
+	sound.SetVolume(Sound::CHANNEL_SQUARE1, conf.audio_vol_sq1);
 	sound.SetVolume(Sound::CHANNEL_SQUARE2, conf.audio_vol_sq2);
 	sound.SetVolume(Sound::CHANNEL_TRIANGLE, conf.audio_vol_tri);
 	sound.SetVolume(Sound::CHANNEL_NOISE, conf.audio_vol_noise);
@@ -308,7 +308,7 @@ void audio_adj_volume() {
 	sound.SetVolume(Sound::CHANNEL_VRC6, conf.audio_vol_vrc6);
 	sound.SetVolume(Sound::CHANNEL_VRC7, conf.audio_vol_vrc7);
 	sound.SetVolume(Sound::CHANNEL_N163, conf.audio_vol_n163);
-	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);*/
+	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);
 }
 
 void audio_output_frame(unsigned long numsamples, int16_t *out) {
