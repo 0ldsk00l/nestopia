@@ -48,6 +48,8 @@ Core:
  Fixes:
   - Hard Drivin' now playable (dragon2snow)
   - Kaettekita Mario Bros. fix (dragon2snow)
+  - Fix for rewinder sound issue (steelywing)
+  - Typos and syntax error fixes (lioncash)
 
 ----------------------------------------------------------------
 1.45
