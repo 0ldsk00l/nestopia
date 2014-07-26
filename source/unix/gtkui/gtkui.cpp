@@ -82,48 +82,78 @@ void gtkui_create() {
 	
 	// Define the File menu
 	GtkWidget *filemenu = gtk_menu_new();
-	GtkWidget *file = gtk_menu_item_new_with_label("File");
-	GtkWidget *open = gtk_menu_item_new_with_label("Open...");
-	GtkWidget *statesave = gtk_menu_item_new_with_label("Save State...");
-	GtkWidget *stateload = gtk_menu_item_new_with_label("Load State...");
-	GtkWidget *moviesave = gtk_menu_item_new_with_label("Movie Save");
-	GtkWidget *movieload = gtk_menu_item_new_with_label("Movie Load");
-	GtkWidget *moviestop = gtk_menu_item_new_with_label("Movie Stop");
-	GtkWidget *quit = gtk_menu_item_new_with_label("Quit");
+	GtkWidget *file = gtk_menu_item_new_with_mnemonic("_File");
+	GtkWidget *open = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
+	GtkWidget *sep_open = gtk_separator_menu_item_new();
+	GtkWidget *stateload = gtk_image_menu_item_new_with_mnemonic("_Load State...");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(stateload), gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_MENU));
+	GtkWidget *statesave = gtk_image_menu_item_new_with_mnemonic("_Save State...");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(statesave), gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
+	GtkWidget *sep_state = gtk_separator_menu_item_new();
+	GtkWidget *movieload = gtk_image_menu_item_new_with_label("Load Movie...");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(movieload), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
+	GtkWidget *moviesave = gtk_image_menu_item_new_with_label("Record Movie...");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(moviesave), gtk_image_new_from_stock(GTK_STOCK_MEDIA_RECORD, GTK_ICON_SIZE_MENU));
+	GtkWidget *moviestop = gtk_image_menu_item_new_with_label("Stop Movie");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(moviestop), gtk_image_new_from_stock(GTK_STOCK_MEDIA_STOP, GTK_ICON_SIZE_MENU));
+	GtkWidget *sep_movie = gtk_separator_menu_item_new();
+	GtkWidget *quit = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
 	
 	// Populate the File menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
-	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), statesave);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), stateload);
-	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviesave);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), statesave);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_state);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movieload);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviesave);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviestop);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_movie);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), quit);
 	
 	// Define the Emulator menu
 	GtkWidget *emulatormenu = gtk_menu_new();
-	GtkWidget *emu = gtk_menu_item_new_with_label("Emulator");
-	GtkWidget *cont = gtk_menu_item_new_with_label("Continue");
-	GtkWidget *pause = gtk_menu_item_new_with_label("Pause");
-	GtkWidget *resetsoft = gtk_menu_item_new_with_label("Reset (Soft)");
-	GtkWidget *resethard = gtk_menu_item_new_with_label("Reset (Hard)");
-	GtkWidget *cheats = gtk_menu_item_new_with_label("Cheats");
-	GtkWidget *configuration = gtk_menu_item_new_with_label("Configuration");
+	GtkWidget *emu = gtk_menu_item_new_with_mnemonic("_Emulator");
+	GtkWidget *cont = gtk_image_menu_item_new_with_mnemonic("C_ontinue");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cont), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU));
+	GtkWidget *pause = gtk_image_menu_item_new_from_stock(GTK_STOCK_MEDIA_PAUSE, NULL);
+	GtkWidget *sep_pause = gtk_separator_menu_item_new();
+	GtkWidget *resetsoft = gtk_image_menu_item_new_with_mnemonic("_Reset (Soft)");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(resetsoft), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
+	GtkWidget *resethard = gtk_image_menu_item_new_with_mnemonic("Reset (_Hard)");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(resethard), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
+	GtkWidget *sep_reset = gtk_separator_menu_item_new();
+	GtkWidget *diskflip = gtk_image_menu_item_new_with_mnemonic("Flip FDS _Disk");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(diskflip), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
+	GtkWidget *diskswitch = gtk_image_menu_item_new_with_mnemonic("_Switch FDS Disk");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(diskswitch), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
+	GtkWidget *sep_disk = gtk_separator_menu_item_new();
+	GtkWidget *cheats = gtk_image_menu_item_new_with_mnemonic("Ch_eats...");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cheats), gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU));
+	GtkWidget *sep_cheats = gtk_separator_menu_item_new();
+	GtkWidget *configuration = gtk_image_menu_item_new_with_mnemonic("_Configuration...");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(configuration), gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU));
 	
 	// Populate the Emulator menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emu), emulatormenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cont);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), pause);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep_pause);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resetsoft);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resethard);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep_reset);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), diskflip);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), diskswitch);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep_disk);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), cheats);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep_cheats);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), configuration);
 	
 	// Define the Help menu
 	GtkWidget *helpmenu = gtk_menu_new();
-	GtkWidget *help = gtk_menu_item_new_with_label("Help");
-	GtkWidget *about = gtk_menu_item_new_with_label("About");
+	GtkWidget *help = gtk_menu_item_new_with_mnemonic("_Help");
+	GtkWidget *about = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, NULL);
 	
 	// Populate the Help menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpmenu);
@@ -211,6 +241,12 @@ void gtkui_create() {
 	
 	g_signal_connect(G_OBJECT(resethard), "activate",
 		G_CALLBACK(gtkui_cb_reset), gpointer(1));
+	
+	g_signal_connect(G_OBJECT(diskflip), "activate",
+		G_CALLBACK(nst_flip_disk), NULL);
+	
+	g_signal_connect(G_OBJECT(diskswitch), "activate",
+		G_CALLBACK(nst_switch_disk), NULL);
 	
 	g_signal_connect(G_OBJECT(cheats), "activate",
 		G_CALLBACK(gtkui_cheats), NULL);
