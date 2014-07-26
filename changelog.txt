@@ -50,6 +50,7 @@ Core:
   - Kaettekita Mario Bros. fix (dragon2snow)
   - Fix for rewinder sound issue (steelywing)
   - Typos and syntax error fixes (lioncash)
+  - Fix for Mickey's Safari in Letterland (joepogo, james)
 
 ----------------------------------------------------------------
 1.45
