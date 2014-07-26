@@ -12,7 +12,7 @@ Linux:
 
 * Make sure you have the proper development libraries installed.
   In Debian:
-	apt-get install libsdl2-dev libarchive-dev
+	apt-get install libsdl2-dev libgtk-3-dev libarchive-dev libao-dev
 
 * cd to the nestopia source directory:
 	make
@@ -22,7 +22,7 @@ Linux:
 
 Free/Open/NetBSD:
 
-* Make sure you have GNU make, and SDL 2.0 installed from ports,
+* Make sure you have GNU make and all dependencies installed from ports,
   pkgsrc or binary packages. Also make sure to have xdg-utils installed.
 
 * cd to the nestopia source directory:
@@ -31,11 +31,32 @@ Free/Open/NetBSD:
 * Install globally and add menu entries:
 	sudo gmake install
 
+Modes
+=====
+* CLI mode is has a command line interface only.
+
+* GUI mode has a GTK+ GUI, and is *nix only.
+
+* CLI mode should work on any platform, and GUI mode can be disabled
+  by modifying the Makefile accordingly. Comment lines 343-354 to build
+  a CLI-only binary. Binaries with support for a GUI can still be run
+  in CLI mode.
+
 Post-Installation
 =================
 
 * Copy the Famicom Disk System rom (not included) to ~/.nestopia:
 	cp disksys.rom ~/.nestopia/disksys.rom
+
+Configuration
+=============
+* CLI mode can only be configured by editing the config files or passing
+  command line arguments.
+
+* GUI mode can be configured by editing config files, passing arguments,
+  or from the Configuration window.
+
+* Config files: ~/.nestopia/nestopia.conf and ~/.nestopia/input.conf
 
 Patching
 ========
@@ -44,27 +65,25 @@ Patching
   the rom, and the filename must be exactly the same as the rom
   filename, but with the .ips extension.
 
-Default Keys
-============
+Hardcoded Keys
+==============
 
-Esc = pause emulation - select Continue from the menu to unpause.
-
-Up Arrow = Up
-Down Arrow = Down
-Left Arrow = Left
-Right Arrow = Right
-Right Shift = Select
-Right Ctrl = Start
-Z = A
-A = B
-
-Backspace = Rewind
-\ = Stop Rewinding
+Esc			= Exit (CLI mode)
+F1			= Flip FDS Disk
+F2			= Reset
+F5			= Quick Save (slot 1)
+F6			= Quick Save (slot 2)
+F7			= Quick Load (slot 1)
+F8			= Quick Load (slot 2)
+`			= Alternate Speed (Fast-forward)
+1, 2		= Insert Coins
+Backspace	= Rewind
+\			= Stop Rewinding
+F			= Toggle Fullscreen
+T			= Toggle Filters
+G			= Toggle Scale factor
 
 Copyright
 =========
 
 This program is licensed under the GNU GPLv2. For details, read COPYING.
-
-inih -- simple .INI file parser Copyright (c) 2009, Brush Technology
-All rights reserved. For details, read source/unix/ini.h

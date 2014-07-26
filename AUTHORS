@@ -1,0 +1,56 @@
+Authors
+=======
+
+Main Contributors
+-----------------
+Martin Freij	-	Original Author
+R. Belmont		-	Initial Linux port
+R. Danbrook		-	Cross-platform port, current maintainer
+
+Community Contributors
+----------------------
+blargg
+dragon2snow
+emu-russia
+Geestarraw
+joepogo
+Keith Kelly
+lioncash
+rnjacobs
+shalma
+steelywing
+Squarepusher
+themaister
+W.M. Martinez
+
+Special Thanks
+--------------
+Aaron Marsh
+CyberWarriorX
+hunterk
+Kakashi
+MottZilla
+Ryphecha
+Stephen Kitt
+
+Included Sofware
+----------------
+
+blargg's NTSC filter
+Copyright (C) 2006-2007 Shay Green
+For details, read source/nes_ntsc/*
+
+inih -- simple .INI file parser Copyright (c) 2009, Brush Technology
+All rights reserved. For details, read source/unix/ini.h
+
+zlib compression library
+Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler
+For details, read source/zlib/*
+
+gtk_opengl
+Copyright (C) 2010, 2014 Carlos Pereira, Javier Jardón Cabezas
+For details, read source/unix/gtkui/gtk_opengl.*
+
+------------------------------------------------------------------------
+If you are not included in this file and should be, please let someone
+know so you can be added to the list of contributors.
