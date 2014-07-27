@@ -116,7 +116,6 @@ void config_file_write() {
 		
 		// Misc
 		fprintf(fp, "[misc]\n");
-		//fprintf(fp, "video_region=%d\n", conf.misc_video_region);
 		fprintf(fp, "; 0=NTSC, 1=PAL, 2=Famicom, 3=Dendy\n");
 		fprintf(fp, "default_system=%d\n\n", conf.misc_default_system);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
@@ -178,7 +177,6 @@ void config_set_default() {
 	conf.timing_limiter = true;
 	
 	// Misc
-	//conf.misc_video_region = 0; // Not in use right now
 	conf.misc_default_system = 0;
 	conf.misc_soft_patching = true;
 	//conf.misc_suppress_screensaver = true;
@@ -231,10 +229,9 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("timing", "altspeed")) { pconfig->timing_altspeed = atoi(value); }
 	else if (MATCH("timing", "turbopulse")) { pconfig->timing_turbopulse = atoi(value); }
 	else if (MATCH("timing", "vsync")) { pconfig->timing_vsync = atoi(value); }
-	else if (MATCH("timing", "limiter")) { pconfig->timing_vsync = atoi(value); }
+	else if (MATCH("timing", "limiter")) { pconfig->timing_limiter = atoi(value); }
     
 	// Misc
-	//else if (MATCH("misc", "video_region")) { pconfig->misc_video_region = atoi(value); }
 	else if (MATCH("misc", "default_system")) { pconfig->misc_default_system = atoi(value); }
 	else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
 	//else if (MATCH("misc", "suppress_screensaver")) { pconfig->misc_suppress_screensaver = atoi(value); }
