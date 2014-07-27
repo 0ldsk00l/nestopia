@@ -20,6 +20,7 @@ BINDIR = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share/nestopia
 
 ifneq ($(findstring MINGW,$(UNAME)),)
+	CPPFLAGS += -DNST_NO_ZLIB
 	DEFINES = -D_MINGW
 	LDFLAGS += -mconsole
 	LIBS += -lopengl32
@@ -27,10 +28,24 @@ else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
 	LIBS += -larchive
 	LIBS += -lGL -lGLU -lao
+	# GTK Stuff - Comment this section to disable GTK+
+	CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
+	LIBS += $(shell pkg-config --libs gtk+-3.0)
+	DEFINES += -D_GTK
+	IOBJS += objs/unix/gtkui/gtkui.o
+	IOBJS += objs/unix/gtkui/gtkui_archive.o
+	IOBJS += objs/unix/gtkui/gtkui_callbacks.o
+	IOBJS += objs/unix/gtkui/gtkui_cheats.o
+	IOBJS += objs/unix/gtkui/gtkui_config.o
+	IOBJS += objs/unix/gtkui/gtkui_dialogs.o
+	IOBJS += objs/unix/gtkui/gtk_opengl.o
+	OBJDIRS += objs/unix/gtkui
+	WARNINGS += -Wno-deprecated-declarations
+	# end GTK
 endif
 
 # Core
-OBJS = objs/core/NstApu.o
+OBJS += objs/core/NstApu.o
 OBJS += objs/core/NstAssert.o
 OBJS += objs/core/NstCartridge.o
 OBJS += objs/core/NstCartridgeInes.o
@@ -325,7 +340,7 @@ OBJS += objs/core/vssystem/NstVsSystem.o
 OBJS += objs/core/vssystem/NstVsTkoBoxing.o
 
 # Interface
-IOBJS = objs/unix/main.o
+IOBJS += objs/unix/main.o
 IOBJS += objs/unix/cli.o
 IOBJS += objs/unix/audio.o
 IOBJS += objs/unix/video.o
@@ -338,20 +353,6 @@ IOBJS += objs/unix/ini.o
 # object dirs
 OBJDIRS = objs objs/core objs/core/api objs/core/board objs/core/input
 OBJDIRS += objs/core/vssystem objs/nes_ntsc objs/unix
-
-# GTK Stuff - Comment this section to disable GTK+
-CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
-LIBS += $(shell pkg-config --libs gtk+-3.0)
-DEFINES += -D_GTK
-IOBJS += objs/unix/gtkui/gtkui.o
-IOBJS += objs/unix/gtkui/gtkui_archive.o
-IOBJS += objs/unix/gtkui/gtkui_callbacks.o
-IOBJS += objs/unix/gtkui/gtkui_cheats.o
-IOBJS += objs/unix/gtkui/gtkui_config.o
-IOBJS += objs/unix/gtkui/gtkui_dialogs.o
-IOBJS += objs/unix/gtkui/gtk_opengl.o
-OBJDIRS += objs/unix/gtkui
-WARNINGS += -Wno-deprecated-declarations
 
 # Core rules
 objs/core/%.o: source/core/%.cpp
