@@ -24,11 +24,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <SDL_endian.h>
-#include "GL/glu.h"
-
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiInput.hpp"
 #include "core/api/NstApiVideo.hpp"
@@ -41,6 +36,7 @@
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
+extern GtkWidget *drawingarea;
 #endif
 
 using namespace Nes::Api;
@@ -49,6 +45,7 @@ GLuint screenTexID = 0;
 void *videobuf;
 
 SDL_Window *sdlwindow;
+SDL_Window *embedwindow;
 SDL_GLContext glcontext;
 SDL_DisplayMode displaymode;
 
@@ -139,7 +136,7 @@ void opengl_blit() {
 	
 	#ifdef _GTK
 	if (conf.misc_disable_gui) { SDL_GL_SwapWindow(sdlwindow); }
-	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : gtkui_swapbuffers(); }
+	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : SDL_GL_SwapWindow(embedwindow); }
 	#else
 	SDL_GL_SwapWindow(sdlwindow);
 	#endif
@@ -269,11 +266,22 @@ void video_toggle_fullscreen() {
 	video_set_params();
 	video_init();
 	
-	SDL_SetWindowFullscreen(sdlwindow, flags);
-	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
-	
+	if (conf.misc_disable_gui) {
+		SDL_SetWindowFullscreen(sdlwindow, flags);
+		SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
+	}
 	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_toggle_fullscreen(); }
+	else {
+		if (conf.video_fullscreen) {
+			video_create_standalone();
+			SDL_GL_MakeCurrent(sdlwindow, glcontext);
+		}
+		else {
+			SDL_GL_MakeCurrent(embedwindow, glcontext);
+			SDL_DestroyWindow(sdlwindow);
+			gtkui_resize();
+		}
+	}
 	video_set_cursor();
 	#endif
 }
@@ -292,6 +300,7 @@ void video_toggle_filter() {
 	opengl_cleanup();
 	
 	video_init();
+	
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 	
 	#ifdef _GTK
@@ -324,24 +333,24 @@ void video_toggle_scalefactor() {
 	#endif
 }
 
-void video_create() {
-	// Create the SDL window
+void video_create_standalone() {
+	// Create a standalone SDL window
 	int displayindex;
 	
 	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
 	
-	if(conf.video_fullscreen) {
+	if (conf.video_fullscreen) {
 		SDL_ShowCursor(0);
 		windowflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
 	
 	sdlwindow = SDL_CreateWindow(
-	"Nestopia UE",						//    window title
-	SDL_WINDOWPOS_UNDEFINED,			//    initial x position
-	SDL_WINDOWPOS_UNDEFINED,			//    initial y position
-	rendersize.w,						//    width, in pixels
-	rendersize.h,						//    height, in pixels
-	windowflags);
+		"Nestopia UE",						//    window title
+		SDL_WINDOWPOS_UNDEFINED,			//    initial x position
+		SDL_WINDOWPOS_UNDEFINED,			//    initial y position
+		rendersize.w,						//    width, in pixels
+		rendersize.h,						//    height, in pixels
+		windowflags);
 	
 	if(sdlwindow == NULL) {
 		fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
@@ -350,26 +359,53 @@ void video_create() {
 	displayindex = SDL_GetWindowDisplayIndex(sdlwindow);
 	SDL_GetDesktopDisplayMode(displayindex, &displaymode);
 	//printf("w: %d\th: %d\n", displaymode.w, displaymode.h);
-	
 	//printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
+	
+	video_init();
+	
+	SDL_GL_MakeCurrent(sdlwindow, glcontext);
+}
+
+void video_create_embedded() {
+	// Create an embedded SDL window
+	#ifdef _GTK
+	GdkWindow *gdkwindow;
+	gdkwindow = gtk_widget_get_window(drawingarea);
+	embedwindow = SDL_CreateWindowFrom((void *)GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
+	embedwindow->flags |= SDL_WINDOW_OPENGL;
+	SDL_GL_LoadLibrary(NULL);
+	#endif
+}
+
+void video_create() {
+	// Create the necessary window(s)
 	
 	opengl_init_structures();
 	
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) {
+		video_create_embedded();
+		glcontext = SDL_GL_CreateContext(embedwindow);
+	}
+	else {
+		video_create_standalone();
+		glcontext = SDL_GL_CreateContext(sdlwindow);
+	}
+	
+	if (conf.video_fullscreen) {
+		video_create_standalone();
+		glcontext = SDL_GL_CreateContext(sdlwindow);
+	}
+	#else
+	video_create_standalone();
 	glcontext = SDL_GL_CreateContext(sdlwindow);
+	#endif
 	
 	if(glcontext == NULL) {
 		fprintf(stderr, "Could not create glcontext: %s\n", SDL_GetError());
 	}
 	
-	SDL_GL_MakeCurrent(sdlwindow, glcontext);
-	
 	SDL_GL_SetSwapInterval(conf.timing_vsync);
-}
-
-void video_destroy() {
-	// Bring down the SDL window
-	SDL_GL_DeleteContext(glcontext);
-	SDL_DestroyWindow(sdlwindow);
 }
 
 void video_set_filter() {
@@ -518,16 +554,10 @@ void video_set_cursor() {
 		Input(emulator).GetConnectedController(1) == 5) {
 		zapper = true;
 		cursor_set_crosshair();
-		#ifdef _GTK
-		if (!conf.misc_disable_gui) { gtkui_cursor_set_crosshair(); }
-		#endif
 	}
 	else {
 		zapper = false;
 		cursor_set_default();
-		#ifdef _GTK
-		if (!conf.misc_disable_gui) { gtkui_cursor_set_default(); }
-		#endif
 	}
 	
 	if (conf.video_fullscreen) { cursor = zapper; }

@@ -840,7 +840,7 @@ void nst_load(const char *filename) {
 	// Set the title
 	video_set_title(nstpaths.gamename);
 	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_opengl_start(); gtkui_set_title(nstpaths.gamename); }
+	if (!conf.misc_disable_gui) { gtkui_set_title(nstpaths.gamename); }
 	#endif
 
 	// power on
@@ -897,11 +897,9 @@ int main(int argc, char *argv[]) {
 	
 	// Create the window
 	#ifdef _GTK
-	conf.misc_disable_gui ? video_create() : gtkui_init(argc, argv);
-	if (conf.video_fullscreen) { video_create(); }
-	#else
-	video_create();
+	if (!conf.misc_disable_gui) { gtkui_init(argc, argv); }
 	#endif
+	video_create();
 	
 	// Set up the callbacks
 	Video::Output::lockCallback.Set(VideoLock, userData);
