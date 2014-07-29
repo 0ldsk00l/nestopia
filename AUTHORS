@@ -47,10 +47,6 @@ zlib compression library
 Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler
 For details, read source/zlib/*
 
-gtk_opengl
-Copyright (C) 2010, 2014 Carlos Pereira, Javier Jardón Cabezas
-For details, read source/unix/gtkui/gtk_opengl.*
-
 ------------------------------------------------------------------------
 If you are not included in this file and should be, please let someone
 know so you can be added to the list of contributors.

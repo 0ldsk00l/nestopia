@@ -33,19 +33,6 @@
 #include "gtkui_config.h"
 #include "gtkui_cheats.h"
 #include "gtkui_dialogs.h"
-#include "gtk_opengl.h"
-
-GLXContext context;
-
-int attributes[] = {
-	GLX_RGBA,
-	GLX_RED_SIZE, 1,
-	GLX_GREEN_SIZE, 1,
-	GLX_BLUE_SIZE, 1,
-	GLX_DOUBLEBUFFER, True,
-	GLX_DEPTH_SIZE, 12,
-	None
-};
 
 GtkWidget *gtkwindow;
 GtkWidget *statusbar;
@@ -165,12 +152,10 @@ void gtkui_create() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	// Create the DrawingArea/OpenGL context
-	context = NULL;
 	drawingarea = gtk_drawing_area_new();
-	context = gtk_opengl_create(drawingarea, attributes, context, TRUE);
+	//gtk_widget_set_double_buffered(drawingarea, FALSE);
 	
 	g_object_set_data(G_OBJECT(gtkwindow), "area", drawingarea);
-	g_object_set_data(G_OBJECT(gtkwindow), "context", context);
 	
 	// Set the Drawing Area to be the size of the game output
 	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
@@ -198,8 +183,6 @@ void gtkui_create() {
 		target_entry, sizeof(target_entry) / sizeof(GtkTargetEntry), (GdkDragAction)(GDK_ACTION_MOVE | GDK_ACTION_COPY));
 	
 	// Connect the signals
-	//g_signal_connect(drawingarea, "realize",
-	//	G_CALLBACK(area_start), gtkwindow);
 	
 	g_signal_connect(G_OBJECT(drawingarea), "drag-data-received",
 		G_CALLBACK(gtkui_drag_data), NULL);
@@ -278,20 +261,6 @@ void gtkui_create() {
 	gtk_widget_show_all(gtkwindow);
 }
 
-void gtkui_toggle_fullscreen() {
-	// Toggle fullscreen
-	if (conf.video_fullscreen) {
-		video_create();
-		video_init();
-	}
-	else {
-		video_destroy();
-		gtk_opengl_current(drawingarea, context);
-		video_init();
-		gtkui_resize();
-	}
-}
-
 void gtkui_resize() {
 	// Resize the GTK+ window
 	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
@@ -342,14 +311,6 @@ void gtkui_message(const char* message) {
 				message);
 	gtk_dialog_run(GTK_DIALOG(messagewindow));
 	gtk_widget_destroy(messagewindow);
-}
-
-void gtkui_opengl_start() {
-	gtk_opengl_area_start(drawingarea, gtkwindow);
-}
-
-void gtkui_swapbuffers() {
-	gtk_opengl_swap(drawingarea);
 }
 
 void gtkui_cursor_set_crosshair() {
