@@ -380,8 +380,6 @@ void video_create_embedded() {
 void video_create() {
 	// Create the necessary window(s)
 	
-	opengl_init_structures();
-	
 	#ifdef _GTK
 	if (!conf.misc_disable_gui) {
 		video_create_embedded();
@@ -406,6 +404,8 @@ void video_create() {
 	}
 	
 	SDL_GL_SetSwapInterval(conf.timing_vsync);
+	
+	opengl_init_structures();
 }
 
 void video_set_filter() {
