@@ -46,10 +46,9 @@ void gtkui_cb_nothing() {
 void gtkui_cb_video_refresh() {
 	// Refresh the Video output after changes
 	if (playing) {
-		opengl_cleanup();
 		video_init();
 	}
-	else { video_set_params(); }
+	else { video_set_dimensions(); }
 	gtkui_resize();
 }
 
