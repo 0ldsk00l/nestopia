@@ -892,8 +892,8 @@ int main(int argc, char *argv[]) {
 	// Read the input config file and override defaults
 	input_config_read();
 	
-	// Set up the video parameters
-	video_set_params();
+	// Set the video dimensions
+	video_set_dimensions();
 	
 	// Create the window
 	#ifdef _GTK

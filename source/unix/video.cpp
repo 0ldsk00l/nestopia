@@ -55,6 +55,7 @@ Video::RenderState renderstate;
 dimensions_t basesize, rendersize;
 
 extern settings_t conf;
+extern nstpaths_t nstpaths;
 extern Emulator emulator;
 
 void opengl_init_structures() {
@@ -143,147 +144,53 @@ void opengl_blit() {
 }
 
 void video_init() {
-	// Initialize video structures	
-	int scalefactor = conf.video_scale_factor;
+	// Initialize video
+	opengl_cleanup();
 	
-	video_set_params();
+	video_set_dimensions();
 	video_set_filter();
+	
+	// Allocate the video buffer
+	videobuf = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
 	
 	opengl_init_structures();
 	
-	// Set up the render state parameters
-	renderstate.filter = filter;
-	renderstate.width = basesize.w;
-	renderstate.height = basesize.h;
-	renderstate.bits.count = 32;
-	
-#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	renderstate.bits.mask.r = 0x000000ff;
-	renderstate.bits.mask.g = 0xff000000;
-	renderstate.bits.mask.b = 0x00ff0000;
-#else
-	renderstate.bits.mask.r = 0x00ff0000;
-	renderstate.bits.mask.g = 0x0000ff00;
-	renderstate.bits.mask.b = 0x000000ff;
-#endif
-	
-	// allocate the intermediate render buffer
-	videobuf = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
-	
-	// acquire the video interface
-	Video video(emulator);
-	
-	// set the sprite limit
-	video.EnableUnlimSprites(conf.video_unlimited_sprites ? false : true);
-	
-	// Set Palette options
-	switch (conf.video_palette_mode) {
-		case 0: // YUV
-			video.GetPalette().SetMode(Video::Palette::MODE_YUV);
-			break;
-		
-		case 1: // RGB
-			video.GetPalette().SetMode(Video::Palette::MODE_RGB);
-	}
-	
-	// Set YUV Decoder/Picture options
-	if (video.GetPalette().GetMode() != Video::Palette::MODE_RGB) {
-		switch (conf.video_decoder) {
-			case 0: // Consumer
-				video.SetDecoder(Video::DECODER_CONSUMER);
-				break;
-			
-			case 1: // Canonical
-				video.SetDecoder(Video::DECODER_CANONICAL);
-				break;
-			
-			case 2: // Alternative (Canonical with yellow boost)
-				video.SetDecoder(Video::DECODER_ALTERNATIVE);
-				break;
-			
-			default: break;
-		}
-		
-		video.SetBrightness(conf.video_brightness);
-		video.SetSaturation(conf.video_saturation);
-		video.SetContrast(conf.video_contrast);
-		video.SetHue(conf.video_hue);
-	}
-	
-	// Set NTSC options
-	switch (conf.video_ntsc_mode) {
-		case 0:	// Composite
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_COMP);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_COMP);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_COMP);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_COMP);
-			break;
-		
-		case 1:	// S-Video
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_SVIDEO);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_SVIDEO);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_SVIDEO);
-			break;
-		
-		case 2:	// RGB
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_RGB);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_RGB);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_RGB);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_RGB);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
-			break;
-		
-		default: break;
-	}
-	
-	// Set xBR options
-	if (conf.video_filter == 2) {
-		video.SetCornerRounding(conf.video_xbr_corner_rounding);
-		video.SetBlend(conf.video_xbr_pixel_blending);
-	}
-	
-	// set the render state
-	if (NES_FAILED(video.SetRenderState(renderstate))) {
-		fprintf(stderr, "Nestopia core rejected render state\n");
-		exit(1);
-	}
+	video_set_cursor();
 }
 
 void video_toggle_fullscreen() {
 	// Toggle between fullscreen and window mode
 	Uint32 flags;
-	
 	conf.video_fullscreen ^= 1;
 	
+	// Do fullscreen shit in here
 	if (conf.video_fullscreen) {
 		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
-	else { flags = 0;}
+	else { flags = 0; }
 	
-	video_set_params();
-	video_init();
-	
-	if (conf.misc_disable_gui) {
-		SDL_SetWindowFullscreen(sdlwindow, flags);
-		SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
-	}
 	#ifdef _GTK
+	if (conf.video_fullscreen) {
+		SDL_DestroyWindow(sdlwindow);
+		video_create_standalone();
+		SDL_GL_MakeCurrent(sdlwindow, glcontext);
+	}
 	else {
-		if (conf.video_fullscreen) {
-			video_create_standalone();
-			SDL_GL_MakeCurrent(sdlwindow, glcontext);
-		}
-		else {
+		if (!conf.misc_disable_gui) {
 			SDL_GL_MakeCurrent(embedwindow, glcontext);
 			SDL_DestroyWindow(sdlwindow);
 			gtkui_resize();
 		}
+		else {
+			video_set_dimensions();
+			SDL_SetWindowFullscreen(sdlwindow, flags);
+			SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
+		}
 	}
 	video_set_cursor();
 	#endif
+	
+	video_init();
 }
 
 void video_toggle_filter() {
@@ -297,15 +204,7 @@ void video_toggle_filter() {
 		conf.video_scale_factor = 3;
 	}
 	
-	opengl_cleanup();
-	
 	video_init();
-	
-	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
-	
-	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_resize(); }
-	#endif
 }
 
 void video_toggle_filterupdate() {
@@ -315,6 +214,7 @@ void video_toggle_filterupdate() {
 }
 
 void video_toggle_scalefactor() {
+	// Toggle video scale factor
 	conf.video_scale_factor++;
 	if (conf.video_scale_factor > 4) { conf.video_scale_factor = 1; }
 	
@@ -323,14 +223,7 @@ void video_toggle_scalefactor() {
 		conf.video_scale_factor = 1;
 	}
 	
-	opengl_cleanup();
-	
 	video_init();
-	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
-	
-	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_resize(); }
-	#endif
 }
 
 void video_create_standalone() {
@@ -345,7 +238,7 @@ void video_create_standalone() {
 	}
 	
 	sdlwindow = SDL_CreateWindow(
-		"Nestopia UE",						//    window title
+		nstpaths.gamename,					//    window title
 		SDL_WINDOWPOS_UNDEFINED,			//    initial x position
 		SDL_WINDOWPOS_UNDEFINED,			//    initial y position
 		rendersize.w,						//    width, in pixels
@@ -361,9 +254,8 @@ void video_create_standalone() {
 	//printf("w: %d\th: %d\n", displaymode.w, displaymode.h);
 	//printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
 	
-	video_init();
-	
 	SDL_GL_MakeCurrent(sdlwindow, glcontext);
+	SDL_GL_SetSwapInterval(conf.timing_vsync);
 }
 
 void video_create_embedded() {
@@ -402,14 +294,11 @@ void video_create() {
 	if(glcontext == NULL) {
 		fprintf(stderr, "Could not create glcontext: %s\n", SDL_GetError());
 	}
-	
-	SDL_GL_SetSwapInterval(conf.timing_vsync);
-	
-	opengl_init_structures();
 }
 
 void video_set_filter() {
 	// Set the filter
+	Video video(emulator);
 	int scalefactor = conf.video_scale_factor;
 	
 	switch(conf.video_filter) {
@@ -482,14 +371,106 @@ void video_set_filter() {
 			break;
 		break;
 	}
+	
+	// Set the sprite limit:  true = enable sprite limit, false = disable sprite limit
+	video.EnableUnlimSprites(conf.video_unlimited_sprites ? false : true);
+	
+	// Set Palette options
+	switch (conf.video_palette_mode) {
+		case 0: // YUV
+			video.GetPalette().SetMode(Video::Palette::MODE_YUV);
+			break;
+		
+		case 1: // RGB
+			video.GetPalette().SetMode(Video::Palette::MODE_RGB);
+	}
+	
+	// Set YUV Decoder/Picture options
+	if (video.GetPalette().GetMode() != Video::Palette::MODE_RGB) {
+		switch (conf.video_decoder) {
+			case 0: // Consumer
+				video.SetDecoder(Video::DECODER_CONSUMER);
+				break;
+			
+			case 1: // Canonical
+				video.SetDecoder(Video::DECODER_CANONICAL);
+				break;
+			
+			case 2: // Alternative (Canonical with yellow boost)
+				video.SetDecoder(Video::DECODER_ALTERNATIVE);
+				break;
+			
+			default: break;
+		}
+		
+		video.SetBrightness(conf.video_brightness);
+		video.SetSaturation(conf.video_saturation);
+		video.SetContrast(conf.video_contrast);
+		video.SetHue(conf.video_hue);
+	}
+	
+	// Set NTSC options
+	switch (conf.video_ntsc_mode) {
+		case 0:	// Composite
+			video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
+			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_COMP);
+			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_COMP);
+			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_COMP);
+			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_COMP);
+			break;
+		
+		case 1:	// S-Video
+			video.SetSharpness(Video::DEFAULT_SHARPNESS_SVIDEO);
+			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
+			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_SVIDEO);
+			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
+			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_SVIDEO);
+			break;
+		
+		case 2:	// RGB
+			video.SetSharpness(Video::DEFAULT_SHARPNESS_RGB);
+			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_RGB);
+			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_RGB);
+			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_RGB);
+			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
+			break;
+		
+		default: break;
+	}
+	
+	// Set xBR options
+	if (conf.video_filter == 2) {
+		video.SetCornerRounding(conf.video_xbr_corner_rounding);
+		video.SetBlend(conf.video_xbr_pixel_blending);
+	}
+	
+	// Set up the render state parameters
+	renderstate.filter = filter;
+	renderstate.width = basesize.w;
+	renderstate.height = basesize.h;
+	renderstate.bits.count = 32;
+	
+	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
+	renderstate.bits.mask.r = 0x000000ff;
+	renderstate.bits.mask.g = 0xff000000;
+	renderstate.bits.mask.b = 0x00ff0000;
+	#else
+	renderstate.bits.mask.r = 0x00ff0000;
+	renderstate.bits.mask.g = 0x0000ff00;
+	renderstate.bits.mask.b = 0x000000ff;
+	#endif
+
+	if (NES_FAILED(video.SetRenderState(renderstate))) {
+		fprintf(stderr, "Nestopia core rejected render state\n");
+		exit(1);
+	}
 }
 
-void video_set_params() {
-
+void video_set_dimensions() {
+	// Set up the video dimensions
 	int scalefactor = conf.video_scale_factor;
 	
-	switch(conf.video_filter)
-	{
+	switch(conf.video_filter) {
 		case 0:	// None
 			basesize.w = Video::Output::WIDTH;
 			basesize.h = Video::Output::HEIGHT;
@@ -542,7 +523,10 @@ void video_set_params() {
 		rendersize.w = displaymode.w;
 	}
 	
-	opengl_cleanup();
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) { gtkui_resize(); }
+	#endif
+	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
 void video_set_cursor() {
