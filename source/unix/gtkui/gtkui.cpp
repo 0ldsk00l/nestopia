@@ -263,7 +263,9 @@ void gtkui_create() {
 
 void gtkui_resize() {
 	// Resize the GTK+ window
-	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
+	if (gtkwindow) {
+		gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
+	}
 }
 
 void gtkui_set_title(const char *title) {
