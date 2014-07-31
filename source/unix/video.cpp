@@ -163,7 +163,6 @@ void video_toggle_fullscreen() {
 	Uint32 flags;
 	conf.video_fullscreen ^= 1;
 	
-	// Do fullscreen shit in here
 	if (conf.video_fullscreen) {
 		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
 	}
@@ -187,9 +186,12 @@ void video_toggle_fullscreen() {
 			SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 		}
 	}
-	video_set_cursor();
+	#else
+	SDL_SetWindowFullscreen(sdlwindow, flags);
+	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 	#endif
 	
+	video_set_cursor();
 	video_init();
 }
 
