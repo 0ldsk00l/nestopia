@@ -85,11 +85,17 @@ void opengl_init_structures() {
 	glLoadIdentity();
 	
 	if (conf.video_unmask_overscan) {
-		glOrtho(0.0, (GLdouble)rendersize.w, (GLdouble)rendersize.h, 0.0, -1.0, 1.0);
+		glOrtho(
+			conf.video_linear_filter ? 2.0 : 0.0,
+			(GLdouble)rendersize.w,
+			(GLdouble)rendersize.h,
+			0.0,
+			-1.0, 1.0
+		);
 	}
 	else {
 		glOrtho(
-			0.0,
+			conf.video_linear_filter ? 2.0 : 0.0,
 			(GLdouble)rendersize.w,
 			(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor) + fencepost,
 			(GLdouble)(OVERSCAN_TOP * scalefactor) - fencepost,
