@@ -526,7 +526,10 @@ void video_set_dimensions() {
 	}
 	
 	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_resize(); }
+	if (!conf.misc_disable_gui) {
+		SDL_SetWindowSize(embedwindow, rendersize.w, rendersize.h);
+		gtkui_resize();
+	}
 	#endif
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
