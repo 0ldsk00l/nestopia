@@ -71,7 +71,6 @@ Emulator emulator;
 bool loaded = false;
 bool playing = false;
 bool updateok = false;
-bool frameskip = false;
 
 bool nst_pal = false;
 
@@ -427,12 +426,8 @@ void nst_play() {
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
 	
-	video_set_cursor();
-	
 	audio_set_params(cNstSound);
 	audio_unpause();
-	
-	audio_set_samples(cNstSound->length[0]);
 	
 	updateok = false;
 	playing = true;
@@ -981,14 +976,11 @@ int main(int argc, char *argv[]) {
 				// Pulse the turbo buttons
 				input_pulse_turbo(cNstPads);
 				
-				// Check if it's time to skip a frame
-				frameskip = timing_frameskip();
-				
 				// Execute a frame
-				if (!frameskip) {
-					emulator.Execute(cNstVideo, cNstSound, cNstPads);
+				if (timing_frameskip()) {
+					emulator.Execute(NULL, cNstSound, cNstPads);
 				}
-				else { emulator.Execute(NULL, cNstSound, cNstPads); }
+				else { emulator.Execute(cNstVideo, cNstSound, cNstPads); }
 				
 				// Prevent insane speeds when vsync is turned off...
 				if (!altspeed) { updateok = false; }
