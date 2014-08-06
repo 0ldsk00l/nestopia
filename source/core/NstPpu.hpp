@@ -139,6 +139,7 @@ namespace Nes
 
 			enum
 			{
+				HCLOCK_POSTRENDER = 340,
 				HCLOCK_DUMMY    = 341,
 				HCLOCK_VBLANK_0 = 681,
 				HCLOCK_VBLANK_1 = 682,
@@ -175,7 +176,6 @@ namespace Nes
 			NST_FORCE_INLINE uint Emphasis() const;
 
 			NST_FORCE_INLINE void UpdateAddressLine(uint);
-			NST_FORCE_INLINE void UpdateScrollAddressLine();
 			NST_FORCE_INLINE void UpdateVramAddress();
 
 			NST_FORCE_INLINE void OpenName();
