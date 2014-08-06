@@ -44,15 +44,14 @@ SDL_AudioDeviceID dev;
 
 int16_t audiobuf[96000];
 
-int framerate, channels;
+int framerate, channels, bufsize;
+int framepulse = 2;
 
 bool altspeed = false;
-int framepulse = 2;
-int framecounter = 0;
 
 void audio_play() {
 	
-	int bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
+	bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
 	if (conf.audio_api == 0) { // SDL
 		SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
@@ -193,12 +192,16 @@ void audio_adj_volume() {
 bool timing_frameskip() {
 	// Calculate whether to skip a frame or not
 	
+	if (conf.audio_api == 0) { // SDL
+		// Wait until the audio is drained
+		while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
+			SDL_Delay(1);
+		}
+	}
+	
 	static int flipper = 1;
 	
-	if (!altspeed) {
-		return false;
-	}
-	else {
+	if (altspeed) {
 		if (flipper > framepulse) { flipper = 0; return false; }
 		else { flipper++; return true; }
 	}
