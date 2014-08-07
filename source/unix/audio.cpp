@@ -76,6 +76,10 @@ void audio_init() {
 	
 	memset(audiobuf, 0, sizeof(audiobuf));
 	
+	#ifdef _MINGW
+	conf.audio_api = 0; // Set SDL audio for MinGW
+	#endif
+	
 	if (conf.audio_api == 0) { // SDL
 		spec.freq = conf.audio_sample_rate;
 		spec.format = AUDIO_S16SYS;
@@ -117,9 +121,9 @@ void audio_init() {
 		}
 		
 		// libao's ALSA plugin causes buffer underflows when vsync is enabled
-		if (ao_default_driver_id() == ao_driver_id("alsa")) {
-			//fprintf(stderr, "Warning: libao's ALSA plugin is buggy. Hack enabled, but no promises!\n");
-		}
+		/*if (ao_default_driver_id() == ao_driver_id("alsa")) {
+			fprintf(stderr, "Warning: libao's ALSA plugin is buggy.\n");
+		}*/
 	}
 #endif
 }
