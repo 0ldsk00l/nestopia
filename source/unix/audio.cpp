@@ -195,7 +195,7 @@ bool timing_frameskip() {
 	if (conf.audio_api == 0) { // SDL
 		// Wait until the audio is drained
 		while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
-			SDL_Delay(1);
+			if (conf.timing_limiter) { SDL_Delay(1); }
 		}
 	}
 	
