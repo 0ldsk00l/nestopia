@@ -380,8 +380,8 @@ void video_set_filter() {
 		break;
 	}
 	
-	// Set the sprite limit:  true = enable sprite limit, false = disable sprite limit
-	video.EnableUnlimSprites(conf.video_unlimited_sprites ? false : true);
+	// Set the sprite limit:  false = enable sprite limit, true = disable sprite limit
+	video.EnableUnlimSprites(conf.video_unlimited_sprites ? true : false);
 	
 	// Set Palette options
 	switch (conf.video_palette_mode) {
