@@ -2143,8 +2143,9 @@ namespace Nes
 
 				cpu.StealCycles( cpu.GetClock(1) );
 
-				if ((readAddress & 0xF000) != 0x4000)
-					cpu.Peek( readAddress );
+				// This is disabled until a real solution is discovered
+				//if ((readAddress & 0xF000) != 0x4000)
+				//	cpu.Peek( readAddress );
 
 				cpu.StealCycles( cpu.GetClock(1) );
 				cpu.Peek( readAddress );
