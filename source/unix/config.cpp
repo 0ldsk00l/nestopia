@@ -154,7 +154,7 @@ void config_set_default() {
 	
 	// Audio
 	conf.audio_api = 1;
-	conf.audio_stereo = true;
+	conf.audio_stereo = false;
 	conf.audio_sample_rate = 44100;
 	conf.audio_volume = 85;
 	conf.audio_vol_sq1 = 85;
