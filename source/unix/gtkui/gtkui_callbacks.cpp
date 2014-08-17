@@ -224,6 +224,11 @@ void gtkui_cb_misc_default_system(GtkComboBox *combobox, gpointer userdata) {
 	conf.misc_default_system = gtk_combo_box_get_active(combobox);
 }
 
+void gtkui_cb_timing_altspeed(GtkRange *range, gpointer userdata) {
+	// Set altspeed
+	conf.timing_altspeed = (int)gtk_range_get_value(range);
+}
+
 void gtkui_cb_timing_vsync(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Toggle vsync
 	conf.timing_vsync = gtk_toggle_button_get_active(togglebutton);
@@ -251,6 +256,7 @@ void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata)
 
 //// Key Translation ////
 
+// This function is based on code from FCEUX
 unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval) {
 	// Translate GDK keys to SDL keys
 	

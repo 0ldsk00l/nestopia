@@ -29,6 +29,7 @@ void gtkui_cb_audio_stereo(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_input_turbopulse(GtkRange *range, gpointer userdata);
 
 void gtkui_cb_misc_default_system(GtkComboBox *combobox, gpointer userdata);
+void gtkui_cb_timing_altspeed(GtkRange *range, gpointer userdata);
 void gtkui_cb_timing_vsync(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_timing_limiter(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_soft_patching(GtkToggleButton *togglebutton, gpointer userdata);

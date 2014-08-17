@@ -771,46 +771,42 @@ void nst_load(const char *filename) {
 	}
 	
 	if (NES_FAILED(result)) {
+		char errorstring[32];
+		#ifdef _GTK
+		if (conf.video_fullscreen) { video_toggle_fullscreen(); }
+		#endif
 		switch (result) {
 			case Nes::RESULT_ERR_INVALID_FILE:
-				fprintf(stderr, "Error: Invalid file\n");
-				#ifdef _GTK
-				gtkui_message("Error: Invalid file");
-				#endif
+				snprintf(errorstring, sizeof(errorstring), "Error: Invalid file");
 				break;
 
 			case Nes::RESULT_ERR_OUT_OF_MEMORY:
-				fprintf(stderr, "Error: Out of Memory\n");
-				#ifdef _GTK
-				gtkui_message("Error: Out of Memory");
-				#endif
+				snprintf(errorstring, sizeof(errorstring), "Error: Out of Memory");
 				break;
 
 			case Nes::RESULT_ERR_CORRUPT_FILE:
-				fprintf(stderr, "Error: Corrupt or Missing file\n");
-				#ifdef _GTK
-				gtkui_message("Error: Corrupt or Missing file");
-				#endif
+				snprintf(errorstring, sizeof(errorstring), "Error: Corrupt or Missing File");
 				break;
 
 			case Nes::RESULT_ERR_UNSUPPORTED_MAPPER:
-				fprintf(stderr, "Error: Unsupported Mapper\n");
-				#ifdef _GTK
-				gtkui_message("Error: Unsupported Mapper");
-				#endif
+				snprintf(errorstring, sizeof(errorstring), "Error: Unsupported Mapper");
 				break;
 
 			case Nes::RESULT_ERR_MISSING_BIOS:
-				fprintf(stderr, "Error: Missing Fds BIOS\n");
-				#ifdef _GTK
-				gtkui_message("Error: Missing Fds BIOS");
-				#endif
+				snprintf(errorstring, sizeof(errorstring), "Error: Missing Fds BIOS");
 				break;
 
 			default:
-				fprintf(stderr, "Error: %d\n", result);
+				snprintf(errorstring, sizeof(errorstring), "Error: %d", result);
 				break;
 		}
+		
+		fprintf(stderr, "%s\n", errorstring);
+		#ifdef _GTK
+		conf.misc_disable_gui ? cli_error(errorstring) :
+		gtkui_message(errorstring);
+		#endif
+		
 		return;
 	}
 	
