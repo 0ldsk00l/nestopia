@@ -963,6 +963,35 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(combo_misc_default_system), "changed",
 		G_CALLBACK(gtkui_cb_misc_default_system), NULL);
 	
+	// Alternate Speed
+	GtkAdjustment *adj_timing_altspeed = gtk_adjustment_new(conf.timing_altspeed, 1, 240, 1, 5, 0);
+	GtkWidget *box_timing_altspeed = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_timing_altspeed = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "Alternate Speed",
+				"halign", GTK_ALIGN_START,
+				"margin-top", MARGIN_TB,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
+				NULL);
+	GtkWidget *scale_timing_altspeed = gtk_widget_new(
+				GTK_TYPE_SCALE,
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				"orientation", GTK_ORIENTATION_HORIZONTAL,
+				"adjustment", adj_timing_altspeed,
+				"width-request", 239,
+				"height-request", 32,
+				"digits", 0,
+				NULL);
+	gtk_box_pack_start(GTK_BOX(box_timing_altspeed), label_timing_altspeed, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_timing_altspeed), scale_timing_altspeed, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_misc), box_timing_altspeed, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(scale_timing_altspeed), "value-changed",
+		G_CALLBACK(gtkui_cb_timing_altspeed), NULL);
+	
 	// Vsync
 	GtkWidget *check_timing_vsync = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,

@@ -45,7 +45,6 @@ SDL_AudioDeviceID dev;
 int16_t audiobuf[96000];
 
 int framerate, channels, bufsize;
-int framepulse = 2;
 
 bool altspeed = false;
 
@@ -119,11 +118,6 @@ void audio_init() {
 		else {
 			fprintf(stderr, "Audio: libao - %dHz, %d-bit, %d channel(s)\n", format.rate, format.bits, format.channels);
 		}
-		
-		// libao's ALSA plugin causes buffer underflows when vsync is enabled
-		/*if (ao_default_driver_id() == ao_driver_id("alsa")) {
-			fprintf(stderr, "Warning: libao's ALSA plugin is buggy.\n");
-		}*/
 	}
 #endif
 }
@@ -206,7 +200,7 @@ bool timing_frameskip() {
 	static int flipper = 1;
 	
 	if (altspeed) {
-		if (flipper > framepulse) { flipper = 0; return false; }
+		if (flipper > 2) { flipper = 0; return false; }
 		else { flipper++; return true; }
 	}
 	

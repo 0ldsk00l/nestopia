@@ -96,7 +96,7 @@ void opengl_init_structures() {
 	else {
 		glOrtho(
 			conf.video_linear_filter ? 2.0 : 0.0,
-			(GLdouble)rendersize.w,
+			conf.video_linear_filter ? (GLdouble)rendersize.w - 2.0 : (GLdouble)rendersize.w,
 			(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor) + fencepost,
 			(GLdouble)(OVERSCAN_TOP * scalefactor) - fencepost,
 			-1.0, 1.0
