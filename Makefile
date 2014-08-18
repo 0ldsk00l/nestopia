@@ -111,6 +111,7 @@ OBJS += objs/core/api/NstApiUser.o
 OBJS += objs/core/api/NstApiVideo.o
 
 # Board
+OBJS += objs/core/board/NstBoardAcclaimMcAcc.o
 OBJS += objs/core/board/NstBoardAe.o
 OBJS += objs/core/board/NstBoardAgci.o
 OBJS += objs/core/board/NstBoardAveD1012.o
