@@ -49,6 +49,7 @@
 #include "NstBoardQj.hpp"
 #include "NstBoardZz.hpp"
 #include "NstBoardAe.hpp"
+#include "NstBoardAcclaim.hpp"
 #include "NstBoardAgci.hpp"
 #include "NstBoardAve.hpp"
 #include "NstBoardBandai.hpp"
@@ -757,7 +758,7 @@ namespace Nes
 				static const Element lut[] =
 				{
 					{ "ACCLAIM-AOROM",               Type::STD_AOROM                },
-					{ "ACCLAIM-MC-ACC",              Type::STD_TLROM                },
+					{ "ACCLAIM-MC-ACC",              Type::ACCLAIM_MCACC            },
 					{ "ACCLAIM-TLROM",               Type::STD_TLROM                },
 					{ "AGCI-47516",                  Type::DISCRETE_74_377          },
 					{ "AGCI-50282",                  Type::AGCI_50282               },
@@ -3298,6 +3299,7 @@ namespace Nes
 					case Type::CUSTOM_WH                  : return new SxRom(c);
 					case Type::CUSTOM_X79B                : return new CnRom(c);
 					case Type::CUSTOM_ZZ                  : return new Zz(c);
+					case Type::ACCLAIM_MCACC              : return new Acclaim::McAcc(c);
 					case Type::AE_STD                     : return new Ae::Standard(c);
 					case Type::AGCI_50282                 : return new Agci::A50282(c);
 					case Type::AVE_MB_91                  : return new Ave::Mb91(c);
