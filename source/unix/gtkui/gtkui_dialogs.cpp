@@ -52,10 +52,13 @@ void gtkui_file_open() {
 	gtk_file_filter_add_pattern(filter, "*.7z");
 	gtk_file_filter_add_pattern(filter, "*.txz");
 	gtk_file_filter_add_pattern(filter, "*.tar.xz");
+	gtk_file_filter_add_pattern(filter, "*.xz");
 	gtk_file_filter_add_pattern(filter, "*.tgz");
 	gtk_file_filter_add_pattern(filter, "*.tar.gz");
+	gtk_file_filter_add_pattern(filter, "*.gz");
 	gtk_file_filter_add_pattern(filter, "*.tbz");
 	gtk_file_filter_add_pattern(filter, "*.tar.bz2");
+	gtk_file_filter_add_pattern(filter, "*.bz2");
 	
 	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
 	
