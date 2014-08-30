@@ -122,14 +122,13 @@ namespace Nes
 			dword frame;
 
 		public:
-
+			Cpu cpu;
 			Input::Adapter* extPort;
 			Input::Device* expPort;
 			Image* image;
 			Cheats* cheats;
 			ImageDatabase* imageDatabase;
 			Tracker tracker;
-			Cpu cpu;
 			Ppu ppu;
 			Video::Renderer renderer;
 
