@@ -49,6 +49,7 @@ void config_file_write() {
 	FILE *fp = fopen(confpath, "w");
 	if (fp != NULL)	{
 		// Video
+		fprintf(fp, "; Nestopia UE Configuration File\n\n");
 		fprintf(fp, "[video]\n");
 		fprintf(fp, "; 0=None, 1=NTSC, 2=xBR, 3=HqX, 4=2xSaI, 5=ScaleX\n");
 		fprintf(fp, "filter=%d\n\n", conf.video_filter);
@@ -181,7 +182,10 @@ void config_set_default() {
 	conf.misc_soft_patching = true;
 	//conf.misc_suppress_screensaver = true;
 	conf.misc_genie_distortion = false;
-	conf.misc_disable_gui = true;
+	conf.misc_disable_gui = false;
+	#ifdef _MINGW
+	conf.misc_disable_gui = true; // Disable GUI for MinGW
+	#endif
 }
 
 static int config_match(void* user, const char* section, const char* name, const char* value) {
