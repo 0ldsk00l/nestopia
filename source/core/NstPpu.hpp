@@ -345,6 +345,9 @@ namespace Nes
 
 				typedef void (Ppu::*Phase)();
 
+				byte ram[0x100];
+				byte buffer[MAX_LINE_SPRITES * 4];
+
 				const byte* limit;
 				Output* visible;
 				Phase phase;
@@ -357,9 +360,6 @@ namespace Nes
 				byte show[2];
 				bool spriteZeroInLine;
 				bool spriteLimit;
-
-				byte ram[0x100];
-				byte buffer[MAX_LINE_SPRITES*4];
 
 				Output output[MAX_LINE_SPRITES];
 			};
@@ -414,9 +414,7 @@ namespace Nes
 			Chr chr;
 			Nmt nmt;
 			int scanline;
-		public:
-			Output output;
-		private:
+
 			PpuModel model;
 			Hook hActiveHook;
 			Hook hBlankHook;
@@ -431,6 +429,7 @@ namespace Nes
 			static const byte yuvMaps[4][0x40];
 
 		public:
+			Output output;
 
 			void Update()
 			{
