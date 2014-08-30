@@ -627,6 +627,10 @@ void input_config_write() {
 	
 	FILE *fp = fopen(inputconfpath, "w");
 	if (fp != NULL)	{
+		fprintf(fp, "; Nestopia UE Input Configuration File\n\n");
+		fprintf(fp, "; Possible values for keyboard input are in the Key Name column:\n; https://wiki.libsdl.org/SDL_Scancode\n\n");
+		fprintf(fp, "; Possible values for joystick input:\n; j[joystick number][a|b|h][button/hat/axis number][1/0 = +/- (axes only)]\n");
+		fprintf(fp, "; Example: j0b3 = joystick 0, button 3. j1a11 = joystick 1, axis 1 +\n\n");
 		fprintf(fp, "[gamepad1]\n");
 		fprintf(fp, "kb_u=%s\n", SDL_GetScancodeName(player[0].u));
 		fprintf(fp, "kb_d=%s\n", SDL_GetScancodeName(player[0].d));
