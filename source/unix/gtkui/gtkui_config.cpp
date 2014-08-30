@@ -49,6 +49,8 @@ GtkWidget *combo_input_type;
 GtkWidget *inputconfbutton;
 GtkWidget *entry_input[NUMBUTTONS];
 
+GtkTreeStore *treestore_input;
+
 GtkWidget *gtkui_config() {
 	// Create the Configuration window
 	
@@ -738,15 +740,10 @@ GtkWidget *gtkui_config() {
 	// Input //
 	GtkWidget *box_input = gtk_widget_new(
 				GTK_TYPE_BOX,
-				"orientation", GTK_ORIENTATION_VERTICAL,
+				"orientation", GTK_ORIENTATION_HORIZONTAL,
 				"margin-top", MARGIN_TB,
 				"margin-bottom", MARGIN_TB,
 				NULL);
-	GtkWidget *box_input_upper = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *box_input_lower = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	
-	gtk_box_pack_start(GTK_BOX(box_input), box_input_upper, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_input), box_input_lower, FALSE, FALSE, 0);
 	
 	// NES Controller
 	GtkWidget *box_input_pad = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "orientation", GTK_ORIENTATION_VERTICAL, NULL);
@@ -757,8 +754,8 @@ GtkWidget *gtkui_config() {
 				"file",	padpath,
 				"margin", MARGIN_TB,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_input_pad), nespad, TRUE, TRUE, 0);
-	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_pad, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_pad), nespad, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_pad, FALSE, FALSE, 0);
 	
 	// Turbo Pulse
 	GtkAdjustment *adj_input_turbopulse = gtk_adjustment_new(conf.timing_turbopulse, 2, 9, 1, 5, 0);
@@ -791,10 +788,7 @@ GtkWidget *gtkui_config() {
 	
 	// Options Box
 	GtkWidget *box_input_options = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_pack_start(GTK_BOX(box_input_upper), box_input_options, FALSE, FALSE, 0);
-	
-	GtkWidget *inputsep1 = gtk_separator_new(GTK_ORIENTATION_HORIZONTAL);
-	gtk_box_pack_start(GTK_BOX(box_input_lower), inputsep1, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_options, FALSE, FALSE, 0);
 	
 	// Player Select
 	combo_input_player = gtk_widget_new(
@@ -802,7 +796,7 @@ GtkWidget *gtkui_config() {
 				"halign", GTK_ALIGN_START,
 				"margin-top", MARGIN_TB,
 				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR * 2,
+				"margin-left", MARGIN_LR,
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 1");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 2");
@@ -818,7 +812,7 @@ GtkWidget *gtkui_config() {
 				"halign", GTK_ALIGN_START,
 				"margin-top", MARGIN_TB,
 				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR * 2,
+				"margin-left", MARGIN_LR,
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Keyboard");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Joysick");
@@ -828,103 +822,70 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(combo_input_type), "changed",
 		G_CALLBACK(gtkui_config_input_refresh), NULL);
 	
-	// The Input Config button
-	inputconfbutton = gtk_widget_new(
-				GTK_TYPE_BUTTON,
-				"label", "Configure",
-				"halign", GTK_ALIGN_START,
-				"margin-top", MARGIN_TB,
-				"margin-left", MARGIN_LR * 2,
-				NULL);
-	gtk_box_pack_start(GTK_BOX(box_input_options), inputconfbutton, FALSE, FALSE, 0);
-	
-	// Connect the button to a callback
-	g_signal_connect(G_OBJECT(inputconfbutton), "clicked",
-		G_CALLBACK(gtkui_config_input), NULL);
-	
 	// Key translation only needs to be done for release events
 	g_signal_connect(G_OBJECT(configwindow), "key-release-event",
 		G_CALLBACK(gtkui_cb_convert_key), NULL);
 	
-	// The Grid
-	GtkWidget *grid_input_lower = gtk_widget_new(
-				GTK_TYPE_GRID,
-				"column-spacing", MARGIN_LR,
-				"row-spacing", MARGIN_TB,
-				"margin", MARGIN_TB,
+	// The Treeview
+	GtkWidget *treeview = gtk_widget_new(GTK_TYPE_TREE_VIEW,
+				"margin-top", MARGIN_TB,
+				"margin-left", MARGIN_LR,
 				NULL);
+	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW (treeview), FALSE);
+	gtk_tree_view_set_enable_search(GTK_TREE_VIEW(treeview), FALSE);
 	
-	GtkWidget *label_input_up = gtk_widget_new(GTK_TYPE_LABEL, "label", "Up:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_up, 0, 0, 1, 1);
+	treestore_input = gtk_tree_store_new(2, G_TYPE_STRING, G_TYPE_STRING);
 	
-	GtkWidget *label_input_down = gtk_widget_new(GTK_TYPE_LABEL, "label", "Down:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_down, 0, 1, 1, 1);
+	gtk_tree_view_set_model(GTK_TREE_VIEW(treeview), GTK_TREE_MODEL(treestore_input));
 	
-	GtkWidget *label_input_left = gtk_widget_new(GTK_TYPE_LABEL, "label", "Left:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_left, 0, 2, 1, 1);
+	GtkTreeIter iter;	
+	GtkCellRenderer *renderer = gtk_cell_renderer_text_new();
 	
-	GtkWidget *label_input_right = gtk_widget_new(GTK_TYPE_LABEL, "label", "Right:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_right, 0, 3, 1, 1);
+	GtkTreeViewColumn *columns[2];
+	columns[0] = gtk_tree_view_column_new_with_attributes(
+			"Button", renderer, "text", 0, NULL);
 	
-	GtkWidget *label_input_select = gtk_widget_new(GTK_TYPE_LABEL, "label", "Select:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_select, 0, 4, 1, 1);
+	columns[1] = gtk_tree_view_column_new_with_attributes(
+			"Value", renderer, "text", 1, NULL);
+	gtk_tree_view_column_set_expand(columns[1], TRUE);
 	
-	entry_input[0] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[0]), SDL_GetScancodeName(player[0].u));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[0], 1, 0, 1, 1);
+	gtk_tree_view_append_column(GTK_TREE_VIEW (treeview), columns[0]);
+	gtk_tree_view_append_column(GTK_TREE_VIEW (treeview), columns[1]);
 	
-	entry_input[1] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[1]), SDL_GetScancodeName(player[0].d));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[1], 1, 1, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, SDL_GetScancodeName(player[0].u), -1);
 	
-	entry_input[2] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[2]), SDL_GetScancodeName(player[0].l));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[2], 1, 2, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, SDL_GetScancodeName(player[0].d), -1);
 	
-	entry_input[3] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[3]), SDL_GetScancodeName(player[0].r));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[3], 1, 3, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, SDL_GetScancodeName(player[0].l), -1);
 	
-	entry_input[4] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[4]), SDL_GetScancodeName(player[0].select));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[4], 1, 4, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, SDL_GetScancodeName(player[0].r), -1);
 	
-	GtkWidget *label_input_start = gtk_widget_new(GTK_TYPE_LABEL, "label", "Start:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_start, 2, 0, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, SDL_GetScancodeName(player[0].select), -1);
 	
-	GtkWidget *label_input_a = gtk_widget_new(GTK_TYPE_LABEL, "label", "A:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_a, 2, 1, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, SDL_GetScancodeName(player[0].start), -1);
 	
-	GtkWidget *label_input_b = gtk_widget_new(GTK_TYPE_LABEL, "label", "B:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_b, 2, 2, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, SDL_GetScancodeName(player[0].a), -1);
 	
-	GtkWidget *label_input_ta = gtk_widget_new(GTK_TYPE_LABEL, "label", "Turbo A:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_ta, 2, 3, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, SDL_GetScancodeName(player[0].b), -1);
 	
-	GtkWidget *label_input_tb = gtk_widget_new(GTK_TYPE_LABEL, "label", "Turbo B:", "halign", GTK_ALIGN_START, NULL);
-	gtk_grid_attach(GTK_GRID(grid_input_lower), label_input_tb, 2, 4, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, SDL_GetScancodeName(player[0].ta), -1);
 	
-	entry_input[5] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[5]), SDL_GetScancodeName(player[0].start));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[5], 3, 0, 1, 1);
+	gtk_tree_store_append(treestore_input, &iter, NULL);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, SDL_GetScancodeName(player[0].tb), -1);
 	
-	entry_input[6] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[6]), SDL_GetScancodeName(player[0].a));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[6], 3, 1, 1, 1);
+	gtk_box_pack_start(GTK_BOX(box_input_options), treeview, FALSE, FALSE, 0);
 	
-	entry_input[7] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[7]), SDL_GetScancodeName(player[0].b));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[7], 3, 2, 1, 1);
-	
-	entry_input[8] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[8]), SDL_GetScancodeName(player[0].ta));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[8], 3, 3, 1, 1);
-	
-	entry_input[9] = gtk_widget_new(GTK_TYPE_ENTRY, FALSE, NULL);
-	gtk_entry_set_text(GTK_ENTRY(entry_input[9]), SDL_GetScancodeName(player[0].tb));
-	gtk_grid_attach(GTK_GRID(grid_input_lower), entry_input[9], 3, 4, 1, 1);
-	
-	gtk_box_pack_start(GTK_BOX(box_input_lower), grid_input_lower, FALSE, FALSE, 0);
+	g_signal_connect(G_OBJECT(treeview), "row-activated",
+		G_CALLBACK(gtkui_config_input_activate), NULL);
 	
 	// Misc //
 	GtkWidget *box_misc = gtk_widget_new(
@@ -1132,12 +1093,100 @@ void gtkui_audio_volume_master() {
 	gtkui_audio_volume();
 }
 
-void gtkui_config_input() {
-	// Start the input configuration routine
-	gtk_widget_grab_focus(entry_input[0]);
+void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer userdata) {
+	// React to a button configuration request
+	GtkTreeIter iter;
+	GtkTreeModel *model;
+	GtkTreeSelection *selection;
+	
 	int pnum = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_input_player));
 	int type = gtk_combo_box_get_active(GTK_COMBO_BOX(combo_input_type));
-	input_configure(pnum, type);
+	
+	// Get the selected item
+	selection = gtk_tree_view_get_selection(GTK_TREE_VIEW(widget));
+	gtk_tree_selection_get_selected(selection, &model, &iter);
+	
+	path = gtk_tree_model_get_path(model, &iter);
+	int bnum = gtk_tree_path_get_indices(path)[0];
+	
+	// Replace the text with the current key
+	gtk_tree_store_set(treestore_input, &iter, 1, "Set Key...", -1);
+	
+	// Set the key
+	input_configure_item(pnum, bnum, type);
+	
+	// Replace the text with the new key
+	//gtkui_config_input_fields(type, pnum); // This can be used in place of the below if statement
+	if (type == 0) { // Keyboard
+		switch (bnum) {
+			case 0:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].u), -1);
+				break;
+			case 1:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].d), -1);
+				break;
+			case 2:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].l), -1);
+				break;
+			case 3:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].r), -1);
+				break;
+			case 4:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].select), -1);
+				break;
+			case 5:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].start), -1);
+				break;
+			case 6:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].a), -1);
+				break;
+			case 7:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].b), -1);
+				break;
+			case 8:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].ta), -1);
+				break;
+			case 9:
+				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].tb), -1);
+				break;
+			default: break;
+		}
+	}
+	else { // Joystick
+		switch (bnum) {
+			case 0:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].ju), -1);
+				break;
+			case 1:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jd), -1);
+				break;
+			case 2:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jl), -1);
+				break;
+			case 3:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jr), -1);
+				break;
+			case 4:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jselect), -1);
+				break;
+			case 5:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jstart), -1);
+				break;
+			case 6:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].ja), -1);
+				break;
+			case 7:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jb), -1);
+				break;
+			case 8:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jta), -1);
+				break;
+			case 9:
+				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jtb), -1);
+				break;
+			default: break;
+		}
+	}
 }
 
 void gtkui_config_input_refresh() {
@@ -1149,44 +1198,52 @@ void gtkui_config_input_refresh() {
 
 void gtkui_config_input_fields(int type, int pnum) {
 	// Set the text in the input fields based on the current settings
+	GtkTreeIter iter;
+	
+	gtk_tree_store_clear(treestore_input);
+	
 	if (type == 0) {
-		gtk_entry_set_text(GTK_ENTRY(entry_input[0]), SDL_GetScancodeName(player[pnum].u));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[1]), SDL_GetScancodeName(player[pnum].d));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[2]), SDL_GetScancodeName(player[pnum].l));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[3]), SDL_GetScancodeName(player[pnum].r));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[4]), SDL_GetScancodeName(player[pnum].select));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[5]), SDL_GetScancodeName(player[pnum].start));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[6]), SDL_GetScancodeName(player[pnum].a));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[7]), SDL_GetScancodeName(player[pnum].b));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[8]), SDL_GetScancodeName(player[pnum].ta));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[9]), SDL_GetScancodeName(player[pnum].tb));
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, SDL_GetScancodeName(player[pnum].u), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, SDL_GetScancodeName(player[pnum].d), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, SDL_GetScancodeName(player[pnum].l), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, SDL_GetScancodeName(player[pnum].r), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, SDL_GetScancodeName(player[pnum].select), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, SDL_GetScancodeName(player[pnum].start), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, SDL_GetScancodeName(player[pnum].a), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, SDL_GetScancodeName(player[pnum].b), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, SDL_GetScancodeName(player[pnum].ta), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, SDL_GetScancodeName(player[pnum].tb), -1);
 	}
 	if (type == 1) {
-		gtk_entry_set_text(GTK_ENTRY(entry_input[0]), input_translate_event(player[pnum].ju));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[1]), input_translate_event(player[pnum].jd));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[2]), input_translate_event(player[pnum].jl));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[3]), input_translate_event(player[pnum].jr));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[4]), input_translate_event(player[pnum].jselect));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[5]), input_translate_event(player[pnum].jstart));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[6]), input_translate_event(player[pnum].ja));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[7]), input_translate_event(player[pnum].jb));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[8]), input_translate_event(player[pnum].jta));
-		gtk_entry_set_text(GTK_ENTRY(entry_input[9]), input_translate_event(player[pnum].jtb));
-	}
-}
-
-void gtkui_config_input_focus(int counter) {
-	// Set focus on the proper input field
-	switch(counter) {
-		case 0: gtk_widget_grab_focus(entry_input[1]); break;
-		case 1: gtk_widget_grab_focus(entry_input[2]); break;
-		case 2: gtk_widget_grab_focus(entry_input[3]); break;
-		case 3: gtk_widget_grab_focus(entry_input[4]); break;
-		case 4: gtk_widget_grab_focus(entry_input[5]); break;
-		case 5: gtk_widget_grab_focus(entry_input[6]); break;
-		case 6: gtk_widget_grab_focus(entry_input[7]); break;
-		case 7: gtk_widget_grab_focus(entry_input[8]); break;
-		case 8: gtk_widget_grab_focus(entry_input[9]); break;
-		default: gtk_widget_grab_focus(entry_input[0]); break;
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, input_translate_event(player[pnum].ju), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, input_translate_event(player[pnum].jd), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, input_translate_event(player[pnum].jl), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, input_translate_event(player[pnum].jr), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, input_translate_event(player[pnum].jselect), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, input_translate_event(player[pnum].jstart), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, input_translate_event(player[pnum].ja), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, input_translate_event(player[pnum].jb), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, input_translate_event(player[pnum].jta), -1);
+		gtk_tree_store_append(treestore_input, &iter, NULL);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, input_translate_event(player[pnum].jtb), -1);
 	}
 }

@@ -10,9 +10,8 @@ GtkWidget *gtkui_config();
 void gtkui_config_ok();
 void gtkui_audio_volume();
 void gtkui_audio_volume_master();
-void gtkui_config_input();
+void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer userdata);
 void gtkui_config_input_refresh();
 void gtkui_config_input_fields(int type, int pnum);
-void gtkui_config_input_focus(int counter);
 
 #endif
