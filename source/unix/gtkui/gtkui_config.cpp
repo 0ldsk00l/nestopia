@@ -746,7 +746,7 @@ GtkWidget *gtkui_config() {
 				NULL);
 	
 	// NES Controller
-	GtkWidget *box_input_pad = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "orientation", GTK_ORIENTATION_VERTICAL, NULL);
+	GtkWidget *box_input_l = gtk_widget_new(GTK_TYPE_BOX, "halign", GTK_ALIGN_START, "orientation", GTK_ORIENTATION_VERTICAL, NULL);
 	GtkWidget *nespad = gtk_widget_new(
 				GTK_TYPE_IMAGE,
 				"halign", GTK_ALIGN_CENTER,
@@ -754,25 +754,28 @@ GtkWidget *gtkui_config() {
 				"file",	padpath,
 				"margin", MARGIN_TB,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_input_pad), nespad, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_input), box_input_pad, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_l), nespad, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_l, FALSE, FALSE, 0);
 	
 	// Turbo Pulse
 	GtkAdjustment *adj_input_turbopulse = gtk_adjustment_new(conf.timing_turbopulse, 2, 9, 1, 5, 0);
-	GtkWidget *box_input_turbopulse = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *box_input_turbopulse = gtk_widget_new(
+				GTK_TYPE_BOX,
+				"halign", GTK_ALIGN_END,
+				"orientation", GTK_ORIENTATION_HORIZONTAL,
+				"margin-bottom", MARGIN_TB,
+				"margin-right", MARGIN_LR,
+				NULL);
 	GtkWidget *label_input_turbopulse = gtk_widget_new(
 				GTK_TYPE_LABEL,
 				"label", "Turbo Pulse",
 				"halign", GTK_ALIGN_START,
 				"margin-top", MARGIN_TB,
-				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
 				"margin-right", MARGIN_LR,
 				NULL);
 	GtkWidget *scale_input_turbopulse = gtk_widget_new(
 				GTK_TYPE_SCALE,
 				"halign", GTK_ALIGN_START,
-				"margin-left", MARGIN_LR,
 				"orientation", GTK_ORIENTATION_HORIZONTAL,
 				"adjustment", adj_input_turbopulse,
 				"width-request", 60,
@@ -781,27 +784,27 @@ GtkWidget *gtkui_config() {
 				NULL);
 	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), label_input_turbopulse, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box_input_turbopulse), scale_input_turbopulse, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_input_pad), box_input_turbopulse, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_l), box_input_turbopulse, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(scale_input_turbopulse), "value-changed",
 		G_CALLBACK(gtkui_cb_input_turbopulse), NULL);
 	
 	// Options Box
-	GtkWidget *box_input_options = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	gtk_box_pack_start(GTK_BOX(box_input), box_input_options, FALSE, FALSE, 0);
+	GtkWidget *box_input_r = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
+	gtk_box_pack_start(GTK_BOX(box_input), box_input_r, FALSE, FALSE, 0);
 	
 	// Player Select
 	combo_input_player = gtk_widget_new(
 				GTK_TYPE_COMBO_BOX_TEXT,
-				"halign", GTK_ALIGN_START,
+				"halign", GTK_ALIGN_END,
 				"margin-top", MARGIN_TB,
 				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 1");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_player), "Player 2");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_input_player), 0);
-	gtk_box_pack_start(GTK_BOX(box_input_options), combo_input_player, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_l), combo_input_player, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(combo_input_player), "changed",
 		G_CALLBACK(gtkui_config_input_refresh), NULL);
@@ -809,15 +812,15 @@ GtkWidget *gtkui_config() {
 	// Device Type Select
 	combo_input_type = gtk_widget_new(
 				GTK_TYPE_COMBO_BOX_TEXT,
-				"halign", GTK_ALIGN_START,
+				"halign", GTK_ALIGN_END,
 				"margin-top", MARGIN_TB,
 				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
+				"margin-right", MARGIN_LR,
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Keyboard");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Joysick");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_input_type), 0);
-	gtk_box_pack_start(GTK_BOX(box_input_options), combo_input_type, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_l), combo_input_type, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(combo_input_type), "changed",
 		G_CALLBACK(gtkui_config_input_refresh), NULL);
@@ -846,7 +849,7 @@ GtkWidget *gtkui_config() {
 			"Button", renderer, "text", 0, NULL);
 	
 	columns[1] = gtk_tree_view_column_new_with_attributes(
-			"Value", renderer, "text", 1, NULL);
+			"Mapping", renderer, "text", 1, NULL);
 	gtk_tree_view_column_set_expand(columns[1], TRUE);
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW (treeview), columns[0]);
@@ -882,10 +885,24 @@ GtkWidget *gtkui_config() {
 	gtk_tree_store_append(treestore_input, &iter, NULL);
 	gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, SDL_GetScancodeName(player[0].tb), -1);
 	
-	gtk_box_pack_start(GTK_BOX(box_input_options), treeview, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_input_r), treeview, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(treeview), "row-activated",
 		G_CALLBACK(gtkui_config_input_activate), NULL);
+	
+	// The Input Defaults button
+	GtkWidget *inputdefaults = gtk_widget_new(
+				GTK_TYPE_BUTTON,
+				"label", "Defaults",
+				"halign", GTK_ALIGN_START,
+				"margin-top", MARGIN_TB * 2,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_box_pack_start(GTK_BOX(box_input_r), inputdefaults, FALSE, FALSE, 0);
+	
+	// Connect the button to a callback
+	g_signal_connect(G_OBJECT(inputdefaults), "clicked",
+		G_CALLBACK(gtkui_config_input_defaults), NULL);
 	
 	// Misc //
 	GtkWidget *box_misc = gtk_widget_new(
@@ -1246,4 +1263,10 @@ void gtkui_config_input_fields(int type, int pnum) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
 		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, input_translate_event(player[pnum].jtb), -1);
 	}
+}
+
+void gtkui_config_input_defaults() {
+	// Restore input defaults
+	input_set_default();
+	gtkui_config_input_refresh();
 }

@@ -13,5 +13,6 @@ void gtkui_audio_volume_master();
 void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer userdata);
 void gtkui_config_input_refresh();
 void gtkui_config_input_fields(int type, int pnum);
+void gtkui_config_input_defaults();
 
 #endif
