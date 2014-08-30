@@ -780,8 +780,8 @@ static int input_config_match(void* user, const char* section, const char* name,
     return 1;
 }
 
-int input_configure(int pnum, int type) {
-	// Configure the input
+int input_configure_item(int pnum, int bnum, int type) {
+	// Configure an input item
 	
 	if (confrunning) { return 0; }
 	
@@ -790,6 +790,7 @@ int input_configure(int pnum, int type) {
 	int axis = 0, axisnoise = 0, counter = 0;
 	
 	confrunning = true;
+	bool confstop = false;
 	while (confrunning) {
 		#ifdef _GTK
 		while (gtk_events_pending()) {
@@ -809,8 +810,9 @@ int input_configure(int pnum, int type) {
 			if (type == 0) { // Keyboard
 				switch(event.type) {
 					case SDL_KEYUP:
-						input_set_item(event, type, pnum, counter);
-						counter++;
+						if (event.key.keysym.sym == SDLK_RETURN) { break; }
+						input_set_item(event, type, pnum, bnum);
+						confstop = true;
 						break;
 					default: break;
 				}
@@ -818,14 +820,14 @@ int input_configure(int pnum, int type) {
 			else if (type == 1) { // Joystick
 				switch(event.type) {
 					case SDL_JOYBUTTONDOWN:
-						input_set_item(event, type, pnum, counter);
-						counter++;
+						input_set_item(event, type, pnum, bnum);
+						confstop = true;
 						break;
 					
 					case SDL_JOYHATMOTION:
 						if (event.jhat.value != SDL_HAT_CENTERED) {
-							input_set_item(event, type, pnum, counter);
-							counter++;
+							input_set_item(event, type, pnum, bnum);
+							confstop = true;
 						}
 						break;
 					
@@ -837,29 +839,24 @@ int input_configure(int pnum, int type) {
 						}
 						
 						else if (abs(event.jaxis.value) < DEADZONE && axisnoise && event.jaxis.axis == axis) {
-							input_set_item(eventbuf, type, pnum, counter);
+							input_set_item(event, type, pnum, bnum);
 							axisnoise = 0;
-							counter++;
+							confstop = true;
 						}						
 						break;
 					
 					default: break;
 				}
 			}
-			
-			if (counter >= NUMBUTTONS) { confrunning = false; }
 		}
+		if (confstop) { confrunning = false; }
 	}
 	
 	return 1;
 }
 
 void input_set_item(SDL_Event event, int type, int pnum, int counter) {
-	
-	#ifdef _GTK
-	gtkui_config_input_focus(counter);
-	#endif
-	
+	// Set an input item to what was requested by configuration process
 	if (type == 0) { // Keyboard
 		switch(counter) {
 			case 0: player[pnum].u = event.key.keysym.scancode; break;
@@ -890,7 +887,4 @@ void input_set_item(SDL_Event event, int type, int pnum, int counter) {
 			default: break;
 		}
 	}
-	#ifdef _GTK
-	gtkui_config_input_fields(type, pnum);
-	#endif
 }
