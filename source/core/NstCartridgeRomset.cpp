@@ -511,9 +511,7 @@ namespace Nes
 
 						if (Xml::Node device=game.GetChild( L"peripherals" ))
 						{
-							uint i = 0;
-
-							for (device=device.GetFirstChild(); i < 4 && device.IsType( L"device" ); device=device.GetNextSibling())
+							for (device=device.GetFirstChild(); device.IsType( L"device" ); device=device.GetNextSibling())
 							{
 								if (const Xml::Attribute attribute = device.GetAttribute( L"type" ))
 								{
