@@ -825,7 +825,10 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(combo_input_type), "changed",
 		G_CALLBACK(gtkui_config_input_refresh), NULL);
 	
-	// Key translation only needs to be done for release events
+	// Key Translation
+	g_signal_connect(G_OBJECT(configwindow), "key-press-event",
+		G_CALLBACK(gtkui_cb_convert_key), gpointer(1));
+	
 	g_signal_connect(G_OBJECT(configwindow), "key-release-event",
 		G_CALLBACK(gtkui_cb_convert_key), NULL);
 	
