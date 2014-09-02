@@ -30,7 +30,7 @@
 #include "gtkui_callbacks.h"
 
 extern settings_t conf;
-extern bool playing;
+extern bool playing, kbactivate;
 
 //// Menu ////
 
@@ -381,8 +381,13 @@ int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer userdata)
 	SDL_Keycode sdlkeycode;
 	int keystate;
 	
-	switch (event->type)
-	{
+	if (userdata) {
+		kbactivate = true;
+		return FALSE;
+	}
+	else { kbactivate = false; }
+	
+	switch (event->type) {
 		case GDK_KEY_PRESS:
 			sdlevent.type = SDL_KEYDOWN;
 			sdlevent.key.state = SDL_PRESSED;

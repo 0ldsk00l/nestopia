@@ -42,7 +42,7 @@ extern dimensions_t rendersize;
 extern SDL_DisplayMode displaymode;
 extern Emulator emulator;
 
-bool confrunning = false;
+bool confrunning, kbactivate = false;
 
 inputsettings_t inputconf;
 gamepad_t player[NUMGAMEPADS];
@@ -793,6 +793,12 @@ int input_configure_item(int pnum, int bnum, int type) {
 	
 	int axis = 0, axisnoise = 0, counter = 0;
 	
+	// Enter and Space hack
+	bool etoggle = true;
+	if (kbactivate) {
+		etoggle = false;
+	}
+	
 	confrunning = true;
 	bool confstop = false;
 	while (confrunning) {
@@ -807,15 +813,20 @@ int input_configure_item(int pnum, int bnum, int type) {
 				case SDLK_ESCAPE:
 					confrunning = false;
 					break;
-			
 				default: break;
 			}
 			// Process the event
 			if (type == 0) { // Keyboard
 				switch(event.type) {
 					case SDL_KEYUP:
-						if (event.key.keysym.sym == SDLK_RETURN) { break; }
-						input_set_item(event, type, pnum, bnum);
+						// Enter and Space need to be handled separately
+						if (event.key.keysym.sym == SDLK_RETURN || event.key.keysym.sym == SDLK_SPACE) {
+							if (etoggle) { input_set_item(event, type, pnum, bnum); }
+							else { etoggle = true; break; }
+						}
+						else {
+							input_set_item(event, type, pnum, bnum);
+						}
 						confstop = true;
 						break;
 					default: break;
