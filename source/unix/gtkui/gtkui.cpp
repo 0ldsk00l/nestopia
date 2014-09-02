@@ -111,6 +111,8 @@ void gtkui_create() {
 	GtkWidget *resethard = gtk_image_menu_item_new_with_mnemonic("Reset (_Hard)");
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(resethard), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
 	GtkWidget *sep_reset = gtk_separator_menu_item_new();
+	GtkWidget *fullscreen = gtk_image_menu_item_new_from_stock(GTK_STOCK_FULLSCREEN, NULL);
+	GtkWidget *sep_fullscreen = gtk_separator_menu_item_new();
 	GtkWidget *diskflip = gtk_image_menu_item_new_with_mnemonic("Flip FDS _Disk");
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(diskflip), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
 	GtkWidget *diskswitch = gtk_image_menu_item_new_with_mnemonic("_Switch FDS Disk");
@@ -130,6 +132,8 @@ void gtkui_create() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resetsoft);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), resethard);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep_reset);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), fullscreen);
+	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep_fullscreen);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), diskflip);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), diskswitch);
 	gtk_menu_shell_append(GTK_MENU_SHELL(emulatormenu), sep_disk);
@@ -224,6 +228,9 @@ void gtkui_create() {
 	
 	g_signal_connect(G_OBJECT(resethard), "activate",
 		G_CALLBACK(gtkui_cb_reset), gpointer(1));
+	
+	g_signal_connect(G_OBJECT(fullscreen), "activate",
+		G_CALLBACK(video_toggle_fullscreen), NULL);
 	
 	g_signal_connect(G_OBJECT(diskflip), "activate",
 		G_CALLBACK(nst_flip_disk), NULL);
