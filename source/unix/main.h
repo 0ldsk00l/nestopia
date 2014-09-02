@@ -1,7 +1,7 @@
 #ifndef _MAIN_H_
 #define _MAIN_H_
 
-#define VERSION "1.46-WIP"
+#define VERSION "1.46"
 
 typedef struct {
 	char nstdir[256];

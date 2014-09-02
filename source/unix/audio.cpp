@@ -56,7 +56,7 @@ void audio_play() {
 		#if SDL_VERSION_ATLEAST(2,0,4)
 		SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
 		// Clear the audio queue arbitrarily to avoid it backing up too far
-		if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufize * 3)) { SDL_ClearQueuedAudio(dev); }
+		if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufsize * 3)) { SDL_ClearQueuedAudio(dev); }
 		#endif
 	}
 #ifndef _MINGW
