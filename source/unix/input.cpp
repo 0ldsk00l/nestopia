@@ -397,11 +397,14 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	
+	// Insert Coins
+	controllers->vsSystem.insertCoin = 0;
+	if (keys[SDL_SCANCODE_F1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
+	if (keys[SDL_SCANCODE_F2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
+	
 	// Process non-game events
-	if (keys[SDL_SCANCODE_F1]) { nst_flip_disk(); }
-	if (keys[SDL_SCANCODE_F2]) { nst_reset(0); }
-	//if (keys[SDL_SCANCODE_F3]) {  }
-	//if (keys[SDL_SCANCODE_F4]) {  }
+	if (keys[SDL_SCANCODE_F3]) { nst_flip_disk(); }
+	if (keys[SDL_SCANCODE_F4]) { nst_switch_disk(); }
 	if (keys[SDL_SCANCODE_F5]) { nst_state_quicksave(0); }
 	if (keys[SDL_SCANCODE_F6]) { nst_state_quicksave(1); }
 	if (keys[SDL_SCANCODE_F7]) { nst_state_quickload(0); }
@@ -409,12 +412,7 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	//if (keys[SDL_SCANCODE_F9]) {  }
 	//if (keys[SDL_SCANCODE_F10]) {  }
 	//if (keys[SDL_SCANCODE_F11]) {  }
-	//if (keys[SDL_SCANCODE_F12]) {  }
-	
-	// Insert Coins
-	controllers->vsSystem.insertCoin = 0;
-	if (keys[SDL_SCANCODE_1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
-	if (keys[SDL_SCANCODE_2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
+	if (keys[SDL_SCANCODE_F12]) { nst_reset(0); }
 	
 	// Rewinder
 	if (keys[SDL_SCANCODE_BACKSPACE]) { nst_set_rewind(0); }
