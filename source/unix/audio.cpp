@@ -53,9 +53,11 @@ void audio_play() {
 	bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
 	if (conf.audio_api == 0) { // SDL
+		#if SDL_VERSION_ATLEAST(2,0,4)
 		SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
 		// Clear the audio queue arbitrarily to avoid it backing up too far
-		if (SDL_GetQueuedAudioSize(dev) > (Uint32)32768) { SDL_ClearQueuedAudio(dev); }
+		if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufize * 3)) { SDL_ClearQueuedAudio(dev); }
+		#endif
 	}
 #ifndef _MINGW
 	else if (conf.audio_api == 1) { // libao
@@ -77,6 +79,14 @@ void audio_init() {
 	
 	#ifdef _MINGW
 	conf.audio_api = 0; // Set SDL audio for MinGW
+	#endif
+	
+	#if SDL_VERSION_ATLEAST(2,0,4)
+	#else // Force libao if SDL lib is not modern enough
+	if (conf.audio_api == 0) {
+		conf.audio_api = 1;
+		fprintf(stderr, "Audio: Forcing libao\n");
+	}
 	#endif
 	
 	if (conf.audio_api == 0) { // SDL
@@ -192,9 +202,11 @@ bool timing_frameskip() {
 	
 	if (conf.audio_api == 0) { // SDL
 		// Wait until the audio is drained
+		#if SDL_VERSION_ATLEAST(2,0,4)
 		while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
 			if (conf.timing_limiter) { SDL_Delay(1); }
 		}
+		#endif
 	}
 	
 	static int flipper = 1;
@@ -211,8 +223,9 @@ void timing_set_default() {
 	// Set the framerate to the default
 	altspeed = false;
 	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
-	
+	#if SDL_VERSION_ATLEAST(2,0,4)
 	if (conf.audio_api == 0) { SDL_ClearQueuedAudio(dev); }
+	#endif
 }
 
 void timing_set_altspeed() {
