@@ -233,7 +233,7 @@ static void nst_unload() {
 	if (!loaded) { return; }
 	
 	// Power down the NES
-	fprintf(stderr, "\rPowering down the emulated machine\n");
+	fprintf(stderr, "\rEmulation stopped\n");
 	machine.Power(false);
 
 	// Remove the cartridge

@@ -38,7 +38,7 @@ Modes
 * GUI mode has a GTK+ GUI, and is *nix only.
 
 * CLI mode should work on any platform, and GUI mode can be disabled
-  by modifying the Makefile accordingly. Comment lines 343-354 to build
+  by modifying the Makefile accordingly. Comment lines 32-42 to build
   a CLI-only binary. Binaries with support for a GUI can still be run
   in CLI mode.
 
