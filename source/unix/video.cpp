@@ -54,6 +54,7 @@ Video::RenderState renderstate;
 
 dimensions_t basesize, rendersize;
 
+extern bool playing;
 extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
@@ -166,6 +167,8 @@ void video_init() {
 
 void video_toggle_fullscreen() {
 	// Toggle between fullscreen and window mode
+	if (!playing) { return; }
+	
 	Uint32 flags;
 	conf.video_fullscreen ^= 1;
 	

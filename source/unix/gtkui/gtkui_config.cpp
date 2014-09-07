@@ -36,6 +36,7 @@
 extern settings_t conf;
 extern gamepad_t player[NUMGAMEPADS];
 extern char padpath[512];
+extern bool confrunning;
 
 GtkWidget *configwindow;
 
@@ -1082,6 +1083,7 @@ GtkWidget *gtkui_config() {
 }
 
 void gtkui_config_ok() {
+	if (confrunning) { confrunning = false; }
 	gtk_widget_destroy(configwindow);
 	configwindow = NULL;
 }
