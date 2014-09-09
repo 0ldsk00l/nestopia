@@ -442,7 +442,9 @@ GtkWidget *gtkui_config() {
 	
 	gtk_box_pack_start(GTK_BOX(box_audio_api), label_audio_api, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box_audio_api), combo_audio_api, FALSE, FALSE, 0);
+	#if SDL_VERSION_ATLEAST(2,0,4)
 	gtk_box_pack_start(GTK_BOX(box_audio), box_audio_api, FALSE, FALSE, 0);
+	#endif
 	
 	g_signal_connect(G_OBJECT(combo_audio_api), "changed",
 		G_CALLBACK(gtkui_cb_audio_api), NULL);
