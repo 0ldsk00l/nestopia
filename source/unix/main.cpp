@@ -803,8 +803,16 @@ void nst_load(const char *filename) {
 		
 		fprintf(stderr, "%s\n", errorstring);
 		#ifdef _GTK
-		conf.misc_disable_gui ? cli_error(errorstring) :
-		gtkui_message(errorstring);
+		if (conf.misc_disable_gui) { cli_error(errorstring); }
+		else {
+			if (conf.video_fullscreen) {
+				video_destroy();
+				conf.video_fullscreen = false;
+				video_create();
+				video_set_cursor();
+			}
+			gtkui_message(errorstring);
+		}
 		#endif
 		
 		return;

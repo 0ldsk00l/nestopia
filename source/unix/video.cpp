@@ -284,18 +284,17 @@ void video_create() {
 	// Create the necessary window(s)
 	
 	#ifdef _GTK
-	if (!conf.misc_disable_gui) {
-		video_create_embedded();
-		glcontext = SDL_GL_CreateContext(embedwindow);
+	if (conf.misc_disable_gui) {
+		video_create_standalone();
+		glcontext = SDL_GL_CreateContext(sdlwindow);
 	}
 	else {
-		video_create_standalone();
-		glcontext = SDL_GL_CreateContext(sdlwindow);
-	}
-	
-	if (conf.video_fullscreen) {
-		video_create_standalone();
-		glcontext = SDL_GL_CreateContext(sdlwindow);
+		video_create_embedded();
+		glcontext = SDL_GL_CreateContext(embedwindow);
+		if (conf.video_fullscreen) {
+			video_create_standalone();
+			glcontext = SDL_GL_CreateContext(sdlwindow);
+		}
 	}
 	#else
 	video_create_standalone();
@@ -305,6 +304,11 @@ void video_create() {
 	if(glcontext == NULL) {
 		fprintf(stderr, "Could not create glcontext: %s\n", SDL_GetError());
 	}
+}
+
+void video_destroy() {
+	// Destroy the video window
+	SDL_DestroyWindow(sdlwindow);
 }
 
 void video_set_filter() {

@@ -33,11 +33,11 @@ Free/Open/NetBSD:
 
 Modes
 =====
-* CLI mode is has a command line interface only.
+* CLI mode has a command line interface only.
 
 * GUI mode has a GTK+ GUI, and is *nix only.
 
-* CLI mode should work on any platform, and GUI mode can be disabled
+* CLI mode should work on any platform, and GUI builds can be disabled
   by modifying the Makefile accordingly. Comment lines 32-42 to build
   a CLI-only binary. Binaries with support for a GUI can still be run
   in CLI mode.
