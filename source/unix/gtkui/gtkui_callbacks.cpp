@@ -30,7 +30,7 @@
 #include "gtkui_callbacks.h"
 
 extern settings_t conf;
-extern bool playing, kbactivate;
+extern bool playing, kbactivate, confrunning;
 
 //// Menu ////
 
@@ -409,8 +409,8 @@ int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer userdata)
 	sdlkeycode = (SDL_Keycode)gtkui_cb_translate_gdk_sdl(event->keyval);
 	sdlevent.key.keysym.sym = sdlkeycode;
 	sdlevent.key.keysym.scancode = SDL_GetScancodeFromKey(sdlevent.key.keysym.sym);
-		
-	if (sdlkeycode != 0) {
+	
+	if (sdlkeycode != 0 && (playing || confrunning)) {
 		SDL_PushEvent(&sdlevent);
 		
 		const Uint8 *statebuffer = SDL_GetKeyboardState(NULL);

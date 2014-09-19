@@ -40,6 +40,7 @@ void video_init();
 void video_create_standalone();
 void video_create_embedded();
 void video_create();
+void video_destroy();
 void video_toggle_fullscreen();
 void video_toggle_filter();
 void video_toggle_filterupdate();
