@@ -852,7 +852,7 @@ int input_configure_item(int pnum, int bnum, int type) {
 						}
 						
 						else if (abs(event.jaxis.value) < DEADZONE && axisnoise && event.jaxis.axis == axis) {
-							input_set_item(event, type, pnum, bnum);
+							input_set_item(eventbuf, type, pnum, bnum);
 							axisnoise = 0;
 							confstop = true;
 						}						
