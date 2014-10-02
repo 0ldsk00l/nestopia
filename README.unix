@@ -84,9 +84,9 @@ F12			= Reset
 Backspace	= Rewind
 \			= Stop Rewinding
 
-F			= Toggle Fullscreen
-T			= Toggle Filters
-G			= Toggle Scale factor
+Alt+Enter		= Toggle Fullscreen
+Alt+T			= Toggle Filters
+Alt+G			= Toggle Scale factor
 
 Copyright
 =========
