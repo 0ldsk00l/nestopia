@@ -424,9 +424,9 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	}
 	
 	// F toggles fullscreen
-	if (keys[SDL_SCANCODE_F]) { video_toggle_fullscreen(); }
-	if (keys[SDL_SCANCODE_T]) { video_toggle_filter(); }
-	if (keys[SDL_SCANCODE_G]) { video_toggle_scalefactor(); }
+	if ((keys[SDL_SCANCODE_LALT] || keys[SDL_SCANCODE_RALT]) && keys[SDL_SCANCODE_RETURN]) { video_toggle_fullscreen(); }
+	if ((keys[SDL_SCANCODE_LALT] || keys[SDL_SCANCODE_RALT]) && keys[SDL_SCANCODE_T]) { video_toggle_filter(); }
+	if ((keys[SDL_SCANCODE_LALT] || keys[SDL_SCANCODE_RALT]) && keys[SDL_SCANCODE_G]) { video_toggle_scalefactor(); }
 }
 
 void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
