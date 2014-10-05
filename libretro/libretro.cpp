@@ -565,20 +565,6 @@ bool retro_load_game(const struct retro_game_info *info)
    std::stringstream ss(std::string(reinterpret_cast<const char*>(info->data),
             reinterpret_cast<const char*>(info->data) + info->size));
 
-   /*if (info->path && (strstr(info->path, "(E)") || strstr(info->path, "(Europe)")))
-   {
-      if (log_cb)
-         log_cb(RETRO_LOG_INFO, "[Nestopia]: Favoring PAL.\n");
-      system = Api::Machine::FAVORED_NES_PAL;
-      is_pal = true;
-   }
-   else if (info->path && (strstr(info->path, "(J)") || strstr(info->path, "(Japan)")))
-   {
-      if (log_cb)
-         log_cb(RETRO_LOG_INFO, "[Nestopia]: Favoring Famicom.\n");
-      system = Api::Machine::FAVORED_FAMICOM;
-   }*/
-
    if (info->path && (strstr(info->path, ".fds") || strstr(info->path, ".FDS")))
    {
       fds = new Api::Fds(emulator);
