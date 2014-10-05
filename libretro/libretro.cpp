@@ -316,19 +316,19 @@ static void update_input()
       for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
          input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
          
-   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L))
+   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X))
       input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_1;
       
-   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R))
+   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y))
       input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_2;
       
    if (machine->Is(Nes::Api::Machine::DISK))
    {
-      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y) &&
+      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L) &&
             fds->CanChangeDiskSide())
          fds->ChangeSide();
       
-      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X) && (fds->GetNumDisks() > 1))
+      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R) && (fds->GetNumDisks() > 1))
       {
          int currdisk = fds->GetCurrentDisk();
          fds->EjectDisk();
