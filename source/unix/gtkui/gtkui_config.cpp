@@ -821,7 +821,7 @@ GtkWidget *gtkui_config() {
 				"margin-right", MARGIN_LR,
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Keyboard");
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Joysick");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT (combo_input_type), "Joystick");
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_input_type), 0);
 	gtk_box_pack_start(GTK_BOX(box_input_l), combo_input_type, FALSE, FALSE, 0);
 	
