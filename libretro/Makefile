@@ -185,6 +185,7 @@ OBJS += $(NST_DIR)/source/core/api/NstApiCheats.o         $(NST_DIR)/source/core
 OBJS += $(NST_DIR)/source/core/api/NstApiDipSwitches.o    $(NST_DIR)/source/core/api/NstApiMachine.o   $(NST_DIR)/source/core/api/NstApiSound.o
 
 # core/board
+OBJS += $(NST_DIR)/source/core/board/NstBoardAcclaimMcAcc.o
 OBJS += $(NST_DIR)/source/core/board/NstBoardAe.o                    $(NST_DIR)/source/core/board/NstBoardBtlPikachuY2k.o          $(NST_DIR)/source/core/board/NstBoardNihon.o
 OBJS += $(NST_DIR)/source/core/board/NstBoardAgci.o                  $(NST_DIR)/source/core/board/NstBoardBtlShuiGuanPipe.o        $(NST_DIR)/source/core/board/NstBoardNitra.o
 OBJS += $(NST_DIR)/source/core/board/NstBoardAveD1012.o              $(NST_DIR)/source/core/board/NstBoardBtlSmb2a.o               $(NST_DIR)/source/core/board/NstBoardNtdec.o

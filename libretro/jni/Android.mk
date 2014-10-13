@@ -44,6 +44,7 @@ OBJS += $(NST_DIR)/source/core/api/NstApiCheats.cpp         $(NST_DIR)/source/co
 OBJS += $(NST_DIR)/source/core/api/NstApiDipSwitches.cpp    $(NST_DIR)/source/core/api/NstApiMachine.cpp   $(NST_DIR)/source/core/api/NstApiSound.cpp
 
 # core/board
+OBJS += $(NST_DIR)/source/core/board/NstBoardAcclaimMcAcc.cpp
 OBJS += $(NST_DIR)/source/core/board/NstBoardAe.cpp                    $(NST_DIR)/source/core/board/NstBoardBtlPikachuY2k.cpp          $(NST_DIR)/source/core/board/NstBoardNihon.cpp
 OBJS += $(NST_DIR)/source/core/board/NstBoardAgci.cpp                  $(NST_DIR)/source/core/board/NstBoardBtlShuiGuanPipe.cpp        $(NST_DIR)/source/core/board/NstBoardNitra.cpp
 OBJS += $(NST_DIR)/source/core/board/NstBoardAveD1012.cpp              $(NST_DIR)/source/core/board/NstBoardBtlSmb2a.cpp               $(NST_DIR)/source/core/board/NstBoardNtdec.cpp

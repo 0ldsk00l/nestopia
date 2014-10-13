@@ -385,6 +385,9 @@
 						RelativePath="..\..\..\source\core\board\NstBoard.cpp">
 					</File>
 					<File
+						RelativePath="..\..\..\source\core\board\NstBoardAcclaimMcAcc.cpp">
+					</File>
+					<File
 						RelativePath="..\..\..\source\core\board\NstBoardAe.cpp">
 					</File>
 					<File

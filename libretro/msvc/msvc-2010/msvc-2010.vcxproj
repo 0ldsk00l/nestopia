@@ -27,6 +27,7 @@
     <ClCompile Include="..\..\..\source\core\api\NstApiUser.cpp" />
     <ClCompile Include="..\..\..\source\core\api\NstApiVideo.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoard.cpp" />
+    <ClCompile Include="..\..\..\source\core\board\NstBoardAcclaimMcAcc.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardAe.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardAgci.cpp" />
     <ClCompile Include="..\..\..\source\core\board\NstBoardAveD1012.cpp" />
