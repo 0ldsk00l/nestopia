@@ -49,23 +49,10 @@ namespace Nes
 
 				void Nina06::SubReset(const bool hard)
 				{
-					switch (board.GetId())
-					{
-						case Type::AVE_NINA06:
-						
-							Map( 0x4020U, 0x5FFFU, &Nina06::Poke_4100 );
-							Map( 0x8000U, 0xFFFFU, &Nina06::Poke_4100 );
+					// FCEUltra
+					Map( 0x4020U, 0x5FFFU, &Nina06::Poke_4100 );
+					Map( 0x8000U, 0xFFFFU, &Nina06::Poke_4100 );
 
-							break;
-
-						default:
-						
-							for (uint i=0x4100; i < 0x6000; i += 0x200)
-								Map( i+0x00, i+0xFF, &Nina06::Poke_4100 );
-
-							break;
-					}
-					
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
