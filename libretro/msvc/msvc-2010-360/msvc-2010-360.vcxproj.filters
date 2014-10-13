@@ -80,6 +80,9 @@
     <ClCompile Include="..\..\..\source\core\board\NstBoard.cpp">
       <Filter>Source Files\core\board</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\core\board\NstBoardAcclaimMcAcc.cpp">
+      <Filter>Source Files\core\board</Filter>
+    </ClCompile>
     <ClCompile Include="..\..\..\source\core\board\NstBoardAe.cpp">
       <Filter>Source Files\core\board</Filter>
     </ClCompile>
