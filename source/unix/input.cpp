@@ -79,8 +79,99 @@ static unsigned char nescodes[TOTALBUTTONS] = {
 
 void input_init() {
 	// Initialize input
-	Input(emulator).AutoSelectController(0);
-	Input(emulator).AutoSelectController(1);
+	
+	char controller[32];
+	
+	for (int i = 0; i < NUMGAMEPADS; i++) {
+		Input(emulator).AutoSelectController(i);
+		
+		switch(Input(emulator).GetConnectedController(i)) {
+			case Input::UNCONNECTED:
+				snprintf(controller, sizeof(controller), "%s", "Unconnected");
+				break;
+			case Input::PAD1:
+			case Input::PAD2:
+			case Input::PAD3:
+			case Input::PAD4:
+				snprintf(controller, sizeof(controller), "%s", "Standard Pad");
+				break;
+			case Input::ZAPPER:
+				snprintf(controller, sizeof(controller), "%s", "Zapper");
+				break;
+			case Input::PADDLE:
+				snprintf(controller, sizeof(controller), "%s", "Arkanoid Paddle");
+				break;
+			case Input::POWERPAD:
+				snprintf(controller, sizeof(controller), "%s", "Power Pad");
+				break;
+			case Input::POWERGLOVE:
+				snprintf(controller, sizeof(controller), "%s", "Power Glove");
+				break;
+			case Input::MOUSE:
+				snprintf(controller, sizeof(controller), "%s", "Mouse");
+				break;
+			case Input::ROB:
+				snprintf(controller, sizeof(controller), "%s", "R.O.B.");
+				break;
+			case Input::FAMILYTRAINER:
+				snprintf(controller, sizeof(controller), "%s", "Family Trainer");
+				break;
+			case Input::FAMILYKEYBOARD:
+				snprintf(controller, sizeof(controller), "%s", "Family Keyboard");
+				break;
+			case Input::SUBORKEYBOARD:
+				snprintf(controller, sizeof(controller), "%s", "Subor Keyboard");
+				break;
+			case Input::DOREMIKKOKEYBOARD:
+				snprintf(controller, sizeof(controller), "%s", "Doremikko Keyboard");
+				break;
+			case Input::HORITRACK:
+				snprintf(controller, sizeof(controller), "%s", "Hori Track");
+				break;
+			case Input::PACHINKO:
+				snprintf(controller, sizeof(controller), "%s", "Pachinko");
+				break;
+			case Input::OEKAKIDSTABLET:
+				snprintf(controller, sizeof(controller), "%s", "Oeka Kids Tablet");
+				break;
+			case Input::KONAMIHYPERSHOT:
+				snprintf(controller, sizeof(controller), "%s", "Konami Hypershot");
+				break;
+			case Input::BANDAIHYPERSHOT:
+				snprintf(controller, sizeof(controller), "%s", "Bandai Hypershot");
+				break;
+			case Input::CRAZYCLIMBER:
+				snprintf(controller, sizeof(controller), "%s", "Crazy Climber");
+				break;
+			case Input::MAHJONG:
+				snprintf(controller, sizeof(controller), "%s", "Mahjong");
+				break;
+			case Input::EXCITINGBOXING:
+				snprintf(controller, sizeof(controller), "%s", "Exciting Boxing");
+				break;
+			case Input::TOPRIDER:
+				snprintf(controller, sizeof(controller), "%s", "Top Rider");
+				break;
+			case Input::POKKUNMOGURAA:
+				snprintf(controller, sizeof(controller), "%s", "Pokkun Moguraa");
+				break;
+			case Input::PARTYTAP:
+				snprintf(controller, sizeof(controller), "%s", "PartyTap");
+				break;
+			case Input::TURBOFILE:
+				snprintf(controller, sizeof(controller), "%s", "Turbo File");
+				break;
+			case Input::BARCODEWORLD:
+				snprintf(controller, sizeof(controller), "%s", "Barcode World");
+				break;
+			default:
+				snprintf(controller, sizeof(controller), "%s", "Unknown");
+				break;
+		}
+		
+		fprintf(stderr, "Port %d: %s\n", i + 1, controller);
+	}
+	
 	video_set_cursor();
 }
 
