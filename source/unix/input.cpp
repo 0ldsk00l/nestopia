@@ -45,6 +45,7 @@ extern Emulator emulator;
 bool confrunning, kbactivate = false;
 
 inputsettings_t inputconf;
+uiinput_t ui;
 gamepad_t player[NUMGAMEPADS];
 
 char inputconfpath[256];
@@ -483,41 +484,40 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 
 	input_inject(controllers, input);
 	
-	if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE && event.type == SDL_KEYDOWN) { timing_set_altspeed(); }
-	if (event.key.keysym.scancode == SDL_SCANCODE_GRAVE && event.type == SDL_KEYUP) { timing_set_default(); }
+	if (event.key.keysym.scancode == ui.altspeed && event.type == SDL_KEYDOWN) { timing_set_altspeed(); }
+	if (event.key.keysym.scancode == ui.altspeed && event.type == SDL_KEYUP) { timing_set_default(); }
 	
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	
 	// Insert Coins
 	controllers->vsSystem.insertCoin = 0;
-	if (keys[SDL_SCANCODE_F1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
-	if (keys[SDL_SCANCODE_F2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
+	if (keys[ui.insertcoin1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
+	if (keys[ui.insertcoin2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
 	
 	// Process non-game events
-	if (keys[SDL_SCANCODE_F3]) { nst_flip_disk(); }
-	if (keys[SDL_SCANCODE_F4]) { nst_switch_disk(); }
-	if (keys[SDL_SCANCODE_F5]) { nst_state_quicksave(0); }
-	if (keys[SDL_SCANCODE_F6]) { nst_state_quicksave(1); }
-	if (keys[SDL_SCANCODE_F7]) { nst_state_quickload(0); }
-	if (keys[SDL_SCANCODE_F8]) { nst_state_quickload(1); }
-	//if (keys[SDL_SCANCODE_F9]) {  }
-	//if (keys[SDL_SCANCODE_F10]) {  }
-	//if (keys[SDL_SCANCODE_F11]) {  }
-	if (keys[SDL_SCANCODE_F12]) { nst_reset(0); }
+	if (keys[ui.fdsflip]) { nst_flip_disk(); }
+	if (keys[ui.fdsswitch]) { nst_switch_disk(); }
+	if (keys[ui.qsave1]) { nst_state_quicksave(0); }
+	if (keys[ui.qsave2]) { nst_state_quicksave(1); }
+	if (keys[ui.qload1]) { nst_state_quickload(0); }
+	if (keys[ui.qload2]) { nst_state_quickload(1); }
+	
+	// Reset
+	if (keys[ui.reset]) { nst_reset(0); }
 	
 	// Rewinder
-	if (keys[SDL_SCANCODE_BACKSPACE]) { nst_set_rewind(0); }
-	if (keys[SDL_SCANCODE_BACKSLASH]) { nst_set_rewind(1); }
+	if (keys[ui.rwstart]) { nst_set_rewind(0); }
+	if (keys[ui.rwstop]) { nst_set_rewind(1); }
+	
+	// Video
+	if (keys[ui.fullscreen]) { video_toggle_fullscreen(); }
+	if (keys[ui.filter]) { video_toggle_filter(); }
+	if (keys[ui.scalefactor]) { video_toggle_scalefactor(); }
 	
 	// Escape exits when not in GUI mode
 	if (keys[SDL_SCANCODE_ESCAPE]) {
 		if (conf.misc_disable_gui) { nst_schedule_quit(); }
 	}
-	
-	// F toggles fullscreen
-	if (keys[SDL_SCANCODE_F]) { video_toggle_fullscreen(); }
-	if (keys[SDL_SCANCODE_T]) { video_toggle_filter(); }
-	if (keys[SDL_SCANCODE_G]) { video_toggle_scalefactor(); }
 }
 
 void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
@@ -663,6 +663,28 @@ void input_config_read() {
 	else {
 		// Map the input settings from the config file
 		
+		// User Interface
+		ui.qsave1 = SDL_GetScancodeFromName(inputconf.qsave1);
+		ui.qsave2 = SDL_GetScancodeFromName(inputconf.qsave2);
+		ui.qload1 = SDL_GetScancodeFromName(inputconf.qload1);
+		ui.qload2 = SDL_GetScancodeFromName(inputconf.qload2);
+		
+		ui.fdsflip = SDL_GetScancodeFromName(inputconf.fdsflip);
+		ui.fdsswitch = SDL_GetScancodeFromName(inputconf.fdsswitch);
+		
+		ui.insertcoin1 = SDL_GetScancodeFromName(inputconf.insertcoin1);
+		ui.insertcoin2 = SDL_GetScancodeFromName(inputconf.insertcoin2);
+		
+		ui.reset = SDL_GetScancodeFromName(inputconf.reset);
+		
+		ui.altspeed = SDL_GetScancodeFromName(inputconf.altspeed);
+		ui.rwstart = SDL_GetScancodeFromName(inputconf.rwstart);
+		ui.rwstop = SDL_GetScancodeFromName(inputconf.rwstop);
+		
+		ui.fullscreen = SDL_GetScancodeFromName(inputconf.fullscreen);
+		ui.filter = SDL_GetScancodeFromName(inputconf.filter);
+		ui.scalefactor = SDL_GetScancodeFromName(inputconf.scalefactor);
+		
 		// Player 1
 		player[0].u = SDL_GetScancodeFromName(inputconf.kb_p1u);
 		player[0].d = SDL_GetScancodeFromName(inputconf.kb_p1d);
@@ -720,6 +742,30 @@ void input_config_write() {
 		fprintf(fp, "; Possible values for keyboard input are in the Key Name column:\n; https://wiki.libsdl.org/SDL_Scancode\n\n");
 		fprintf(fp, "; Possible values for joystick input:\n; j[joystick number][a|b|h][button/hat/axis number][1/0 = +/- (axes only)]\n");
 		fprintf(fp, "; Example: j0b3 = joystick 0, button 3. j1a11 = joystick 1, axis 1 +\n\n");
+		
+		fprintf(fp, "[ui]\n");
+		fprintf(fp, "qsave1=%s\n", SDL_GetScancodeName(ui.qsave1));
+		fprintf(fp, "qsave2=%s\n", SDL_GetScancodeName(ui.qsave2));
+		fprintf(fp, "qload1=%s\n", SDL_GetScancodeName(ui.qload1));
+		fprintf(fp, "qload2=%s\n", SDL_GetScancodeName(ui.qload2));
+		
+		fprintf(fp, "fdsflip=%s\n", SDL_GetScancodeName(ui.fdsflip));
+		fprintf(fp, "fdsswitch=%s\n", SDL_GetScancodeName(ui.fdsswitch));
+		
+		fprintf(fp, "insertcoin1=%s\n", SDL_GetScancodeName(ui.insertcoin1));
+		fprintf(fp, "insertcoin2=%s\n", SDL_GetScancodeName(ui.insertcoin2));
+		
+		fprintf(fp, "reset=%s\n", SDL_GetScancodeName(ui.reset));
+		
+		fprintf(fp, "altspeed=%s\n", SDL_GetScancodeName(ui.altspeed));
+		fprintf(fp, "rwstart=%s\n", SDL_GetScancodeName(ui.rwstart));
+		fprintf(fp, "rwstop=%s\n", SDL_GetScancodeName(ui.rwstop));
+		
+		fprintf(fp, "fullscreen=%s\n", SDL_GetScancodeName(ui.fullscreen));
+		fprintf(fp, "filter=%s\n", SDL_GetScancodeName(ui.filter));
+		fprintf(fp, "scalefactor=%s\n", SDL_GetScancodeName(ui.scalefactor));
+		fprintf(fp, "\n"); // End of Section
+		
 		fprintf(fp, "[gamepad1]\n");
 		fprintf(fp, "kb_u=%s\n", SDL_GetScancodeName(player[0].u));
 		fprintf(fp, "kb_d=%s\n", SDL_GetScancodeName(player[0].d));
@@ -773,7 +819,29 @@ void input_config_write() {
 }
 
 void input_set_default() {
-	// Set default input config	
+	// Set default input config
+	
+	ui.qsave1 = SDL_GetScancodeFromName("F5");
+	ui.qsave2 = SDL_GetScancodeFromName("F6");
+	ui.qload1 = SDL_GetScancodeFromName("F7");
+	ui.qload2 = SDL_GetScancodeFromName("F8");
+	
+	ui.fdsflip = SDL_GetScancodeFromName("F3");
+	ui.fdsswitch = SDL_GetScancodeFromName("F4");
+	
+	ui.insertcoin1 = SDL_GetScancodeFromName("F1");
+	ui.insertcoin2 = SDL_GetScancodeFromName("F2");
+	
+	ui.reset = SDL_GetScancodeFromName("F12");
+	
+	ui.altspeed = SDL_GetScancodeFromName("`");
+	ui.rwstart = SDL_GetScancodeFromName("Backspace");
+	ui.rwstop = SDL_GetScancodeFromName("\\");
+	
+	ui.fullscreen = SDL_GetScancodeFromName("F");
+	ui.filter = SDL_GetScancodeFromName("T");
+	ui.scalefactor = SDL_GetScancodeFromName("G");
+	
 	player[0].u = SDL_GetScancodeFromName("Up");
 	player[0].d = SDL_GetScancodeFromName("Down");
 	player[0].l = SDL_GetScancodeFromName("Left");
@@ -823,8 +891,30 @@ static int input_config_match(void* user, const char* section, const char* name,
 	// Match values from input config file and populate live config
 	inputsettings_t* pconfig = (inputsettings_t*)user;
 	
+	// User Interface
+	if (MATCH("ui", "qsave1")) { pconfig->qsave1 = strdup(value); }
+	else if (MATCH("ui", "qsave2")) { pconfig->qsave2 = strdup(value); }
+	else if (MATCH("ui", "qload1")) { pconfig->qload1 = strdup(value); }
+	else if (MATCH("ui", "qload2")) { pconfig->qload2 = strdup(value); }
+	
+	else if (MATCH("ui", "fdsflip")) { pconfig->fdsflip = strdup(value); }
+	else if (MATCH("ui", "fdsswitch")) { pconfig->fdsswitch = strdup(value); }
+	
+	else if (MATCH("ui", "insertcoin1")) { pconfig->insertcoin1 = strdup(value); }
+	else if (MATCH("ui", "insertcoin2")) { pconfig->insertcoin2 = strdup(value); }
+	
+	else if (MATCH("ui", "reset")) { pconfig->reset = strdup(value); }
+	
+	else if (MATCH("ui", "altspeed")) { pconfig->altspeed = strdup(value); }
+	else if (MATCH("ui", "rwstart")) { pconfig->rwstart = strdup(value); }
+	else if (MATCH("ui", "rwstop")) { pconfig->rwstop = strdup(value); }
+	
+	else if (MATCH("ui", "fullscreen")) { pconfig->fullscreen = strdup(value); }
+	else if (MATCH("ui", "filter")) { pconfig->filter = strdup(value); }
+	else if (MATCH("ui", "scalefactor")) { pconfig->scalefactor = strdup(value); }
+	
 	// Player 1
-	if (MATCH("gamepad1", "kb_u")) { pconfig->kb_p1u = strdup(value); }
+	else if (MATCH("gamepad1", "kb_u")) { pconfig->kb_p1u = strdup(value); }
 	else if (MATCH("gamepad1", "kb_d")) { pconfig->kb_p1d = strdup(value); }
 	else if (MATCH("gamepad1", "kb_l")) { pconfig->kb_p1l = strdup(value); }
 	else if (MATCH("gamepad1", "kb_r")) { pconfig->kb_p1r = strdup(value); }
