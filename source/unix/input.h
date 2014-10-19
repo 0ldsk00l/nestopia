@@ -13,6 +13,29 @@
 using namespace Nes::Api;
 
 typedef struct {
+	SDL_Scancode qsave1;
+	SDL_Scancode qsave2;
+	SDL_Scancode qload1;
+	SDL_Scancode qload2;
+	
+	SDL_Scancode fdsflip;
+	SDL_Scancode fdsswitch;
+	
+	SDL_Scancode insertcoin1;
+	SDL_Scancode insertcoin2;
+	
+	SDL_Scancode reset;
+	
+	SDL_Scancode altspeed;
+	SDL_Scancode rwstart;
+	SDL_Scancode rwstop;
+	
+	SDL_Scancode fullscreen;
+	SDL_Scancode filter;
+	SDL_Scancode scalefactor;
+} uiinput_t;
+
+typedef struct {
 	SDL_Scancode u;
 	SDL_Scancode d;
 	SDL_Scancode l;
@@ -37,6 +60,28 @@ typedef struct {
 } gamepad_t;
 
 typedef struct {
+	// User Interface
+	char *qsave1;
+	char *qsave2;
+	char *qload1;
+	char *qload2;
+	
+	char *fdsflip;
+	char *fdsswitch;
+	
+	char *insertcoin1;
+	char *insertcoin2;
+	
+	char *reset;
+	
+	char *altspeed;
+	char *rwstart;
+	char *rwstop;
+	
+	char *fullscreen;
+	char *filter;
+	char *scalefactor;
+	
 	// Player 1
 	char *kb_p1u;
 	char *kb_p1d;
