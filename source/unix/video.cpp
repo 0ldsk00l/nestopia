@@ -550,19 +550,19 @@ void video_set_dimensions() {
 void video_set_cursor() {
 	// Set the cursor to what it needs to be
 	int cursor;
-	bool zapper;
-
-	if (Input(emulator).GetConnectedController(0) == 5 ||
-		Input(emulator).GetConnectedController(1) == 5) {
-		zapper = true;
-		cursor_set_crosshair();
+	bool special;
+	
+	if (Input(emulator).GetConnectedController(0) == Input::ZAPPER ||
+		Input(emulator).GetConnectedController(1) == Input::ZAPPER) {
+		special = true;
+		cursor_set_special(Input::ZAPPER);
 	}
 	else {
-		zapper = false;
+		special = false;
 		cursor_set_default();
 	}
 	
-	if (conf.video_fullscreen) { cursor = zapper; }
+	if (conf.video_fullscreen) { cursor = special; }
 	else { cursor = true; }
 		
 	SDL_ShowCursor(cursor);

@@ -90,11 +90,11 @@ static SDL_Cursor *cursor_init(const char *image[]) {
 					data[i] |= 0x01;
 					mask[i] |= 0x01;
 					break;
-					
+				
 				case '.':
 					mask[i] |= 0x01;
 					break;
-					
+				
 				case ' ': break;
 			}
 		}
@@ -104,8 +104,8 @@ static SDL_Cursor *cursor_init(const char *image[]) {
 	return SDL_CreateCursor(data, mask, 32, 32, hot_x, hot_y);
 }
 
-void cursor_set_crosshair() {
-	// Set the cursor as a crosshair
+void cursor_set_special(int type) {
+	// Set special cursors
 	cursor = cursor_init(crosshair);
 	SDL_SetCursor(cursor);
 }
