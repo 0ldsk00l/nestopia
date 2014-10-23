@@ -283,6 +283,7 @@ GtkWidget *gtkui_about() {
 	// Pull up the About dialog
 	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(iconpath, 192, 192, NULL);
 	GtkWidget *aboutdialog = gtk_about_dialog_new();
+	gtk_window_set_transient_for(GTK_WINDOW(aboutdialog), GTK_WINDOW(gtkwindow));
 	
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
 	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia UE");
