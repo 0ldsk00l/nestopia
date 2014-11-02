@@ -1,0 +1,107 @@
+SOURCES_CXX := $(CORE_DIR)/source/core/NstZlib.cpp
+
+## Yes, I didn't type all this out ...
+# core objs
+SOURCES_CXX += $(CORE_DIR)/source/core/NstApu.cpp              $(CORE_DIR)/source/core/NstFds.cpp            $(CORE_DIR)/source/core/NstPpu.cpp              $(CORE_DIR)/source/core/NstVector.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstAssert.cpp           $(CORE_DIR)/source/core/NstFile.cpp           $(CORE_DIR)/source/core/NstProperties.cpp       $(CORE_DIR)/source/core/NstVideoFilter2xSaI.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCartridge.cpp        $(CORE_DIR)/source/core/NstImage.cpp          $(CORE_DIR)/source/core/NstRam.cpp              $(CORE_DIR)/source/core/NstVideoFilterHqX.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCartridgeInes.cpp    $(CORE_DIR)/source/core/NstImageDatabase.cpp  $(CORE_DIR)/source/core/NstSha1.cpp             $(CORE_DIR)/source/core/NstVideoFilterNone.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCartridgeRomset.cpp  $(CORE_DIR)/source/core/NstLog.cpp            $(CORE_DIR)/source/core/NstSoundPcm.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCartridgeUnif.cpp    $(CORE_DIR)/source/core/NstMachine.cpp        $(CORE_DIR)/source/core/NstSoundPlayer.cpp      $(CORE_DIR)/source/core/NstVideoFilterScaleX.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCheats.cpp           $(CORE_DIR)/source/core/NstMemory.cpp         $(CORE_DIR)/source/core/NstSoundRenderer.cpp    $(CORE_DIR)/source/core/NstVideoRenderer.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstChecksum.cpp         $(CORE_DIR)/source/core/NstNsf.cpp            $(CORE_DIR)/source/core/NstState.cpp            $(CORE_DIR)/source/core/NstVideoScreen.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstChips.cpp            $(CORE_DIR)/source/core/NstPatcher.cpp        $(CORE_DIR)/source/core/NstStream.cpp           $(CORE_DIR)/source/core/NstXml.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCore.cpp             $(CORE_DIR)/source/core/NstPatcherIps.cpp     $(CORE_DIR)/source/core/NstTracker.cpp          
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCpu.cpp              $(CORE_DIR)/source/core/NstPatcherUps.cpp     $(CORE_DIR)/source/core/NstTrackerMovie.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstCrc32.cpp            $(CORE_DIR)/source/core/NstPins.cpp           $(CORE_DIR)/source/core/NstTrackerRewinder.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/NstVideoFilterNtscCfg.cpp				$(CORE_DIR)/source/core/NstVideoFilterNtsc.cpp
+
+# core/api
+SOURCES_CXX += $(CORE_DIR)/source/core/api/NstApiBarcodeReader.cpp  $(CORE_DIR)/source/core/api/NstApiEmulator.cpp  $(CORE_DIR)/source/core/api/NstApiMovie.cpp     $(CORE_DIR)/source/core/api/NstApiTapeRecorder.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/api/NstApiCartridge.cpp      $(CORE_DIR)/source/core/api/NstApiFds.cpp       $(CORE_DIR)/source/core/api/NstApiNsf.cpp       $(CORE_DIR)/source/core/api/NstApiUser.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/api/NstApiCheats.cpp         $(CORE_DIR)/source/core/api/NstApiInput.cpp     $(CORE_DIR)/source/core/api/NstApiRewinder.cpp  $(CORE_DIR)/source/core/api/NstApiVideo.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/api/NstApiDipSwitches.cpp    $(CORE_DIR)/source/core/api/NstApiMachine.cpp   $(CORE_DIR)/source/core/api/NstApiSound.cpp
+
+# core/board
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAcclaimMcAcc.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAe.cpp                    $(CORE_DIR)/source/core/board/NstBoardBtlPikachuY2k.cpp          $(CORE_DIR)/source/core/board/NstBoardNihon.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAgci.cpp                  $(CORE_DIR)/source/core/board/NstBoardBtlShuiGuanPipe.cpp        $(CORE_DIR)/source/core/board/NstBoardNitra.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAveD1012.cpp              $(CORE_DIR)/source/core/board/NstBoardBtlSmb2a.cpp               $(CORE_DIR)/source/core/board/NstBoardNtdec.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAveNina.cpp               $(CORE_DIR)/source/core/board/NstBoardBtlSmb2b.cpp               $(CORE_DIR)/source/core/board/NstBoardOpenCorp.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAxRom.cpp                 $(CORE_DIR)/source/core/board/NstBoardBtlSmb2c.cpp               $(CORE_DIR)/source/core/board/NstBoardQj.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBandai24c0x.cpp           $(CORE_DIR)/source/core/board/NstBoardBtlSmb3.cpp                $(CORE_DIR)/source/core/board/NstBoardRcm.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBandaiAerobicsStudio.cpp  $(CORE_DIR)/source/core/board/NstBoardBtlSuperBros11.cpp         $(CORE_DIR)/source/core/board/NstBoardRexSoftDb5z.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBandaiDatach.cpp          $(CORE_DIR)/source/core/board/NstBoardBtlT230.cpp                $(CORE_DIR)/source/core/board/NstBoardRexSoftSl1632.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBandaiKaraokeStudio.cpp   $(CORE_DIR)/source/core/board/NstBoardBtlTobidaseDaisakusen.cpp  $(CORE_DIR)/source/core/board/NstBoardRumbleStation.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBandaiLz93d50.cpp         $(CORE_DIR)/source/core/board/NstBoardBxRom.cpp                  $(CORE_DIR)/source/core/board/NstBoardSachen74x374.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBandaiLz93d50ex.cpp       $(CORE_DIR)/source/core/board/NstBoardCaltron.cpp                $(CORE_DIR)/source/core/board/NstBoardSachenS8259.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBandaiOekaKids.cpp        $(CORE_DIR)/source/core/board/NstBoardCamerica.cpp               $(CORE_DIR)/source/core/board/NstBoardSachenSa0036.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBenshengBs5.cpp           $(CORE_DIR)/source/core/board/NstBoardCneDecathlon.cpp           $(CORE_DIR)/source/core/board/NstBoardSachenSa0037.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc110in1.cpp             $(CORE_DIR)/source/core/board/NstBoardCnePsb.cpp                 $(CORE_DIR)/source/core/board/NstBoardSachenSa72007.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc1200in1.cpp            $(CORE_DIR)/source/core/board/NstBoardCneShlz.cpp                $(CORE_DIR)/source/core/board/NstBoardSachenSa72008.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc150in1.cpp             $(CORE_DIR)/source/core/board/NstBoardCony.cpp                   $(CORE_DIR)/source/core/board/NstBoardSachenStreetHeroes.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc15in1.cpp              $(CORE_DIR)/source/core/board/NstBoard.cpp                       $(CORE_DIR)/source/core/board/NstBoardSachenTca01.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc20in1.cpp              $(CORE_DIR)/source/core/board/NstBoardCxRom.cpp                  $(CORE_DIR)/source/core/board/NstBoardSachenTcu.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc21in1.cpp              $(CORE_DIR)/source/core/board/NstBoardDiscrete.cpp               $(CORE_DIR)/source/core/board/NstBoardSomeriTeamSl12.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc22Games.cpp            $(CORE_DIR)/source/core/board/NstBoardDreamtech.cpp              $(CORE_DIR)/source/core/board/NstBoardSubor.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc31in1.cpp              $(CORE_DIR)/source/core/board/NstBoardEvent.cpp                  $(CORE_DIR)/source/core/board/NstBoardSunsoft1.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc35in1.cpp              $(CORE_DIR)/source/core/board/NstBoardFb.cpp                     $(CORE_DIR)/source/core/board/NstBoardSunsoft2.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc36in1.cpp              $(CORE_DIR)/source/core/board/NstBoardFfe.cpp                    $(CORE_DIR)/source/core/board/NstBoardSunsoft3.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc64in1.cpp              $(CORE_DIR)/source/core/board/NstBoardFujiya.cpp                 $(CORE_DIR)/source/core/board/NstBoardSunsoft4.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc72in1.cpp              $(CORE_DIR)/source/core/board/NstBoardFukutake.cpp               $(CORE_DIR)/source/core/board/NstBoardSunsoft5b.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc76in1.cpp              $(CORE_DIR)/source/core/board/NstBoardFutureMedia.cpp            $(CORE_DIR)/source/core/board/NstBoardSunsoftDcs.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc800in1.cpp             $(CORE_DIR)/source/core/board/NstBoardGouder.cpp                 $(CORE_DIR)/source/core/board/NstBoardSunsoftFme7.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc8157.cpp               $(CORE_DIR)/source/core/board/NstBoardGxRom.cpp                  $(CORE_DIR)/source/core/board/NstBoardSuperGameBoogerman.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmc9999999in1.cpp         $(CORE_DIR)/source/core/board/NstBoardHenggedianzi.cpp           $(CORE_DIR)/source/core/board/NstBoardSuperGameLionKing.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcA65as.cpp              $(CORE_DIR)/source/core/board/NstBoardHes.cpp                    $(CORE_DIR)/source/core/board/NstBoardSuperGamePocahontas2.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcBallgames11in1.cpp     $(CORE_DIR)/source/core/board/NstBoardHosenkan.cpp               $(CORE_DIR)/source/core/board/NstBoardTaitoTc0190fmc.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcCh001.cpp              $(CORE_DIR)/source/core/board/NstBoardIremG101.cpp               $(CORE_DIR)/source/core/board/NstBoardTaitoTc0190fmcPal16r4.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcCtc65.cpp              $(CORE_DIR)/source/core/board/NstBoardIremH3001.cpp              $(CORE_DIR)/source/core/board/NstBoardTaitoX1005.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcFamily4646B.cpp        $(CORE_DIR)/source/core/board/NstBoardIremHolyDiver.cpp          $(CORE_DIR)/source/core/board/NstBoardTaitoX1017.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcFk23c.cpp              $(CORE_DIR)/source/core/board/NstBoardIremKaiketsu.cpp           $(CORE_DIR)/source/core/board/NstBoardTengen.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcGamestarA.cpp          $(CORE_DIR)/source/core/board/NstBoardIremLrog017.cpp            $(CORE_DIR)/source/core/board/NstBoardTengenRambo1.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcGamestarB.cpp          $(CORE_DIR)/source/core/board/NstBoardJalecoJf11.cpp             $(CORE_DIR)/source/core/board/NstBoardTxc.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcGolden190in1.cpp       $(CORE_DIR)/source/core/board/NstBoardJalecoJf13.cpp             $(CORE_DIR)/source/core/board/NstBoardTxcMxmdhtwo.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcGoldenCard6in1.cpp     $(CORE_DIR)/source/core/board/NstBoardJalecoJf16.cpp             $(CORE_DIR)/source/core/board/NstBoardTxcPoliceman.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcGoldenGame260in1.cpp   $(CORE_DIR)/source/core/board/NstBoardJalecoJf17.cpp             $(CORE_DIR)/source/core/board/NstBoardTxcTw.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcHero.cpp               $(CORE_DIR)/source/core/board/NstBoardJalecoJf19.cpp             $(CORE_DIR)/source/core/board/NstBoardTxRom.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcMarioParty7in1.cpp     $(CORE_DIR)/source/core/board/NstBoardJalecoSs88006.cpp          $(CORE_DIR)/source/core/board/NstBoardUnlA9746.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcNovelDiamond.cpp       $(CORE_DIR)/source/core/board/NstBoardJyCompany.cpp              $(CORE_DIR)/source/core/board/NstBoardUnlCc21.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcPowerjoy84in1.cpp      $(CORE_DIR)/source/core/board/NstBoardKaiser.cpp                 $(CORE_DIR)/source/core/board/NstBoardUnlEdu2000.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcResetBased4in1.cpp     $(CORE_DIR)/source/core/board/NstBoardKasing.cpp                 $(CORE_DIR)/source/core/board/NstBoardUnlKingOfFighters96.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuper22Games.cpp       $(CORE_DIR)/source/core/board/NstBoardKayH2288.cpp               $(CORE_DIR)/source/core/board/NstBoardUnlKingOfFighters97.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuper24in1.cpp         $(CORE_DIR)/source/core/board/NstBoardKayPandaPrince.cpp         $(CORE_DIR)/source/core/board/NstBoardUnlMortalKombat2.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuper40in1.cpp         $(CORE_DIR)/source/core/board/NstBoardKonamiVrc1.cpp             $(CORE_DIR)/source/core/board/NstBoardUnlN625092.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuper700in1.cpp        $(CORE_DIR)/source/core/board/NstBoardKonamiVrc2.cpp             $(CORE_DIR)/source/core/board/NstBoardUnlSuperFighter3.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuperBig7in1.cpp       $(CORE_DIR)/source/core/board/NstBoardKonamiVrc3.cpp             $(CORE_DIR)/source/core/board/NstBoardUnlTf1201.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuperGun20in1.cpp      $(CORE_DIR)/source/core/board/NstBoardKonamiVrc4.cpp             $(CORE_DIR)/source/core/board/NstBoardUnlWorldHero.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuperHiK300in1.cpp     $(CORE_DIR)/source/core/board/NstBoardKonamiVrc6.cpp             $(CORE_DIR)/source/core/board/NstBoardUnlXzy.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuperHiK4in1.cpp       $(CORE_DIR)/source/core/board/NstBoardKonamiVrc7.cpp             $(CORE_DIR)/source/core/board/NstBoardUxRom.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcSuperVision16in1.cpp   $(CORE_DIR)/source/core/board/NstBoardKonamiVsSystem.cpp         $(CORE_DIR)/source/core/board/NstBoardVsSystem.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcT262.cpp               $(CORE_DIR)/source/core/board/NstBoardMagicSeries.cpp            $(CORE_DIR)/source/core/board/NstBoardWaixing.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcVrc4.cpp               $(CORE_DIR)/source/core/board/NstBoardMmc1.cpp                   $(CORE_DIR)/source/core/board/NstBoardWaixingFfv.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcVt5201.cpp             $(CORE_DIR)/source/core/board/NstBoardMmc2.cpp                   $(CORE_DIR)/source/core/board/NstBoardWaixingPs2.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBmcY2k64in1.cpp           $(CORE_DIR)/source/core/board/NstBoardMmc3.cpp                   $(CORE_DIR)/source/core/board/NstBoardWaixingSecurity.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBtl2708.cpp               $(CORE_DIR)/source/core/board/NstBoardMmc4.cpp                   $(CORE_DIR)/source/core/board/NstBoardWaixingSgz.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBtl6035052.cpp            $(CORE_DIR)/source/core/board/NstBoardMmc5.cpp                   $(CORE_DIR)/source/core/board/NstBoardWaixingSgzlz.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBtlAx5705.cpp             $(CORE_DIR)/source/core/board/NstBoardMmc6.cpp                   $(CORE_DIR)/source/core/board/NstBoardWaixingSh2.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBtlDragonNinja.cpp        $(CORE_DIR)/source/core/board/NstBoardNamcot163.cpp              $(CORE_DIR)/source/core/board/NstBoardWaixingZs.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardNamcot175.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBtlGeniusMerioBros.cpp    $(CORE_DIR)/source/core/board/NstBoardNamcot34xx.cpp             $(CORE_DIR)/source/core/board/NstBoardWhirlwind.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardBtlMarioBaby.cpp          $(CORE_DIR)/source/core/board/NstBoardNanjing.cpp                $(CORE_DIR)/source/core/board/NstBoardZz.cpp
+
+# core/input
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpAdapter.cpp            $(CORE_DIR)/source/core/input/NstInpKonamiHyperShot.cpp  $(CORE_DIR)/source/core/input/NstInpPowerGlove.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpBandaiHyperShot.cpp    $(CORE_DIR)/source/core/input/NstInpMahjong.cpp          $(CORE_DIR)/source/core/input/NstInpPowerPad.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpBarcodeWorld.cpp       $(CORE_DIR)/source/core/input/NstInpMouse.cpp            $(CORE_DIR)/source/core/input/NstInpRob.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpCrazyClimber.cpp       $(CORE_DIR)/source/core/input/NstInpOekaKidsTablet.cpp   $(CORE_DIR)/source/core/input/NstInpSuborKeyboard.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpDoremikkoKeyboard.cpp  $(CORE_DIR)/source/core/input/NstInpPachinko.cpp         $(CORE_DIR)/source/core/input/NstInpTopRider.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpExcitingBoxing.cpp     $(CORE_DIR)/source/core/input/NstInpPad.cpp              $(CORE_DIR)/source/core/input/NstInpTurboFile.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpFamilyKeyboard.cpp     $(CORE_DIR)/source/core/input/NstInpPaddle.cpp           $(CORE_DIR)/source/core/input/NstInpZapper.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpFamilyTrainer.cpp      $(CORE_DIR)/source/core/input/NstInpPartyTap.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/input/NstInpHoriTrack.cpp          $(CORE_DIR)/source/core/input/NstInpPokkunMoguraa.cpp
+
+# core/vssystem
+SOURCES_CXX += $(CORE_DIR)/source/core/vssystem/NstVsRbiBaseball.cpp  $(CORE_DIR)/source/core/vssystem/NstVsSuperXevious.cpp  $(CORE_DIR)/source/core/vssystem/NstVsSystem.cpp  $(CORE_DIR)/source/core/vssystem/NstVsTkoBoxing.cpp
+
+SOURCES_CXX += $(CORE_DIR)/libretro/libretro.cpp
