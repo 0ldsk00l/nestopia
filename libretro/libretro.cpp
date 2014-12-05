@@ -216,9 +216,9 @@ void retro_set_environment(retro_environment_t cb)
    environ_cb = cb;
 
    static const struct retro_variable vars[] = {
-      { "blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
-      { "palette", "Palette; canonical|consumer|alternative|rgb" },
-      { "nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
+      { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
+      { "nestopia_palette", "Palette; canonical|consumer|alternative|rgb" },
+      { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { NULL, NULL },
    };
 
@@ -348,7 +348,7 @@ static void check_variables(void)
    Api::Machine machine( emulator );
    Api::Video::RenderState::Filter filter;
    
-   var.key = "nospritelimit";
+   var.key = "nestopia_nospritelimit";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
@@ -358,7 +358,7 @@ static void check_variables(void)
          video.EnableUnlimSprites(true);
    }
    
-   var.key = "blargg_ntsc_filter";
+   var.key = "nestopia_blargg_ntsc_filter";
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
@@ -411,7 +411,7 @@ static void check_variables(void)
          break;
    }
    
-   var.key = "palette";
+   var.key = "nestopia_palette";
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
