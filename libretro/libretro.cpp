@@ -10,6 +10,7 @@
 #include <core/api/NstApiMachine.hpp>
 #include <core/api/NstApiEmulator.hpp>
 #include <core/api/NstApiVideo.hpp>
+#include <core/api/NstApiCheats.hpp>
 #include <core/api/NstApiSound.hpp>
 #include <core/api/NstApiInput.hpp>
 #include <core/api/NstApiCartridge.hpp>
@@ -775,7 +776,18 @@ size_t retro_get_memory_size(unsigned id)
 }
 
 void retro_cheat_reset(void)
-{}
+{
+   Nes::Api::Cheats cheater(emulator);
+   cheater.ClearCodes();
+}
 
-void retro_cheat_set(unsigned, bool, const char *)
-{}
+void retro_cheat_set(unsigned index, bool enabled, const char *code)
+{
+   Nes::Api::Cheats cheater(emulator);
+   Nes::Api::Cheats::Code ggCode;
+
+   if (Nes::Api::Cheats::GameGenieDecode(code, ggCode) == RESULT_OK)
+      cheater.SetCode(ggCode);
+   if (Nes::Api::Cheats::ProActionRockyDecode(code, ggCode) == RESULT_OK)
+      cheater.SetCode(ggCode);
+}
