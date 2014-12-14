@@ -33,6 +33,7 @@
 #include "video.h"
 #include "config.h"
 #include "cursor.h"
+#include "font.h"
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
@@ -41,8 +42,14 @@ extern GtkWidget *drawingarea;
 
 using namespace Nes::Api;
 
+int drawtext = 0;
+char textbuf[32];
+
+bool drawtime = false;
+char timebuf[6];
+
 GLuint screenTexID = 0;
-void *videobuf;
+static uint32_t videobuf[31457280]; // Maximum possible internal size
 
 SDL_Window *sdlwindow;
 SDL_Window *embedwindow;
@@ -110,15 +117,11 @@ void opengl_init_structures() {
 void opengl_cleanup() {
 	// tears down OpenGL when it's no longer needed
 	if (screenTexID) { glDeleteTextures( 1, &screenTexID ); }
-	
-	if (videobuf) {
-		free(videobuf);
-		videobuf = NULL;
-	}
 }
 
 void opengl_blit() {
 	// blit the image using OpenGL
+	
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
 				GL_RGBA,
@@ -156,9 +159,6 @@ void video_init() {
 	
 	video_set_dimensions();
 	video_set_filter();
-	
-	// Allocate the video buffer
-	videobuf = malloc(renderstate.bits.count * renderstate.width * renderstate.height);
 	
 	opengl_init_structures();
 	
@@ -579,5 +579,154 @@ long video_lock_screen(void*& ptr) {
 }
 
 void video_unlock_screen(void*) {
+	
+	int wscale = renderstate.width / 256;
+	int hscale = renderstate.height / 240;
+		
+	if (drawtext) {
+		//video_text_draw(textbuf, 8 * wscale, 16 * hscale); // Top
+		video_text_draw(textbuf, 8 * wscale, 218 * hscale); // Bottom
+		drawtext--;
+	}
+	
+	if (drawtime) {
+		video_text_draw(timebuf, 208 * wscale, 218 * hscale);
+	}
+	
 	opengl_blit();
+}
+
+void video_text_draw(const char *text, int xpos, int ypos) {
+	// Draw text on screen
+	uint32_t w = 0xc0c0c0c0;
+	uint32_t b = 0x00000000;
+	
+	int numchars = strlen(text);
+	
+	int letterypos;
+	int letterxpos;
+	int letternum = 0;
+	
+	for (int tpos = 0; tpos < (8 * numchars); tpos+=8) {
+		video_text_match(text, &letterxpos, &letterypos, letternum);
+		for (int row = 0; row < 8; row++) { // Draw Rows
+			for (int col = 0; col < 8; col++) { // Draw Columns
+				switch (nesfont[row + letterypos][col + letterxpos]) {
+					case '.':
+						videobuf[xpos + ((ypos + row) * renderstate.width) + (col + tpos)] = w;
+						break;
+					
+					case '+':
+						videobuf[xpos + ((ypos + row) * renderstate.width) + (col + tpos)] = b;
+						break;
+					
+					default: break;
+				}
+			}
+		}
+		letternum++;
+	}
+}
+
+void video_text_match(const char *text, int *xpos, int *ypos, int strpos) {
+	// Match letters to draw on screen
+	switch (text[strpos]) {
+		case ' ': *xpos = 0; *ypos = 0; break;
+		case '!': *xpos = 8; *ypos = 0; break;
+		case '"': *xpos = 16; *ypos = 0; break;
+		case '#': *xpos = 24; *ypos = 0; break;
+		case '$': *xpos = 32; *ypos = 0; break;
+		case '%': *xpos = 40; *ypos = 0; break;
+		case '&': *xpos = 48; *ypos = 0; break;
+		case '\'': *xpos = 56; *ypos = 0; break;
+		case '(': *xpos = 64; *ypos = 0; break;
+		case ')': *xpos = 72; *ypos = 0; break;
+		case '*': *xpos = 80; *ypos = 0; break;
+		case '+': *xpos = 88; *ypos = 0; break;
+		case ',': *xpos = 96; *ypos = 0; break;
+		case '-': *xpos = 104; *ypos = 0; break;
+		case '.': *xpos = 112; *ypos = 0; break;
+		case '/': *xpos = 120; *ypos = 0; break;
+		case '0': *xpos = 0; *ypos = 8; break;
+		case '1': *xpos = 8; *ypos = 8; break;
+		case '2': *xpos = 16; *ypos = 8; break;
+		case '3': *xpos = 24; *ypos = 8; break;
+		case '4': *xpos = 32; *ypos = 8; break;
+		case '5': *xpos = 40; *ypos = 8; break;
+		case '6': *xpos = 48; *ypos = 8; break;
+		case '7': *xpos = 56; *ypos = 8; break;
+		case '8': *xpos = 64; *ypos = 8; break;
+		case '9': *xpos = 72; *ypos = 8; break;
+		case ':': *xpos = 80; *ypos = 8; break;
+		case ';': *xpos = 88; *ypos = 8; break;
+		case '<': *xpos = 96; *ypos = 8; break;
+		case '=': *xpos = 104; *ypos = 8; break;
+		case '>': *xpos = 112; *ypos = 8; break;
+		case '?': *xpos = 120; *ypos = 8; break;
+		case '@': *xpos = 0; *ypos = 16; break;
+		case 'A': *xpos = 8; *ypos = 16; break;
+		case 'B': *xpos = 16; *ypos = 16; break;
+		case 'C': *xpos = 24; *ypos = 16; break;
+		case 'D': *xpos = 32; *ypos = 16; break;
+		case 'E': *xpos = 40; *ypos = 16; break;
+		case 'F': *xpos = 48; *ypos = 16; break;
+		case 'G': *xpos = 56; *ypos = 16; break;
+		case 'H': *xpos = 64; *ypos = 16; break;
+		case 'I': *xpos = 72; *ypos = 16; break;
+		case 'J': *xpos = 80; *ypos = 16; break;
+		case 'K': *xpos = 88; *ypos = 16; break;
+		case 'L': *xpos = 96; *ypos = 16; break;
+		case 'M': *xpos = 104; *ypos = 16; break;
+		case 'N': *xpos = 112; *ypos = 16; break;
+		case 'O': *xpos = 120; *ypos = 16; break;
+		case 'P': *xpos = 0; *ypos = 24; break;
+		case 'Q': *xpos = 8; *ypos = 24; break;
+		case 'R': *xpos = 16; *ypos = 24; break;
+		case 'S': *xpos = 24; *ypos = 24; break;
+		case 'T': *xpos = 32; *ypos = 24; break;
+		case 'U': *xpos = 40; *ypos = 24; break;
+		case 'V': *xpos = 48; *ypos = 24; break;
+		case 'W': *xpos = 56; *ypos = 24; break;
+		case 'X': *xpos = 64; *ypos = 24; break;
+		case 'Y': *xpos = 72; *ypos = 24; break;
+		case 'Z': *xpos = 80; *ypos = 24; break;
+		case '[': *xpos = 88; *ypos = 24; break;
+		case '\\': *xpos = 96; *ypos = 24; break;
+		case ']': *xpos = 104; *ypos = 24; break;
+		case '^': *xpos = 112; *ypos = 24; break;
+		case '_': *xpos = 120; *ypos = 24; break;
+		case '`': *xpos = 0; *ypos = 32; break;
+		case 'a': *xpos = 8; *ypos = 32; break;
+		case 'b': *xpos = 16; *ypos = 32; break;
+		case 'c': *xpos = 24; *ypos = 32; break;
+		case 'd': *xpos = 32; *ypos = 32; break;
+		case 'e': *xpos = 40; *ypos = 32; break;
+		case 'f': *xpos = 48; *ypos = 32; break;
+		case 'g': *xpos = 56; *ypos = 32; break;
+		case 'h': *xpos = 64; *ypos = 32; break;
+		case 'i': *xpos = 72; *ypos = 32; break;
+		case 'j': *xpos = 80; *ypos = 32; break;
+		case 'k': *xpos = 88; *ypos = 32; break;
+		case 'l': *xpos = 96; *ypos = 32; break;
+		case 'm': *xpos = 104; *ypos = 32; break;
+		case 'n': *xpos = 112; *ypos = 32; break;
+		case 'o': *xpos = 120; *ypos = 32; break;
+		case 'p': *xpos = 0; *ypos = 40; break;
+		case 'q': *xpos = 8; *ypos = 40; break;
+		case 'r': *xpos = 16; *ypos = 40; break;
+		case 's': *xpos = 24; *ypos = 40; break;
+		case 't': *xpos = 32; *ypos = 40; break;
+		case 'u': *xpos = 40; *ypos = 40; break;
+		case 'v': *xpos = 48; *ypos = 40; break;
+		case 'w': *xpos = 56; *ypos = 40; break;
+		case 'x': *xpos = 64; *ypos = 40; break;
+		case 'y': *xpos = 72; *ypos = 40; break;
+		case 'z': *xpos = 80; *ypos = 40; break;
+		case '{': *xpos = 88; *ypos = 40; break;
+		case '|': *xpos = 96; *ypos = 40; break;
+		case '}': *xpos = 104; *ypos = 40; break;
+		case '~': *xpos = 112; *ypos = 40; break;
+		//case ' ': *xpos = 120; *ypos = 40; break; // Triangle
+		default: *xpos = 0; *ypos = 0; break;
+	}
 }
