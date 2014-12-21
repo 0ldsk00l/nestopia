@@ -2,6 +2,7 @@ LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
 
+LOCAL_SHORT_COMMANDS := true
 LOCAL_MODULE    := libretro
 
 ifeq ($(TARGET_ARCH),arm)
