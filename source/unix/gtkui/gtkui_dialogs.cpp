@@ -47,7 +47,7 @@ void gtkui_file_open() {
 	gtk_file_filter_add_pattern(filter, "*.fds");
 	gtk_file_filter_add_pattern(filter, "*.unf");
 	gtk_file_filter_add_pattern(filter, "*.unif");
-	//gtk_file_filter_add_pattern(filter, "*.nsf");
+	gtk_file_filter_add_pattern(filter, "*.nsf");
 	gtk_file_filter_add_pattern(filter, "*.zip");
 	gtk_file_filter_add_pattern(filter, "*.7z");
 	gtk_file_filter_add_pattern(filter, "*.txz");

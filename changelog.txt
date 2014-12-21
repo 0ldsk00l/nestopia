@@ -1,6 +1,12 @@
 ----------------------------------------------------------------
 1.47-WIP
 ----------------------------------------------------------------
+Unix Shell:
+
+ Additions:
+  - On-screen text when saving/loading states
+  - Basic NSF player
+
 Core:
 
  Additions:

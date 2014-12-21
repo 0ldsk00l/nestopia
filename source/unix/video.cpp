@@ -27,6 +27,7 @@
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiInput.hpp"
 #include "core/api/NstApiVideo.hpp"
+#include "core/api/NstApiNsf.hpp"
 
 #include "main.h"
 #include "audio.h"
@@ -61,7 +62,7 @@ Video::RenderState renderstate;
 
 dimensions_t basesize, rendersize;
 
-extern bool playing;
+extern bool playing, nst_nsf;
 extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
@@ -161,6 +162,8 @@ void video_init() {
 	video_set_filter();
 	
 	opengl_init_structures();
+	
+	if (nst_nsf) { video_clear_buffer(); video_disp_nsf(); }
 	
 	video_set_cursor();
 }
@@ -277,6 +280,7 @@ void video_create_embedded() {
 	embedwindow = SDL_CreateWindowFrom((void *)GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
 	embedwindow->flags |= SDL_WINDOW_OPENGL;
 	SDL_GL_LoadLibrary(NULL);
+	if (nst_nsf) { video_disp_nsf(); }
 	#endif
 }
 
@@ -592,6 +596,31 @@ void video_unlock_screen(void*) {
 	if (drawtime) {
 		video_text_draw(timebuf, 208 * wscale, 218 * hscale);
 	}
+	
+	opengl_blit();
+}
+
+void video_clear_buffer() {
+	// Write black to the video buffer
+	for (int i = 0; i < 31457280; i++) {
+		videobuf[i] = 0x00000000;
+	}
+}
+
+void video_disp_nsf() {
+	// Display NSF text
+	Nsf nsf(emulator);
+	
+	int wscale = renderstate.width / 256;
+	int hscale = renderstate.height / 240;
+	
+	video_text_draw(nsf.GetName(), 4 * wscale, 16 * hscale);
+	video_text_draw(nsf.GetArtist(), 4 * wscale, 28 * hscale);
+	video_text_draw(nsf.GetCopyright(), 4 * wscale, 40 * hscale);
+	
+	char currentsong[10];
+	snprintf(currentsong, sizeof(currentsong), "%d / %d", nsf.GetCurrentSong() +1, nsf.GetNumSongs());
+	video_text_draw(currentsong, 4 * wscale, 52 * hscale);
 	
 	opengl_blit();
 }
