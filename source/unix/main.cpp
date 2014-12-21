@@ -49,6 +49,7 @@
 #include "core/api/NstApiRewinder.hpp"
 #include "core/api/NstApiCartridge.hpp"
 #include "core/api/NstApiMovie.hpp"
+#include "core/api/NstApiNsf.hpp"
 
 #include "main.h"
 #include "cli.h"
@@ -73,6 +74,7 @@ bool playing = false;
 bool updateok = false;
 
 bool nst_pal = false;
+bool nst_nsf = false;
 
 static int nst_quit = 0;
 
@@ -440,6 +442,12 @@ void nst_play() {
 	audio_set_params(cNstSound);
 	audio_unpause();
 	
+	if (nst_nsf) {
+		Nsf nsf(emulator);
+		nsf.PlaySong();
+		video_disp_nsf();
+	}
+	
 	updateok = false;
 	playing = true;
 }
@@ -739,6 +747,7 @@ void nst_load_fds_bios() {
 void nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
+	Nsf nsf(emulator);
 	Sound sound(emulator);
 	Nes::Result result;
 	char *rom;
@@ -840,6 +849,10 @@ void nst_load(const char *filename) {
 		fds.InsertDisk(0, 0);
 		nst_fds_info();
 	}
+	
+	// Check if this is an NSF
+	nst_nsf = (machine.Is(Machine::SOUND));
+	if (nst_nsf) { nsf.StopSong(); }
 	
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);

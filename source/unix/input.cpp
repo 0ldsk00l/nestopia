@@ -41,6 +41,7 @@ extern nstpaths_t nstpaths;
 extern dimensions_t rendersize;
 extern SDL_DisplayMode displaymode;
 extern Emulator emulator;
+extern bool nst_nsf;
 
 bool confrunning, kbactivate = false;
 
@@ -513,6 +514,30 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[ui.fullscreen]) { video_toggle_fullscreen(); }
 	if (keys[ui.filter]) { video_toggle_filter(); }
 	if (keys[ui.scalefactor]) { video_toggle_scalefactor(); }
+	
+	// NSF
+	if (nst_nsf) {
+		Nsf nsf(emulator);
+		
+		if (keys[SDL_SCANCODE_UP]) {
+			nsf.PlaySong();
+			video_clear_buffer();
+			video_disp_nsf();
+		}
+		if (keys[SDL_SCANCODE_DOWN]) {
+			//nsf.StopSong();
+		}
+		if (keys[SDL_SCANCODE_LEFT]) {
+			nsf.SelectPrevSong();
+			video_clear_buffer();
+			video_disp_nsf();
+		}
+		if (keys[SDL_SCANCODE_RIGHT]) {
+			nsf.SelectNextSong();
+			video_clear_buffer();
+			video_disp_nsf();
+		}
+	}
 	
 	// Escape exits when not in GUI mode
 	if (keys[SDL_SCANCODE_ESCAPE]) {
