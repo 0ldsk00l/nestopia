@@ -49,6 +49,7 @@
 #include "core/api/NstApiRewinder.hpp"
 #include "core/api/NstApiCartridge.hpp"
 #include "core/api/NstApiMovie.hpp"
+#include "core/api/NstApiNsf.hpp"
 
 #include "main.h"
 #include "cli.h"
@@ -73,6 +74,7 @@ bool playing = false;
 bool updateok = false;
 
 bool nst_pal = false;
+bool nst_nsf = false;
 
 static int nst_quit = 0;
 
@@ -91,6 +93,12 @@ static std::fstream *movierecfile;
 
 extern settings_t conf;
 extern bool altspeed;
+
+extern int drawtext;
+extern char textbuf[32];
+
+extern bool drawtime;
+extern char timebuf[6];
 
 // *******************
 // emulation callbacks
@@ -126,6 +134,8 @@ static void NST_CALLBACK nst_cb_event(void *userData, User::Event event, const v
 			break;
 		case User::EVENT_DISPLAY_TIMER:
 			fprintf(stderr, "\r%s", (const char*)data);
+			snprintf(timebuf, sizeof(timebuf), "%s", (const char*)data + strlen((char*)data) - 5);
+			drawtime = true;
 			break;
 		default: break;
 	}
@@ -336,6 +346,7 @@ void nst_state_save(char *filename) {
 	
 	if (statefile.is_open()) { machine.SaveState(statefile, Nes::Api::Machine::NO_COMPRESSION); }
 	fprintf(stderr, "State Saved: %s\n", filename);
+	snprintf(textbuf, sizeof(textbuf), "State Saved."); drawtext = 120;
 }
 
 void nst_state_load(char *filename) {
@@ -346,6 +357,7 @@ void nst_state_load(char *filename) {
 	
 	if (statefile.is_open()) { machine.LoadState(statefile); }
 	fprintf(stderr, "State Loaded: %s\n", filename);
+	snprintf(textbuf, sizeof(textbuf), "State Loaded."); drawtext = 120; 
 }
 
 void nst_state_quicksave(int slot) {
@@ -363,7 +375,8 @@ void nst_state_quickload(int slot) {
 		
 	struct stat qloadstat;
 	if (stat(slotpath, &qloadstat) == -1) {
-		fprintf(stderr, "No State to Load\n");
+		fprintf(stderr, "No State to Load\n"); drawtext = 120;
+		snprintf(textbuf, sizeof(textbuf), "No State to Load.");
 		return;
 	}
 	
@@ -428,6 +441,12 @@ void nst_play() {
 	
 	audio_set_params(cNstSound);
 	audio_unpause();
+	
+	if (nst_nsf) {
+		Nsf nsf(emulator);
+		nsf.PlaySong();
+		video_disp_nsf();
+	}
 	
 	updateok = false;
 	playing = true;
@@ -728,6 +747,7 @@ void nst_load_fds_bios() {
 void nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
+	Nsf nsf(emulator);
 	Sound sound(emulator);
 	Nes::Result result;
 	char *rom;
@@ -738,7 +758,7 @@ void nst_load(const char *filename) {
 	if (playing) { nst_pause(); }
 	
 	// Pull out any inserted cartridges
-	nst_unload();
+	nst_unload(); drawtime = false;
 	
 	// Handle the file as an archive if it is one
 	#ifdef _GTK
@@ -829,6 +849,10 @@ void nst_load(const char *filename) {
 		fds.InsertDisk(0, 0);
 		nst_fds_info();
 	}
+	
+	// Check if this is an NSF
+	nst_nsf = (machine.Is(Machine::SOUND));
+	if (nst_nsf) { nsf.StopSong(); }
 	
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);
