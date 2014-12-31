@@ -9,6 +9,7 @@
 #include <SDL.h>
 #include "core/api/NstApiInput.hpp"
 #include "core/api/NstApiVideo.hpp"
+#include "core/api/NstApiNsf.hpp"
 
 using namespace Nes::Api;
 
