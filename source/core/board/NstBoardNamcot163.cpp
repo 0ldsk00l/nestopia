@@ -289,7 +289,8 @@ namespace Nes
 
 				inline void N163::Sound::BaseChannel::SetWaveLength(const uint data)
 				{
-					const dword length = (0x20UL - (data & REG_WAVELENGTH)) << PHASE_SHIFT;
+					//const dword length = (0x20UL - (data & REG_WAVELENGTH)) << PHASE_SHIFT;
+					const dword length = (0x100UL - (data & REG_WAVELENGTH)) << PHASE_SHIFT;
 
 					if (waveLength != length)
 					{

@@ -81,7 +81,8 @@ namespace Nes
 						{
 							NUM_CHANNELS     = 8,
 							EXRAM_INC        = 0x80,
-							REG_WAVELENGTH   = 0x1C,
+							//REG_WAVELENGTH   = 0x1C,
+							REG_WAVELENGTH   = 0xFC,
 							REG_ENABLE_SHIFT = 5,
 							REG_VOLUME       = 0x0F,
 							PHASE_SHIFT      = 18,
