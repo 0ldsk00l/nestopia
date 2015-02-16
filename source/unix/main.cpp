@@ -271,6 +271,7 @@ void nst_fds_info() {
 	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
 
 	fprintf(stderr, "Fds: Disk %s Side %s\n", disk, side);
+	snprintf(textbuf, sizeof(textbuf), "Disk %s Side %s", disk, side); drawtext = 120;
 }
 
 void nst_flip_disk() {
