@@ -662,8 +662,21 @@ namespace Nes
 		{
 			if ((scanline != SCANLINE_VBLANK ) && (regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED))
 			{
-				scroll.ClockX();
-				scroll.ClockY();
+				//scroll.ClockX();
+				//scroll.ClockY();
+				if ((scroll.address & 0x001F) != 0x001F)
+				{
+					scroll.address++;
+				}
+				else
+				{
+					scroll.address ^= (0x001F | 0x0400);
+				}
+
+				if ((scroll.address & 0x7000) != (7U << 12))
+				{
+					scroll.address += (1U << 12);
+				}
 			}
 			else
 			{
