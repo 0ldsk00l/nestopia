@@ -969,8 +969,8 @@ int main(int argc, char *argv[]) {
 	
 	while (!nst_quit) {
 		#ifdef _GTK
-		while (gtk_events_pending()) {
-			gtk_main_iteration_do(FALSE);
+		while (gtk_events_pending() || !playing) {
+			gtk_main_iteration_do(TRUE);
 		}
 		#endif
 		if (playing) {
