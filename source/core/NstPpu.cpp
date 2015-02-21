@@ -947,6 +947,9 @@ namespace Nes
 			    (scanline == SCANLINE_VBLANK)) {
 				UpdateAddressLine(scroll.address & 0x3fff);
 			}
+			else {
+				return;
+			}
 
 			io.latch = data;
 
