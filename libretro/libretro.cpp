@@ -43,6 +43,7 @@ static char g_basename[256];
 static char g_rom_dir[256];
 static bool use_overscan;
 static unsigned blargg_ntsc;
+static bool fds_auto_insert;
 
 int16_t video_width = Api::Video::Output::WIDTH;
 size_t pitch;
@@ -220,6 +221,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
       { "nestopia_palette", "Palette; canonical|consumer|alternative|rgb" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
+      { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { NULL, NULL },
    };
 
@@ -258,7 +260,8 @@ void retro_reset(void)
    if (machine->Is(Nes::Api::Machine::DISK))
    {
       fds->EjectDisk();
-      fds->InsertDisk(0, 0);
+      if (fds_auto_insert)
+         fds->InsertDisk(0, 0);
    }
 }
 
@@ -325,16 +328,26 @@ static void update_input()
       
    if (machine->Is(Nes::Api::Machine::DISK))
    {
-      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L) &&
-            fds->CanChangeDiskSide())
-         fds->ChangeSide();
+      bool curL = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
+      static bool prevL = false;
+      if (curL && !prevL)
+      {
+         if (!fds->IsAnyDiskInserted())
+            fds->InsertDisk(0, 0);
+         else if (fds->CanChangeDiskSide())
+            fds->ChangeSide();
+      }
+      prevL = curL;
       
-      if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R) && (fds->GetNumDisks() > 1))
+      bool curR = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
+      static bool prevR = false;
+      if (curR && !prevR && (fds->GetNumDisks() > 1))
       {
          int currdisk = fds->GetCurrentDisk();
          fds->EjectDisk();
          fds->InsertDisk(!currdisk, 0);
       }
+      prevR = curR;
    }
 }
 
@@ -358,6 +371,11 @@ static void check_variables(void)
       else if (strcmp(var.value, "enabled") == 0)
          video.EnableUnlimSprites(true);
    }
+   
+   var.key = "nestopia_fds_auto_insert";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+      fds_auto_insert = (strcmp(var.value, "enabled") == 0);
    
    var.key = "nestopia_blargg_ntsc_filter";
    
@@ -668,9 +686,6 @@ bool retro_load_game(const struct retro_game_info *info)
    else
       machine->SetMode(Api::Machine::NTSC);
 
-   if (machine->Is(Nes::Api::Machine::DISK))
-      fds->InsertDisk(0, 0);
-
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "[Nestopia]: Machine is %s.\n", is_pal ? "PAL" : "NTSC");
 
@@ -707,6 +722,9 @@ bool retro_load_game(const struct retro_game_info *info)
    machine->Power(true);
 
    check_variables();
+
+   if (fds_auto_insert && machine->Is(Nes::Api::Machine::DISK))
+      fds->InsertDisk(0, 0);
    
    video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
 
