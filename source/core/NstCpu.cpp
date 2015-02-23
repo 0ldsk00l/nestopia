@@ -237,7 +237,10 @@ namespace Nes
 			pc = map.Peek16( RESET_VECTOR );
 
 			if (hard)
+			{
+				Poke(0x4017, 0x00);
 				cycles.count = cycles.clock[RESET_CYCLES-1];
+			}
 		}
 
 		void Cpu::SetModel(const CpuModel m)
