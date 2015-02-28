@@ -57,7 +57,7 @@ else ifeq ($(platform), ios)
 	fpic := -fPIC
 	SHARED := -dynamiclib
 	ifeq ($(IOSSDK),)
-		IOSSDK := $(shell xcrun -sdk iphoneos -show-sdk-path)
+		IOSSDK := $(shell xcodebuild -version -sdk iphoneos Path)
 	endif
 	CC = clang -arch armv7 -isysroot $(IOSSDK)
 	CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
