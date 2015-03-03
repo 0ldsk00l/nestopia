@@ -171,8 +171,8 @@ namespace Nes
 							irq.Update();
 							irq.unit.enabled = data & 0x01;
 
-							if (!irq.Connect( data & 0x80 ))
-								irq.ClearIRQ();
+							irq.Connect( data & 0x80 );
+							irq.ClearIRQ();
 
 							break;
 
