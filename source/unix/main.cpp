@@ -970,9 +970,10 @@ int main(int argc, char *argv[]) {
 	
 	while (!nst_quit) {
 		#ifdef _GTK
-		while (gtk_events_pending() || !playing) {
+		while (gtk_events_pending()) {
 			gtk_main_iteration_do(TRUE);
 		}
+		if (!playing) { gtk_main_iteration_do(TRUE); }
 		#endif
 		if (playing) {
 			while (SDL_PollEvent(&event)) {
