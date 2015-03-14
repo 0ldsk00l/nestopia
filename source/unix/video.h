@@ -52,6 +52,7 @@ void video_set_title(const char *title);
 
 long video_lock_screen(void*& ptr);
 void video_unlock_screen(void*);
+void video_screenshot();
 void video_clear_buffer();
 void video_disp_nsf();
 void video_text_draw(const char *text, int xpos, int ypos);

@@ -44,6 +44,4 @@ void nst_switch_disk();
 
 void nst_dipswitch();
 
-void SetupInput();
-
 #endif

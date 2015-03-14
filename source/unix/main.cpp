@@ -508,6 +508,16 @@ void nst_set_dirs() {
 #endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
+	
+	// create screenshots directory if it doesn't exist
+	snprintf(dirstr, sizeof(dirstr), "%sscreenshots", nstpaths.nstdir);
+#ifdef _MINGW	
+	if (mkdir(dirstr) && errno != EEXIST) {
+#else
+	if (mkdir(dirstr, 0755) && errno != EEXIST) {
+#endif
+		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
+	}
 }
 
 void nst_set_region() {

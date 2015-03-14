@@ -19,6 +19,8 @@ typedef struct {
 	SDL_Scancode qload1;
 	SDL_Scancode qload2;
 	
+	SDL_Scancode screenshot;
+	
 	SDL_Scancode fdsflip;
 	SDL_Scancode fdsswitch;
 	
@@ -66,6 +68,8 @@ typedef struct {
 	char *qsave2;
 	char *qload1;
 	char *qload2;
+	
+	char *screenshot;
 	
 	char *fdsflip;
 	char *fdsswitch;
