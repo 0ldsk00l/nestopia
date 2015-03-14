@@ -77,6 +77,9 @@ void gtkui_create() {
 	GtkWidget *statesave = gtk_image_menu_item_new_with_mnemonic("_Save State...");
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(statesave), gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
 	GtkWidget *sep_state = gtk_separator_menu_item_new();
+	GtkWidget *screenshot = gtk_image_menu_item_new_with_mnemonic("S_creenshot...");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(screenshot), gtk_image_new_from_stock(GTK_STOCK_SELECT_COLOR, GTK_ICON_SIZE_MENU));
+	GtkWidget *sep_screenshot = gtk_separator_menu_item_new();
 	GtkWidget *movieload = gtk_image_menu_item_new_with_label("Load Movie...");
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(movieload), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
 	GtkWidget *moviesave = gtk_image_menu_item_new_with_label("Record Movie...");
@@ -93,6 +96,8 @@ void gtkui_create() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), stateload);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), statesave);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_state);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), screenshot);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_screenshot);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movieload);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviesave);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), moviestop);
@@ -203,6 +208,9 @@ void gtkui_create() {
 	
 	g_signal_connect(G_OBJECT(stateload), "activate",
 		G_CALLBACK(gtkui_state_load), NULL);
+	
+	g_signal_connect(G_OBJECT(screenshot), "activate",
+		G_CALLBACK(gtkui_screenshot_save), NULL);
 	
 	g_signal_connect(G_OBJECT(moviesave), "activate",
 		G_CALLBACK(gtkui_movie_save), NULL);

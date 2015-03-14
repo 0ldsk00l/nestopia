@@ -21,6 +21,7 @@
  */
 
 #include "../main.h"
+#include "../video.h"
 
 #include "gtkui.h"
 #include "gtkui_cheats.h"
@@ -113,6 +114,31 @@ void gtkui_state_load() {
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 		nst_state_load(filename);
+		g_free(filename);
+	}
+	
+	gtk_widget_destroy(dialog);
+}
+
+void gtkui_screenshot_save() {
+	// Save a screenshot from the GUI
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save screenshot (.png)",
+				GTK_WINDOW(gtkwindow),
+				GTK_FILE_CHOOSER_ACTION_SAVE,
+				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
+				GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+				NULL);
+	
+	char sshotpath[512];
+	char sshotfile[768];
+	snprintf(sshotpath, sizeof(sshotpath), "%sscreenshots/", nstpaths.nstdir);
+	snprintf(sshotfile, sizeof(sshotfile), "%s%s.png", sshotpath, nstpaths.gamename);
+	gtk_file_chooser_set_current_name(GTK_FILE_CHOOSER(dialog), sshotfile);
+	gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), sshotpath);
+	
+	if (gtk_dialog_run(GTK_DIALOG (dialog)) == GTK_RESPONSE_ACCEPT) {
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+		video_screenshot(filename);
 		g_free(filename);
 	}
 	

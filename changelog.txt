@@ -16,6 +16,7 @@ Core:
  Fixes:
   - Reverted fix for Mapper 79
   - Fixed Burai Fighter status area (perilsensitive)
+  - FME-7 IRQ Fix (lidnariq)
 
 ----------------------------------------------------------------
 1.46.1/1.46.2
