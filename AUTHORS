@@ -15,6 +15,7 @@ emu-russia
 Geestarraw
 joepogo
 Keith Kelly
+lidnariq
 lioncash
 rnjacobs
 shalma
@@ -42,6 +43,10 @@ For details, read source/nes_ntsc/*
 
 inih -- simple .INI file parser Copyright (c) 2009, Brush Technology
 All rights reserved. For details, read source/unix/ini.h
+
+LodePNG version 20141130
+Copyright (c) 2005-2014 Lode Vandevenne
+For details, read source/unix/png.h
 
 zlib compression library
 Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler

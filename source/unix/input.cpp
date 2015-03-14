@@ -503,6 +503,9 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[ui.qload1]) { nst_state_quickload(0); }
 	if (keys[ui.qload2]) { nst_state_quickload(1); }
 	
+	// Screenshot
+	if (keys[ui.screenshot]) { video_screenshot(); }
+	
 	// Reset
 	if (keys[ui.reset]) { nst_reset(0); }
 	
@@ -694,6 +697,8 @@ void input_config_read() {
 		ui.qload1 = SDL_GetScancodeFromName(inputconf.qload1);
 		ui.qload2 = SDL_GetScancodeFromName(inputconf.qload2);
 		
+		ui.screenshot = SDL_GetScancodeFromName(inputconf.screenshot);
+		
 		ui.fdsflip = SDL_GetScancodeFromName(inputconf.fdsflip);
 		ui.fdsswitch = SDL_GetScancodeFromName(inputconf.fdsswitch);
 		
@@ -774,6 +779,8 @@ void input_config_write() {
 		fprintf(fp, "qload1=%s\n", SDL_GetScancodeName(ui.qload1));
 		fprintf(fp, "qload2=%s\n", SDL_GetScancodeName(ui.qload2));
 		
+		fprintf(fp, "screenshot=%s\n", SDL_GetScancodeName(ui.screenshot));
+		
 		fprintf(fp, "fdsflip=%s\n", SDL_GetScancodeName(ui.fdsflip));
 		fprintf(fp, "fdsswitch=%s\n", SDL_GetScancodeName(ui.fdsswitch));
 		
@@ -851,6 +858,8 @@ void input_set_default() {
 	ui.qload1 = SDL_GetScancodeFromName("F7");
 	ui.qload2 = SDL_GetScancodeFromName("F8");
 	
+	ui.screenshot = SDL_GetScancodeFromName("F9");
+	
 	ui.fdsflip = SDL_GetScancodeFromName("F3");
 	ui.fdsswitch = SDL_GetScancodeFromName("F4");
 	
@@ -921,6 +930,8 @@ static int input_config_match(void* user, const char* section, const char* name,
 	else if (MATCH("ui", "qsave2")) { pconfig->qsave2 = strdup(value); }
 	else if (MATCH("ui", "qload1")) { pconfig->qload1 = strdup(value); }
 	else if (MATCH("ui", "qload2")) { pconfig->qload2 = strdup(value); }
+	
+	else if (MATCH("ui", "screenshot")) { pconfig->screenshot = strdup(value); }
 	
 	else if (MATCH("ui", "fdsflip")) { pconfig->fdsflip = strdup(value); }
 	else if (MATCH("ui", "fdsswitch")) { pconfig->fdsswitch = strdup(value); }

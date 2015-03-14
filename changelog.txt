@@ -6,6 +6,7 @@ Unix Shell:
  Additions:
   - On-screen text when saving/loading states
   - Basic NSF player
+  - PNG Screenshots
 
 Core:
 

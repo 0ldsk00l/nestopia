@@ -349,6 +349,7 @@ IOBJS += objs/unix/config.o
 IOBJS += objs/unix/cheats.o
 IOBJS += objs/unix/cursor.o
 IOBJS += objs/unix/ini.o
+IOBJS += objs/unix/png.o
 
 # object dirs
 OBJDIRS += objs objs/core objs/core/api objs/core/board objs/core/input

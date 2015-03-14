@@ -23,6 +23,7 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <time.h>
 
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiInput.hpp"
@@ -35,6 +36,7 @@
 #include "config.h"
 #include "cursor.h"
 #include "font.h"
+#include "png.h"
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
@@ -586,7 +588,7 @@ void video_unlock_screen(void*) {
 	
 	int wscale = renderstate.width / 256;
 	int hscale = renderstate.height / 240;
-		
+	
 	if (drawtext) {
 		//video_text_draw(textbuf, 8 * wscale, 16 * hscale); // Top
 		video_text_draw(textbuf, 8 * wscale, 218 * hscale); // Bottom
@@ -598,6 +600,41 @@ void video_unlock_screen(void*) {
 	}
 	
 	opengl_blit();
+}
+
+void video_screenshot_flip(unsigned char *pixels, int width, int height, int bytes) {
+	// Flip the pixels
+	int rowsize = width * bytes;
+	unsigned char *row = (unsigned char*)malloc(rowsize);
+	unsigned char *low = pixels;
+	unsigned char *high = &pixels[(height - 1) * rowsize];
+	
+	for (; low < high; low += rowsize, high -= rowsize) {
+		memcpy(row, low, rowsize);
+		memcpy(low, high, rowsize);
+		memcpy(high, row, rowsize);
+	}
+	free(row);
+}
+
+void video_screenshot() {
+	// Take a screenshot in .png format
+	unsigned char *pixels;
+	pixels = (unsigned char*)malloc(sizeof(unsigned char) * rendersize.w * rendersize.h * 4);
+	
+	// Read the pixels and flip them vertically
+	glReadPixels(0, 0, rendersize.w, rendersize.h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
+	video_screenshot_flip(pixels, rendersize.w, rendersize.h, 4);
+	
+	// Set the filename
+	char sshotpath[512];
+	snprintf(sshotpath, sizeof(sshotpath), "%sscreenshots/%s-%d-%d.png", nstpaths.nstdir, nstpaths.gamename, time(NULL), rand() % 899 + 100);
+	
+	// Save the file
+	lodepng_encode32_file(sshotpath, (const unsigned char*)pixels, rendersize.w, rendersize.h);
+	fprintf(stderr, "Screenshot: %s\n", sshotpath);
+	
+	free(pixels);
 }
 
 void video_clear_buffer() {
