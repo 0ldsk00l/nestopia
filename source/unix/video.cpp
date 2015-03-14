@@ -617,7 +617,7 @@ void video_screenshot_flip(unsigned char *pixels, int width, int height, int byt
 	free(row);
 }
 
-void video_screenshot() {
+void video_screenshot(const char* filename) {
 	// Take a screenshot in .png format
 	unsigned char *pixels;
 	pixels = (unsigned char*)malloc(sizeof(unsigned char) * rendersize.w * rendersize.h * 4);
@@ -626,13 +626,18 @@ void video_screenshot() {
 	glReadPixels(0, 0, rendersize.w, rendersize.h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
 	video_screenshot_flip(pixels, rendersize.w, rendersize.h, 4);
 	
-	// Set the filename
-	char sshotpath[512];
-	snprintf(sshotpath, sizeof(sshotpath), "%sscreenshots/%s-%d-%d.png", nstpaths.nstdir, nstpaths.gamename, time(NULL), rand() % 899 + 100);
-	
-	// Save the file
-	lodepng_encode32_file(sshotpath, (const unsigned char*)pixels, rendersize.w, rendersize.h);
-	fprintf(stderr, "Screenshot: %s\n", sshotpath);
+	if (filename == NULL) {
+		// Set the filename
+		char sshotpath[512];
+		snprintf(sshotpath, sizeof(sshotpath), "%sscreenshots/%s-%d-%d.png", nstpaths.nstdir, nstpaths.gamename, time(NULL), rand() % 899 + 100);
+		
+		// Save the file
+		lodepng_encode32_file(sshotpath, (const unsigned char*)pixels, rendersize.w, rendersize.h);
+		fprintf(stderr, "Screenshot: %s\n", sshotpath);
+	}
+	else {
+		lodepng_encode32_file(filename, (const unsigned char*)pixels, rendersize.w, rendersize.h);
+	}
 	
 	free(pixels);
 }

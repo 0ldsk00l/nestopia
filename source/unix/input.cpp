@@ -504,7 +504,7 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[ui.qload2]) { nst_state_quickload(1); }
 	
 	// Screenshot
-	if (keys[ui.screenshot]) { video_screenshot(); }
+	if (keys[ui.screenshot]) { video_screenshot(NULL); }
 	
 	// Reset
 	if (keys[ui.reset]) { nst_reset(0); }
