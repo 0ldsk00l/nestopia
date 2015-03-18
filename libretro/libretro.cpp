@@ -454,9 +454,9 @@ static void check_variables(void)
           * that can be decoded by the frontend (using shaders for example)
           * the following formulas can be used to extract the
           * values back from a normalized R/G/B triplet
-          * chroma   = floor(R * 15.0) + 0.5)
-          * level    = floor(G *  3.0) + 0.5)
-          * emphasis = floor(B *  7.0) + 0.5) */
+          * chroma   = floor(R * 15.0) + 0.5
+          * level    = floor(G *  3.0) + 0.5
+          * emphasis = floor(B *  7.0) + 0.5 */
          unsigned char raw_palette[512][3];
          int i;
          for (i = 0; i < 512; i++)
