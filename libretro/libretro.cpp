@@ -219,7 +219,7 @@ void retro_set_environment(retro_environment_t cb)
 
    static const struct retro_variable vars[] = {
       { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
-      { "nestopia_palette", "Palette; canonical|consumer|alternative|rgb" },
+      { "nestopia_palette", "Palette; canonical|consumer|alternative|rgb|raw" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { NULL, NULL },
@@ -448,6 +448,25 @@ static void check_variables(void)
       }
       else if (strcmp(var.value, "rgb") == 0) {
          video.GetPalette().SetMode(Api::Video::Palette::MODE_RGB);
+      }
+      else if (strcmp(var.value, "raw") == 0) {
+         /* outputs raw chroma/level/emphasis in the R/G/B channels
+          * that can be decoded by the frontend (using shaders for example)
+          * the following formulas can be used to extract the
+          * values back from a normalized R/G/B triplet
+          * chroma   = floor(R * 15.0) + 0.5)
+          * level    = floor(G *  3.0) + 0.5)
+          * emphasis = floor(B *  7.0) + 0.5) */
+         unsigned char raw_palette[512][3];
+         int i;
+         for (i = 0; i < 512; i++)
+         {
+            raw_palette[i][0] = (((i >> 0) & 0xF) * 255.0) / 15.0;
+            raw_palette[i][1] = (((i >> 4) & 0x3) * 255.0) / 3.0;
+            raw_palette[i][2] = (((i >> 6) & 0x7) * 255.0) / 7.0;
+         }
+         video.GetPalette().SetMode(Api::Video::Palette::MODE_CUSTOM);
+         video.GetPalette().SetCustom(raw_palette, Api::Video::Palette::EXT_PALETTE);
       }
    }
    
