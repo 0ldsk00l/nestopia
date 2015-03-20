@@ -193,6 +193,8 @@ void audio_adj_volume() {
 	sound.SetVolume(Sound::CHANNEL_VRC7, conf.audio_vol_vrc7);
 	sound.SetVolume(Sound::CHANNEL_N163, conf.audio_vol_n163);
 	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);
+	
+	if (conf.audio_volume == 0) { memset(audiobuf, 0, sizeof(audiobuf)); }
 }
 
 // Timing Functions
