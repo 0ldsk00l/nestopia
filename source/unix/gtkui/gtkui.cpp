@@ -60,6 +60,12 @@ void gtkui_state_quicksave(GtkWidget *widget, gpointer userdata) {
 	nst_state_quicksave(GPOINTER_TO_INT(userdata));
 }
 
+void gtkui_open_recent(GtkWidget *widget, gpointer userdata) {
+	// Open a recently used item
+	gchar *uri = gtk_recent_chooser_get_current_uri((GtkRecentChooser*)widget);
+	nst_load(g_filename_from_uri(uri, NULL, NULL));
+}
+
 void gtkui_create() {
 	// Create the GTK+ Window
 	
@@ -81,6 +87,8 @@ void gtkui_create() {
 	GtkWidget *filemenu = gtk_menu_new();
 	GtkWidget *file = gtk_menu_item_new_with_mnemonic("_File");
 	GtkWidget *open = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
+	GtkWidget *recent = gtk_image_menu_item_new_with_label("Open Recent");
+		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(recent), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
 	GtkWidget *sep_open = gtk_separator_menu_item_new();
 	GtkWidget *stateload = gtk_image_menu_item_new_with_mnemonic("_Load State...");
 		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(stateload), gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_MENU));
@@ -116,9 +124,32 @@ void gtkui_create() {
 	GtkWidget *sep_movie = gtk_separator_menu_item_new();
 	GtkWidget *quit = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
 	
+	// Set up the recently used items
+	GtkWidget *recent_items = gtk_recent_chooser_menu_new();
+	GtkRecentFilter *recent_filter = gtk_recent_filter_new();
+		gtk_recent_filter_add_pattern(recent_filter, "*.nes");
+		gtk_recent_filter_add_pattern(recent_filter, "*.fds");
+		gtk_recent_filter_add_pattern(recent_filter, "*.unf");
+		gtk_recent_filter_add_pattern(recent_filter, "*.unif");
+		gtk_recent_filter_add_pattern(recent_filter, "*.nsf");
+		gtk_recent_filter_add_pattern(recent_filter, "*.zip");
+		gtk_recent_filter_add_pattern(recent_filter, "*.7z");
+		gtk_recent_filter_add_pattern(recent_filter, "*.txz");
+		gtk_recent_filter_add_pattern(recent_filter, "*.tar.xz");
+		gtk_recent_filter_add_pattern(recent_filter, "*.xz");
+		gtk_recent_filter_add_pattern(recent_filter, "*.tgz");
+		gtk_recent_filter_add_pattern(recent_filter, "*.tar.gz");
+		gtk_recent_filter_add_pattern(recent_filter, "*.gz");
+		gtk_recent_filter_add_pattern(recent_filter, "*.tbz");
+		gtk_recent_filter_add_pattern(recent_filter, "*.tar.bz2");
+		gtk_recent_filter_add_pattern(recent_filter, "*.bz2");
+	gtk_recent_chooser_add_filter(GTK_RECENT_CHOOSER(recent_items), recent_filter);
+	
 	// Populate the File menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(file), filemenu);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), open);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), recent);
+		gtk_menu_item_set_submenu(GTK_MENU_ITEM(recent), recent_items);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_open);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), stateload);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), statesave);
@@ -243,6 +274,9 @@ void gtkui_create() {
 	// File menu
 	g_signal_connect(G_OBJECT(open), "activate",
 		G_CALLBACK(gtkui_file_open), NULL);
+	
+	g_signal_connect(G_OBJECT(recent_items), "item-activated",
+		G_CALLBACK(gtkui_open_recent), NULL);
 	
 	g_signal_connect(G_OBJECT(stateload), "activate",
 		G_CALLBACK(gtkui_state_load), NULL);
