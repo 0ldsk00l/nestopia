@@ -39,6 +39,8 @@ extern char padpath[512];
 extern bool confrunning;
 
 GtkWidget *configwindow;
+GtkWidget *notebook;
+gint tabnum = 0;
 
 // Audio
 GtkWidget *scale_audio_volume[NUMCHANNELS];
@@ -62,7 +64,7 @@ GtkWidget *gtkui_config() {
 	
 	GtkWidget *box_upper = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
 	GtkWidget *box_lower = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
-	GtkWidget *notebook = gtk_notebook_new();
+	notebook = gtk_notebook_new();
 	
 	gtk_container_add(GTK_CONTAINER(configwindow), box_upper);
 	
@@ -1081,11 +1083,14 @@ GtkWidget *gtkui_config() {
 	
 	gtk_widget_show_all(configwindow);
 	
+	gtk_notebook_set_current_page(GTK_NOTEBOOK(notebook), tabnum);
+	
 	return configwindow;
 }
 
 void gtkui_config_ok() {
 	if (confrunning) { confrunning = false; }
+	tabnum = gtk_notebook_get_current_page(GTK_NOTEBOOK(notebook));
 	gtk_widget_destroy(configwindow);
 	configwindow = NULL;
 }
