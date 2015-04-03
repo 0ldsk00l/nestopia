@@ -36,6 +36,7 @@
 extern settings_t conf;
 extern gamepad_t player[NUMGAMEPADS];
 extern char padpath[512];
+extern bool playing;
 extern bool confrunning;
 
 GtkWidget *configwindow;
@@ -58,6 +59,7 @@ GtkWidget *gtkui_config() {
 	// Create the Configuration window
 	
 	if (configwindow) { return NULL; }
+	if (conf.misc_config_pause) { if (playing) { nst_pause(); } }
 	
 	configwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(configwindow), "Configuration");
@@ -1048,6 +1050,20 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(check_misc_disable_gui), "toggled",
 		G_CALLBACK(gtkui_cb_misc_disable_gui), NULL);
 	
+	// Pause While Configuration Open
+	GtkWidget *check_misc_config_pause = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Pause While Configuration Open",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_config_pause), conf.misc_config_pause);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc), check_misc_config_pause, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_misc_config_pause), "toggled",
+		G_CALLBACK(gtkui_cb_misc_config_pause), NULL);
+	
 	// Structuring the notebook
 	GtkWidget *label_video = gtk_label_new("Video");
 	GtkWidget *label_audio = gtk_label_new("Audio");
@@ -1093,6 +1109,7 @@ void gtkui_config_ok() {
 	tabnum = gtk_notebook_get_current_page(GTK_NOTEBOOK(notebook));
 	gtk_widget_destroy(configwindow);
 	configwindow = NULL;
+	nst_play();
 }
 
 void gtkui_audio_volume() {
