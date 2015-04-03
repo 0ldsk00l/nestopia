@@ -72,9 +72,12 @@ void gtkui_create() {
 	gtkui_image_paths();
 	GdkPixbuf *icon = gdk_pixbuf_new_from_file(iconpath, NULL);
 	
+	char title[24];
+	snprintf(title, sizeof(title), "Nestopia UE %s", VERSION);
+	
 	gtkwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_icon(GTK_WINDOW(gtkwindow), icon);
-	gtk_window_set_title(GTK_WINDOW(gtkwindow), "Nestopia");
+	gtk_window_set_title(GTK_WINDOW(gtkwindow), title);
 	gtk_window_set_resizable(GTK_WINDOW(gtkwindow), FALSE);
 	
 	GtkWidget *box = gtk_box_new(GTK_ORIENTATION_VERTICAL, 0);
