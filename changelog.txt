@@ -7,6 +7,12 @@ Unix Shell:
   - On-screen text when saving/loading states
   - Basic NSF player
   - PNG Screenshots
+  - Quick State Save/Load menu items
+  - Open Recent menu item
+  - Ability to pause games when configuration dialog is open
+
+ Fixes:
+  - Empty audio buffer when volume is set to 0
 
 Core:
 
