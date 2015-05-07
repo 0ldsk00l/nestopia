@@ -11,6 +11,9 @@ Unix Shell:
   - Open Recent menu item
   - Ability to pause games when configuration dialog is open
 
+ Changes:
+  - Updated to modern OpenGL (version 3.2 minimum)
+
  Fixes:
   - Empty audio buffer when volume is set to 0
 
