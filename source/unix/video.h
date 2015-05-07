@@ -7,10 +7,11 @@
 #define OVERSCAN_BOTTOM 8
 #define OVERSCAN_TOP 8
 
+#include <GL/glew.h>
+#include <GL/glu.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_endian.h>
-#include "GL/glu.h"
 
 // This is part of an elaborate hack to embed the SDL window
 struct SDL_Window {
@@ -32,14 +33,15 @@ typedef struct {
 	int h;
 } dimensions_t;
 
-void opengl_init_structures();
-void opengl_cleanup();
-void opengl_blit();
+void ogl_init();
+void ogl_deinit();
+void ogl_render();
 
 void video_init();
 void video_create_standalone();
 void video_create_embedded();
 void video_create();
+void video_swapbuffers();
 void video_destroy();
 void video_toggle_fullscreen();
 void video_toggle_filter();
