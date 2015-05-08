@@ -114,6 +114,8 @@ void ogl_init() {
 		1.0, 0.0		// Texture 4 (X, Y)
 	};
 	
+	GLint status;
+	
 	glGenVertexArrays(1, &vao);
 	glBindVertexArray(vao);
 	
@@ -125,15 +127,25 @@ void ogl_init() {
 	glShaderSource(vshader, 1, &vshader_src, NULL);
 	glCompileShader(vshader);
 	
+	glGetShaderiv(vshader, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE) { fprintf(stderr, "Failed to compile vertex shader\n"); }
+	
 	fshader = glCreateShader(GL_FRAGMENT_SHADER);
 	glShaderSource(fshader, 1, &fshader_src, NULL);
 	glCompileShader(fshader);
+	
+	glGetShaderiv(fshader, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE) { fprintf(stderr, "Failed to compile fragment shader\n"); }
 	
 	GLuint gl_shader_prog = glCreateProgram();
 	glAttachShader(gl_shader_prog, vshader);
 	glAttachShader(gl_shader_prog, fshader);
 	
 	glLinkProgram(gl_shader_prog);
+	
+	glValidateProgram(gl_shader_prog);
+	glGetProgramiv(gl_shader_prog, GL_LINK_STATUS, &status);
+	if (status == GL_FALSE) { fprintf(stderr, "Failed to link shader program\n"); }
 	
 	glUseProgram(gl_shader_prog);
 	
@@ -302,10 +314,6 @@ void video_create_standalone() {
 	//printf("w: %d\th: %d\n", displaymode.w, displaymode.h);
 	//printf("Window Flags: %x\n", SDL_GetWindowFlags(sdlwindow));
 	
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-	
 	SDL_GL_MakeCurrent(sdlwindow, glcontext);
 	SDL_GL_SetSwapInterval(conf.timing_vsync);
 }
@@ -324,6 +332,10 @@ void video_create_embedded() {
 
 void video_create() {
 	// Create the necessary window(s)
+	
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	
 	#ifdef _GTK
 	if (conf.misc_disable_gui) {
@@ -346,6 +358,8 @@ void video_create() {
 	if(glcontext == NULL) {
 		fprintf(stderr, "Could not create glcontext: %s\n", SDL_GetError());
 	}
+	
+	fprintf(stderr, "OpenGL: %s\n", glGetString(GL_VERSION));
 }
 
 void video_swapbuffers() {
