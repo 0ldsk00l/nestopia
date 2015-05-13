@@ -13,6 +13,11 @@ typedef struct {
 	int video_contrast;
 	int video_hue;
 	int video_ntsc_mode;
+	int video_ntsc_sharpness;
+	int video_ntsc_resolution;
+	int video_ntsc_bleed;
+	int video_ntsc_artifacts;
+	int video_ntsc_fringing;
 	int video_xbr_corner_rounding;
 	bool video_linear_filter;
 	bool video_tv_aspect;

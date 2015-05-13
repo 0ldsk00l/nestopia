@@ -65,8 +65,14 @@ void config_file_write() {
 		fprintf(fp, "contrast=%d\n\n", conf.video_contrast);
 		fprintf(fp, "; Valid values are -45 to 45.\n");
 		fprintf(fp, "hue=%d\n\n", conf.video_hue);
-		fprintf(fp, "; 0=Composite, 1=S-Video, 2=RGB\n");
+		fprintf(fp, "; 0=Composite, 1=S-Video, 2=RGB, 3=Custom\n");
 		fprintf(fp, "ntsc_mode=%d\n\n", conf.video_ntsc_mode);
+		fprintf(fp, "; Valid values are -100 to 100.\n");
+		fprintf(fp, "ntsc_sharpness=%d\n", conf.video_ntsc_sharpness);
+		fprintf(fp, "ntsc_resolution=%d\n", conf.video_ntsc_resolution);
+		fprintf(fp, "ntsc_bleed=%d\n", conf.video_ntsc_bleed);
+		fprintf(fp, "ntsc_artifacts=%d\n", conf.video_ntsc_artifacts);
+		fprintf(fp, "ntsc_fringing=%d\n\n", conf.video_ntsc_fringing);
 		fprintf(fp, "; 0=None, 1=Some, 2=All\n");
 		fprintf(fp, "xbr_corner_rounding=%d\n\n", conf.video_xbr_corner_rounding);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
@@ -145,6 +151,11 @@ void config_set_default() {
 	conf.video_contrast = 0; // -100 to 100
 	conf.video_hue = 0; // -45 to 45
 	conf.video_ntsc_mode = 0;
+	conf.video_ntsc_sharpness = 0; // -100 to 100
+	conf.video_ntsc_resolution = 0; // -100 to 100
+	conf.video_ntsc_bleed = 0; // -100 to 100
+	conf.video_ntsc_artifacts = 0; // -100 to 100
+	conf.video_ntsc_fringing = 0; // -100 to 100
 	conf.video_xbr_corner_rounding = 0;
 	conf.video_linear_filter = false;
 	conf.video_tv_aspect = false;
@@ -204,6 +215,11 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("video", "contrast")) { pconfig->video_contrast = atoi(value); }
 	else if (MATCH("video", "hue")) { pconfig->video_hue = atoi(value); }
 	else if (MATCH("video", "ntsc_mode")) { pconfig->video_ntsc_mode = atoi(value); }
+	else if (MATCH("video", "ntsc_sharpness")) { pconfig->video_ntsc_sharpness = atoi(value); }
+	else if (MATCH("video", "ntsc_resolution")) { pconfig->video_ntsc_resolution = atoi(value); }
+	else if (MATCH("video", "ntsc_bleed")) { pconfig->video_ntsc_bleed = atoi(value); }
+	else if (MATCH("video", "ntsc_artifacts")) { pconfig->video_ntsc_artifacts = atoi(value); }
+	else if (MATCH("video", "ntsc_fringing")) { pconfig->video_ntsc_fringing = atoi(value); }
 	else if (MATCH("video", "xbr_corner_rounding")) { pconfig->video_xbr_corner_rounding = atoi(value); }
 	else if (MATCH("video", "linear_filter")) { pconfig->video_linear_filter = atoi(value); }
 	else if (MATCH("video", "tv_aspect")) { pconfig->video_tv_aspect = atoi(value); }
