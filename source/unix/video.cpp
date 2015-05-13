@@ -516,6 +516,14 @@ void video_set_filter() {
 			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
 			break;
 		
+		case 3: // Custom
+			video.SetSharpness(conf.video_ntsc_sharpness);
+			video.SetColorResolution(conf.video_ntsc_resolution);
+			video.SetColorBleed(conf.video_ntsc_bleed);
+			video.SetColorArtifacts(conf.video_ntsc_artifacts);
+			video.SetColorFringing(conf.video_ntsc_fringing);
+			break;
+		
 		default: break;
 	}
 	
