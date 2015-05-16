@@ -204,7 +204,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 
    // It's better if the size is based on NTSC_WIDTH if the filter is on
    const retro_game_geometry geom = {
-      Api::Video::Output::WIDTH,
+      Api::Video::Output::WIDTH - (overscan_h ? 16 : 0),
       Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
       Api::Video::Output::NTSC_WIDTH,
       Api::Video::Output::HEIGHT,
@@ -294,7 +294,7 @@ static void update_input()
    input->vsSystem.insertCoin = 0;
    
    if (Api::Input(emulator).GetConnectedController(1) == 5) {
-      static int zapx = 0; 
+      static int zapx = overscan_h ? 8 : 0; 
       static int zapy = overscan_v ? 8 : 0;
       zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
       zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
@@ -518,10 +518,8 @@ void retro_run(void)
       video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
    }
    
-   bool overscan = blargg_ntsc || overscan_v;
-   
-   video_cb(video_buffer + (overscan_v ? (256 * 8) : 0),
-         video_width,
+   video_cb(video_buffer + (overscan_v ? ((overscan_h ? 8 : 0) + 256 * 8) : (overscan_h ? 8 : 0) + 0),
+         video_width - (overscan_h ? 16 : 0),
          Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
          pitch);
 }
