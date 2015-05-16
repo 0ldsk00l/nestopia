@@ -41,9 +41,10 @@ static Api::Machine *machine;
 static Api::Fds *fds;
 static char g_basename[256];
 static char g_rom_dir[256];
-static bool use_overscan;
 static unsigned blargg_ntsc;
 static bool fds_auto_insert;
+static bool overscan_v;
+static bool overscan_h;
 
 int16_t video_width = Api::Video::Output::WIDTH;
 size_t pitch;
@@ -204,7 +205,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
    // It's better if the size is based on NTSC_WIDTH if the filter is on
    const retro_game_geometry geom = {
       Api::Video::Output::WIDTH,
-      Api::Video::Output::HEIGHT - (use_overscan ? 0 : 16),
+      Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
       Api::Video::Output::NTSC_WIDTH,
       Api::Video::Output::HEIGHT,
       4.0 / 3.0,
@@ -222,6 +223,8 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_palette", "Palette; consumer|canonical|alternative|rgb|raw" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
+      { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
+      { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
       { NULL, NULL },
    };
 
@@ -292,7 +295,7 @@ static void update_input()
    
    if (Api::Input(emulator).GetConnectedController(1) == 5) {
       static int zapx = 0; 
-      static int zapy = use_overscan ? 0 : 8;
+      static int zapy = overscan_v ? 8 : 0;
       zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
       zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
    
@@ -470,6 +473,16 @@ static void check_variables(void)
       }
    }
    
+   var.key = "nestopia_overscan_v";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+      overscan_v = (strcmp(var.value, "enabled") == 0);
+   
+   var.key = "nestopia_overscan_h";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+      overscan_h = (strcmp(var.value, "enabled") == 0);
+   
    pitch = video_width * 4;
    
    renderState.filter = filter;
@@ -505,11 +518,11 @@ void retro_run(void)
       video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
    }
    
-   bool overscan = blargg_ntsc || use_overscan;
+   bool overscan = blargg_ntsc || overscan_v;
    
-   video_cb(video_buffer + (overscan ? 0 : (256 * 8)),
+   video_cb(video_buffer + (overscan_v ? (256 * 8) : 0),
          video_width,
-         Api::Video::Output::HEIGHT - (overscan ? 0 : 16),
+         Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
          pitch);
 }
 
@@ -620,9 +633,6 @@ bool retro_load_game(const struct retro_game_info *info)
 
    if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
       return false;
-
-   if (!environ_cb(RETRO_ENVIRONMENT_GET_OVERSCAN, &use_overscan))
-      use_overscan = true;
 
    snprintf(db_path, sizeof(db_path), "%s%cNstDatabase.xml", dir, slash);
 
