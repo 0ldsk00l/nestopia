@@ -219,7 +219,7 @@ void retro_set_environment(retro_environment_t cb)
 
    static const struct retro_variable vars[] = {
       { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
-      { "nestopia_palette", "Palette; canonical|consumer|alternative|rgb|raw" },
+      { "nestopia_palette", "Palette; consumer|canonical|alternative|rgb|raw" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { NULL, NULL },
@@ -434,13 +434,13 @@ static void check_variables(void)
    
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
-      if (strcmp(var.value, "canonical") == 0) {
-         video.GetPalette().SetMode(Api::Video::Palette::MODE_YUV);
-         video.SetDecoder(Api::Video::DECODER_CANONICAL);
-      }
-      else if (strcmp(var.value, "consumer") == 0) {
+      if (strcmp(var.value, "consumer") == 0) {
          video.GetPalette().SetMode(Api::Video::Palette::MODE_YUV);
          video.SetDecoder(Api::Video::DECODER_CONSUMER);
+      }
+      else if (strcmp(var.value, "canonical") == 0) {
+         video.GetPalette().SetMode(Api::Video::Palette::MODE_YUV);
+         video.SetDecoder(Api::Video::DECODER_CANONICAL);
       }
       else if (strcmp(var.value, "alternative") == 0) {
          video.GetPalette().SetMode(Api::Video::Palette::MODE_YUV);
