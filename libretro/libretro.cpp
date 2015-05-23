@@ -41,6 +41,7 @@ static Api::Machine *machine;
 static Api::Fds *fds;
 static char g_basename[256];
 static char g_rom_dir[256];
+static char *g_save_dir;
 static unsigned blargg_ntsc;
 static bool fds_auto_insert;
 static bool overscan_v;
@@ -109,7 +110,7 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
       case Api::User::File::LOAD_FDS:
          {
             char base[256];
-            snprintf(base, sizeof(base), "%s%c%s.sav", g_rom_dir, slash, g_basename);
+            snprintf(base, sizeof(base), "%s%c%s.sav", g_save_dir, slash, g_basename);
             if (log_cb)
                log_cb(RETRO_LOG_INFO, "Want to load FDS sav from: %s\n", base);
             std::ifstream in_tmp(base,std::ifstream::in|std::ifstream::binary);
@@ -123,7 +124,7 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
       case Api::User::File::SAVE_FDS:
          {
             char base[256];
-            snprintf(base, sizeof(base), "%s%c%s.sav", g_rom_dir, slash, g_basename);
+            snprintf(base, sizeof(base), "%s%c%s.sav", g_save_dir, slash, g_basename);
             if (log_cb)
                log_cb(RETRO_LOG_INFO, "Want to save FDS sav to: %s\n", base);
             std::ofstream out_tmp(base,std::ifstream::out|std::ifstream::binary);
@@ -695,6 +696,12 @@ bool retro_load_game(const struct retro_game_info *info)
       }
       else
          return false;
+   }
+   
+   if (!environ_cb(RETRO_ENVIRONMENT_GET_SAVE_DIRECTORY, &g_save_dir))
+   {
+      if (log_cb)
+         log_cb(RETRO_LOG_ERROR, "Could not find save directory.\n");
    }
 
    Api::Machine::FavoredSystem system = Api::Machine::FAVORED_NES_NTSC;
