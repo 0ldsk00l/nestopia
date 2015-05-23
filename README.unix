@@ -12,13 +12,13 @@ Linux:
 
 * Make sure you have the proper development libraries installed.
   In Debian:
-	apt-get install libsdl2-dev libgtk-3-dev libarchive-dev libao-dev
+   apt-get install libglew-dev libsdl2-dev libgtk-3-dev libarchive-dev libao-dev
 
 * cd to the nestopia source directory:
-	make
+   make
 
 * Install globally and add menu entries:
-	sudo make install
+   sudo make install
 
 Free/Open/NetBSD:
 
@@ -26,10 +26,10 @@ Free/Open/NetBSD:
   pkgsrc or binary packages. Also make sure to have xdg-utils installed.
 
 * cd to the nestopia source directory:
-	gmake
+   gmake
 
 * Install globally and add menu entries:
-	sudo gmake install
+   sudo gmake install
 
 Modes
 =====
@@ -46,7 +46,7 @@ Post-Installation
 =================
 
 * Copy the Famicom Disk System rom (not included) to ~/.nestopia:
-	cp disksys.rom ~/.nestopia/disksys.rom
+   cp disksys.rom ~/.nestopia/disksys.rom
 
 Configuration
 =============
@@ -68,25 +68,26 @@ Patching
 Hardcoded Keys
 ==============
 
-Esc			= Exit (CLI mode)
+Esc           = Exit (CLI mode)
 
-`			= Alternate Speed (Fast-forward)
+`             = Alternate Speed (Fast-forward)
 
-F1, F2		= Insert Coins
-F3			= Flip FDS Disk
-F4			= Switch FDS Disk
-F5			= Quick Save (slot 1)
-F6			= Quick Save (slot 2)
-F7			= Quick Load (slot 1)
-F8			= Quick Load (slot 2)
-F12			= Reset
+F1, F2        = Insert Coins
+F3            = Flip FDS Disk
+F4            = Switch FDS Disk
+F5            = Quick Save (slot 1)
+F6            = Quick Save (slot 2)
+F7            = Quick Load (slot 1)
+F8            = Quick Load (slot 2)
+F9            = Screenshot
+F12           = Reset
 
-Backspace	= Rewind
-\			= Stop Rewinding
+Backspace     = Rewind
+\             = Stop Rewinding
 
-F			= Toggle Fullscreen
-T			= Toggle Filters
-G			= Toggle Scale factor
+F             = Toggle Fullscreen
+T             = Toggle Filters
+G             = Toggle Scale factor
 
 Copyright
 =========

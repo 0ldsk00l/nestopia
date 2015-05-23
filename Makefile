@@ -27,7 +27,7 @@ ifneq ($(findstring MINGW,$(UNAME)),)
 else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
 	LIBS += -larchive
-	LIBS += -lGL -lGLU -lao
+	LIBS += -lGLEW -lGL -lGLU -lao
 	# GTK Stuff - Comment this section to disable GTK+
 	CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
 	LIBS += $(shell pkg-config --libs gtk+-3.0)

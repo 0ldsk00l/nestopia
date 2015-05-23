@@ -51,7 +51,8 @@ char textbuf[32];
 bool drawtime = false;
 char timebuf[6];
 
-GLuint screenTexID = 0;
+int overscan_offset, overscan_height;
+
 static uint32_t videobuf[31457280]; // Maximum possible internal size
 
 SDL_Window *sdlwindow;
@@ -69,101 +70,144 @@ extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
 
-void opengl_init_structures() {
-	// init OpenGL and set up for blitting
-	int scalefactor = conf.video_scale_factor;
+// Shader sources
+const GLchar* vshader_src =
+	"#version 150 core\n"
+	"in vec2 position;"
+	"in vec2 texcoord;"
+	"out vec2 outcoord;"
+	"void main() {"
+	"	outcoord = texcoord;"
+	"	gl_Position = vec4(position, 0.0, 1.0);"
+	"}";
+
+const GLchar* fshader_src =
+	"#version 150 core\n"
+	"in vec2 outcoord;"
+	"uniform sampler2D nestex;"
+	"void main() {"
+	"	gl_FragColor = texture(nestex, outcoord);"
+	"}";
+
+GLuint vao;
+GLuint vbo;
+GLuint vshader;
+GLuint fshader;
+GLuint gl_shader_prog = 0;
+GLuint gl_texture_id = 0;
+
+void ogl_init() {
+	// Initialize OpenGL
+	glewExperimental = true;
+	if (glewInit() != GLEW_OK) {
+		fprintf(stderr, "Failed to initialize GLEW\n");
+	}
 	
-	// Fix the fencepost issue when masking overscan
-	float fencepost = scalefactor / 2.0;
+	float vertices[] = {
+		-1.0f, -1.0f,	// Vertex 1 (X, Y)
+		-1.0f, 1.0f,	// Vertex 2 (X, Y)
+		1.0f, -1.0f,	// Vertex 3 (X, Y)
+		1.0f, 1.0f,		// Vertex 4 (X, Y)
+		0.0, 1.0,		// Texture 1 (X, Y)
+		0.0, 0.0,		// Texture 2 (X, Y)
+		1.0, 1.0,		// Texture 3 (X, Y)
+		1.0, 0.0		// Texture 4 (X, Y)
+	};
 	
-	glEnable( GL_TEXTURE_2D );
+	GLint status;
 	
-	glGenTextures( 1, &screenTexID ) ;
-	glBindTexture( GL_TEXTURE_2D, screenTexID ) ;
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, conf.video_linear_filter ? GL_LINEAR : GL_NEAREST) ;
-	glTexParameteri( GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST ) ;
+	glGenVertexArrays(1, &vao);
+	glBindVertexArray(vao);
+	
+	glGenBuffers(1, &vbo);
+	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+	
+	vshader = glCreateShader(GL_VERTEX_SHADER);
+	glShaderSource(vshader, 1, &vshader_src, NULL);
+	glCompileShader(vshader);
+	
+	glGetShaderiv(vshader, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE) { fprintf(stderr, "Failed to compile vertex shader\n"); }
+	
+	fshader = glCreateShader(GL_FRAGMENT_SHADER);
+	glShaderSource(fshader, 1, &fshader_src, NULL);
+	glCompileShader(fshader);
+	
+	glGetShaderiv(fshader, GL_COMPILE_STATUS, &status);
+	if (status == GL_FALSE) { fprintf(stderr, "Failed to compile fragment shader\n"); }
+	
+	GLuint gl_shader_prog = glCreateProgram();
+	glAttachShader(gl_shader_prog, vshader);
+	glAttachShader(gl_shader_prog, fshader);
+	
+	glLinkProgram(gl_shader_prog);
+	
+	glValidateProgram(gl_shader_prog);
+	glGetProgramiv(gl_shader_prog, GL_LINK_STATUS, &status);
+	if (status == GL_FALSE) { fprintf(stderr, "Failed to link shader program\n"); }
+	
+	glUseProgram(gl_shader_prog);
+	
+	GLint posAttrib = glGetAttribLocation(gl_shader_prog, "position");
+	glEnableVertexAttribArray(posAttrib);
+	glVertexAttribPointer(posAttrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+	
+	GLint texAttrib = glGetAttribLocation(gl_shader_prog, "texcoord");
+	glEnableVertexAttribArray(texAttrib);
+	glVertexAttribPointer(texAttrib, 2, GL_FLOAT, GL_FALSE, 0, (void*)(8 * sizeof(GLfloat)));
+	
+	glGenTextures(1, &gl_texture_id);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, gl_texture_id);
+	
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, conf.video_linear_filter ? GL_LINEAR : GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 	
 	conf.video_fullscreen ? 
-	glViewport( displaymode.w / 2.0f - rendersize.w / 2.0f, 0, rendersize.w, rendersize.h) :
-	glViewport( 0, 0, rendersize.w, rendersize.h);
+	glViewport(displaymode.w / 2.0f - rendersize.w / 2.0f, 0, rendersize.w, rendersize.h) :
+	glViewport(0, 0, rendersize.w, rendersize.h);
 	
-	glDisable( GL_DEPTH_TEST );
-	glDisable( GL_ALPHA_TEST );
-	glDisable( GL_BLEND );
-	glDisable( GL_LIGHTING );
-	glDisable( GL_TEXTURE_3D_EXT );
-	glMatrixMode( GL_PROJECTION );
-	glLoadIdentity();
-	
-	if (conf.video_unmask_overscan) {
-		glOrtho(
-			conf.video_linear_filter ? 2.0 : 0.0,
-			(GLdouble)rendersize.w,
-			(GLdouble)rendersize.h,
-			0.0,
-			-1.0, 1.0
-		);
-	}
-	else {
-		glOrtho(
-			conf.video_linear_filter ? 2.0 : 0.0,
-			conf.video_linear_filter ? (GLdouble)rendersize.w - 2.0 : (GLdouble)rendersize.w,
-			(GLdouble)rendersize.h - (OVERSCAN_BOTTOM * scalefactor) + fencepost,
-			(GLdouble)(OVERSCAN_TOP * scalefactor) - fencepost,
-			-1.0, 1.0
-		);
-	}
-	glMatrixMode(GL_MODELVIEW);
-	glLoadIdentity();
+	glUniform1i(glGetUniformLocation(gl_shader_prog, "nestex"), 0);
 }
 
-void opengl_cleanup() {
-	// tears down OpenGL when it's no longer needed
-	if (screenTexID) { glDeleteTextures( 1, &screenTexID ); }
+void ogl_deinit() {
+	// Deinitialize OpenGL
+	if (gl_texture_id) { glDeleteTextures(1, &gl_texture_id); }
+	if (gl_shader_prog) { glDeleteProgram(gl_shader_prog); }
+	if (vshader) { glDeleteShader(vshader); }
+	if (fshader) { glDeleteShader(fshader); }
+	if (vao) { glDeleteVertexArrays(1, &vao); }
+	if (vbo) { glDeleteBuffers(1, &vbo); }
 }
 
-void opengl_blit() {
-	// blit the image using OpenGL
-	
+void ogl_render() {
+	// Render the scene
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
 				GL_RGBA,
-				basesize.w, basesize.h,
+				basesize.w,
+				overscan_height,
 				0,
 				GL_BGRA,
 				GL_UNSIGNED_BYTE,
-		videobuf);
-
-	glBegin( GL_QUADS ) ;
-		glTexCoord2f(1.0f, 1.0f);
-		glVertex2f(rendersize.w, rendersize.h);
-		
-		glTexCoord2f(1.0f, 0.0f);
-		glVertex2f(rendersize.w, 0);
-		
-		glTexCoord2f(0.0f, 0.0f);
-		glVertex2f(0, 0);
-		
-		glTexCoord2f(0.0f, 1.0f);
-		glVertex2f(0, rendersize.h);
-	glEnd();
+		videobuf + overscan_offset);
 	
-	#ifdef _GTK
-	if (conf.misc_disable_gui) { SDL_GL_SwapWindow(sdlwindow); }
-	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : SDL_GL_SwapWindow(embedwindow); }
-	#else
-	SDL_GL_SwapWindow(sdlwindow);
-	#endif
+	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT);
+	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+	
+	video_swapbuffers();
 }
 
 void video_init() {
 	// Initialize video
-	opengl_cleanup();
+	ogl_deinit();
 	
 	video_set_dimensions();
 	video_set_filter();
 	
-	opengl_init_structures();
+	ogl_init();
 	
 	if (nst_nsf) { video_clear_buffer(); video_disp_nsf(); }
 	
@@ -289,6 +333,10 @@ void video_create_embedded() {
 void video_create() {
 	// Create the necessary window(s)
 	
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+	
 	#ifdef _GTK
 	if (conf.misc_disable_gui) {
 		video_create_standalone();
@@ -310,6 +358,18 @@ void video_create() {
 	if(glcontext == NULL) {
 		fprintf(stderr, "Could not create glcontext: %s\n", SDL_GetError());
 	}
+	
+	fprintf(stderr, "OpenGL: %s\n", glGetString(GL_VERSION));
+}
+
+void video_swapbuffers() {
+	// Swap Buffers
+	#ifdef _GTK
+	if (conf.misc_disable_gui) { SDL_GL_SwapWindow(sdlwindow); }
+	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : SDL_GL_SwapWindow(embedwindow); }
+	#else
+	SDL_GL_SwapWindow(sdlwindow);
+	#endif
 }
 
 void video_destroy() {
@@ -456,6 +516,14 @@ void video_set_filter() {
 			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
 			break;
 		
+		case 3: // Custom
+			video.SetSharpness(conf.video_ntsc_sharpness);
+			video.SetColorResolution(conf.video_ntsc_resolution);
+			video.SetColorBleed(conf.video_ntsc_bleed);
+			video.SetColorArtifacts(conf.video_ntsc_artifacts);
+			video.SetColorFringing(conf.video_ntsc_fringing);
+			break;
+		
 		default: break;
 	}
 	
@@ -497,6 +565,8 @@ void video_set_dimensions() {
 			basesize.h = Video::Output::HEIGHT;
 			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
 			rendersize.h = basesize.h * scalefactor;
+			overscan_offset = basesize.w * OVERSCAN_TOP;
+			overscan_height = basesize.h - OVERSCAN_TOP - OVERSCAN_BOTTOM;
 			break;
 
 		case 1: // NTSC
@@ -504,6 +574,8 @@ void video_set_dimensions() {
 			rendersize.w = (basesize.w / 2) * scalefactor;
 			basesize.h = Video::Output::HEIGHT;
 			rendersize.h = basesize.h * scalefactor;
+			overscan_offset = basesize.w * OVERSCAN_TOP;
+			overscan_height = basesize.h - OVERSCAN_TOP - OVERSCAN_BOTTOM;
 			break;
 
 		case 2: // xBR
@@ -518,6 +590,8 @@ void video_set_dimensions() {
 			basesize.h = Video::Output::HEIGHT * scalefactor;
 			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
 			rendersize.h = basesize.h;
+			overscan_offset = basesize.w * OVERSCAN_TOP * scalefactor;
+			overscan_height = basesize.h - (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
 			break;
 		
 		case 4: // 2xSaI
@@ -525,12 +599,15 @@ void video_set_dimensions() {
 			basesize.h = Video::Output::HEIGHT * 2;
 			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
 			rendersize.h = Video::Output::HEIGHT * scalefactor;
+			overscan_offset = basesize.w * OVERSCAN_TOP * 2;
+			overscan_height = basesize.h - (OVERSCAN_TOP + OVERSCAN_BOTTOM) * 2;
 			break;
 	}
 
 	if (!conf.video_unmask_overscan) {
 		rendersize.h -= (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
 	}
+	else { overscan_offset = 0; overscan_height = basesize.h; }
 	
 	// Calculate the aspect from the height because it's smaller
 	float aspect = (float)displaymode.h / (float)rendersize.h;
@@ -599,7 +676,7 @@ void video_unlock_screen(void*) {
 		video_text_draw(timebuf, 208 * wscale, 218 * hscale);
 	}
 	
-	opengl_blit();
+	ogl_render();
 }
 
 void video_screenshot_flip(unsigned char *pixels, int width, int height, int bytes) {
@@ -664,7 +741,7 @@ void video_disp_nsf() {
 	snprintf(currentsong, sizeof(currentsong), "%d / %d", nsf.GetCurrentSong() +1, nsf.GetNumSongs());
 	video_text_draw(currentsong, 4 * wscale, 52 * hscale);
 	
-	opengl_blit();
+	ogl_render();
 }
 
 void video_text_draw(const char *text, int xpos, int ypos) {
