@@ -7,8 +7,7 @@
 #define OVERSCAN_BOTTOM 8
 #define OVERSCAN_TOP 8
 
-#include <GL/glew.h>
-#include <GL/glu.h>
+#include <epoxy/gl.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_endian.h>
