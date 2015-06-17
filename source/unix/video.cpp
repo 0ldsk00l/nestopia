@@ -98,10 +98,6 @@ GLuint gl_texture_id = 0;
 
 void ogl_init() {
 	// Initialize OpenGL
-	glewExperimental = true;
-	if (glewInit() != GLEW_OK) {
-		fprintf(stderr, "Failed to initialize GLEW\n");
-	}
 	
 	float vertices[] = {
 		-1.0f, -1.0f,	// Vertex 1 (X, Y)
