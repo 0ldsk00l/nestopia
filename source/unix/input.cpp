@@ -630,7 +630,7 @@ char* input_translate_event(SDL_Event event) {
 		
 		case SDL_JOYBUTTONUP:	
 		case SDL_JOYBUTTONDOWN:
-			sprintf(inputcode, "j%db%x", event.jbutton.which, event.jbutton.button);
+			sprintf(inputcode, "j%db%d", event.jbutton.which, event.jbutton.button);
 			break;
 	}
 	return inputcode;
@@ -654,6 +654,9 @@ SDL_Event input_translate_string(char *string) {
 	else if ((unsigned char)string[2] == 0x62) { // Button
 		which = string[1] - '0';
 		value = string[3] - '0';
+		if (string[4]) {
+			value = ((string[3] - '0') * 10) + (string[4] - '0');
+		}
 		event.type = SDL_JOYBUTTONDOWN;
 		event.jbutton.which = which;
 		event.jbutton.button = value;
