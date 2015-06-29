@@ -20,10 +20,9 @@ BINDIR = $(PREFIX)/bin
 DATADIR = $(PREFIX)/share/nestopia
 
 ifneq ($(findstring MINGW,$(UNAME)),)
-	CPPFLAGS += -DNST_NO_ZLIB
 	DEFINES = -D_MINGW
 	LDFLAGS += -mconsole
-	LIBS += -lopengl32
+	LIBS += -lepoxy -lopengl32
 else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
 	LIBS += -larchive

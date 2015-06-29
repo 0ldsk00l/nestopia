@@ -317,9 +317,30 @@ void video_create_standalone() {
 void video_create_embedded() {
 	// Create an embedded SDL window
 	#ifdef _GTK
-	GdkWindow *gdkwindow;
-	gdkwindow = gtk_widget_get_window(drawingarea);
-	embedwindow = SDL_CreateWindowFrom((void *)GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
+	GdkDisplayManager *displaymanager = gdk_display_manager_get();
+	GdkDisplay *display = gdk_display_manager_get_default_display(displaymanager);
+	
+	#ifdef GDK_WINDOWING_X11
+	if (GDK_IS_X11_DISPLAY(display)) {
+		embedwindow = SDL_CreateWindowFrom((void*)GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
+	}
+	#endif
+	
+	#ifdef GDK_WINDOWING_WAYLAND
+	if (GDK_IS_WAYLAND_DISPLAY(display)) {
+		printf("Wayland will be supported in the future. For now use the X11 backend.\n");
+		exit(0);
+	}
+	#endif
+	
+	#ifdef _MINGW
+	#ifdef GDK_WINDOWING_WIN32
+	if (GDK_IS_WIN32_DISPLAY(display)) {
+		embedwindow = SDL_CreateWindowFrom((void*)GDK_WINDOW_HWND(gtk_widget_get_window(drawingarea)));
+	}
+	#endif
+	#endif
+	
 	embedwindow->flags |= SDL_WINDOW_OPENGL;
 	SDL_GL_LoadLibrary(NULL);
 	if (nst_nsf) { video_disp_nsf(); }
