@@ -2,7 +2,12 @@
 #define _GTKUI_H_
 
 #include <gtk/gtk.h>
+#ifdef _MINGW
+#include <gdk/gdkwin32.h>
+#else
 #include <gdk/gdkx.h>
+#include <gdk/gdkwayland.h>
+#endif
 
 void gtkui_init(int argc, char *argv[]);
 void gtkui_create();
