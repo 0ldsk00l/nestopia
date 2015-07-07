@@ -7,15 +7,15 @@
 #include <sstream>
 #include <fstream>
 
-#include <core/api/NstApiMachine.hpp>
-#include <core/api/NstApiEmulator.hpp>
-#include <core/api/NstApiVideo.hpp>
-#include <core/api/NstApiCheats.hpp>
-#include <core/api/NstApiSound.hpp>
-#include <core/api/NstApiInput.hpp>
-#include <core/api/NstApiCartridge.hpp>
-#include <core/api/NstApiUser.hpp>
-#include <core/api/NstApiFds.hpp>
+#include "../source/core/api/NstApiMachine.hpp"
+#include "../source/core/api/NstApiEmulator.hpp"
+#include "../source/core/api/NstApiVideo.hpp"
+#include "../source/core/api/NstApiCheats.hpp"
+#include "../source/core/api/NstApiSound.hpp"
+#include "../source/core/api/NstApiInput.hpp"
+#include "../source/core/api/NstApiCartridge.hpp"
+#include "../source/core/api/NstApiUser.hpp"
+#include "../source/core/api/NstApiFds.hpp"
 
 #define NST_VERSION "1.47-WIP"
 
