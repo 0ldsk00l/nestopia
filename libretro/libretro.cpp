@@ -519,7 +519,8 @@ void retro_run(void)
       video = new Api::Video::Output(video_buffer, video_width * sizeof(uint32_t));
    }
    
-   video_cb(video_buffer + (overscan_v ? ((overscan_h ? 8 : 0) + 256 * 8) : (overscan_h ? 8 : 0) + 0),
+   // Absolute mess of inline if statements...
+   video_cb(video_buffer + (overscan_v ? ((overscan_h ? 8 : 0) + (blargg_ntsc ? Api::Video::Output::NTSC_WIDTH : Api::Video::Output::WIDTH) * 8) : (overscan_h ? 8 : 0) + 0),
          video_width - (overscan_h ? 16 : 0),
          Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
          pitch);
