@@ -226,6 +226,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
       { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
+      { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
       { NULL, NULL },
    };
 
@@ -360,12 +361,22 @@ static void check_variables(void)
    static bool last_ntsc_val_same;
    struct retro_variable var = {0};
 
-   retro_reset();
+   Api::Sound sound(emulator);
    Api::Video video(emulator);
    Api::Video::RenderState renderState;
    Api::Machine machine( emulator );
    Api::Video::RenderState::Filter filter;
-   
+
+   var.key = "nestopia_genie_distortion";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+   {
+      if (strcmp(var.value, "disabled") == 0)
+         sound.SetGenie(0);
+      else if (strcmp(var.value, "enabled") == 0)
+         sound.SetGenie(1);
+   }
+
    var.key = "nestopia_nospritelimit";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
@@ -495,6 +506,8 @@ static void check_variables(void)
    renderState.bits.mask.b = 0x000000ff;
    if (NES_FAILED(video.SetRenderState( renderState )) && log_cb)
       log_cb(RETRO_LOG_INFO, "Nestopia core rejected render state\n");;
+
+    retro_reset();
 }
 
 void retro_run(void)
