@@ -10,17 +10,33 @@ Unix Shell:
   - Quick State Save/Load menu items
   - Open Recent menu item
   - Ability to pause games when configuration dialog is open
+  - Customizable NTSC filter options
 
  Changes:
   - Updated to modern OpenGL (version 3.2 minimum)
 
  Fixes:
   - Empty audio buffer when volume is set to 0
+  - Input config now accepts joystick buttons over 10
+
+libretro:
+
+ Additions:
+  - Game Genie Sound Distortion option
+
+ Changes:
+  - Default to "consumer" palette
+  - Vertical and Horizontal overscan options separated
+
+ Fixes:
+  - Fixed FDS save path
 
 Core:
 
  Additions:
   - Added support for MC-ACC (perilsensitive)
+  - Added NstDatabase.xml entries (clobber)
+  - Added support for NES 2.0 submappers
   
  Fixes:
   - Reverted fix for Mapper 79
