@@ -192,7 +192,9 @@ namespace Nes
 				static const char title[] = "Ines: ";
 
 				if (setup.version)
-					log << title << "version 2.0 detected" NST_LINEBREAK;
+				{
+					log << title << "NES 2.0 (extended iNES)" NST_LINEBREAK;
+				}
 
 				if (result == RESULT_WARN_BAD_FILE_HEADER)
 					log << title << "warning, unknown or invalid header data!" NST_LINEBREAK;
@@ -335,7 +337,7 @@ namespace Nes
 				log << NST_LINEBREAK;
 
 				if (setup.version && setup.subMapper)
-					log << title << "unknown sub-mapper " << setup.subMapper << " set" NST_LINEBREAK;
+					log << title << "submapper " << setup.subMapper << " set" NST_LINEBREAK;
 
 				TrainerSetup trainerSetup;
 
@@ -405,6 +407,7 @@ namespace Nes
 				}
 
 				profile.board.mapper = setup.mapper;
+				profile.board.subMapper = setup.subMapper;
 				profileEx.wramAuto = (setup.version == 0 && profile.board.wram.empty());
 
 				switch (setup.mirroring)

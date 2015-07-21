@@ -252,7 +252,7 @@ namespace Nes
 		: battery(false) {}
 
 		Cartridge::Profile::Board::Board() throw()
-		: solderPads(0), mapper(NO_MAPPER) {}
+		: solderPads(0), mapper(NO_MAPPER), subMapper(0) {}
 
 		Cartridge::Profile::Board::~Board() throw()
 		{

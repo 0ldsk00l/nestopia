@@ -1211,7 +1211,7 @@ namespace Nes
 				return true;
 			}
 
-			bool Board::Context::DetectBoard(const byte mapper,const dword wram,bool wramAuto)
+			bool Board::Context::DetectBoard(const byte mapper,const dword wram,bool wramAuto,const byte submapper)
 			{
 				Type::Id id;
 
