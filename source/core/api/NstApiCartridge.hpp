@@ -805,6 +805,11 @@ namespace Nes
 					* Mapper ID.
 					*/
 					uint mapper;
+
+					/**
+					* Submapper ID.
+					*/
+					uint subMapper;
 				};
 
 				/**

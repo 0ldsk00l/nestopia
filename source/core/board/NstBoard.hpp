@@ -643,7 +643,7 @@ namespace Nes
 					Context(Cpu*,Apu*,Ppu*,Ram&,Ram&,const Ram&,Type::Nmt,bool,bool,Chips&);
 
 					bool DetectBoard(wcstring,dword);
-					bool DetectBoard(byte,dword,bool);
+					bool DetectBoard(byte,dword,bool,byte);
 
 					cstring name;
 					Type type;
