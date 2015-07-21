@@ -1802,6 +1802,13 @@ namespace Nes
 
 					case 23:
 
+						if (submapper == 15)
+						{
+							name = "KONAMI VRC2";
+							id = Type::KONAMI_VRC2;
+							break;
+						}
+
 						if (prg >= SIZE_512K)
 						{
 							if (!this->chips.Has(L"Konami VRC IV"))
