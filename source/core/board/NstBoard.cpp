@@ -1771,6 +1771,17 @@ namespace Nes
 					case 21:
 					case 25:
 
+						if (submapper == 15)
+						{ // The correct board is VRC2 but the functionality is implemented in the VRC4 code currently
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
+							chip.Pin(3)  = L"PRG A0";
+							chip.Pin(4)  = L"PRG A1";
+
+							name = "KONAMI VRC2";
+							id = Type::KONAMI_VRC4_2;
+							break;
+						}
+
 						if (!this->chips.Has(L"Konami VRC IV"))
 							return false;
 
