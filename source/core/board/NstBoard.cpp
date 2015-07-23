@@ -1424,6 +1424,14 @@ namespace Nes
 
 					case 4:
 
+						if (submapper == 1)
+						{ // StarTropics/Zoda's Revenge - might not be correct
+							chips.Add(L"MMC6B");
+							name = "NES-HKROM";
+							id = Type::STD_HKROM;
+							break;
+						}
+
 						if (nmt == Type::NMT_FOURSCREEN)
 						{
 							if (prg == SIZE_64K && (chr == SIZE_32K || chr == SIZE_64K) && !wram && !useWramAuto)
