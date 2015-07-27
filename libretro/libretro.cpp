@@ -53,6 +53,7 @@ size_t pitch;
 static Api::Video::Output *video;
 static Api::Sound::Output *audio;
 static Api::Input::Controllers *input;
+static Api::Machine::FavoredSystem favsystem;
 
 static void *sram;
 static unsigned long sram_size;
@@ -227,6 +228,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
       { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
       { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
+      { "nestopia_favored_system", "Favored System; ntsc|pal|famicom|dendy" },
       { NULL, NULL },
    };
 
@@ -367,6 +369,22 @@ static void check_variables(void)
    Api::Machine machine( emulator );
    Api::Video::RenderState::Filter filter;
 
+   var.key = "nestopia_favored_system";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+   {
+      if (strcmp(var.value, "ntsc") == 0)
+         favsystem = Api::Machine::FAVORED_NES_NTSC;
+      else if (strcmp(var.value, "pal") == 0)
+         favsystem = Api::Machine::FAVORED_NES_NTSC;
+      else if (strcmp(var.value, "famicom") == 0)
+         favsystem = Api::Machine::FAVORED_FAMICOM;
+      else if (strcmp(var.value, "dendy") == 0)
+         favsystem = Api::Machine::FAVORED_DENDY;
+      else
+         favsystem = Api::Machine::FAVORED_NES_NTSC;
+   }
+
    var.key = "nestopia_genie_distortion";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
@@ -393,7 +411,7 @@ static void check_variables(void)
       fds_auto_insert = (strcmp(var.value, "enabled") == 0);
    
    var.key = "nestopia_blargg_ntsc_filter";
-   
+
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
    {
       if (strcmp(var.value, "disabled") == 0)
@@ -405,7 +423,7 @@ static void check_variables(void)
       else if (strcmp(var.value, "rgb") == 0)
          blargg_ntsc = 4;
    }
-   
+
    switch(blargg_ntsc)
    {
       case 0:
@@ -718,18 +736,20 @@ bool retro_load_game(const struct retro_game_info *info)
          log_cb(RETRO_LOG_ERROR, "Could not find save directory.\n");
    }
 
-   Api::Machine::FavoredSystem system = Api::Machine::FAVORED_NES_NTSC;
    is_pal = false;
+   check_variables();
 
-   if (machine->Load(ss, system))
+   if (machine->Load(ss, favsystem))
       return false;
 
    // If you have no Database, no region detection for you.
    if (database.IsLoaded())
    {
-	   machine->SetMode(machine->GetDesiredMode());
-	   if (machine->GetMode() == Api::Machine::PAL)
-		  is_pal = true;
+      machine->SetMode(machine->GetDesiredMode());
+      if (machine->GetMode() == Api::Machine::PAL)
+      {
+         is_pal = true;
+      }
    }
    else
       machine->SetMode(Api::Machine::NTSC);
