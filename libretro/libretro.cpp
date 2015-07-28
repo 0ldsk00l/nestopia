@@ -376,7 +376,10 @@ static void check_variables(void)
       if (strcmp(var.value, "ntsc") == 0)
          favsystem = Api::Machine::FAVORED_NES_NTSC;
       else if (strcmp(var.value, "pal") == 0)
-         favsystem = Api::Machine::FAVORED_NES_NTSC;
+      {
+         favsystem = Api::Machine::FAVORED_NES_PAL;
+         is_pal = true;
+      }
       else if (strcmp(var.value, "famicom") == 0)
          favsystem = Api::Machine::FAVORED_FAMICOM;
       else if (strcmp(var.value, "dendy") == 0)
