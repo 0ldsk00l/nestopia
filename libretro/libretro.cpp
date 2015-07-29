@@ -376,10 +376,7 @@ static void check_variables(void)
       if (strcmp(var.value, "ntsc") == 0)
          favsystem = Api::Machine::FAVORED_NES_NTSC;
       else if (strcmp(var.value, "pal") == 0)
-      {
          favsystem = Api::Machine::FAVORED_NES_PAL;
-         is_pal = true;
-      }
       else if (strcmp(var.value, "famicom") == 0)
          favsystem = Api::Machine::FAVORED_FAMICOM;
       else if (strcmp(var.value, "dendy") == 0)
@@ -755,7 +752,17 @@ bool retro_load_game(const struct retro_game_info *info)
       }
    }
    else
-      machine->SetMode(Api::Machine::NTSC);
+   {
+      if (favsystem == Api::Machine::FAVORED_NES_PAL)
+      {
+         machine->SetMode(Api::Machine::PAL);
+         is_pal = true;
+      }
+      else
+      {
+         machine->SetMode(Api::Machine::NTSC);
+      }
+   }
 
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "[Nestopia]: Machine is %s.\n", is_pal ? "PAL" : "NTSC");
