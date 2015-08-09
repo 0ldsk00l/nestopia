@@ -23,10 +23,15 @@ ifneq ($(findstring MINGW,$(UNAME)),)
 	DEFINES = -D_MINGW
 	LDFLAGS += -mconsole
 	LIBS += -lepoxy -lopengl32
+else ifneq ($(findstring Darwin,$(UNAME)),)
+	DEFINES = -D_APPLE
+	DEFINES += -DDATADIR=\"$(DATADIR)\"
+	INCLUDES += -I/usr/local/opt/libarchive/include
+	LDFLAGS = -Wl -L/usr/local/opt/libarchive/lib
+	LIBS += -larchive -lepoxy -lao
 else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
-	LIBS += -larchive
-	LIBS += -lepoxy -lGL -lGLU -lao
+	LIBS += -larchive -lepoxy -lGL -lGLU -lao
 	# GTK Stuff - Comment this section to disable GTK+
 	CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
 	LIBS += $(shell pkg-config --libs gtk+-3.0)

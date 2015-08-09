@@ -11,6 +11,9 @@
 #include <SDL.h>
 #include <SDL_opengl.h>
 #include <SDL_endian.h>
+#ifdef _APPLE
+#include <OpenGL/gl.h>
+#endif
 
 // This is part of an elaborate hack to embed the SDL window
 struct SDL_Window {

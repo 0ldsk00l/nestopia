@@ -84,9 +84,10 @@ const GLchar* vshader_src =
 const GLchar* fshader_src =
 	"#version 150 core\n"
 	"in vec2 outcoord;"
+	"out vec4 fragcolor;"
 	"uniform sampler2D nestex;"
 	"void main() {"
-	"	gl_FragColor = texture(nestex, outcoord);"
+	"	fragcolor = texture(nestex, outcoord);"
 	"}";
 
 GLuint vao;
