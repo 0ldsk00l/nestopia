@@ -1,7 +1,7 @@
 ----------------------------------------------------------------
 1.47-WIP
 ----------------------------------------------------------------
-Unix Shell:
+Shell:
 
  Additions:
   - On-screen text when saving/loading states
@@ -11,6 +11,7 @@ Unix Shell:
   - Open Recent menu item
   - Ability to pause games when configuration dialog is open
   - Customizable NTSC filter options
+  - Support for Mac OS X
 
  Changes:
   - Updated to modern OpenGL (version 3.2 minimum)
@@ -23,6 +24,7 @@ libretro:
 
  Additions:
   - Game Genie Sound Distortion option
+  - Region selection core option
 
  Changes:
   - Default to "consumer" palette
@@ -37,6 +39,9 @@ Core:
   - Added support for MC-ACC (perilsensitive)
   - Added NstDatabase.xml entries (clobber)
   - Added support for NES 2.0 submappers
+  - Added support for mapper 4.1
+  - Added support for mapper 25.15
+  - Added support for mapper 23.15
   
  Fixes:
   - Reverted fix for Mapper 79
