@@ -295,6 +295,8 @@ static void update_input()
    input_poll_cb();
    input->pad[0].buttons = 0;
    input->pad[1].buttons = 0;
+   input->pad[2].buttons = 0;
+   input->pad[3].buttons = 0;
    input->zapper.fire = 0;
    input->vsSystem.insertCoin = 0;
    
@@ -324,7 +326,7 @@ static void update_input()
       }
    }
    
-   for (unsigned p = 0; p < 2; p++)
+   for (unsigned p = 0; p < 4; p++)
       for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
          input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
          
@@ -804,11 +806,21 @@ bool retro_load_game(const struct retro_game_info *info)
    isound.SetSampleRate(44100);
    isound.SetSpeaker(Api::Sound::SPEAKER_MONO);
 
-   //Api::Input(emulator).ConnectController(0, Api::Input::PAD1);
-   //Api::Input(emulator).ConnectController(1, Api::Input::PAD2);
-   Api::Input(emulator).AutoSelectController(0);
-   Api::Input(emulator).AutoSelectController(1);
-   //Api::Input(emulator).ConnectController(1, Api::Input::ZAPPER);
+   if (dbpresent)
+   {
+      Api::Input(emulator).AutoSelectController(0);
+      Api::Input(emulator).AutoSelectController(1);
+      Api::Input(emulator).AutoSelectController(2);
+      Api::Input(emulator).AutoSelectController(3);
+   }
+   else
+   {
+      Api::Input(emulator).ConnectController(0, Api::Input::PAD1);
+      Api::Input(emulator).ConnectController(1, Api::Input::PAD2);
+      //Api::Input(emulator).ConnectController(1, Api::Input::ZAPPER);
+      Api::Input(emulator).ConnectController(2, Api::Input::PAD3);
+      Api::Input(emulator).ConnectController(3, Api::Input::PAD4);
+   }
 
    machine->Power(true);
 
