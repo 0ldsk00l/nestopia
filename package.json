@@ -1,0 +1,10 @@
+{
+  "name": "nestopia",
+  "version": "0.4.6",
+  "dependencies": {},
+  "devDependencies": {},
+  "jspm": {
+    "format": "amd",
+    "main": "retro.js"
+  }
+}
