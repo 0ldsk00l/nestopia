@@ -7,3 +7,6 @@
 *.ips
 *.ups
 /nestopia
+*.js
+*.bc
+.npmignore
