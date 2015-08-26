@@ -1,6 +1,9 @@
 DEBUG = 0
 HAS_GCC = 1
 
+ifneq ($(EMSCRIPTEN),)
+	platform = emscripten
+endif
 
 ifeq ($(platform),)
 	platform = unix
@@ -176,6 +179,9 @@ else ifneq (,$(findstring armv,$(platform)))
 		PLATFORM_DEFINES += -mfloat-abi=hard
 	endif
 	PLATFORM_DEFINES += -DARM
+
+else ifeq ($(platform),emscripten)
+	TARGET := $(TARGET_NAME)_libretro.bc
 
 # Windows
 else
