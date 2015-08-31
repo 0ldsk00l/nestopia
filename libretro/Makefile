@@ -117,6 +117,14 @@ else ifeq ($(platform), psp1)
 	PLATFORM_DEFINES := -DPSP -G0
 	STATIC_LINKING = 1
 
+# Vita
+else ifeq ($(platform), vita)
+	TARGET := $(TARGET_NAME)_libretro_vita.a
+	CC = arm-vita-eabi-gcc$(EXE_EXT)
+	AR = arm-vita-eabi-ar$(EXE_EXT)
+	PLATFORM_DEFINES := -DVITA
+	STATIC_LINKING = 1
+
 # Lightweight PS3 Homebrew SDK
 else ifeq ($(platform), psl1ght)
 	TARGET := $(TARGET_NAME)_libretro_psl1ght.a
