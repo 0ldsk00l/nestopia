@@ -40,8 +40,9 @@ Core:
   - Added NstDatabase.xml entries (clobber)
   - Added support for NES 2.0 submappers
   - Added support for mapper 4.1
-  - Added support for mapper 25.15
+  - Added support for mapper 4.3
   - Added support for mapper 23.15
+  - Added support for mapper 25.15
   
  Fixes:
   - Reverted fix for Mapper 79

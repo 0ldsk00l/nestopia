@@ -1432,6 +1432,13 @@ namespace Nes
 							break;
 						}
 
+						if (submapper == 3)
+						{
+							name = "ACCLAIM-MC-ACC";
+							id = Type::ACCLAIM_MCACC;
+							break;
+						}
+
 						if (nmt == Type::NMT_FOURSCREEN)
 						{
 							if (prg == SIZE_64K && (chr == SIZE_32K || chr == SIZE_64K) && !wram && !useWramAuto)
