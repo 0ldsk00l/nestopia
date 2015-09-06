@@ -1908,6 +1908,12 @@ namespace Nes
 
 						name = "IREM G-101";
 
+						if (submapper == 1)
+						{
+							id = Type::IREM_G101B_0;
+							break;
+						}
+
 						if (wram || useWramAuto)
 						{
 							wramAuto = useWramAuto;
