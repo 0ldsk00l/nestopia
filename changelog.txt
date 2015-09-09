@@ -44,6 +44,7 @@ Core:
   - Added support for mapper 23.15
   - Added support for mapper 25.15
   - Added support for mapper 32.1
+  - Added support for mapper 68.1
   
  Fixes:
   - Reverted fix for Mapper 79
