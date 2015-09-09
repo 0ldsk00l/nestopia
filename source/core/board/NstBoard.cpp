@@ -2221,6 +2221,13 @@ namespace Nes
 
 					case 71:
 
+						if (submapper == 1)
+						{
+							name = "CAMERICA BF9097";
+							id = Type::CAMERICA_BF9097;
+							break;
+						}
+
 						if (prg >= SIZE_256K)
 						{
 							name = "CAMERICA BF9093";
