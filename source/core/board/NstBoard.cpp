@@ -2170,9 +2170,16 @@ namespace Nes
 
 					case 68:
 
+						if (submapper == 1)
+						{
+							name = "SUNSOFT DCS";
+							id = Type::SUNSOFT_DCS;
+							break;
+						}
+
 						if (prg > SIZE_128K)
 						{
-							name = "SUNSOFT DOUBLE CASETTE SYSTEM";
+							name = "SUNSOFT DCS";
 							id = Type::SUNSOFT_DCS;
 						}
 						else
