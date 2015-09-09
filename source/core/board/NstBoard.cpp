@@ -2278,6 +2278,20 @@ namespace Nes
 
 					case 78:
 
+						if (submapper == 1)
+						{
+							name = "JALECO JF-16";
+							id = Type::JALECO_JF16;
+							break;
+						}
+						
+						if (submapper == 3)
+						{
+							name = "IREM-HOLYDIVER";
+							id = Type::IREM_HOLYDIVER;
+							break;
+						}
+
 						name = "JALECO JF-16";
 						id = Type::JALECO_JF16;
 						break;
