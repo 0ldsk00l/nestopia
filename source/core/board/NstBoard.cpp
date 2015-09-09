@@ -1769,20 +1769,6 @@ namespace Nes
 						}
 						break;
 
-					case 210:
-
-						if (!this->chips.Has(L"175"))
-						{
-							name = "NAMCOT-340";
-							id = Type::NAMCOT_340;
-						}
-						else
-						{
-							name = "NAMCOT-175";
-							id = Type::NAMCOT_175;
-						}
-						break;
-
 					case 21:
 					case 25:
 
@@ -3002,6 +2988,34 @@ namespace Nes
 
 						name = "J.Y.COMPANY (b)";
 						id = Type::JYCOMPANY_TYPE_B;
+						break;
+
+					case 210:
+
+						if (submapper == 1)
+						{
+							name = "NAMCOT-175";
+							id = Type::NAMCOT_175;
+							break;
+						}
+
+						if (submapper == 2)
+						{
+							name = "NAMCOT-340";
+							id = Type::NAMCOT_340;
+							break;
+						}
+
+						if (!this->chips.Has(L"175"))
+						{
+							name = "NAMCOT-340";
+							id = Type::NAMCOT_340;
+						}
+						else
+						{
+							name = "NAMCOT-175";
+							id = Type::NAMCOT_175;
+						}
 						break;
 
 					case 211:
