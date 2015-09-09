@@ -445,8 +445,9 @@ namespace Nes
 						NAMCOT_163_1               = MakeId<   19,  512,  256,  8,  0, CRM_0,  NMT_X,  0 >::ID,
 						NAMCOT_163_S_0             = MakeId<   19,  512,  256,  0,  0, CRM_0,  NMT_X,  1 >::ID,
 						NAMCOT_163_S_1             = MakeId<   19,  512,  256,  8,  0, CRM_0,  NMT_X,  1 >::ID,
-						NAMCOT_175                 = MakeId<  210,  512,  128,  8,  0, CRM_0,  NMT_X,  0 >::ID,
-						NAMCOT_340                 = MakeId<  210,  256,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
+						NAMCOT_175                 = MakeId<  210,  512,  128,  8,  0, CRM_0,  NMT_V,  0 >::ID,
+						// FIXME: Setting NMT_4 is incorrect but makes things work
+						NAMCOT_340                 = MakeId<  210,  256,  256,  0,  0, CRM_0,  NMT_4,  0 >::ID,
 						// Nitra
 						NITRA_TDA                  = MakeId<  250,  512,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						// NTDEC
