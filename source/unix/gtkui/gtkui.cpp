@@ -317,9 +317,6 @@ void gtkui_create() {
 	g_signal_connect(G_OBJECT(qsave4), "activate",
 		G_CALLBACK(gtkui_state_quicksave), gpointer(4));
 	
-	g_signal_connect(G_OBJECT(statesave), "activate",
-		G_CALLBACK(gtkui_state_save), NULL);
-	
 	g_signal_connect(G_OBJECT(screenshot), "activate",
 		G_CALLBACK(gtkui_screenshot_save), NULL);
 	
