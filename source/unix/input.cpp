@@ -884,7 +884,7 @@ void input_set_default() {
 	player[0].l = SDL_GetScancodeFromName("Left");
 	player[0].r = SDL_GetScancodeFromName("Right");
 	player[0].select = SDL_GetScancodeFromName("Right Shift");
-	player[0].start = SDL_GetScancodeFromName("Right Ctrl");
+	player[0].start = SDL_GetScancodeFromName("Return");
 	player[0].a = SDL_GetScancodeFromName("Z");
 	player[0].b = SDL_GetScancodeFromName("A");
 	player[0].ta = SDL_GetScancodeFromName("X");
