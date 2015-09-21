@@ -40,6 +40,9 @@
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
+#ifndef _APPLE
+#define _EMBED
+#endif
 extern GtkWidget *drawingarea;
 #endif
 
@@ -223,7 +226,7 @@ void video_toggle_fullscreen() {
 	}
 	else { flags = 0; }
 	
-	#ifdef _GTK
+	#ifdef _EMBED
 	if (conf.video_fullscreen) {
 		SDL_DestroyWindow(sdlwindow);
 		video_create_standalone();
@@ -317,7 +320,7 @@ void video_create_standalone() {
 
 void video_create_embedded() {
 	// Create an embedded SDL window
-	#ifdef _GTK
+	#ifdef _EMBED
 	GdkDisplayManager *displaymanager = gdk_display_manager_get();
 	GdkDisplay *display = gdk_display_manager_get_default_display(displaymanager);
 	
@@ -355,7 +358,7 @@ void video_create() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	
-	#ifdef _GTK
+	#ifdef _EMBED
 	if (conf.misc_disable_gui) {
 		video_create_standalone();
 		glcontext = SDL_GL_CreateContext(sdlwindow);
@@ -382,7 +385,7 @@ void video_create() {
 
 void video_swapbuffers() {
 	// Swap Buffers
-	#ifdef _GTK
+	#ifdef _EMBED
 	if (conf.misc_disable_gui) { SDL_GL_SwapWindow(sdlwindow); }
 	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : SDL_GL_SwapWindow(embedwindow); }
 	#else
@@ -639,7 +642,7 @@ void video_set_dimensions() {
 		rendersize.w = displaymode.w;
 	}
 	
-	#ifdef _GTK
+	#ifdef _EMBED
 	if (!conf.misc_disable_gui) {
 		SDL_SetWindowSize(embedwindow, rendersize.w, rendersize.h);
 		gtkui_resize();

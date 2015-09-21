@@ -47,7 +47,9 @@ extern settings_t conf;
 void gtkui_init(int argc, char *argv[]) {
 	// Initialize the GTK+ GUI
 	gtk_init(&argc, &argv);
+	#ifndef _APPLE
 	gtkui_create();
+	#endif
 }
 
 void gtkui_state_quickload(GtkWidget *widget, gpointer userdata) {
@@ -392,7 +394,9 @@ void gtkui_resize() {
 }
 
 void gtkui_set_title(const char *title) {
+	#ifndef _APPLE
 	gtk_window_set_title(GTK_WINDOW(gtkwindow), title);
+	#endif
 }
 
 GtkWidget *gtkui_about() {

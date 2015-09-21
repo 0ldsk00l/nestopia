@@ -47,8 +47,11 @@ int16_t audiobuf[96000];
 int framerate, channels, bufsize;
 
 bool altspeed = false;
+bool paused = false;
 
 void audio_play() {
+	
+	if (paused) { updateok = true; return; }
 	
 	bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	
@@ -130,6 +133,7 @@ void audio_init() {
 		}
 	}
 #endif
+	paused = false;
 }
 
 void audio_deinit() {
@@ -151,6 +155,7 @@ void audio_pause() {
 	if (conf.audio_api == 0) { // SDL
 		SDL_PauseAudioDevice(dev, 1);
 	}
+	paused = true;
 }
 
 void audio_unpause() {
@@ -158,6 +163,7 @@ void audio_unpause() {
 	if (conf.audio_api == 0) { // SDL
 		SDL_PauseAudioDevice(dev, 0);
 	}
+	paused = false;
 }
 
 void audio_set_params(Sound::Output *soundoutput) {
