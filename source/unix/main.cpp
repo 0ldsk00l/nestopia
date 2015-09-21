@@ -979,7 +979,9 @@ int main(int argc, char *argv[]) {
 	nst_quit = 0;
 	
 	while (!nst_quit) {
-		#ifdef _GTK
+		#if defined(_APPLE) && defined(_GTK)
+		if (!playing) { gtk_main_iteration_do(TRUE); }
+		#elif _GTK
 		while (gtk_events_pending()) {
 			gtk_main_iteration_do(TRUE);
 		}

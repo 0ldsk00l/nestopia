@@ -2,8 +2,10 @@
 #define _GTKUI_H_
 
 #include <gtk/gtk.h>
+
 #ifdef _MINGW
 #include <gdk/gdkwin32.h>
+#elif _APPLE
 #else
 #include <gdk/gdkx.h>
 #include <gdk/gdkwayland.h>

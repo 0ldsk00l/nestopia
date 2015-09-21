@@ -195,10 +195,13 @@ void config_set_default() {
 	//conf.misc_suppress_screensaver = true;
 	conf.misc_genie_distortion = false;
 	conf.misc_disable_gui = false;
+	conf.misc_config_pause = false;
 	#ifdef _MINGW
 	conf.misc_disable_gui = true; // Disable GUI for MinGW
 	#endif
-	conf.misc_config_pause = false;
+	#ifdef _APPLE
+	conf.misc_config_pause = true; // Always pause on OS X
+	#endif
 }
 
 static int config_match(void* user, const char* section, const char* name, const char* value) {
