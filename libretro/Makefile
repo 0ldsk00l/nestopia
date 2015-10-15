@@ -48,7 +48,8 @@ else ifeq ($(platform), osx)
 	endif
 
 # iOS
-else ifeq ($(platform), ios)
+else ifneq (,$(findstring ios,$(platform)))
+
 	TARGET := $(TARGET_NAME)_libretro_ios.dylib
 	fpic := -fPIC
 	SHARED := -dynamiclib
@@ -59,11 +60,15 @@ else ifeq ($(platform), ios)
 	CXX = clang++ -arch armv7 -isysroot $(IOSSDK)
 	OSXVER = `sw_vers -productVersion | cut -d. -f 2`
 	OSX_LT_MAVERICKS = `(( $(OSXVER) <= 9)) && echo "YES"`
-	ifeq ($(OSX_LT_MAVERICKS),"YES")
-		CC += -miphoneos-version-min=5.0
-		CXX += -miphoneos-version-min=5.0
-		PLATFORM_DEFINES += -miphoneos-version-min=5.0
-	endif
+ifeq ($(platform),ios9)
+	CC               += -miphoneos-version-min=8.0
+	CXX              += -miphoneos-version-min=8.0
+	PLATFORM_DEFINES += -miphoneos-version-min=8.0
+else
+	CC               += -miphoneos-version-min=5.0
+	CXX              += -miphoneos-version-min=5.0
+	PLATFORM_DEFINES += -miphoneos-version-min=5.0
+endif
 
 # Theos
 else ifeq ($(platform), theos_ios)
