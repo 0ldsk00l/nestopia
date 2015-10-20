@@ -128,14 +128,18 @@ else ifeq ($(platform), vita)
 	PLATFORM_DEFINES := -DVITA
 	STATIC_LINKING = 1
 
-# CTR (3DS)
+# CTR(3DS)
 else ifeq ($(platform), ctr)
 	TARGET := $(TARGET_NAME)_libretro_ctr.a
 	CC = $(DEVKITARM)/bin/arm-none-eabi-gcc$(EXE_EXT)
 	CXX = $(DEVKITARM)/bin/arm-none-eabi-g++$(EXE_EXT)
 	AR = $(DEVKITARM)/bin/arm-none-eabi-ar$(EXE_EXT)
-        PLATFORM_DEFINES := -DARM11 -march=armv6k -mtune=mpcore -mfloat-abi=hard -Wall -mword-relocations -fomit-frame-pointer -ffast-math -D_3DS
-        STATIC_LINKING = 1
+	PLATFORM_DEFINES := -DARM11 -D_3DS
+	PLATFORM_DEFINES += -march=armv6k -mtune=mpcore -mfloat-abi=hard
+	PLATFORM_DEFINES += -mword-relocations
+	PLATFORM_DEFINES += -fomit-frame-pointer -fstrict-aliasing -ffast-math
+	CXXFLAGS += -fno-rtti
+	STATIC_LINKING = 1
 
 # Lightweight PS3 Homebrew SDK
 else ifeq ($(platform), psl1ght)
