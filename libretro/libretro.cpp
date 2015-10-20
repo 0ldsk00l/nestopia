@@ -33,7 +33,14 @@ static retro_environment_t environ_cb;
 static retro_input_poll_t input_poll_cb;
 static retro_input_state_t input_state_cb;
 
+#ifdef _3DS
+extern "C" void* linearMemAlign(size_t size, size_t alignment);
+extern "C" void linearFree(void* mem);
+static uint32_t* video_buffer = NULL;
+#else
 static uint32_t video_buffer[Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT];
+#endif
+
 static int16_t audio_buffer[(44100 / 50)];
 static int16_t audio_stereo_buffer[2 * (44100 / 50)];
 static Api::Emulator emulator;
@@ -149,6 +156,9 @@ static void check_system_specs(void)
 void retro_init(void)
 {
    struct retro_log_callback log;
+#ifdef _3DS
+   video_buffer = (uint32_t*)linearMemAlign(Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT * sizeof(uint32_t), 0x80);
+#endif
 
    machine = new Api::Machine(emulator);
    input = new Api::Input::Controllers;
@@ -180,6 +190,11 @@ void retro_deinit(void)
    video   = 0;
    audio   = 0;
    input   = 0;
+
+#ifdef _3DS
+   linearFree(video_buffer);
+   video_buffer = NULL;
+#endif
 }
 
 unsigned retro_api_version(void)
