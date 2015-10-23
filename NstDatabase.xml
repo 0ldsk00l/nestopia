@@ -23189,7 +23189,7 @@
             <board mapper="4">
                 <prg size="128k" />
                 <chr size="128k" />
-                <wram size="8k" />
+                <wram size="8k" battery="1" />
             </board>
         </cartridge>
     </game>
