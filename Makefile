@@ -15,9 +15,9 @@ UNAME := $(shell uname)
 
 BIN = nestopia
 
-PREFIX = /usr/local
-BINDIR = $(PREFIX)/bin
-DATADIR = $(PREFIX)/share/nestopia
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
+DATADIR ?= $(PREFIX)/share/nestopia
 
 ifneq ($(findstring MINGW,$(UNAME)),)
 	DEFINES = -D_MINGW
