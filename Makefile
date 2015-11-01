@@ -395,6 +395,7 @@ $(BIN): $(OBJS) $(IOBJS)
 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $(BIN)
 
 install:
+	mkdir -p $(BINDIR)
 	mkdir -p $(DATADIR)/icons
 	mkdir -p $(PREFIX)/share/pixmaps
 	install -m 0755 $(BIN) $(BINDIR)
