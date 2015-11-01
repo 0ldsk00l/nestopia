@@ -389,7 +389,7 @@ interface: maketree $(IOBJS)
 maketree: $(sort $(OBJDIRS))
 
 $(sort $(OBJDIRS)):
-	@mkdir $@
+	@mkdir -p $@
 
 $(BIN): $(OBJS) $(IOBJS)
 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $(BIN)
