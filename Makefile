@@ -1,5 +1,5 @@
-CC = cc
-CXX = c++
+CC ?= cc
+CXX ?= c++
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE
 CFLAGS = $(shell sdl2-config --cflags)
