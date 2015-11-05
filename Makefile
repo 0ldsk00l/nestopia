@@ -1,5 +1,5 @@
-CC = cc
-CXX = c++
+CC ?= cc
+CXX ?= c++
 CXXFLAGS ?= -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE
 CFLAGS = $(shell sdl2-config --cflags)
@@ -15,9 +15,9 @@ UNAME := $(shell uname)
 
 BIN = nestopia
 
-PREFIX = /usr/local
-BINDIR = $(PREFIX)/bin
-DATADIR = $(PREFIX)/share/nestopia
+PREFIX ?= /usr/local
+BINDIR ?= $(PREFIX)/bin
+DATADIR ?= $(PREFIX)/share/nestopia
 
 ifneq ($(findstring MINGW,$(UNAME)),)
 	DEFINES = -D_MINGW
@@ -389,12 +389,13 @@ interface: maketree $(IOBJS)
 maketree: $(sort $(OBJDIRS))
 
 $(sort $(OBJDIRS)):
-	@mkdir $@
+	@mkdir -p $@
 
 $(BIN): $(OBJS) $(IOBJS)
 	$(CC) $(LDFLAGS) $^ $(LIBS) -o $(BIN)
 
 install:
+	mkdir -p $(BINDIR)
 	mkdir -p $(DATADIR)/icons
 	mkdir -p $(PREFIX)/share/pixmaps
 	install -m 0755 $(BIN) $(BINDIR)
