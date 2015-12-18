@@ -968,7 +968,7 @@ namespace Nes
 
 		NST_SINGLE_CALL dword Apu::Synchronizer::Clock(const dword output,const dword sampleRate,const Cpu& cpu)
 		{
-			if (sync)
+			/*if (sync)
 			{
 				if (duty >= 60*4)
 					streamed += output;
@@ -1008,7 +1008,7 @@ namespace Nes
 						return actualRate;
 					}
 				}
-			}
+			}*/
 
 			return 0;
 		}
