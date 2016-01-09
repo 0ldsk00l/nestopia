@@ -30,17 +30,17 @@ else ifneq ($(findstring Darwin,$(UNAME)),)
 	LDFLAGS = -Wl -L/usr/local/opt/libarchive/lib
 	LIBS += -larchive -lepoxy -lao
 	# GTK Stuff - Comment this section to disable GTK+
-	CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
-	LIBS += $(shell pkg-config --libs gtk+-3.0)
-	DEFINES += -D_GTK
-	IOBJS += objs/unix/gtkui/gtkui.o
-	IOBJS += objs/unix/gtkui/gtkui_archive.o
-	IOBJS += objs/unix/gtkui/gtkui_callbacks.o
-	IOBJS += objs/unix/gtkui/gtkui_cheats.o
-	IOBJS += objs/unix/gtkui/gtkui_config.o
-	IOBJS += objs/unix/gtkui/gtkui_dialogs.o
-	OBJDIRS += objs/unix/gtkui
-	WARNINGS += -Wno-deprecated-declarations
+	#CFLAGS += $(shell pkg-config --cflags gtk+-3.0)
+	#LIBS += $(shell pkg-config --libs gtk+-3.0)
+	#DEFINES += -D_GTK
+	#IOBJS += objs/unix/gtkui/gtkui.o
+	#IOBJS += objs/unix/gtkui/gtkui_archive.o
+	#IOBJS += objs/unix/gtkui/gtkui_callbacks.o
+	#IOBJS += objs/unix/gtkui/gtkui_cheats.o
+	#IOBJS += objs/unix/gtkui/gtkui_config.o
+	#IOBJS += objs/unix/gtkui/gtkui_dialogs.o
+	#OBJDIRS += objs/unix/gtkui
+	#WARNINGS += -Wno-deprecated-declarations
 	# end GTK
 else
 	DEFINES = -DDATADIR=\"$(DATADIR)\"
