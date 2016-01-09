@@ -17,7 +17,7 @@
 #include "../source/core/api/NstApiUser.hpp"
 #include "../source/core/api/NstApiFds.hpp"
 
-#define NST_VERSION "1.47-WIP"
+#define NST_VERSION "1.48-WIP"
 
 #ifdef _WIN32
 #define snprintf _snprintf
