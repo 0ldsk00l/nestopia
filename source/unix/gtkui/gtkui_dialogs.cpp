@@ -71,6 +71,10 @@ void gtkui_file_open() {
 	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
 		char *filename;
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+		
+		if(conf.gtk_file_chooser_last_folder != NULL)
+			free(conf.gtk_file_chooser_last_folder);
+			
 		conf.gtk_file_chooser_last_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
 		gtk_widget_destroy(dialog);
 		nst_load(filename);
