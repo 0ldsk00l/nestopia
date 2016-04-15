@@ -31,8 +31,6 @@ extern nstpaths_t nstpaths;
 extern GtkWidget *gtkwindow;
 extern settings_t conf;
 
-gchar *currentFolder = NULL;
-
 void gtkui_file_open() {
 	// Open a file using a GTK+ dialog
 	GtkWidget *dialog = gtk_file_chooser_dialog_new(
