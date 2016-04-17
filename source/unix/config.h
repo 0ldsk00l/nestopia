@@ -58,6 +58,7 @@ typedef struct {
 	//bool misc_suppress_screensaver;
 	bool misc_genie_distortion;
 	bool misc_disable_gui;
+	bool misc_disable_cursor;
 	bool misc_config_pause;
 	char* misc_last_folder;
 } settings_t;
