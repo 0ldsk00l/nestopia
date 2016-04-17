@@ -59,7 +59,7 @@ typedef struct {
 	bool misc_genie_distortion;
 	bool misc_disable_gui;
 	bool misc_config_pause;
-	char* gtk_file_chooser_last_folder;
+	char* misc_last_folder;
 } settings_t;
 
 void config_file_read();
