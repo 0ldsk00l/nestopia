@@ -28,8 +28,8 @@
 #include "gtkui_cheats.h"
 
 extern nstpaths_t nstpaths;
-extern GtkWidget *gtkwindow;
 extern settings_t conf;
+extern GtkWidget *gtkwindow;
 
 void gtkui_file_open() {
 	// Open a file using a GTK+ dialog
@@ -43,8 +43,8 @@ void gtkui_file_open() {
 				GTK_RESPONSE_ACCEPT,
 				NULL);
 	
-	if(conf.gtk_file_chooser_last_folder != NULL)
-		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), conf.gtk_file_chooser_last_folder);
+	if(conf.misc_last_folder != NULL)
+		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), conf.misc_last_folder);
 	
 	GtkFileFilter *filter = gtk_file_filter_new();
 	
@@ -72,10 +72,10 @@ void gtkui_file_open() {
 		char *filename;
 		filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
 		
-		if(conf.gtk_file_chooser_last_folder != NULL)
-			free(conf.gtk_file_chooser_last_folder);
+		if(conf.misc_last_folder != NULL)
+			free(conf.misc_last_folder);
 			
-		conf.gtk_file_chooser_last_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
+		conf.misc_last_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
 		gtk_widget_destroy(dialog);
 		nst_load(filename);
 		g_free(filename);

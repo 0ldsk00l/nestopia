@@ -131,7 +131,7 @@ void config_file_write() {
 		fprintf(fp, "genie_distortion=%d\n", conf.misc_genie_distortion);
 		fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
 		fprintf(fp, "config_pause=%d\n", conf.misc_config_pause);
-		fprintf(fp, "gtk_file_chooser_last_folder=%s\n", conf.gtk_file_chooser_last_folder);		
+		fprintf(fp, "last_folder=%s\n", conf.misc_last_folder);		
 		
 		fclose(fp);
 	}
@@ -203,7 +203,7 @@ void config_set_default() {
 	#ifdef _APPLE
 	conf.misc_config_pause = true; // Always pause on OS X
 	#endif
-	conf.gtk_file_chooser_last_folder = NULL;
+	conf.misc_last_folder = NULL;
 }
 
 static int config_match(void* user, const char* section, const char* name, const char* value) {
@@ -265,7 +265,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("misc", "genie_distortion")) { pconfig->misc_genie_distortion = atoi(value); }
 	else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
 	else if (MATCH("misc", "config_pause")) { pconfig->misc_config_pause = atoi(value); }
-	else if (MATCH("misc", "gtk_file_chooser_last_folder")) { pconfig->gtk_file_chooser_last_folder = strdup(value); }	
+	else if (MATCH("misc", "last_folder")) { pconfig->misc_last_folder = strdup(value); }	
     
 	else { return 0; }
 	return 1;
