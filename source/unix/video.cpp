@@ -656,20 +656,24 @@ void video_set_cursor() {
 	int cursor;
 	bool special;
 	
-	if (Input(emulator).GetConnectedController(0) == Input::ZAPPER ||
-		Input(emulator).GetConnectedController(1) == Input::ZAPPER) {
-		special = true;
-		cursor_set_special(Input::ZAPPER);
-	}
+	if (conf.misc_disable_cursor) { SDL_ShowCursor(false); }
 	else {
-		special = false;
-		cursor_set_default();
-	}
-	
-	if (conf.video_fullscreen) { cursor = special; }
-	else { cursor = true; }
+		if (Input(emulator).GetConnectedController(0) == Input::ZAPPER ||
+			Input(emulator).GetConnectedController(1) == Input::ZAPPER) {
+			special = true;
+			SDL_ShowCursor(true); // Must be set true to be modified if special
+			cursor_set_special(Input::ZAPPER);
+		}
+		else {
+			special = false;
+			cursor_set_default();
+		}
 		
-	SDL_ShowCursor(cursor);
+		if (conf.video_fullscreen) { cursor = special; }
+		else { cursor = true; }
+		
+		SDL_ShowCursor(cursor);
+	}
 }
 
 void video_set_title(const char *title) {

@@ -35,6 +35,7 @@ void gtkui_cb_timing_limiter(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_soft_patching(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_genie_distortion(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata);
+void gtkui_cb_misc_disable_cursor(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_config_pause(GtkToggleButton *togglebutton, gpointer userdata);
 
 unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval);
