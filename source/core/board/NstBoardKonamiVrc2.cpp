@@ -80,7 +80,8 @@ namespace Nes
 						Map( 0x6000U, &Vrc2::Peek_6000, &Vrc2::Poke_6000 );
 
 					Map( 0x8000U, 0x8FFFU, PRG_SWAP_8K_0 );
-					Map( 0x9000U, 0x9FFFU, NMT_SWAP_VH01 );
+					//Map( 0x9000U, 0x9FFFU, NMT_SWAP_VH01 );
+					Map( 0x9000U, 0x9FFFU, NMT_SWAP_HV );
 					Map( 0xA000U, 0xAFFFU, PRG_SWAP_8K_1 );
 
 					for (uint i=0xB000, a=9-prgLineA, b=8-prgLineB; i < 0xF000; ++i)

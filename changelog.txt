@@ -7,6 +7,11 @@ Shell:
   - Remember previous ROM directory (fabiengb)
   - Added an option to disable the cursor
 
+Core:
+
+ Fixes:
+  - VRC2 Mirroring bug (koitsu, lidnariq)
+
 ----------------------------------------------------------------
 1.47
 ----------------------------------------------------------------
