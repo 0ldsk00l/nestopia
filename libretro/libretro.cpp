@@ -651,7 +651,6 @@ static void check_variables(void)
    if (NES_FAILED(video.SetRenderState( renderState )) && log_cb)
       log_cb(RETRO_LOG_INFO, "Nestopia core rejected render state\n");;
 
-    retro_reset();
 }
 
 void retro_run(void)
