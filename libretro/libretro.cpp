@@ -439,6 +439,7 @@ static void check_variables(void)
 {
    static bool last_ntsc_val_same;
    struct retro_variable var = {0};
+   struct retro_system_av_info av_info;
 
    Api::Sound sound(emulator);
    Api::Video video(emulator);
@@ -650,6 +651,9 @@ static void check_variables(void)
    renderState.bits.mask.b = 0x000000ff;
    if (NES_FAILED(video.SetRenderState( renderState )) && log_cb)
       log_cb(RETRO_LOG_INFO, "Nestopia core rejected render state\n");;
+
+   retro_get_system_av_info(&av_info);
+   environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &av_info);
 
 }
 
