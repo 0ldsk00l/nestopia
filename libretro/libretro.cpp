@@ -23,6 +23,9 @@
 #define snprintf _snprintf
 #endif
 
+#define NES_8_7_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (8.0 / 7.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
+#define NES_4_3 4.0 / 3.0
+
 using namespace Nes;
 
 static retro_log_printf_t log_cb;
@@ -53,6 +56,7 @@ static unsigned blargg_ntsc;
 static bool fds_auto_insert;
 static bool overscan_v;
 static bool overscan_h;
+static bool use_par;
 
 int16_t video_width = Api::Video::Output::WIDTH;
 size_t pitch;
@@ -285,7 +289,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
       Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
       Api::Video::Output::NTSC_WIDTH,
       Api::Video::Output::HEIGHT,
-      4.0 / 3.0,
+      use_par ? NES_8_7_PAR : NES_4_3,
    };
    info->geometry = geom;
 }
@@ -302,6 +306,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
       { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
+      { "nestopia_aspect" ,  "Core-provided aspect ratio; 8:7 PAR|4:3" },
       { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
       { "nestopia_favored_system", "Favored System; auto|ntsc|pal|famicom|dendy" },
       { NULL, NULL },
@@ -439,6 +444,7 @@ static void check_variables(void)
 {
    static bool last_ntsc_val_same;
    struct retro_variable var = {0};
+   struct retro_system_av_info av_info;
 
    Api::Sound sound(emulator);
    Api::Video video(emulator);
@@ -638,6 +644,16 @@ static void check_variables(void)
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
       overscan_h = (strcmp(var.value, "enabled") == 0);
+
+   var.key = "nestopia_aspect";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+      if (!strcmp(var.value, "8:7 PAR"))
+         use_par = true;
+      else if(!strcmp(var.value, "4:3"))
+         use_par = false;
+   }
    
    pitch = video_width * 4;
    
@@ -650,6 +666,9 @@ static void check_variables(void)
    renderState.bits.mask.b = 0x000000ff;
    if (NES_FAILED(video.SetRenderState( renderState )) && log_cb)
       log_cb(RETRO_LOG_INFO, "Nestopia core rejected render state\n");;
+
+   retro_get_system_av_info(&av_info);
+   environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &av_info);
 
 }
 
