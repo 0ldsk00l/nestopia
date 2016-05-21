@@ -23,6 +23,8 @@
 #define snprintf _snprintf
 #endif
 
+#define NES_8_7_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (8.0 / 7.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
+
 using namespace Nes;
 
 static retro_log_printf_t log_cb;
@@ -285,7 +287,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
       Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
       Api::Video::Output::NTSC_WIDTH,
       Api::Video::Output::HEIGHT,
-      4.0 / 3.0,
+      NES_8_7_PAR,
    };
    info->geometry = geom;
 }
