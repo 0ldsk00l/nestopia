@@ -297,6 +297,7 @@ GtkWidget *gtkui_config() {
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_palette), "YUV");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_palette), "RGB");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_palette), "Custom");
 		
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_video_palette), conf.video_palette_mode);
 	

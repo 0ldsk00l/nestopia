@@ -11,6 +11,7 @@ typedef struct {
 	char fdssave[512];
 	char statepath[512];
 	char cheatpath[512];
+	char palettepath[512];
 } nstpaths_t;
 
 bool nst_archive_checkext(const char *filename);
@@ -18,6 +19,7 @@ bool nst_archive_handle(const char *filename, char **rom, int *romsize, const ch
 bool nst_find_patch(char *filename);
 void nst_load_db();
 void nst_load_fds_bios();
+void nst_load_palette(const char *filename);
 void nst_load(const char *filename);
 void nst_play();
 void nst_pause();
