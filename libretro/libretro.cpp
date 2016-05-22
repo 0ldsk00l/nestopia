@@ -70,6 +70,7 @@ static void *sram;
 static unsigned long sram_size;
 static bool is_pal;
 static bool dbpresent;
+static unsigned char *custpal[64*3];
 
 static const byte yuv_v3_palette[64][3] =
 {
@@ -301,7 +302,7 @@ void retro_set_environment(retro_environment_t cb)
 
    static const struct retro_variable vars[] = {
       { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
-      { "nestopia_palette", "Palette; consumer|canonical|alternative|rgb|yuv-v3|unsaturated-v5|pal|raw" },
+      { "nestopia_palette", "Palette; consumer|canonical|alternative|rgb|yuv-v3|unsaturated-v5|pal|raw|custom" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
@@ -633,6 +634,10 @@ static void check_variables(void)
          video.GetPalette().SetMode(Api::Video::Palette::MODE_CUSTOM);
          video.GetPalette().SetCustom(raw_palette, Api::Video::Palette::EXT_PALETTE);
       }
+      else if (strcmp(var.value, "custom") == 0) {
+         video.GetPalette().SetMode(Api::Video::Palette::MODE_CUSTOM);
+         video.GetPalette().SetCustom((const byte(*)[3])custpal, Api::Video::Palette::STD_PALETTE);
+      }
    }
    
    var.key = "nestopia_overscan_v";
@@ -741,6 +746,7 @@ bool retro_load_game(const struct retro_game_info *info)
    const char *dir;
    char slash;
    char db_path[256];
+   char palette_path[256];
    
 #if defined(_WIN32)
    slash = '\\';
@@ -809,6 +815,26 @@ bool retro_load_game(const struct retro_game_info *info)
    if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
       return false;
 
+   snprintf(palette_path, sizeof(palette_path), "%s%ccustom.pal", dir, slash);
+
+   if (log_cb)
+      log_cb(RETRO_LOG_INFO, "Custom palette path: %s\n", palette_path);
+   
+   std::ifstream *custompalette = new std::ifstream(palette_path, std::ifstream::in|std::ifstream::binary);
+   
+   if (custompalette->is_open())
+   {
+      custompalette->read((char*)custpal, 64*3);
+      if (log_cb)
+         log_cb(RETRO_LOG_WARN, "custom.pal loaded from system directory.\n");
+   }
+   else
+   {
+      if (log_cb)
+         log_cb(RETRO_LOG_WARN, "custom.pal not found in system directory.\n");
+   }
+   delete custompalette;
+   
    snprintf(db_path, sizeof(db_path), "%s%cNstDatabase.xml", dir, slash);
 
    if (log_cb)
