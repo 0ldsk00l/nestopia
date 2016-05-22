@@ -6,6 +6,10 @@ Shell:
  Additions:
   - Remember previous ROM directory (fabiengb)
   - Added an option to disable the cursor
+  - Added ability to load custom palettes
+
+libretro:
+  - Added ability to load custom palettes
 
 Core:
 
