@@ -55,7 +55,7 @@ void config_file_write() {
 		fprintf(fp, "filter=%d\n\n", conf.video_filter);
 		fprintf(fp, "; Valid values are 1 to 4.\n");
 		fprintf(fp, "scale_factor=%d\n\n", conf.video_scale_factor);
-		fprintf(fp, "; 0=YUV, 1=RGB\n");
+		fprintf(fp, "; 0=YUV, 1=RGB, 2=Custom\n");
 		fprintf(fp, "palette_mode=%d\n\n", conf.video_palette_mode);
 		fprintf(fp, "; 0=Consumer, 1=Canonical, 2=Alternative\n");
 		fprintf(fp, "decoder=%d\n\n", conf.video_decoder);

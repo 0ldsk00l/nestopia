@@ -80,6 +80,8 @@ static int nst_quit = 0;
 
 nstpaths_t nstpaths;
 
+void *custompalette = NULL;
+
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
 static Input::Controllers *cNstPads;
@@ -518,6 +520,9 @@ void nst_set_dirs() {
 #endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
+	
+	// Construct the custom palette path
+	snprintf(nstpaths.palettepath, sizeof(nstpaths.palettepath), "%s%s", nstpaths.nstdir, "custom.pal");
 }
 
 void nst_set_region() {
@@ -749,10 +754,39 @@ void nst_load_fds_bios() {
 		fds.SetBIOS(fdsbios);
 	}
 	else {
-		fprintf(stderr, "%s not found, Disk System games will not work.\n", biospath);
+		fprintf(stderr, "Fds: BIOS not found: %s\n", biospath);
 		delete fdsbios;
 		fdsbios = NULL;
 	}
+}
+
+void nst_load_palette(const char *filename) {
+	// Load a custom palette
+	
+	FILE *file;
+	long filesize; // File size in bytes
+	size_t result;
+	
+	file = fopen(filename, "rb");
+	
+	if (!file) {
+		if (conf.video_palette_mode == 2) {
+			fprintf(stderr, "Custom palette: not found: %s\n", filename);
+			conf.video_palette_mode = 0;
+		}
+		return;
+	}
+	
+	fseek(file, 0, SEEK_END);
+	filesize = ftell(file);
+	fseek(file, 0, SEEK_SET);
+	
+	if (custompalette) { free(custompalette); }
+	custompalette = malloc(filesize * sizeof(uint8_t));
+	
+	result = fread(custompalette, sizeof(uint8_t), filesize, file);
+	
+	fclose(file);
 }
 
 void nst_load(const char *filename) {
@@ -926,6 +960,9 @@ int main(int argc, char *argv[]) {
 	// Read the input config file and override defaults
 	input_config_read();
 	
+	// Load the custom palette
+	nst_load_palette(nstpaths.palettepath);
+	
 	// Set the video dimensions
 	video_set_dimensions();
 	
@@ -1030,9 +1067,10 @@ int main(int argc, char *argv[]) {
 	// Remove the cartridge and shut down the NES
 	nst_unload();
 	
-	// Unload the FDS BIOS and NstDatabase.xml
+	// Unload the FDS BIOS, NstDatabase.xml, and the custom palette
 	if (nstdb) { delete nstdb; nstdb = NULL; }
 	if (fdsbios) { delete fdsbios; fdsbios = NULL; }
+	if (custompalette) { free(custompalette); }
 	
 	// Deinitialize audio
 	audio_deinit();

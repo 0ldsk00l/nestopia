@@ -68,6 +68,8 @@ Video::RenderState renderstate;
 
 dimensions_t basesize, rendersize;
 
+extern void *custompalette;
+
 extern bool playing, nst_nsf;
 extern settings_t conf;
 extern nstpaths_t nstpaths;
@@ -485,10 +487,18 @@ void video_set_filter() {
 		
 		case 1: // RGB
 			video.GetPalette().SetMode(Video::Palette::MODE_RGB);
+			break;
+		
+		case 2: // Custom
+			video.GetPalette().SetMode(Video::Palette::MODE_CUSTOM);
+			video.GetPalette().SetCustom((const unsigned char (*)[3])custompalette, Video::Palette::EXT_PALETTE);
+			break;
+		
+		default: break;
 	}
 	
 	// Set YUV Decoder/Picture options
-	if (video.GetPalette().GetMode() != Video::Palette::MODE_RGB) {
+	if (video.GetPalette().GetMode() == Video::Palette::MODE_YUV) {
 		switch (conf.video_decoder) {
 			case 0: // Consumer
 				video.SetDecoder(Video::DECODER_CONSUMER);
