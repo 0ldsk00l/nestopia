@@ -1592,8 +1592,8 @@ namespace Nes
 		{
 			Oscillator::UpdateSettings( r, f );
 
-			if (model == CPU_DENDY)
-				v = v * 85 / Channel::DEFAULT_VOLUME;
+			/*if (model == CPU_DENDY)
+				v = v * 85 / Channel::DEFAULT_VOLUME;*/
 
 			outputVolume = (v * Channel::OUTPUT_MUL + Channel::DEFAULT_VOLUME/2) / Channel::DEFAULT_VOLUME;
 			active = CanOutput();
