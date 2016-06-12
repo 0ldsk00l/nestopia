@@ -8,6 +8,9 @@ Shell:
   - Added an option to disable the cursor
   - Added ability to load custom palettes
 
+ Fixes:
+  - Made the region selector more coherent
+
 libretro:
   - Added ability to load custom palettes
 
@@ -15,6 +18,7 @@ Core:
 
  Fixes:
   - VRC2 Mirroring bug (koitsu, lidnariq)
+  - Dendy timing and audio fixes (FHorse, Eugene.S)
 
 ----------------------------------------------------------------
 1.47
