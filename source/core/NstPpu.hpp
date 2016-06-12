@@ -414,6 +414,8 @@ namespace Nes
 			Chr chr;
 			Nmt nmt;
 			int scanline;
+			int scanline_sleep;
+			int ssleep;
 
 			PpuModel model;
 			Hook hActiveHook;
