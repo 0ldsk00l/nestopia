@@ -430,7 +430,7 @@ namespace Nes
 
 			square[0].UpdateSettings ( settings.muted ? 0 : settings.volumes[ Channel::APU_SQUARE1  ], rate, fixed );
 			square[1].UpdateSettings ( settings.muted ? 0 : settings.volumes[ Channel::APU_SQUARE2  ], rate, fixed );
-			triangle.UpdateSettings  ( settings.muted ? 0 : settings.volumes[ Channel::APU_TRIANGLE ], rate, fixed, cpu.GetModel() );
+			triangle.UpdateSettings  ( settings.muted ? 0 : settings.volumes[ Channel::APU_TRIANGLE ], rate, fixed );
 			noise.UpdateSettings     ( settings.muted ? 0 : settings.volumes[ Channel::APU_NOISE    ], rate, fixed );
 			dmc.UpdateSettings       ( settings.muted ? 0 : settings.volumes[ Channel::APU_DPCM     ] );
 
@@ -1588,12 +1588,9 @@ namespace Nes
 		#pragma optimize("s", on)
 		#endif
 
-		void Apu::Triangle::UpdateSettings(uint v,dword r,uint f,CpuModel model)
+		void Apu::Triangle::UpdateSettings(uint v,dword r,uint f)
 		{
 			Oscillator::UpdateSettings( r, f );
-
-			/*if (model == CPU_DENDY)
-				v = v * 85 / Channel::DEFAULT_VOLUME;*/
 
 			outputVolume = (v * Channel::OUTPUT_MUL + Channel::DEFAULT_VOLUME/2) / Channel::DEFAULT_VOLUME;
 			active = CanOutput();

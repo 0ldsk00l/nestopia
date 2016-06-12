@@ -436,7 +436,7 @@ namespace Nes
 				Triangle();
 
 				void Reset();
-				void UpdateSettings(uint,dword,uint,CpuModel);
+				void UpdateSettings(uint,dword,uint);
 				void LoadState(State::Loader&);
 				void SaveState(State::Saver&,dword) const;
 
