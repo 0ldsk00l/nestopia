@@ -302,24 +302,22 @@ void nst_switch_disk() {
 
 static Machine::FavoredSystem nst_default_system() {
 	switch (conf.misc_default_system) {
-		case 0:
-			return Machine::FAVORED_NES_NTSC;
-			break;
-
-		case 1:
+		case 2:
 			return Machine::FAVORED_NES_PAL;
 			break;
-
-		case 2:
+		
+		case 3:
 			return Machine::FAVORED_FAMICOM;
 			break;
-
-		case 3:
+		
+		case 4:
 			return Machine::FAVORED_DENDY;
 			break;
+		
+		default:
+			return Machine::FAVORED_NES_NTSC;
+			break;
 	}
-
-	return Machine::FAVORED_NES_NTSC;
 }
 
 void nst_dipswitch() {
@@ -536,7 +534,13 @@ void nst_set_region() {
 		//Cartridge::ReadInes(dbfile, nst_default_system(), profile);
 		//dbentry = database.FindEntry(profile.hash, nst_default_system());
 		
-		machine.SetMode(machine.GetDesiredMode());
+		switch (conf.misc_default_system) {
+			case 0: machine.SetMode(machine.GetDesiredMode()); break; // Auto
+			case 1: machine.SetMode(Machine::NTSC); break; // NTSC
+			case 2: machine.SetMode(Machine::PAL); break; // PAL
+			case 3: machine.SetMode(Machine::NTSC); break; // Famicom
+			case 4: machine.SetMode(Machine::PAL); break; // Dendy
+		}
 		
 		if (machine.GetMode() == Machine::PAL) {
 			fprintf(stderr, "Region: PAL\n");

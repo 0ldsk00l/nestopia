@@ -939,6 +939,7 @@ GtkWidget *gtkui_config() {
 				"margin-bottom", MARGIN_TB,
 				"margin-left", MARGIN_LR,
 				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "Auto");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "NTSC");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "PAL");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_default_system), "Famicom");

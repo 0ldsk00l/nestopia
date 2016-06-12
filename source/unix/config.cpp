@@ -123,7 +123,7 @@ void config_file_write() {
 		
 		// Misc
 		fprintf(fp, "[misc]\n");
-		fprintf(fp, "; 0=NTSC, 1=PAL, 2=Famicom, 3=Dendy\n");
+		fprintf(fp, "; 0=Auto, 1=NTSC, 2=PAL, 3=Famicom, 4=Dendy\n");
 		fprintf(fp, "default_system=%d\n\n", conf.misc_default_system);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
