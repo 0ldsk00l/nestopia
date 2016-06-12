@@ -496,6 +496,7 @@ static void check_variables(void)
       {
          favsystem = Api::Machine::FAVORED_DENDY;
          machine.SetMode(Api::Machine::PAL);
+         is_pal = true;
       }
       else
       {
