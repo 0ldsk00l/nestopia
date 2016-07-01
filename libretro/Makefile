@@ -248,6 +248,7 @@ OBJS := $(SOURCES_CXX:.cpp=.o)
 ifeq ($(HAS_GCC), 1)
 GCC_FLAGS := -Wno-deprecated -Wno-write-strings
 C_VER = -std=gnu99
+CXXFLAGS += -std=gnu++98
 else
 endif
 

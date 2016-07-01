@@ -1,6 +1,6 @@
 CC ?= cc
 CXX ?= c++
-CXXFLAGS ?= -O3 -g3
+CXXFLAGS ?= -std=c++98 -O3 -g3
 CPPFLAGS += -DNST_PRAGMA_ONCE
 CFLAGS = $(shell sdl2-config --cflags)
 
