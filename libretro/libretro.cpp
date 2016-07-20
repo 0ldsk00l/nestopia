@@ -301,7 +301,7 @@ void retro_set_environment(retro_environment_t cb)
    environ_cb = cb;
 
    static const struct retro_variable vars[] = {
-      { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb" },
+      { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb|monochrome" },
       { "nestopia_palette", "Palette; consumer|canonical|alternative|rgb|yuv-v3|unsaturated-v6|pal|raw|custom" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
@@ -544,6 +544,8 @@ static void check_variables(void)
          blargg_ntsc = 3;
       else if (strcmp(var.value, "rgb") == 0)
          blargg_ntsc = 4;
+      else if (strcmp(var.value, "monochrome") == 0)
+         blargg_ntsc = 5;
    }
 
    switch(blargg_ntsc)
@@ -581,6 +583,16 @@ static void check_variables(void)
          video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_RGB);
          video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_RGB);
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_RGB);
+         video_width = Api::Video::Output::NTSC_WIDTH;
+         break;
+     case 5:
+         filter = Api::Video::RenderState::FILTER_NTSC;
+         video.SetSharpness(Api::Video::DEFAULT_SHARPNESS_MONO);
+         video.SetColorResolution(Api::Video::DEFAULT_COLOR_RESOLUTION_MONO);
+         video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_MONO);
+         video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_MONO);
+         video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_MONO);
+         video.SetSaturation(Api::Video::DEFAULT_SATURATION_MONO);
          video_width = Api::Video::Output::NTSC_WIDTH;
          break;
    }
