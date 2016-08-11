@@ -514,7 +514,7 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[ui.rwstop]) { nst_set_rewind(1); }
 	
 	// Video
-	if (keys[ui.fullscreen] && (!event.key.repeat || event.key.repeat == 0x7f)) { video_toggle_fullscreen(); }
+	if (event.key.keysym.scancode == ui.fullscreen && event.type == SDL_KEYUP) { video_toggle_fullscreen(); }
 	if (keys[ui.filter]) { video_toggle_filter(); }
 	if (keys[ui.scalefactor]) { video_toggle_scalefactor(); }
 	
