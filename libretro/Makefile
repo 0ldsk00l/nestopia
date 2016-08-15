@@ -126,7 +126,7 @@ else ifeq ($(platform), vita)
 	CC = arm-vita-eabi-gcc$(EXE_EXT)
 	CXX = arm-vita-eabi-g++$(EXE_EXT)
 	AR = arm-vita-eabi-ar$(EXE_EXT)
-	PLATFORM_DEFINES := -DVITA
+	PLATFORM_DEFINES := -DVITA -fno-short-enums
 	STATIC_LINKING = 1
 
 # CTR(3DS)
