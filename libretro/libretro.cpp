@@ -309,7 +309,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
       { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
-      { "nestopia_aspect" ,  "Preferred aspect ratio; 8:7|4:3" },
+      { "nestopia_aspect" ,  "Preferred aspect ratio; 8:7 PAR|4:3" },
       { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
       { "nestopia_favored_system", "Favored System; auto|ntsc|pal|famicom|dendy" },
       { NULL, NULL },
@@ -669,7 +669,7 @@ static void check_variables(void)
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      if (!strcmp(var.value, "8:7"))
+      if (!strcmp(var.value, "8:7 PAR"))
          use_par = true;
       else if(!strcmp(var.value, "4:3"))
          use_par = false;
