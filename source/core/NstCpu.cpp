@@ -767,19 +767,7 @@ namespace Nes
 
 		void Cpu::Ram::Reset(const CpuModel model)
 		{
-			if (model == CPU_DENDY)
-			{
-				std::memset( mem, 0x00, sizeof(mem) );
-			}
-			else
-			{
-				std::memset( mem, 0xFF, sizeof(mem) );
-
-				mem[0x08] = 0xF7;
-				mem[0x09] = 0xEF;
-				mem[0x0A] = 0xDF;
-				mem[0x0F] = 0xBF;
-			}
+			std::memset( mem, 0x00, sizeof(mem) );
 		}
 
 		#ifdef NST_MSVC_OPTIMIZE
