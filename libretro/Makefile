@@ -25,6 +25,9 @@ else ifneq ($(findstring MINGW,$(shell uname -a)),)
 	system_platform = win
 endif
 
+prefix := /usr
+libdir := $(prefix)/lib
+
 LIBRETRO_DIR := libretro
 TARGET_NAME := nestopia
 
@@ -292,6 +295,12 @@ clean-objs:
 clean:
 	rm -f $(OBJS)
 	rm -f $(TARGET)
+
+install:
+	install -D -m 755 $(TARGET) $(DESTDIR)$(libdir)/$(LIBRETRO_DIR)/$(TARGET)
+
+uninstall:
+	rm $(DESTDIR)$(libdir)/$(LIBRETRO_DIR)/$(TARGET)
 
 .PHONY: clean clean-objs
 endif
