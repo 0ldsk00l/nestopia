@@ -527,30 +527,30 @@ void nst_set_region() {
 	// Set the region
 	Machine machine(emulator);
 	Cartridge::Database database(emulator);
-	//Cartridge::Profile profile;
 	
-	if (database.IsLoaded()) {
-		//std::ifstream dbfile(filename, std::ios::in|std::ios::binary);
-		//Cartridge::ReadInes(dbfile, nst_default_system(), profile);
-		//dbentry = database.FindEntry(profile.hash, nst_default_system());
-		
-		switch (conf.misc_default_system) {
-			case 0: machine.SetMode(machine.GetDesiredMode()); break; // Auto
-			case 1: machine.SetMode(Machine::NTSC); break; // NTSC
-			case 2: machine.SetMode(Machine::PAL); break; // PAL
-			case 3: machine.SetMode(Machine::NTSC); break; // Famicom
-			case 4: machine.SetMode(Machine::PAL); break; // Dendy
-		}
-		
-		if (machine.GetMode() == Machine::PAL) {
-			fprintf(stderr, "Region: PAL\n");
-			nst_pal = true;
-		}
-		else {
-			fprintf(stderr, "Region: NTSC\n");
-			nst_pal = false;
-		}
-		//printf("Mapper: %d\n", dbentry.GetMapper());
+	/*if (database.IsLoaded()) {
+		std::ifstream dbfile(filename, std::ios::in|std::ios::binary);
+		Cartridge::Profile profile;
+		Cartridge::ReadInes(dbfile, nst_default_system(), profile);
+		dbentry = database.FindEntry(profile.hash, nst_default_system());
+		printf("Mapper: %d\n", dbentry.GetMapper());
+	}*/
+	
+	switch (conf.misc_default_system) {
+		case 0: machine.SetMode(machine.GetDesiredMode()); break; // Auto
+		case 1: machine.SetMode(Machine::NTSC); break; // NTSC
+		case 2: machine.SetMode(Machine::PAL); break; // PAL
+		case 3: machine.SetMode(Machine::NTSC); break; // Famicom
+		case 4: machine.SetMode(Machine::PAL); break; // Dendy
+	}
+
+	if (machine.GetMode() == Machine::PAL) {
+		fprintf(stderr, "Region: PAL\n");
+		nst_pal = true;
+	}
+	else {
+		fprintf(stderr, "Region: NTSC\n");
+		nst_pal = false;
 	}
 }
 
