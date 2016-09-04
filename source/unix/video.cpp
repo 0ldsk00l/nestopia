@@ -70,7 +70,7 @@ dimensions_t basesize, rendersize;
 
 extern void *custompalette;
 
-extern bool playing, nst_nsf;
+extern bool playing, nst_nsf, nst_pal;
 extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
@@ -589,12 +589,13 @@ void video_set_filter() {
 void video_set_dimensions() {
 	// Set up the video dimensions
 	int scalefactor = conf.video_scale_factor;
+	int tvwidth = nst_pal ? PAL_TV_WIDTH : TV_WIDTH;
 	
 	switch(conf.video_filter) {
 		case 0:	// None
 			basesize.w = Video::Output::WIDTH;
 			basesize.h = Video::Output::HEIGHT;
-			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w * scalefactor;
+			conf.video_tv_aspect == true ? rendersize.w = tvwidth * scalefactor : rendersize.w = basesize.w * scalefactor;
 			rendersize.h = basesize.h * scalefactor;
 			overscan_offset = basesize.w * OVERSCAN_TOP;
 			overscan_height = basesize.h - OVERSCAN_TOP - OVERSCAN_BOTTOM;
@@ -619,7 +620,7 @@ void video_set_dimensions() {
 			
 			basesize.w = Video::Output::WIDTH * scalefactor;
 			basesize.h = Video::Output::HEIGHT * scalefactor;
-			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = basesize.w;
+			conf.video_tv_aspect == true ? rendersize.w = tvwidth * scalefactor : rendersize.w = basesize.w;
 			rendersize.h = basesize.h;
 			overscan_offset = basesize.w * OVERSCAN_TOP * scalefactor;
 			overscan_height = basesize.h - (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
@@ -628,7 +629,7 @@ void video_set_dimensions() {
 		case 4: // 2xSaI
 			basesize.w = Video::Output::WIDTH * 2;
 			basesize.h = Video::Output::HEIGHT * 2;
-			conf.video_tv_aspect == true ? rendersize.w = TV_WIDTH * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
+			conf.video_tv_aspect == true ? rendersize.w = tvwidth * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
 			rendersize.h = Video::Output::HEIGHT * scalefactor;
 			overscan_offset = basesize.w * OVERSCAN_TOP * 2;
 			overscan_height = basesize.h - (OVERSCAN_TOP + OVERSCAN_BOTTOM) * 2;
