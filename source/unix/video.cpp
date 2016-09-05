@@ -514,48 +514,63 @@ void video_set_filter() {
 			
 			default: break;
 		}
-		
-		video.SetBrightness(conf.video_brightness);
-		video.SetSaturation(conf.video_saturation);
-		video.SetContrast(conf.video_contrast);
-		video.SetHue(conf.video_hue);
 	}
 	
+	video.SetBrightness(conf.video_brightness);
+	video.SetSaturation(conf.video_saturation);
+	video.SetContrast(conf.video_contrast);
+	video.SetHue(conf.video_hue);
+	
 	// Set NTSC options
-	switch (conf.video_ntsc_mode) {
-		case 0:	// Composite
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_COMP);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_COMP);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_COMP);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_COMP);
-			break;
-		
-		case 1:	// S-Video
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_SVIDEO);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_SVIDEO);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_SVIDEO);
-			break;
-		
-		case 2:	// RGB
-			video.SetSharpness(Video::DEFAULT_SHARPNESS_RGB);
-			video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_RGB);
-			video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_RGB);
-			video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_RGB);
-			video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
-			break;
-		
-		case 3: // Custom
-			video.SetSharpness(conf.video_ntsc_sharpness);
-			video.SetColorResolution(conf.video_ntsc_resolution);
-			video.SetColorBleed(conf.video_ntsc_bleed);
-			video.SetColorArtifacts(conf.video_ntsc_artifacts);
-			video.SetColorFringing(conf.video_ntsc_fringing);
-			break;
-		
-		default: break;
+	if (conf.video_filter == 1) {
+		switch (conf.video_ntsc_mode) {
+			case 0:	// Composite
+				video.SetSaturation(Video::DEFAULT_SATURATION_COMP);
+				video.SetSharpness(Video::DEFAULT_SHARPNESS_COMP);
+				video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_COMP);
+				video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_COMP);
+				video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_COMP);
+				video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_COMP);
+				break;
+			
+			case 1:	// S-Video
+				video.SetSaturation(Video::DEFAULT_SATURATION_SVIDEO);
+				video.SetSharpness(Video::DEFAULT_SHARPNESS_SVIDEO);
+				video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_SVIDEO);
+				video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_SVIDEO);
+				video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
+				video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_SVIDEO);
+				break;
+			
+			case 2:	// RGB
+				video.SetSaturation(Video::DEFAULT_SATURATION_RGB);
+				video.SetSharpness(Video::DEFAULT_SHARPNESS_RGB);
+				video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_RGB);
+				video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_RGB);
+				video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_RGB);
+				video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_RGB);
+				break;
+			
+			case 3: // Monochrome
+				video.SetSaturation(Video::DEFAULT_SATURATION_MONO);
+				video.SetSharpness(Video::DEFAULT_SHARPNESS_MONO);
+				video.SetColorResolution(Video::DEFAULT_COLOR_RESOLUTION_MONO);
+				video.SetColorBleed(Video::DEFAULT_COLOR_BLEED_MONO);
+				video.SetColorArtifacts(Video::DEFAULT_COLOR_ARTIFACTS_MONO);
+				video.SetColorFringing(Video::DEFAULT_COLOR_FRINGING_MONO);
+				break;
+			
+			case 4: // Custom
+				video.SetSaturation(conf.video_saturation);
+				video.SetSharpness(conf.video_ntsc_sharpness);
+				video.SetColorResolution(conf.video_ntsc_resolution);
+				video.SetColorBleed(conf.video_ntsc_bleed);
+				video.SetColorArtifacts(conf.video_ntsc_artifacts);
+				video.SetColorFringing(conf.video_ntsc_fringing);
+				break;
+			
+			default: break;
+		}
 	}
 	
 	// Set xBR options

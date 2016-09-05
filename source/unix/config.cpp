@@ -65,7 +65,7 @@ void config_file_write() {
 		fprintf(fp, "contrast=%d\n\n", conf.video_contrast);
 		fprintf(fp, "; Valid values are -45 to 45.\n");
 		fprintf(fp, "hue=%d\n\n", conf.video_hue);
-		fprintf(fp, "; 0=Composite, 1=S-Video, 2=RGB, 3=Custom\n");
+		fprintf(fp, "; 0=Composite, 1=S-Video, 2=RGB, 3=Monochrome, 4=Custom\n");
 		fprintf(fp, "ntsc_mode=%d\n\n", conf.video_ntsc_mode);
 		fprintf(fp, "; Valid values are -100 to 100.\n");
 		fprintf(fp, "ntsc_sharpness=%d\n", conf.video_ntsc_sharpness);
