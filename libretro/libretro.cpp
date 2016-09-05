@@ -568,10 +568,7 @@ static void check_variables(void)
       case 0:
          filter = Api::Video::RenderState::FILTER_NONE;
          video_width = Api::Video::Output::WIDTH;
-         break;
-      case 1:
-         filter = Api::Video::RenderState::FILTER_NTSC;
-         video_width = Api::Video::Output::NTSC_WIDTH;
+         video.SetSaturation(Api::Video::DEFAULT_SATURATION);
          break;
       case 2:
          filter = Api::Video::RenderState::FILTER_NTSC;
@@ -580,6 +577,7 @@ static void check_variables(void)
          video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_COMP);
          video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_COMP);
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_COMP);
+         video.SetSaturation(Api::Video::DEFAULT_SATURATION_COMP);
          video_width = Api::Video::Output::NTSC_WIDTH;
          break;
       case 3:
@@ -589,6 +587,7 @@ static void check_variables(void)
          video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_SVIDEO);
          video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_SVIDEO);
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_SVIDEO);
+         video.SetSaturation(Api::Video::DEFAULT_SATURATION_SVIDEO);
          video_width = Api::Video::Output::NTSC_WIDTH;
          break;
       case 4:
@@ -598,6 +597,7 @@ static void check_variables(void)
          video.SetColorBleed(Api::Video::DEFAULT_COLOR_BLEED_RGB);
          video.SetColorArtifacts(Api::Video::DEFAULT_COLOR_ARTIFACTS_RGB);
          video.SetColorFringing(Api::Video::DEFAULT_COLOR_FRINGING_RGB);
+         video.SetSaturation(Api::Video::DEFAULT_SATURATION_RGB);
          video_width = Api::Video::Output::NTSC_WIDTH;
          break;
      case 5:
