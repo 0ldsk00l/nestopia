@@ -17,6 +17,9 @@ libretro:
 
 Core:
 
+ Additions:
+  - RAM Power-on State setting
+
  Fixes:
   - VRC2 Mirroring bug (koitsu, lidnariq)
   - Dendy timing and audio fixes (FHorse, Eugene.S)
