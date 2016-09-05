@@ -23,6 +23,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 #include <cstring>
+#include <cstdlib>
 #include "NstCpu.hpp"
 #include "NstHook.hpp"
 #include "NstState.hpp"
@@ -164,6 +165,11 @@ namespace Nes
 		void Cpu::PowerOff()
 		{
 			Reset( false, true );
+		}
+
+		void Cpu::SetRamPowerState(uint powerstate)
+		{
+			ram.powerstate = powerstate;
 		}
 
 		void Cpu::Reset(bool hard)
@@ -767,7 +773,11 @@ namespace Nes
 
 		void Cpu::Ram::Reset(const CpuModel model)
 		{
-			std::memset( mem, 0x00, sizeof(mem) );
+			switch (powerstate) {
+				case 1: std::memset( mem, 0xFF, sizeof(mem) ); break;
+				case 2: std::memset( mem, byte(std::rand()), sizeof(mem) ); break;
+				default: std::memset( mem, 0x00, sizeof(mem) ); break;
+			}
 		}
 
 		#ifdef NST_MSVC_OPTIMIZE

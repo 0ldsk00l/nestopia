@@ -257,6 +257,14 @@ namespace Nes
 			Result Reset(bool state) throw();
 
 			/**
+			* Sets the RAM's power state.
+			*
+			* @param power-up state
+			* @return result code
+			*/
+			Result SetRamPowerState(uint state) throw();
+
+			/**
 			* Returns the current mode.
 			*
 			* @return mode

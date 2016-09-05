@@ -321,6 +321,11 @@ namespace Nes
 			}
 		}
 
+		void Machine::SetRamPowerState(uint state)
+		{
+			cpu.SetRamPowerState(state);
+		}
+
 		void Machine::SwitchMode()
 		{
 			NST_ASSERT( !(state & Api::Machine::ON) );

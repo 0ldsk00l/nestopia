@@ -66,6 +66,7 @@ namespace Nes
 			};
 
 			void Reset(bool);
+			void SetRamPowerState(uint);
 			void Boot(bool);
 			void ExecuteFrame(Sound::Output*);
 			void EndFrame();
@@ -433,6 +434,7 @@ namespace Nes
 				NES_DECL_POKE( Ram_3 );
 
 				byte mem[RAM_SIZE];
+				byte powerstate;
 			};
 
 			struct IoMap : Io::Map<SIZE_64K>
