@@ -954,6 +954,34 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(combo_misc_default_system), "changed",
 		G_CALLBACK(gtkui_cb_misc_default_system), NULL);
 	
+	// RAM Power-on State
+	GtkWidget *box_misc_power_state = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_misc_power_state = gtk_widget_new(
+				GTK_TYPE_LABEL,
+				"label", "RAM Power-on State:",
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	GtkWidget *combo_misc_power_state = gtk_widget_new(
+				GTK_TYPE_COMBO_BOX_TEXT,
+				"halign", GTK_ALIGN_START,
+				"margin-bottom", MARGIN_TB,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_power_state), "0x00");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_power_state), "0xFF");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_misc_power_state), "Random");
+		
+	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_misc_power_state), conf.misc_power_state);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc_power_state), label_misc_power_state, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_misc_power_state), combo_misc_power_state, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_misc), box_misc_power_state, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(combo_misc_power_state), "changed",
+		G_CALLBACK(gtkui_cb_misc_power_state), NULL);
+	
 	// Alternate Speed
 	GtkAdjustment *adj_timing_altspeed = gtk_adjustment_new(conf.timing_altspeed, 1, 240, 1, 5, 0);
 	GtkWidget *box_timing_altspeed = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
