@@ -95,6 +95,7 @@ namespace Nes
 			Result Unload();
 			Result PowerOff(Result=RESULT_OK);
 			void   Reset(bool);
+			void   SetRamPowerState(uint);
 			void   SwitchMode();
 			bool   LoadState(State::Loader&,bool);
 			void   SaveState(State::Saver&) const;
