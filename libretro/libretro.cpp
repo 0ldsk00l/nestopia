@@ -312,6 +312,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_aspect" ,  "Preferred aspect ratio; 8:7 PAR|4:3" },
       { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
       { "nestopia_favored_system", "Favored System; auto|ntsc|pal|famicom|dendy" },
+      { "nestopia_ram_power_state", "RAM Power-on State; 0x00|0xFF|random" },
       { NULL, NULL },
    };
 
@@ -517,6 +518,18 @@ static void check_variables(void)
          sound.SetGenie(0);
       else if (strcmp(var.value, "enabled") == 0)
          sound.SetGenie(1);
+   }
+   
+   var.key = "nestopia_ram_power_state";
+
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+   {
+      if (strcmp(var.value, "0x00") == 0)
+         machine.SetRamPowerState(0);
+      else if (strcmp(var.value, "0xFF") == 0)
+         machine.SetRamPowerState(1);
+      else if (strcmp(var.value, "random") == 0)
+         machine.SetRamPowerState(2);
    }
 
    var.key = "nestopia_nospritelimit";
