@@ -61,6 +61,7 @@ typedef struct {
 	bool misc_disable_cursor;
 	bool misc_config_pause;
 	char* misc_last_folder;
+	int misc_power_state;
 } settings_t;
 
 void config_file_read();

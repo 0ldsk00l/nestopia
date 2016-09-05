@@ -457,6 +457,7 @@ void nst_reset(bool hardreset) {
 	// Reset the machine (soft or hard)
 	Machine machine(emulator);
 	Fds fds(emulator);
+	machine.SetRamPowerState(conf.misc_power_state);
 	machine.Reset(hardreset);
 	
 	// Set the FDS disk to defaults
@@ -906,7 +907,7 @@ void nst_load(const char *filename) {
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);
 	
-	// note that something is loaded
+	// Note that something is loaded
 	loaded = 1;
 	
 	// Set the title
@@ -914,9 +915,12 @@ void nst_load(const char *filename) {
 	#ifdef _GTK
 	if (!conf.misc_disable_gui) { gtkui_set_title(nstpaths.gamename); }
 	#endif
-
-	// power on
-	machine.Power(true); // false = power off
+	
+	// Set the RAM's power state
+	machine.SetRamPowerState(conf.misc_power_state);
+	
+	// Power on
+	machine.Power(true);
 	
 	nst_play();
 }
