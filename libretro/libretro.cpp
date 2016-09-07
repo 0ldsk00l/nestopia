@@ -278,7 +278,7 @@ void retro_get_system_info(struct retro_system_info *info)
    info->library_name     = "Nestopia";
    info->library_version  = "v" NST_VERSION;
    info->need_fullpath    = false;
-   info->valid_extensions = "nes|fds";
+   info->valid_extensions = "nes|fds|unf|unif";
 }
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
