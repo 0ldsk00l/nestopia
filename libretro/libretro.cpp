@@ -23,8 +23,8 @@
 #define snprintf _snprintf
 #endif
 
-#define NES_8_7_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (8.0 / 7.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
-#define NES_4_3 4.0 / 3.0
+#define NES_NTSC_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (8.0 / 7.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
+#define NES_PAL_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (2950000.0 / 2128137.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
 
 using namespace Nes;
 
@@ -54,7 +54,7 @@ static unsigned blargg_ntsc;
 static bool fds_auto_insert;
 static bool overscan_v;
 static bool overscan_h;
-static bool use_par;
+static unsigned aspect_ratio_mode;
 
 int16_t video_width = Api::Video::Output::WIDTH;
 size_t pitch;
@@ -281,6 +281,20 @@ void retro_get_system_info(struct retro_system_info *info)
    info->valid_extensions = "nes|fds|unf|unif";
 }
 
+double get_aspect_ratio(void)
+{
+  switch (aspect_ratio_mode)
+  {
+  case 1:
+    return NES_NTSC_PAR;
+    break;
+  case 2:
+    return NES_PAL_PAR;
+    break;
+  }
+  return is_pal ? NES_PAL_PAR : NES_NTSC_PAR;
+}
+
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
    const retro_system_timing timing = { is_pal ? 50.0 : 60.0, 44100.0 };
@@ -292,7 +306,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
       Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
       Api::Video::Output::NTSC_WIDTH,
       Api::Video::Output::HEIGHT,
-      use_par ? NES_8_7_PAR : NES_4_3,
+      get_aspect_ratio(),
    };
    info->geometry = geom;
 }
@@ -309,7 +323,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
       { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
-      { "nestopia_aspect" ,  "Preferred aspect ratio; 8:7 PAR|4:3" },
+      { "nestopia_aspect" ,  "Preferred aspect ratio; auto|ntsc|pal" },
       { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
       { "nestopia_favored_system", "Favored System; auto|ntsc|pal|famicom|dendy" },
       { "nestopia_ram_power_state", "RAM Power-on State; 0x00|0xFF|random" },
@@ -682,10 +696,12 @@ static void check_variables(void)
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    {
-      if (!strcmp(var.value, "8:7 PAR"))
-         use_par = true;
-      else if(!strcmp(var.value, "4:3"))
-         use_par = false;
+     if (!strcmp(var.value, "ntsc"))
+       aspect_ratio_mode = 1;
+     else if (!strcmp(var.value, "pal"))
+       aspect_ratio_mode = 2;
+     else
+       aspect_ratio_mode = 0;
    }
    
    pitch = video_width * 4;
