@@ -277,7 +277,11 @@ void retro_get_system_info(struct retro_system_info *info)
 {
    memset(info, 0, sizeof(*info));
    info->library_name     = "Nestopia";
-   info->library_version  = "v" NST_VERSION;
+#ifdef GIT_VERSION
+   info->library_version  = NST_VERSION GIT_VERSION;
+#else
+   info->library_version  = NST_VERSION;
+#endif
    info->need_fullpath    = false;
    info->valid_extensions = "nes|fds|unf|unif";
 }

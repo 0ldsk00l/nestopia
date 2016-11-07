@@ -1,3 +1,5 @@
+GIT_VERSION := " ($(shell git describe --abbrev=4 --dirty --always --tags))"
+
 LOCAL_SHORT_COMMANDS := true
 
 LOCAL_PATH := $(call my-dir)
@@ -24,6 +26,7 @@ CORE_DIR = ../..
 include $(CORE_DIR)/libretro/Makefile.common
 
 LOCAL_SRC_FILES += $(SOURCES_CXX) $(SOURCES_C)
-LOCAL_CXXFLAGS += -DANDROID -D__LIBRETRO__ -DINLINE=inline -DHAVE_STDINT_H -DHAVE_INTTYPES_H -DNST_NO_ZLIB -fexceptions $(INCFLAGS)
+LOCAL_CFLAGS += -DGIT_VERSION=\"$(GIT_VERSION)\"
+LOCAL_CXXFLAGS += -DANDROID -D__LIBRETRO__ -DINLINE=inline -DHAVE_STDINT_H -DHAVE_INTTYPES_H -DNST_NO_ZLIB -fexceptions -DGIT_VERSION=\"$(GIT_VERSION)\" $(INCFLAGS)
 
 include $(BUILD_SHARED_LIBRARY)
