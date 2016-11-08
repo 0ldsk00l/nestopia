@@ -1,4 +1,4 @@
-GIT_VERSION := " ($(shell git describe --abbrev=4 --dirty --always --tags))"
+GIT_VERSION := " $(shell git describe --dirty --always --tags)"
 
 LOCAL_SHORT_COMMANDS := true
 

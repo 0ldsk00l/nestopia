@@ -1,5 +1,5 @@
 DEBUG = 0
-GIT_VERSION := " ($(shell git describe --abbrev=4 --dirty --always --tags))"
+GIT_VERSION := " $(shell git describe --dirty --always --tags)"
 HAS_GCC = 1
 
 ifeq ($(platform),)
