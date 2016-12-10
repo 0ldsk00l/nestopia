@@ -14,11 +14,13 @@ Shell:
 
 libretro:
   - Added ability to load custom palettes
+  - Added turbo buttons
 
 Core:
 
  Additions:
   - RAM Power-on State setting
+  - Support for mapper 23.10
 
  Fixes:
   - VRC2 Mirroring bug (koitsu, lidnariq)
