@@ -279,14 +279,14 @@ namespace Nes
 		template<typename T>
 		inline long signed_shl(T v,uint c)
 		{
-			enum {NATIVE = T(-7) << 1 == -14};
+			enum {NATIVE = -(T(7) << 1) == -14};
 			return Helper::ShiftSigned<T,NATIVE>::Left( v, c );
 		}
 
 		template<typename T>
 		inline long signed_shr(T v,uint c)
 		{
-			enum {NATIVE = T(-7) >> 1 == -4 || T(-7) >> 1 == -3};
+			enum {NATIVE = -(T(7) >> 1) == -4 || -(T(7) >> 1) == -3};
 			return Helper::ShiftSigned<T,NATIVE>::Right( v, c );
 		}
 

@@ -8,7 +8,6 @@
 #elif _APPLE
 #else
 #include <gdk/gdkx.h>
-#include <gdk/gdkwayland.h>
 #endif
 
 void gtkui_init(int argc, char *argv[]);

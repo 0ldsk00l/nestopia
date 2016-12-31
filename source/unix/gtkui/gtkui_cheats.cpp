@@ -373,7 +373,7 @@ void gtkui_cheats_fill_tree(char *filename) {
 				else if (node.GetChild(L"address")) { // Raw
 					char rawbuf[11];
 					snprintf(rawbuf, sizeof(rawbuf),
-								"%04x %02x %02x",
+								"%04lu %02lu %02lu",
 								node.GetChild(L"address").GetUnsignedValue(),
 								node.GetChild(L"value").GetUnsignedValue(),
 								node.GetChild(L"compare").GetUnsignedValue());
@@ -545,13 +545,13 @@ gboolean gtkui_cheats_scan_list(GtkTreeModel *model, GtkTreePath *path, GtkTreeI
 			int addr, value, compare;
 			char buf[5];
 			
-			snprintf(buf, sizeof(buf), "%c%c%c%c\0", rawcode[0], rawcode[1], rawcode[2], rawcode[3]);
+			snprintf(buf, sizeof(buf), "%c%c%c%c", rawcode[0], rawcode[1], rawcode[2], rawcode[3]);
 			sscanf(buf, "%x", &addr);
 			
-			snprintf(buf, sizeof(buf), "%c%c\0", rawcode[5], rawcode[6]);
+			snprintf(buf, sizeof(buf), "%c%c", rawcode[5], rawcode[6]);
 			sscanf(buf, "%x", &value);
 			
-			snprintf(buf, sizeof(buf), "%c%c\0", rawcode[8], rawcode[9]);
+			snprintf(buf, sizeof(buf), "%c%c", rawcode[8], rawcode[9]);
 			sscanf(buf, "%x", &compare);
 			
 			code.address = addr;
