@@ -636,7 +636,7 @@ char* input_translate_event(SDL_Event event) {
 	return inputcode;
 }
 
-SDL_Event input_translate_string(char *string) {
+SDL_Event input_translate_string(const char *string) {
 	// Translate an inputcode to an SDL_Event
 	SDL_Event event;
 	

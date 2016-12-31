@@ -30,7 +30,7 @@
 
 extern settings_t conf;
 
-void cli_error(char *message) {
+void cli_error(const char *message) {
 	cli_show_usage();
 	fprintf(stderr, "%s\n", message);
 	exit(1);
