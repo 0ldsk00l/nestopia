@@ -159,7 +159,7 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event);
 void input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
 void input_match_mouse(Input::Controllers *controllers, SDL_Event event);
 char* input_translate_event(SDL_Event event);
-SDL_Event input_translate_string(char *string);
+SDL_Event input_translate_string(const char *string);
 int input_checksign(int axisvalue);
 void input_config_read_new();
 void input_config_read();
