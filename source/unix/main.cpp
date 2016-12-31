@@ -266,8 +266,8 @@ void nst_pause() {
 void nst_fds_info() {
 	Fds fds(emulator);
 
-	char* disk;
-	char* side;
+	const char* disk;
+	const char* side;
 
 	fds.GetCurrentDisk() == 0 ? disk = "1" : disk = "2";
 	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
