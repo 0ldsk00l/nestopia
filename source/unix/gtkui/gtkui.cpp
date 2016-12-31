@@ -438,7 +438,7 @@ void gtkui_message(const char* message) {
 				GTK_DIALOG_DESTROY_WITH_PARENT,
 				GTK_MESSAGE_INFO,
 				GTK_BUTTONS_OK,
-				message);
+				"%s", message);
 	gtk_dialog_run(GTK_DIALOG(messagewindow));
 	gtk_widget_destroy(messagewindow);
 }
