@@ -332,12 +332,12 @@ void video_create_embedded() {
 	}
 	#endif
 	
-	#ifdef GDK_WINDOWING_WAYLAND
+	/*#ifdef GDK_WINDOWING_WAYLAND
 	if (GDK_IS_WAYLAND_DISPLAY(display)) {
 		printf("Wayland will be supported in the future. For now use the X11 backend.\n");
 		exit(0);
 	}
-	#endif
+	#endif*/
 	
 	#ifdef _MINGW
 	#ifdef GDK_WINDOWING_WIN32
