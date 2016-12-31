@@ -56,7 +56,7 @@ char timebuf[6];
 
 int overscan_offset, overscan_height;
 
-static uint32_t videobuf[31457280]; // Maximum possible internal size
+static uint32_t videobuf[VIDBUF_MAXSIZE]; // Maximum possible internal size
 
 SDL_Window *sdlwindow;
 SDL_Window *embedwindow;
@@ -772,9 +772,7 @@ void video_screenshot(const char* filename) {
 
 void video_clear_buffer() {
 	// Write black to the video buffer
-	for (int i = 0; i < 31457280; i++) {
-		videobuf[i] = 0x00000000;
-	}
+	memset(videobuf, 0x00000000, VIDBUF_MAXSIZE);
 }
 
 void video_disp_nsf() {

@@ -8,6 +8,8 @@
 #define OVERSCAN_BOTTOM 8
 #define OVERSCAN_TOP 8
 
+#define VIDBUF_MAXSIZE 31457280
+
 #include <epoxy/gl.h>
 #include <SDL.h>
 #include <SDL_opengl.h>
