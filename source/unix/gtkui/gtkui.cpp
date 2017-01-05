@@ -419,8 +419,8 @@ GtkWidget *gtkui_about() {
 
 void gtkui_image_paths() {
 	// Set paths to SVG icons/images
-	snprintf(iconpath, sizeof(iconpath), "%s/icons/nestopia.svg", DATADIR);
-	snprintf(padpath, sizeof(padpath), "%s/icons/nespad.svg", DATADIR);
+	snprintf(iconpath, sizeof(iconpath), "%s/icons/hicolor/scalable/apps/nestopia.svg", DATAROOTDIR);
+	snprintf(padpath, sizeof(padpath), "%s/icons/hicolor/scalable/apps/nespad.svg", DATAROOTDIR);
 	
 	// Load the SVG from local source dir if make install hasn't been done
 	struct stat svgstat;
