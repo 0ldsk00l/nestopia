@@ -410,18 +410,18 @@ endif()
 # Installation #
 ################
 # program-specific files
-install( TARGETS nestopia                         DESTINATION ${CMAKE_INSTALL_BINDIR} )
-install( FILES NstDatabase.xml                    DESTINATION ${CMAKE_INSTALL_DATADIR}/nestopia )
+install( TARGETS nestopia                          DESTINATION ${CMAKE_INSTALL_BINDIR} )
+install( FILES NstDatabase.xml                     DESTINATION ${CMAKE_INSTALL_DATADIR}/nestopia )
 
 # freedesktop.org-specific files
-install( FILES source/unix/icons/nestopia.desktop DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
-install( FILES source/unix/icons/nestopia32.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps RENAME nestopia.png )
-install( FILES source/unix/icons/nestopia48.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps RENAME nestopia.png )
-install( FILES source/unix/icons/nestopia64.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps RENAME nestopia.png )
-install( FILES source/unix/icons/nestopia96.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/96x96/apps RENAME nestopia.png )
-install( FILES source/unix/icons/nestopia128.png  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps RENAME nestopia.png )
-install( FILES source/unix/icons/nestopia.svg     DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps )
-install( FILES source/unix/icons/nespad.svg       DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps )
+install( FILES source/unix/icons/nestopia.desktop  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/applications )
+install( FILES source/unix/icons/32/nestopia.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/32x32/apps )
+install( FILES source/unix/icons/48/nestopia.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/48x48/apps )
+install( FILES source/unix/icons/64/nestopia.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/64x64/apps )
+install( FILES source/unix/icons/96/nestopia.png   DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/96x96/apps )
+install( FILES source/unix/icons/128/nestopia.png  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/128x128/apps )
+install( FILES source/unix/icons/svg/nestopia.svg  DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps )
+install( FILES source/unix/icons/svg/nespad.svg    DESTINATION ${CMAKE_INSTALL_DATAROOTDIR}/icons/hicolor/scalable/apps )
 
 # documentation
 install( FILES AUTHORS ChangeLog README.md README.unix DESTINATION ${CMAKE_INSTALL_DOCDIR} )
