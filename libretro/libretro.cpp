@@ -241,49 +241,18 @@ static void check_system_specs(void)
 void retro_init(void)
 {
    struct retro_log_callback log;
-#ifdef _3DS
-   video_buffer = (uint32_t*)linearMemAlign(Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT * sizeof(uint32_t), 0x80);
-#else
-   video_buffer = (uint32_t*)malloc(Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT * sizeof(uint32_t));
-#endif
-
-   machine = new Api::Machine(emulator);
-   input = new Api::Input::Controllers;
-   Api::User::fileIoCallback.Set(file_io_callback, 0);
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_LOG_INTERFACE, &log))
       log_cb = log.log;
    else
       log_cb = NULL;
 
+
    check_system_specs();
 }
 
 void retro_deinit(void)
 {
-   if (machine->Is(Nes::Api::Machine::DISK))
-   {
-      if (fds)
-         delete fds;
-      fds = 0;
-   }
-   
-   delete machine;
-   delete video;
-   delete audio;
-   delete input;
-
-   machine = 0;
-   video   = 0;
-   audio   = 0;
-   input   = 0;
-
-#ifdef _3DS
-   linearFree(video_buffer);
-#else
-   free(video_buffer);
-#endif
-   video_buffer = NULL;
 }
 
 unsigned retro_api_version(void)
@@ -905,6 +874,16 @@ bool retro_load_game(const struct retro_game_info *info)
       { 0 },
    };
 
+#ifdef _3DS
+   video_buffer = (uint32_t*)linearMemAlign(Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT * sizeof(uint32_t), 0x80);
+#else
+   video_buffer = (uint32_t*)malloc(Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT * sizeof(uint32_t));
+#endif
+
+   machine = new Api::Machine(emulator);
+   input = new Api::Input::Controllers;
+   Api::User::fileIoCallback.Set(file_io_callback, 0);
+
    environ_cb(RETRO_ENVIRONMENT_SET_INPUT_DESCRIPTORS, desc);
 
    if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
@@ -1064,9 +1043,41 @@ bool retro_load_game(const struct retro_game_info *info)
 
 void retro_unload_game(void)
 {
-   machine->Unload();
+   if (machine)
+   {
+      machine->Unload();
+
+      if (machine->Is(Nes::Api::Machine::DISK))
+      {
+         if (fds)
+            delete fds;
+         fds = 0;
+      }
+
+      delete machine;
+   }
+
+   if (video)
+      delete video;
+   if (audio)
+      delete audio;
+   if (input)
+      delete input;
+
+   machine = 0;
+   video   = 0;
+   audio   = 0;
+   input   = 0;
+
    sram = 0;
    sram_size = 0;
+
+#ifdef _3DS
+   linearFree(video_buffer);
+#else
+   free(video_buffer);
+#endif
+   video_buffer = NULL;
 }
 
 unsigned retro_get_region(void)
