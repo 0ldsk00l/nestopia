@@ -874,9 +874,6 @@ bool retro_load_game(const struct retro_game_info *info)
       { 0 },
    };
 
-   if (!info)
-      return false;
-
 #ifdef _3DS
    video_buffer = (uint32_t*)linearMemAlign(Api::Video::Output::NTSC_WIDTH * Api::Video::Output::HEIGHT * sizeof(uint32_t), 0x80);
 #else
