@@ -117,6 +117,7 @@ namespace Nes
 						case VT5201_54IN1: id = 4; break;
 						case VT5201_55IN1: id = 5; break;
 						case VT5201_65IN1: id = 6; break;
+						case VT5201_XIN1: default: break;
 					}
 
 					return names[id][i];
