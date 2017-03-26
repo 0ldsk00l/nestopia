@@ -306,13 +306,13 @@ namespace Nes
 
 		Video::Palette::Mode Video::Palette::GetMode() const throw()
 		{
-			switch (emulator.renderer.GetPaletteType())
+			if (emulator.renderer.GetPaletteType() == Core::Video::Renderer::PALETTE_YUV)
 			{
-				case Core::Video::Renderer::PALETTE_YUV:
-					return MODE_YUV;
-
-				case Core::Video::Renderer::PALETTE_CUSTOM:
-					return MODE_CUSTOM;
+				return MODE_YUV;
+			}
+			else if (emulator.renderer.GetPaletteType() == Core::Video::Renderer::PALETTE_CUSTOM)
+			{
+				return MODE_CUSTOM;
 			}
 
 			return MODE_RGB;

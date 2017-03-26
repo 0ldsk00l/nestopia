@@ -88,42 +88,34 @@ namespace Nes
 					Map( 0x4503U, &Ffe::Poke_4503 );
 				}
 
-				switch (board.GetId())
+				if (board.GetId() == Type::CUSTOM_FFE3)
 				{
-					case Type::CUSTOM_FFE3:
+					Map( 0x8000U, 0xFFFFU, &Ffe::Poke_Prg_F3 );
 
-						Map( 0x8000U, 0xFFFFU, &Ffe::Poke_Prg_F3 );
+					if (hard)
+						prg.SwapBank<SIZE_32K,0x0000>(0);
+				}
+				else if (board.GetId() == Type::CUSTOM_FFE4)
+				{
+					Map( 0x8000U, 0xFFFFU, &Ffe::Poke_Prg_F4 );
 
-						if (hard)
-							prg.SwapBank<SIZE_32K,0x0000>(0);
-
-						break;
-
-					case Type::CUSTOM_FFE4:
-
-						Map( 0x8000U, 0xFFFFU, &Ffe::Poke_Prg_F4 );
-
-						if (hard)
-							prg.SwapBank<SIZE_16K,0x4000>(7);
-
-						break;
-
-					case Type::CUSTOM_FFE8:
-
-						Map( 0x4504U, PRG_SWAP_8K_0 );
-						Map( 0x4505U, PRG_SWAP_8K_1 );
-						Map( 0x4506U, PRG_SWAP_8K_2 );
-						Map( 0x4507U, PRG_SWAP_8K_3 );
-						Map( 0x4510U, CHR_SWAP_1K_0 );
-						Map( 0x4511U, CHR_SWAP_1K_1 );
-						Map( 0x4512U, CHR_SWAP_1K_2 );
-						Map( 0x4513U, CHR_SWAP_1K_3 );
-						Map( 0x4514U, CHR_SWAP_1K_4 );
-						Map( 0x4515U, CHR_SWAP_1K_5 );
-						Map( 0x4516U, CHR_SWAP_1K_6 );
-						Map( 0x4517U, CHR_SWAP_1K_7 );
-
-						break;
+					if (hard)
+						prg.SwapBank<SIZE_16K,0x4000>(7);
+				}
+				else if (board.GetId() == Type::CUSTOM_FFE8)
+				{
+					Map( 0x4504U, PRG_SWAP_8K_0 );
+					Map( 0x4505U, PRG_SWAP_8K_1 );
+					Map( 0x4506U, PRG_SWAP_8K_2 );
+					Map( 0x4507U, PRG_SWAP_8K_3 );
+					Map( 0x4510U, CHR_SWAP_1K_0 );
+					Map( 0x4511U, CHR_SWAP_1K_1 );
+					Map( 0x4512U, CHR_SWAP_1K_2 );
+					Map( 0x4513U, CHR_SWAP_1K_3 );
+					Map( 0x4514U, CHR_SWAP_1K_4 );
+					Map( 0x4515U, CHR_SWAP_1K_5 );
+					Map( 0x4516U, CHR_SWAP_1K_6 );
+					Map( 0x4517U, CHR_SWAP_1K_7 );
 				}
 			}
 
