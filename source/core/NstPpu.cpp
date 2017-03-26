@@ -137,37 +137,28 @@ namespace Nes
 					cpu.Map( i+7 ).Set( this,               &Ppu::Peek_2007,                   &Ppu::Poke_2007 );
 				}
 
-				switch (model)
+				if (model == (PPU_RC2C05_01 || PPU_RC2C05_04))
 				{
-					case PPU_RC2C05_01:
-					case PPU_RC2C05_02:
-					case PPU_RC2C05_03:
-					case PPU_RC2C05_04:
-
-						if (model == PPU_RC2C05_02)
-						{
-							for (uint i=0x2002; i < 0x4000; i += 0x8)
-								cpu.Map( i ).Set( &Ppu::Peek_2002_RC2C05_02 );
-						}
-						else if (model == PPU_RC2C05_03)
-						{
-							for (uint i=0x2002; i < 0x4000; i += 0x8)
-								cpu.Map( i ).Set( &Ppu::Peek_2002_RC2C05_03 );
-						}
-						else
-						{
-							for (uint i=0x2002; i < 0x4000; i += 0x8)
-								cpu.Map( i ).Set( &Ppu::Peek_2002_RC2C05_01_04 );
-						}
-
-					case PPU_RC2C05_05:
-
-						for (uint i=0x2000; i < 0x4000; i += 0x8)
-						{
-							cpu.Map( i+0 ).Set( &Ppu::Poke_2001 );
-							cpu.Map( i+1 ).Set( &Ppu::Poke_2000 );
-						}
-						break;
+					for (uint i=0x2002; i < 0x4000; i += 0x8)
+						cpu.Map( i ).Set( &Ppu::Peek_2002_RC2C05_01_04 );
+				}
+				else if (model == PPU_RC2C05_02)
+				{
+					for (uint i=0x2002; i < 0x4000; i += 0x8)
+						cpu.Map( i ).Set( &Ppu::Peek_2002_RC2C05_02 );
+				}
+				else if (model == PPU_RC2C05_03)
+				{
+					for (uint i=0x2002; i < 0x4000; i += 0x8)
+						cpu.Map( i ).Set( &Ppu::Peek_2002_RC2C05_03 );
+				}
+				else if (model == PPU_RC2C05_05)
+				{
+					for (uint i=0x2000; i < 0x4000; i += 0x8)
+					{
+						cpu.Map( i+0 ).Set( &Ppu::Poke_2001 );
+						cpu.Map( i+1 ).Set( &Ppu::Poke_2000 );
+					}
 				}
 
 				cpu.Map( 0x4014U ).Set( this, &Ppu::Peek_4014, &Ppu::Poke_4014 );
