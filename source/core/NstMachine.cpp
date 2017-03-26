@@ -104,17 +104,15 @@ namespace Nes
 
 					state |= Api::Machine::CARTRIDGE;
 
-					switch (static_cast<const Cartridge*>(image)->GetProfile().system.type)
+					if ((static_cast<const Cartridge*>(image)->GetProfile().system.type) == Api::Cartridge::Profile::System::VS_UNISYSTEM)
 					{
-						case Api::Cartridge::Profile::System::VS_UNISYSTEM:
 
-							state |= Api::Machine::VS;
-							break;
+						state |= Api::Machine::VS;
+					}
+					else if ((static_cast<const Cartridge*>(image)->GetProfile().system.type) == Api::Cartridge::Profile::System::PLAYCHOICE_10)
+					{
 
-						case Api::Cartridge::Profile::System::PLAYCHOICE_10:
-
-							state |= Api::Machine::PC10;
-							break;
+						state |= Api::Machine::PC10;
 					}
 					break;
 
@@ -126,6 +124,11 @@ namespace Nes
 				case Image::SOUND:
 
 					state |= Api::Machine::SOUND;
+					break;
+
+				case Image::UNKNOWN:
+
+					default:
 					break;
 			}
 
@@ -275,17 +278,8 @@ namespace Nes
 
 					bool acknowledged = true;
 
-					if (image)
-					{
-						switch (image->GetDesiredSystem((state & Api::Machine::NTSC) ? REGION_NTSC : REGION_PAL))
-						{
-							case SYSTEM_FAMICOM:
-							case SYSTEM_DENDY:
-
-								acknowledged = false;
-								break;
-						}
-					}
+					if (image && ((image->GetDesiredSystem((state & Api::Machine::NTSC) ? REGION_NTSC : REGION_PAL))) == (SYSTEM_FAMICOM || SYSTEM_DENDY))
+						acknowledged = false;
 
 					ppu.Reset( hard, acknowledged );
 
