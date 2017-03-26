@@ -1059,6 +1059,12 @@ namespace Nes
 									return it;
 
 								break;
+							case Profile::System::VS_UNISYSTEM:
+							case Profile::System::VS_DUALSYSTEM:
+							case Profile::System::PLAYCHOICE_10:
+
+								default:
+								break;
 						}
 					}
 
