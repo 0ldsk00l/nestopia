@@ -118,23 +118,21 @@ namespace Nes
 
 				board->Load( savefile );
 
-				switch (profile.system.type)
+				if ((profile.system.type) == Profile::System::VS_UNISYSTEM)
 				{
-					case Profile::System::VS_UNISYSTEM:
+					vs = VsSystem::Create
+					(
+						context.cpu,
+						context.ppu,
+						static_cast<PpuModel>(profile.system.ppu),
+						prgCrc
+					);
 
-						vs = VsSystem::Create
-						(
-							context.cpu,
-							context.ppu,
-							static_cast<PpuModel>(profile.system.ppu),
-							prgCrc
-						);
-
-						profile.system.ppu = static_cast<Profile::System::Ppu>(vs->GetPpuModel());
-						break;
-
-					case Profile::System::VS_DUALSYSTEM:
-						throw RESULT_ERR_UNSUPPORTED_VSSYSTEM;
+					profile.system.ppu = static_cast<Profile::System::Ppu>(vs->GetPpuModel());
+				}
+				else if ((profile.system.type) == Profile::System::VS_DUALSYSTEM)
+				{
+					throw RESULT_ERR_UNSUPPORTED_VSSYSTEM;
 				}
 
 				if (Cartridge::QueryExternalDevice( EXT_DIP_SWITCHES ))
@@ -460,6 +458,13 @@ namespace Nes
 								*ppu = PPU_DENDY;
 
 							return SYSTEM_DENDY;
+
+						case Profile::System::VS_UNISYSTEM:
+						case Profile::System::VS_DUALSYSTEM:
+						case Profile::System::PLAYCHOICE_10:
+
+							default:
+							break;
 					}
 				}
 
