@@ -1397,6 +1397,7 @@ namespace Nes
 				case TYPE_3: return new Type3;
 				case TYPE_4: return new Type4;
 				case TYPE_5: return new Type5;
+				case TYPE_NONE: default: break;
 			}
 
 			return NULL;
