@@ -146,101 +146,72 @@ namespace Nes
 				{
 					NST_ASSERT( bit <= 1 );
 
-					switch (mode)
+					if (mode == MODE_ADDRESS)
 					{
-						case MODE_ADDRESS:
+						if (latch.bit < 7)
+						{
+							latch.address &= ~(1U << latch.bit);
+							latch.address |= bit << latch.bit++;
+						}
+						else if (latch.bit < 8)
+						{
+							latch.bit = 8;
 
-							if (latch.bit < 7)
+							if (bit)
 							{
-								latch.address &= ~(1U << latch.bit);
-								latch.address |= bit << latch.bit++;
+								next = MODE_READ;
+								latch.data = mem[latch.address];
 							}
-							else if (latch.bit < 8)
+							else
 							{
-								latch.bit = 8;
-
-								if (bit)
-								{
-									next = MODE_READ;
-									latch.data = mem[latch.address];
-								}
-								else
-								{
-									next = MODE_WRITE;
-								}
+								next = MODE_WRITE;
 							}
-							break;
-
-						case MODE_ACK:
-
-							output = 0x00;
-							break;
-
-						case MODE_READ:
-
-							if (latch.bit < 8)
-								output = (latch.data & 1U << latch.bit++) ? 0x10 : 0x00;
-
-							break;
-
-						case MODE_WRITE:
-
-							if (latch.bit < 8)
-							{
-								latch.data &= ~(1U << latch.bit);
-								latch.data |= bit << latch.bit++;
-							}
-							break;
-
-						case MODE_ACK_WAIT:
-
-							if (bit == 0)
-								next = MODE_IDLE;
-
-							break;
+						}
+					}
+					else if (mode == MODE_ACK)
+					{
+						output = 0x00;
+					}
+					else if (mode == MODE_READ && (latch.bit < 8))
+					{
+						output = (latch.data & 1U << latch.bit++) ? 0x10 : 0x00;
+					}
+					else if (mode == MODE_WRITE && (latch.bit < 8))
+					{
+						latch.data &= ~(1U << latch.bit);
+						latch.data |= bit << latch.bit++;
+					}
+					else if (mode == MODE_ACK_WAIT && (bit == 0))
+					{
+						next = MODE_IDLE;
 					}
 				}
 
 				template<>
 				void X24C0X<128>::Fall()
 				{
-					switch (mode)
+					if (mode == MODE_ADDRESS && (latch.bit == 8))
 					{
-						case MODE_ADDRESS:
-
-							if (latch.bit == 8)
-							{
-								mode = MODE_ACK;
-								output = 0x10;
-							}
-							break;
-
-						case MODE_ACK:
-
-							mode = next;
-							latch.bit = 0;
-							output = 0x10;
-							break;
-
-						case MODE_READ:
-
-							if (latch.bit == 8)
-							{
-								mode = MODE_ACK_WAIT;
-								latch.address = (latch.address+1) & 0x7F;
-							}
-							break;
-
-						case MODE_WRITE:
-
-							if (latch.bit == 8)
-							{
-								mode = MODE_ACK;
-								next = MODE_IDLE;
-								mem[latch.address] = latch.data;
-								latch.address = (latch.address+1) & 0x7F;
-							}
-							break;
+						mode = MODE_ACK;
+						output = 0x10;
+					}
+					else if (mode == MODE_ACK)
+					{
+						mode = next;
+						latch.bit = 0;
+						output = 0x10;
+					}
+					else if (mode == MODE_READ && (latch.bit == 8))
+					{
+						mode = MODE_ACK_WAIT;
+						latch.address = (latch.address+1) & 0x7F;
+					}
+					else if (mode == MODE_WRITE && (latch.bit == 8))
+					{
+						mode = MODE_ACK;
+						next = MODE_IDLE;
+						mem[latch.address] = latch.data;
+						latch.address = (latch.address+1) & 0x7F;
 					}
 				}
 
@@ -302,6 +273,12 @@ namespace Nes
 								next = MODE_READ;
 								latch.data = mem[latch.address];
 							}
+							break;
+
+						case MODE_IDLE:
+						case MODE_MAX:
+
+							default:
 							break;
 					}
 				}
@@ -386,6 +363,12 @@ namespace Nes
 							mode = next;
 							latch.bit = 0;
 							output = 0x10;
+							break;
+
+						case MODE_IDLE:
+						case MODE_MAX:
+
+							default:
 							break;
 					}
 				}
