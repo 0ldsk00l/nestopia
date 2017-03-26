@@ -426,6 +426,12 @@ namespace Nes
 
 						profileEx.nmt = ProfileEx::NMT_FOURSCREEN;
 						break;
+
+					case Header::MIRRORING_SINGLESCREEN:
+					case Header::MIRRORING_CONTROLLED:
+
+						default:
+						break;
 				}
 
 				profile.system.cpu = Profile::System::CPU_RP2A03;
