@@ -6,6 +6,18 @@ The following platforms are supported:
 * Linux, FreeBSD, OpenBSD, NetBSD, OS X, Windows
 * Anything supported by libretro
 
+## Building with Autotools
+In order to build with Autotools:
+```
+autoreconf -vif
+./configure --prefix=<INSTALLATION PREFIX>
+make -j<NUMBER OF CORES>
+```
+optionally:
+```
+make install
+```
+
 ## Building with CMake
 In order to build with CMake:
 ```
@@ -14,24 +26,11 @@ cd BUILD
 cmake -DCMAKE_INSTALL_PREFIX=<INSTALLATION PREFIX> ..
 make -j<NUMBER OF CORES>
 ```
-and optionally:
+optionally:
 ```
 make install
 ```
 The CMake build system can also be used with Ninja by adding `-GNinja` to the `cmake` line.
-
-## Building with Autotools
-In order to build with Autotools:
-```
-mkdir BUILD
-cd BUILD
-../configure --prefix=<INSTALLATION PREFIX>
-make -j<NUMBER OF CORES>
-```
-and optionally:
-```
-make install
-```
 
 in order to bootstrap the Autotools you will need
 
