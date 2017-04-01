@@ -6,6 +6,11 @@ The following platforms are supported:
 * Linux, FreeBSD, OpenBSD, NetBSD, OS X, Windows
 * Anything supported by libretro
 
+This project depends on the following libraries:
+libsdl2, libepoxy, libao, libarchive, zlib
+
+Optionally, it depends on GTK+3 for the GUI, currently only available on Linux and BSD.
+
 ## Building with Autotools
 In order to build with Autotools:
 ```
@@ -16,6 +21,11 @@ make -j<NUMBER OF CORES>
 optionally:
 ```
 make install
+```
+Differences on OS X:
+```
+export PKG_CONFIG_PATH=/usr/local/opt/libarchive/lib/pkgconfig/
+./configure --disable-gui
 ```
 
 ## Building with CMake
@@ -32,7 +42,7 @@ make install
 ```
 The CMake build system can also be used with Ninja by adding `-GNinja` to the `cmake` line.
 
-in order to bootstrap the Autotools you will need
+In order to bootstrap the Autotools you will need:
 
 1.  **Autoconf**; latest 2.69 release (http://www.gnu.org/software/autoconf/)
 
@@ -45,4 +55,3 @@ in order to bootstrap the Autotools you will need
 3.  **Autoconf Archive**; latest 2016.09.16 release (http://www.gnu.org/software/autoconf-archive/)
 
     The configure.ac requires a number of m4 macros from the Autoconf archive.
-
