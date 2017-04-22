@@ -95,7 +95,7 @@ void audio_init_sdl() {
 	spec.format = AUDIO_S16SYS;
 	spec.channels = channels;
 	spec.silence = 0;
-	spec.samples = channels * (conf.audio_sample_rate / framerate);
+	spec.samples = (conf.audio_sample_rate / framerate);
 	spec.userdata = 0;
 	//spec.callback = NULL; // Use SDL_QueueAudio instead
 	spec.callback = audio_cb_sdl;
