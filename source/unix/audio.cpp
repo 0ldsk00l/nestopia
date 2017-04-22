@@ -53,9 +53,9 @@ void (*audio_output)();
 void (*audio_deinit)();
 
 void audio_output_sdl() {
-	SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
+	//SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
 	// Clear the audio queue arbitrarily to avoid it backing up too far
-	if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufsize * 3)) { SDL_ClearQueuedAudio(dev); }
+	//if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufsize * 3)) { SDL_ClearQueuedAudio(dev); }
 }
 
 void audio_output_ao() {
@@ -82,14 +82,23 @@ void audio_play() {
 	updateok = true;
 }
 
+void audio_cb_sdl(void *data, uint8_t *stream, int len) {
+	uint8_t *soundbuf = (uint8_t*)audiobuf;
+	
+	for (int i = 0; i < len; i++) {
+		stream[i] = soundbuf[i];
+	}
+}
+
 void audio_init_sdl() {
 	spec.freq = conf.audio_sample_rate;
 	spec.format = AUDIO_S16SYS;
 	spec.channels = channels;
 	spec.silence = 0;
-	spec.samples = 512;
+	spec.samples = channels * (conf.audio_sample_rate / framerate);
 	spec.userdata = 0;
-	spec.callback = NULL; // Use SDL_QueueAudio instead
+	//spec.callback = NULL; // Use SDL_QueueAudio instead
+	spec.callback = audio_cb_sdl;
 	
 	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 	if (!dev) {
@@ -211,9 +220,9 @@ bool timing_frameskip() {
 	
 	if (conf.audio_api == 0) { // SDL
 		// Wait until the audio is drained
-		while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
-			if (conf.timing_limiter) { SDL_Delay(1); }
-		}
+		//while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
+		//	if (conf.timing_limiter) { SDL_Delay(1); }
+		//}
 	}
 	
 	static int fskip;
@@ -225,7 +234,7 @@ void timing_set_default() {
 	// Set the framerate to the default
 	altspeed = false;
 	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
-	if (conf.audio_api == 0) { SDL_ClearQueuedAudio(dev); }
+	//if (conf.audio_api == 0) { SDL_ClearQueuedAudio(dev); }
 }
 
 void timing_set_altspeed() {
