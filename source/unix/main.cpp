@@ -93,6 +93,8 @@ static std::ifstream *fdsbios;
 static std::ifstream *moviefile;
 static std::fstream *movierecfile;
 
+extern void (*audio_deinit)();
+
 extern settings_t conf;
 extern bool altspeed;
 

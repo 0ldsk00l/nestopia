@@ -7,8 +7,9 @@
 
 using namespace Nes::Api;
 
+extern void (*audio_deinit)();
+
 void audio_init();
-void audio_deinit();
 void audio_play();
 void audio_pause();
 void audio_unpause();

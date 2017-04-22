@@ -1,7 +1,7 @@
 /*
  * Nestopia UE
  * 
- * Copyright (C) 2012-2016 R. Danbrook
+ * Copyright (C) 2012-2017 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
 #ifndef _MINGW
 #include <ao/ao.h>
 
-ao_device *aodevice;
-ao_sample_format format;
+static ao_device *aodevice;
+static ao_sample_format format;
 #endif
 
 extern settings_t conf;
@@ -39,35 +39,90 @@ extern Emulator emulator;
 extern bool nst_pal;
 extern bool updateok;
 
-SDL_AudioSpec spec, obtained;
-SDL_AudioDeviceID dev;
+static SDL_AudioSpec spec, obtained;
+static SDL_AudioDeviceID dev;
 
-int16_t audiobuf[96000];
+static int16_t audiobuf[6400];
 
-int framerate, channels, bufsize;
+static int framerate, channels, bufsize;
 
-bool altspeed = false;
-bool paused = false;
+static bool altspeed = false;
+static bool paused = false;
+
+void (*audio_output)();
+void (*audio_deinit)();
+
+void audio_output_sdl() {
+	SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
+	// Clear the audio queue arbitrarily to avoid it backing up too far
+	if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufsize * 3)) { SDL_ClearQueuedAudio(dev); }
+}
+
+void audio_output_ao() {
+#ifndef _MINGW
+	ao_play(aodevice, (char*)audiobuf, bufsize);
+#endif
+}
+
+void audio_deinit_sdl() {
+	SDL_CloseAudioDevice(dev);
+}
+
+void audio_deinit_ao() {
+#ifndef _MINGW
+	ao_close(aodevice);
+	ao_shutdown();
+#endif
+}
 
 void audio_play() {
-	
 	if (paused) { updateok = true; return; }
-	
 	bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
+	audio_output();
+	updateok = true;
+}
+
+void audio_init_sdl() {
+	spec.freq = conf.audio_sample_rate;
+	spec.format = AUDIO_S16SYS;
+	spec.channels = channels;
+	spec.silence = 0;
+	spec.samples = 512;
+	spec.userdata = 0;
+	spec.callback = NULL; // Use SDL_QueueAudio instead
 	
-	if (conf.audio_api == 0) { // SDL
-		#if SDL_VERSION_ATLEAST(2,0,4)
-		SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
-		// Clear the audio queue arbitrarily to avoid it backing up too far
-		if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufsize * 3)) { SDL_ClearQueuedAudio(dev); }
-		#endif
+	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
+	if (!dev) {
+		fprintf(stderr, "Error opening audio device.\n");
 	}
+	else {
+		fprintf(stderr, "Audio: SDL - %dHz %d-bit, %d channel(s)\n", spec.freq, 16, spec.channels);
+	}
+	
+	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
+}
+
+void audio_init_ao() {
 #ifndef _MINGW
-	else if (conf.audio_api == 1) { // libao
-		ao_play(aodevice, (char*)audiobuf, bufsize);
+	ao_initialize();
+	
+	int default_driver = ao_default_driver_id();
+	
+	memset(&format, 0, sizeof(format));
+	format.bits = 16;
+	format.channels = channels;
+	format.rate = conf.audio_sample_rate;
+	format.byte_format = AO_FMT_NATIVE;
+	
+	aodevice = ao_open_live(default_driver, &format, NULL);
+	if (aodevice == NULL) {
+		fprintf(stderr, "Error opening audio device.\n");
+		aodevice = ao_open_live(ao_driver_id("null"), &format, NULL);
+	}
+	else {
+		fprintf(stderr, "Audio: libao - %dHz, %d-bit, %d channel(s)\n", format.rate, format.bits, format.channels);
 	}
 #endif
-	updateok = true;
 }
 
 void audio_init() {
@@ -75,79 +130,25 @@ void audio_init() {
 	
 	// Set the framerate based on the region. For PAL: (60 / 6) * 5 = 50
 	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
-	
 	channels = conf.audio_stereo ? 2 : 1;
-	
 	memset(audiobuf, 0, sizeof(audiobuf));
 	
 	#ifdef _MINGW
 	conf.audio_api = 0; // Set SDL audio for MinGW
 	#endif
 	
-	#if SDL_VERSION_ATLEAST(2,0,4)
-	#else // Force libao if SDL lib is not modern enough
-	if (conf.audio_api == 0) {
-		conf.audio_api = 1;
-		fprintf(stderr, "Audio: Forcing libao\n");
-	}
-	#endif
-	
 	if (conf.audio_api == 0) { // SDL
-		spec.freq = conf.audio_sample_rate;
-		spec.format = AUDIO_S16SYS;
-		spec.channels = channels;
-		spec.silence = 0;
-		spec.samples = 512;
-		spec.userdata = 0;
-		spec.callback = NULL; // Use SDL_QueueAudio instead
-		
-		dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
-		if (!dev) {
-			fprintf(stderr, "Error opening audio device.\n");
-		}
-		else {
-			fprintf(stderr, "Audio: SDL - %dHz %d-bit, %d channel(s)\n", spec.freq, 16, spec.channels);
-		}
-		
-		SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
+		audio_init_sdl();
+		audio_output = &audio_output_sdl;
+		audio_deinit = &audio_deinit_sdl;
 	}
-#ifndef _MINGW
 	else if (conf.audio_api == 1) { // libao
-		ao_initialize();
-		
-		int default_driver = ao_default_driver_id();
-		
-		memset(&format, 0, sizeof(format));
-		format.bits = 16;
-		format.channels = channels;
-		format.rate = conf.audio_sample_rate;
-		format.byte_format = AO_FMT_NATIVE;
-		
-		aodevice = ao_open_live(default_driver, &format, NULL);
-		if (aodevice == NULL) {
-			fprintf(stderr, "Error opening audio device.\n");
-			aodevice = ao_open_live(ao_driver_id("null"), &format, NULL);
-		}
-		else {
-			fprintf(stderr, "Audio: libao - %dHz, %d-bit, %d channel(s)\n", format.rate, format.bits, format.channels);
-		}
+		audio_init_ao();
+		audio_output = &audio_output_ao;
+		audio_deinit = &audio_deinit_ao;
 	}
-#endif
+	
 	paused = false;
-}
-
-void audio_deinit() {
-	// Deinitialize audio
-	
-	if (conf.audio_api == 0) { // SDL
-		SDL_CloseAudioDevice(dev);
-	}
-#ifndef _MINGW
-	else if (conf.audio_api == 1) { // libao
-		ao_close(aodevice);
-		ao_shutdown();
-	}
-#endif
 }
 
 void audio_pause() {
@@ -210,30 +211,21 @@ bool timing_frameskip() {
 	
 	if (conf.audio_api == 0) { // SDL
 		// Wait until the audio is drained
-		#if SDL_VERSION_ATLEAST(2,0,4)
 		while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
 			if (conf.timing_limiter) { SDL_Delay(1); }
 		}
-		#endif
 	}
 	
-	static int flipper = 1;
-	
-	if (altspeed) {
-		if (flipper > 2) { flipper = 0; return false; }
-		else { flipper++; return true; }
-	}
-	
-	return false;
+	static int fskip;
+	fskip = altspeed ? (fskip > 1 ? 0 : fskip + 1) : 0;
+	return fskip;
 }
 
 void timing_set_default() {
 	// Set the framerate to the default
 	altspeed = false;
 	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
-	#if SDL_VERSION_ATLEAST(2,0,4)
 	if (conf.audio_api == 0) { SDL_ClearQueuedAudio(dev); }
-	#endif
 }
 
 void timing_set_altspeed() {
