@@ -1772,6 +1772,17 @@ namespace Nes
 						break;
 
 					case 21:
+						
+						if (submapper == 9)
+						{
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
+
+							chip.Pin(3) = L"PRG A2";
+							chip.Pin(4) = L"PRG A1";
+
+							name = "KONAMI VRC4";
+							id = Type::KONAMI_VRC4_0;
+						}
 					case 25:
 
 						if (submapper == 15)
