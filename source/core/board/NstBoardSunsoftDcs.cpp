@@ -96,7 +96,7 @@ namespace Nes
 
 				NES_PEEK_A(Dcs,8000)
 				{
-					if (const uint bank = ((prgBank & 0x8 && counter < SIGNAL && ++counter == SIGNAL) ? (prgBank & 0x7 | 0x10) : 0))
+					if (const uint bank = ((prgBank & 0x8 && counter < SIGNAL && ++counter == SIGNAL) ? ((prgBank & 0x7) | 0x10) : 0))
 						prg.SwapBank<SIZE_16K,0x0000>( bank & 0xF );
 
 					return prg.Peek( address - 0x8000 );

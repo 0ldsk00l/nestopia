@@ -63,7 +63,7 @@ namespace Nes
 							{
 								const uint data = state.Read8();
 								selector[0] = data << 1 & 0x2;
-								selector[1] = data & 0x2 | 0x4;
+								selector[1] = (data & 0x2) | 0x4;
 							}
 
 							state.End();

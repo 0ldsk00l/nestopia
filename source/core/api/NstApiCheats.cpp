@@ -247,7 +247,7 @@ namespace Nes
 				}
 			}
 
-			code.address    = output & 0x7FFF | 0x8000;
+			code.address    = (output & 0x7FFF) | 0x8000;
 			code.compare    = output >> 16 & 0xFF;
 			code.value      = output >> 24 & 0xFF;
 			code.useCompare = true;

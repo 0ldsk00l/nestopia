@@ -98,7 +98,7 @@ namespace Nes
 
 				void NST_FASTCALL Powerjoy84in1::UpdatePrg(uint address,uint bank)
 				{
-					bank &= ~uint(exRegs[0]) >> 2 & 0x10 | 0x0F;
+					bank &= (~uint(exRegs[0]) >> 2 & 0x10) | 0x0F;
 					bank |= (exRegs[0] & (0x6U | (exRegs[0] & 0x40U) >> 6)) << 4 | (exRegs[0] & 0x10U) << 3;
 
 					if (!(exRegs[3] & 0x3U))
