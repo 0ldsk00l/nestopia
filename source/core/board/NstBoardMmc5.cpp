@@ -713,7 +713,7 @@ namespace Nes
 
 				if (bank & Regs::PRG_ROM_SELECT)
 				{
-					banks.security = banks.security & ~uint(RAM) | ROM;
+					banks.security = (banks.security & ~uint(RAM)) | ROM;
 					static_cast<Prg::SourceProxy>(prg.Source(0)).SwapBank<SIZE_8K,ADDRESS>( bank & Regs::PRG_ROM_BANK );
 				}
 				else if (Banks::Wrk::INVALID != (bank = banks.wrk[bank & Regs::PRG_RAM_BANK]))
@@ -742,13 +742,13 @@ namespace Nes
 				{
 					case Regs::PRG_MODE_32K:
 
-						banks.security = banks.security & ~uint(RAM_8_A_C) | ROM_8_A_C;
+						banks.security = (banks.security & ~uint(RAM_8_A_C)) | ROM_8_A_C;
 						prg.SwapBank<SIZE_32K,0x0000>( banks.prg[3] >> 2 );
 						break;
 
 					case Regs::PRG_MODE_16K:
 
-						banks.security = banks.security & ~uint(RAM_C) | ROM_C;
+						banks.security = (banks.security & ~uint(RAM_C)) | ROM_C;
 						SwapPrg8Ex<0x0000>( banks.prg[1] & 0xFEU );
 						SwapPrg8Ex<0x2000>( banks.prg[1] | 0x01U );
 						prg.SwapBank<SIZE_16K,0x4000>( banks.prg[3] >> 1 );

@@ -142,10 +142,10 @@ namespace Nes
 
 									chr.SwapBanks<SIZE_2K,0x0000>
 									(
-										(regs[(regs[7] & 0x1U) ? 0 : 0] & 0x07U | h) << s,
-										(regs[(regs[7] & 0x1U) ? 0 : 1] & 0x07U | h) << s | (board != Type::SACHEN_8259B ? 1 : 0),
-										(regs[(regs[7] & 0x1U) ? 0 : 2] & 0x07U | h) << s | (board == Type::SACHEN_8259C ? 2 : 0),
-										(regs[(regs[7] & 0x1U) ? 0 : 3] & 0x07U | h) << s | (board == Type::SACHEN_8259A ? 1 : board == Type::SACHEN_8259C ? 3 : 0)
+										((regs[(regs[7] & 0x1U) ? 0 : 0] & 0x07U) | h) << s,
+										((regs[(regs[7] & 0x1U) ? 0 : 1] & 0x07U) | h) << s | (board != Type::SACHEN_8259B ? 1 : 0),
+										((regs[(regs[7] & 0x1U) ? 0 : 2] & 0x07U) | h) << s | (board == Type::SACHEN_8259C ? 2 : 0),
+										((regs[(regs[7] & 0x1U) ? 0 : 3] & 0x07U) | h) << s | (board == Type::SACHEN_8259A ? 1 : board == Type::SACHEN_8259C ? 3 : 0)
 									);
 								}
 							}

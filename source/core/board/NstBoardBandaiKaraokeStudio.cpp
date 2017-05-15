@@ -71,7 +71,7 @@ namespace Nes
 						if (controllers)
 						{
 							Input::Controllers::KaraokeStudio::callback( controllers->karaokeStudio );
-							mic = controllers->karaokeStudio.buttons & 0x7 ^ 0x3;
+							mic = (controllers->karaokeStudio.buttons & 0x7) ^ 0x3;
 						}
 						else
 						{

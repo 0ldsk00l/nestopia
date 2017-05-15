@@ -151,7 +151,7 @@ namespace Nes
 				chr.SwapBanks<SIZE_4K,0x0000>
 				(
 					regs[CHR0] & (0x1E | mode),
-					regs[CHR0+mode] & 0x1FU | (mode^1)
+					(regs[CHR0+mode] & 0x1FU) | (mode^1)
 				);
 			}
 

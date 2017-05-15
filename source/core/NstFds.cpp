@@ -962,7 +962,7 @@ namespace Nes
 				count = 0;
 				status |= uint(STATUS_UNREADY);
 			}
-			else if (!(reg & CTRL_STOP | count) && io)
+			else if (!((reg & CTRL_STOP) | count) && io)
 			{
 				count = CLK_MOTOR;
 				headPos = 0;
@@ -1284,7 +1284,7 @@ namespace Nes
 					State::Loader::Data<16> data( state );
 
 					unit.drive.ctrl = data[0];
-					unit.drive.status = data[1] & (Unit::Drive::STATUS_EJECTED|Unit::Drive::STATUS_UNREADY|Unit::Drive::STATUS_PROTECTED) | OPEN_BUS;
+					unit.drive.status = (data[1] & (Unit::Drive::STATUS_EJECTED|Unit::Drive::STATUS_UNREADY|Unit::Drive::STATUS_PROTECTED)) | OPEN_BUS;
 					unit.drive.in = data[2] | (data[15] << 8 & 0x100);
 					unit.drive.out = data[3];
 					unit.drive.headPos = data[4] | data[5] << 8;
