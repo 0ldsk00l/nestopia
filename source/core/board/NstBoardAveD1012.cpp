@@ -82,7 +82,7 @@ namespace Nes
 				void D1012::Update()
 				{
 					prg.SwapBank<SIZE_32K,0x0000>( (regs[0] & 0xE) | (regs[regs[0] >> 6 & 0x1] & 0x1) );
-					chr.SwapBank<SIZE_8K,0x0000>( (regs[0] << 2 & (regs[0] >> 4 & 0x4 ^ 0x3C)) | (regs[1] >> 4 & (regs[0] >> 4 & 0x4 | 0x3)) );
+					chr.SwapBank<SIZE_8K,0x0000>( (regs[0] << 2 & ((regs[0] >> 4 & 0x4) ^ 0x3C)) | (regs[1] >> 4 & ((regs[0] >> 4 & 0x4) | 0x3)) );
 				}
 
 				NES_POKE_D(D1012,FF80)

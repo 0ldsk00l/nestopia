@@ -303,7 +303,7 @@ namespace Nes
 		void Ppu::UpdatePalette()
 		{
 			for (uint i=0, c=Coloring(), e=Emphasis(); i < Palette::SIZE; ++i)
-				output.palette[i] = (rgbMap ? rgbMap[palette.ram[i] & uint(Palette::COLOR)] : palette.ram[i]) & c | e;
+				output.palette[i] = ((rgbMap ? rgbMap[palette.ram[i] & uint(Palette::COLOR)] : palette.ram[i]) & c) | e;
 		}
 
 		void Ppu::SaveState(State::Saver& state,const dword baseChunk) const
@@ -801,12 +801,12 @@ namespace Nes
 					if (!map)
 					{
 						for (uint i=0; i < Palette::SIZE; ++i)
-							output.palette[i] = palette.ram[i] & ce[0] | ce[1];
+							output.palette[i] = (palette.ram[i] & ce[0]) | ce[1];
 					}
 					else
 					{
 						for (uint i=0; i < Palette::SIZE; ++i)
-							output.palette[i] = map[palette.ram[i] & Palette::COLOR] & ce[0] | ce[1];
+							output.palette[i] = (map[palette.ram[i] & Palette::COLOR] & ce[0]) | ce[1];
 					}
 				}
 			}
@@ -827,17 +827,17 @@ namespace Nes
 
 		NES_PEEK_A(Ppu,2002_RC2C05_01_04)
 		{
-			return NES_DO_PEEK(2002,address) & 0xC0 | 0x1B;
+			return (NES_DO_PEEK(2002,address) & 0xC0) | 0x1B;
 		}
 
 		NES_PEEK_A(Ppu,2002_RC2C05_02)
 		{
-			return NES_DO_PEEK(2002,address) & 0xC0 | 0x3D;
+			return (NES_DO_PEEK(2002,address) & 0xC0) | 0x3D;
 		}
 
 		NES_PEEK_A(Ppu,2002_RC2C05_03)
 		{
-			return NES_DO_PEEK(2002,address) & 0xC0 | 0x1C;
+			return (NES_DO_PEEK(2002,address) & 0xC0) | 0x1C;
 		}
 
 		NES_POKE_D(Ppu,2003)
@@ -958,7 +958,7 @@ namespace Nes
 			{
 				address &= 0x1F;
 
-				const uint final = (!rgbMap ? data : rgbMap[data & Palette::COLOR]) & Coloring() | Emphasis();
+				const uint final = ((!rgbMap ? data : rgbMap[data & Palette::COLOR]) & Coloring()) | Emphasis();
 
 				palette.ram[address] = data;
 				output.palette[address] = final;
@@ -1302,7 +1302,7 @@ namespace Nes
 				address = (regs.ctrl[0] & Regs::CTRL0_SP_OFFSET) << 9 | buffer[1] << 4;
 			}
 
-			return address | comparitor & Oam::XFINE;
+			return address | (comparitor & Oam::XFINE);
 		}
 
 		NST_FORCE_INLINE void Ppu::LoadSprite(const uint pattern0,const uint pattern1,const byte* const NST_RESTRICT buffer)
