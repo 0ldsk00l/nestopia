@@ -146,12 +146,12 @@ namespace Nes
 					{
 						chr.SwapBank<SIZE_1K>
 						(
-							address, exReg <<
+							address, (exReg <<
 							(
 								address < 0x0800 ? 5 :
 								address < 0x1000 ? 6 :
 								address < 0x1800 ? 8 : 7
-							)   & 0x100 | bank
+							)   & 0x100) | bank
 						);
 					}
 				}

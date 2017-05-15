@@ -366,7 +366,7 @@ namespace Nes
 
 							if (exRegs[3] << 2 & (regs.ctrl0 & 0x8))
 							{
-								exRegs[4 | regs.ctrl0 & 0x3] = data;
+								exRegs[4 | (regs.ctrl0 & 0x3)] = data;
 
 								Fk23c::UpdatePrg();
 								Fk23c::UpdateChr();
