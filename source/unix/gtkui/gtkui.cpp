@@ -1,7 +1,7 @@
 /*
  * Nestopia UE
  * 
- * Copyright (C) 2012-2016 R. Danbrook
+ * Copyright (C) 2012-2017 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,6 +36,7 @@
 
 GtkWidget *gtkwindow;
 GtkWidget *statusbar;
+GtkWidget *menubar;
 GtkWidget *drawingarea;
 
 char iconpath[512];
@@ -86,7 +87,7 @@ void gtkui_create() {
 	gtk_container_add(GTK_CONTAINER(gtkwindow), box);
 	
 	// Define the menubar and menus
-	GtkWidget *menubar = gtk_menu_bar_new();
+	menubar = gtk_menu_bar_new();
 	
 	// Define the File menu
 	GtkWidget *filemenu = gtk_menu_new();
@@ -269,7 +270,6 @@ void gtkui_create() {
 		target_entry, sizeof(target_entry) / sizeof(GtkTargetEntry), (GdkDragAction)(GDK_ACTION_MOVE | GDK_ACTION_COPY));
 	
 	// Connect the signals
-	
 	g_signal_connect(G_OBJECT(drawingarea), "drag-data-received",
 		G_CALLBACK(gtkui_drag_data), NULL);
 	
@@ -399,6 +399,18 @@ void gtkui_set_title(const char *title) {
 	#endif
 }
 
+void gtkui_toggle_fullscreen() {
+	if (conf.video_fullscreen) {
+		gtk_widget_hide(menubar);
+		gtk_window_fullscreen(GTK_WINDOW(gtkwindow));
+	}
+	else {
+		gtk_window_unfullscreen(GTK_WINDOW(gtkwindow));
+		gtk_widget_show(menubar);
+	}
+	gtkui_resize();
+}
+
 GtkWidget *gtkui_about() {
 	// Pull up the About dialog
 	GdkPixbuf *pixbuf = gdk_pixbuf_new_from_file_at_size(iconpath, 192, 192, NULL);
@@ -410,7 +422,7 @@ GtkWidget *gtkui_about() {
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), VERSION);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "Cycle-Accurate Nintendo Entertainment System Emulator");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/nestopia/");
-	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2016, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
+	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2017, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
 	gtk_dialog_run(GTK_DIALOG(aboutdialog));
 	gtk_widget_destroy(aboutdialog);
 	
