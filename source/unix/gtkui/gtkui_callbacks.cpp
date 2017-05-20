@@ -49,7 +49,6 @@ void gtkui_cb_video_refresh() {
 		video_init();
 	}
 	else { video_set_dimensions(); }
-	gtkui_resize();
 }
 
 // Video //

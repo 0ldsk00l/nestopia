@@ -2,7 +2,7 @@
  * Nestopia UE
  * 
  * Copyright (C) 2007-2008 R. Belmont
- * Copyright (C) 2012-2016 R. Danbrook
+ * Copyright (C) 2012-2017 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -59,7 +59,6 @@ int overscan_offset, overscan_height;
 static uint32_t videobuf[VIDBUF_MAXSIZE]; // Maximum possible internal size
 
 SDL_Window *sdlwindow;
-SDL_Window *embedwindow;
 SDL_GLContext glcontext;
 SDL_DisplayMode displaymode;
 
@@ -220,37 +219,20 @@ void video_toggle_fullscreen() {
 	// Toggle between fullscreen and window mode
 	if (!playing) { return; }
 	
-	Uint32 flags;
 	conf.video_fullscreen ^= 1;
 	
-	if (conf.video_fullscreen) {
-		flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+	if (conf.misc_disable_gui) {
+		Uint32 flags;
+		if (conf.video_fullscreen) {
+			flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
+		}
+		else { flags = 0; }
+		SDL_SetWindowFullscreen(sdlwindow, flags);
+		SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 	}
-	else { flags = 0; }
-	
 	#ifdef _EMBED
-	if (conf.video_fullscreen) {
-		SDL_DestroyWindow(sdlwindow);
-		video_create_standalone();
-		SDL_GL_MakeCurrent(sdlwindow, glcontext);
-	}
-	else {
-		if (!conf.misc_disable_gui) {
-			SDL_GL_MakeCurrent(embedwindow, glcontext);
-			SDL_DestroyWindow(sdlwindow);
-			gtkui_resize();
-		}
-		else {
-			video_set_dimensions();
-			SDL_SetWindowFullscreen(sdlwindow, flags);
-			SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
-		}
-	}
-	#else
-	SDL_SetWindowFullscreen(sdlwindow, flags);
-	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
+	else { gtkui_toggle_fullscreen(); }
 	#endif
-	
 	video_set_cursor();
 	video_init();
 }
@@ -326,28 +308,12 @@ void video_create_embedded() {
 	GdkDisplayManager *displaymanager = gdk_display_manager_get();
 	GdkDisplay *display = gdk_display_manager_get_default_display(displaymanager);
 	
-	#ifdef GDK_WINDOWING_X11
-	if (GDK_IS_X11_DISPLAY(display)) {
-		embedwindow = SDL_CreateWindowFrom((void*)GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
-	}
-	#endif
+	sdlwindow = SDL_CreateWindowFrom((void*)GDK_WINDOW_XID(gtk_widget_get_window(drawingarea)));
 	
-	/*#ifdef GDK_WINDOWING_WAYLAND
-	if (GDK_IS_WAYLAND_DISPLAY(display)) {
-		printf("Wayland will be supported in the future. For now use the X11 backend.\n");
-		exit(0);
-	}
-	#endif*/
+	int displayindex = SDL_GetWindowDisplayIndex(sdlwindow);
+	SDL_GetDesktopDisplayMode(displayindex, &displaymode);
 	
-	#ifdef _MINGW
-	#ifdef GDK_WINDOWING_WIN32
-	if (GDK_IS_WIN32_DISPLAY(display)) {
-		embedwindow = SDL_CreateWindowFrom((void*)GDK_WINDOW_HWND(gtk_widget_get_window(drawingarea)));
-	}
-	#endif
-	#endif
-	
-	embedwindow->flags |= SDL_WINDOW_OPENGL;
+	sdlwindow->flags |= SDL_WINDOW_OPENGL;
 	SDL_GL_LoadLibrary(NULL);
 	if (nst_nsf) { video_disp_nsf(); }
 	#endif
@@ -363,16 +329,11 @@ void video_create() {
 	#ifdef _EMBED
 	if (conf.misc_disable_gui) {
 		video_create_standalone();
-		glcontext = SDL_GL_CreateContext(sdlwindow);
 	}
 	else {
 		video_create_embedded();
-		glcontext = SDL_GL_CreateContext(embedwindow);
-		if (conf.video_fullscreen) {
-			video_create_standalone();
-			glcontext = SDL_GL_CreateContext(sdlwindow);
-		}
 	}
+	glcontext = SDL_GL_CreateContext(sdlwindow);
 	#else
 	video_create_standalone();
 	glcontext = SDL_GL_CreateContext(sdlwindow);
@@ -387,12 +348,7 @@ void video_create() {
 
 void video_swapbuffers() {
 	// Swap Buffers
-	#ifdef _EMBED
-	if (conf.misc_disable_gui) { SDL_GL_SwapWindow(sdlwindow); }
-	else { conf.video_fullscreen ? SDL_GL_SwapWindow(sdlwindow) : SDL_GL_SwapWindow(embedwindow); }
-	#else
 	SDL_GL_SwapWindow(sdlwindow);
-	#endif
 }
 
 void video_destroy() {
@@ -669,12 +625,11 @@ void video_set_dimensions() {
 	}
 	
 	#ifdef _EMBED
-	if (!conf.misc_disable_gui) {
-		SDL_SetWindowSize(embedwindow, rendersize.w, rendersize.h);
-		gtkui_resize();
-	}
-	#endif
+	if (conf.misc_disable_gui) { SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h); }
+	else { gtkui_resize(); }
+	#else
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
+	#endif
 }
 
 void video_set_cursor() {

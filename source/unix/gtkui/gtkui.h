@@ -19,5 +19,6 @@ void gtkui_image_paths();
 void gtkui_message(const char* message);
 void gtkui_cursor_set_crosshair();
 void gtkui_cursor_set_default();
+void gtkui_toggle_fullscreen();
 
 #endif
