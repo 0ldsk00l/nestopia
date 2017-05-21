@@ -719,6 +719,8 @@ nestopia_SOURCES += \
 	source/unix/gtkui/gtkui_archive.cpp \
 	source/unix/gtkui/gtkui.cpp \
 	source/unix/gtkui/gtkui.h \
+	source/unix/gtkui/gtkui_input.cpp \
+	source/unix/gtkui/gtkui_input.h \
 	source/unix/gtkui/gtkui_config.cpp
 endif
 

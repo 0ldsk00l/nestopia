@@ -32,9 +32,11 @@
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_config.h"
+#include "gtkui_input.h"
 
 extern settings_t conf;
 extern gamepad_t player[NUMGAMEPADS];
+extern gpad_t pad[NUMGAMEPADS];
 extern char padpath[512];
 extern bool playing;
 extern bool confrunning;
@@ -837,10 +839,10 @@ GtkWidget *gtkui_config() {
 	
 	// Key Translation
 	g_signal_connect(G_OBJECT(configwindow), "key-press-event",
-		G_CALLBACK(gtkui_cb_convert_key), gpointer(1));
+		G_CALLBACK(gtkui_input_process_key), gpointer(1));
 	
 	g_signal_connect(G_OBJECT(configwindow), "key-release-event",
-		G_CALLBACK(gtkui_cb_convert_key), NULL);
+		G_CALLBACK(gtkui_input_process_key), NULL);
 	
 	// The Treeview
 	GtkWidget *treeview = gtk_widget_new(GTK_TYPE_TREE_VIEW,
@@ -869,34 +871,34 @@ GtkWidget *gtkui_config() {
 	gtk_tree_view_append_column(GTK_TREE_VIEW (treeview), columns[1]);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, SDL_GetScancodeName(player[0].u), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, gdk_keyval_name(pad[0].u), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, SDL_GetScancodeName(player[0].d), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, gdk_keyval_name(pad[0].d), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, SDL_GetScancodeName(player[0].l), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, gdk_keyval_name(pad[0].l), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, SDL_GetScancodeName(player[0].r), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, gdk_keyval_name(pad[0].r), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, SDL_GetScancodeName(player[0].select), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, gdk_keyval_name(pad[0].select), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, SDL_GetScancodeName(player[0].start), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, gdk_keyval_name(pad[0].start), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, SDL_GetScancodeName(player[0].a), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, gdk_keyval_name(pad[0].a), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, SDL_GetScancodeName(player[0].b), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, gdk_keyval_name(pad[0].b), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, SDL_GetScancodeName(player[0].ta), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, gdk_keyval_name(pad[0].ta), -1);
 	
 	gtk_tree_store_append(treestore_input, &iter, NULL);
-	gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, SDL_GetScancodeName(player[0].tb), -1);
+	gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, gdk_keyval_name(pad[0].tb), -1);
 	
 	gtk_box_pack_start(GTK_BOX(box_input_r), treeview, FALSE, FALSE, 0);
 	
@@ -1207,41 +1209,46 @@ void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer 
 	gtk_tree_store_set(treestore_input, &iter, 1, "Set Key...", -1);
 	
 	// Set the key
-	input_configure_item(pnum, bnum, type);
+	if (type == 0) { // Keyboard
+		gtkui_input_config_item(pnum, bnum);
+	}
+	else { // Joystick
+		input_configure_item(pnum, bnum, type);
+	}
 	
 	// Replace the text with the new key
 	//gtkui_config_input_fields(type, pnum); // This can be used in place of the below if statement
 	if (type == 0) { // Keyboard
 		switch (bnum) {
 			case 0:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].u), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].u), -1);
 				break;
 			case 1:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].d), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].d), -1);
 				break;
 			case 2:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].l), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].l), -1);
 				break;
 			case 3:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].r), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].r), -1);
 				break;
 			case 4:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].select), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].select), -1);
 				break;
 			case 5:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].start), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].start), -1);
 				break;
 			case 6:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].a), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].a), -1);
 				break;
 			case 7:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].b), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].b), -1);
 				break;
 			case 8:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].ta), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].ta), -1);
 				break;
 			case 9:
-				gtk_tree_store_set(treestore_input, &iter, 1, SDL_GetScancodeName(player[pnum].tb), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].tb), -1);
 				break;
 			default: break;
 		}
@@ -1298,25 +1305,25 @@ void gtkui_config_input_fields(int type, int pnum) {
 	
 	if (type == 0) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, SDL_GetScancodeName(player[pnum].u), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, gdk_keyval_name(pad[pnum].u), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, SDL_GetScancodeName(player[pnum].d), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, gdk_keyval_name(pad[pnum].d), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, SDL_GetScancodeName(player[pnum].l), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, gdk_keyval_name(pad[pnum].l), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, SDL_GetScancodeName(player[pnum].r), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, gdk_keyval_name(pad[pnum].r), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, SDL_GetScancodeName(player[pnum].select), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, gdk_keyval_name(pad[pnum].select), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, SDL_GetScancodeName(player[pnum].start), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, gdk_keyval_name(pad[pnum].start), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, SDL_GetScancodeName(player[pnum].a), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, gdk_keyval_name(pad[pnum].a), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, SDL_GetScancodeName(player[pnum].b), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, gdk_keyval_name(pad[pnum].b), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, SDL_GetScancodeName(player[pnum].ta), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, gdk_keyval_name(pad[pnum].ta), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, SDL_GetScancodeName(player[pnum].tb), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, gdk_keyval_name(pad[pnum].tb), -1);
 	}
 	if (type == 1) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
