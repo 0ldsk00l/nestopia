@@ -45,16 +45,16 @@ extern bool nst_nsf;
 
 bool confrunning, kbactivate = false;
 
-inputsettings_t inputconf;
-uiinput_t ui;
+static inputsettings_t inputconf;
+static uiinput_t ui;
 gamepad_t player[NUMGAMEPADS];
 
-char inputconfpath[256];
+static char inputconfpath[256];
 
-turbo_t turbostate;
-turbo_t turbotoggle;
+static turbo_t turbostate;
+static turbo_t turbotoggle;
 
-SDL_Joystick *joystick;
+static SDL_Joystick *joystick;
 
 static unsigned char nescodes[TOTALBUTTONS] = {
 	Input::Controllers::Pad::UP,
@@ -684,6 +684,84 @@ int input_checksign(int axisvalue) {
 	else { return 1; }
 }
 
+static int input_config_match(void* user, const char* section, const char* name, const char* value) {
+	// Match values from input config file and populate live config
+	inputsettings_t* pconfig = (inputsettings_t*)user;
+	
+	// User Interface
+	if (MATCH("ui", "qsave1")) { pconfig->qsave1 = strdup(value); }
+	else if (MATCH("ui", "qsave2")) { pconfig->qsave2 = strdup(value); }
+	else if (MATCH("ui", "qload1")) { pconfig->qload1 = strdup(value); }
+	else if (MATCH("ui", "qload2")) { pconfig->qload2 = strdup(value); }
+	
+	else if (MATCH("ui", "screenshot")) { pconfig->screenshot = strdup(value); }
+	
+	else if (MATCH("ui", "fdsflip")) { pconfig->fdsflip = strdup(value); }
+	else if (MATCH("ui", "fdsswitch")) { pconfig->fdsswitch = strdup(value); }
+	
+	else if (MATCH("ui", "insertcoin1")) { pconfig->insertcoin1 = strdup(value); }
+	else if (MATCH("ui", "insertcoin2")) { pconfig->insertcoin2 = strdup(value); }
+	
+	else if (MATCH("ui", "reset")) { pconfig->reset = strdup(value); }
+	
+	else if (MATCH("ui", "altspeed")) { pconfig->altspeed = strdup(value); }
+	else if (MATCH("ui", "rwstart")) { pconfig->rwstart = strdup(value); }
+	else if (MATCH("ui", "rwstop")) { pconfig->rwstop = strdup(value); }
+	
+	else if (MATCH("ui", "fullscreen")) { pconfig->fullscreen = strdup(value); }
+	else if (MATCH("ui", "filter")) { pconfig->filter = strdup(value); }
+	else if (MATCH("ui", "scalefactor")) { pconfig->scalefactor = strdup(value); }
+	
+	// Player 1
+	else if (MATCH("gamepad1", "kb_u")) { pconfig->kb_p1u = strdup(value); }
+	else if (MATCH("gamepad1", "kb_d")) { pconfig->kb_p1d = strdup(value); }
+	else if (MATCH("gamepad1", "kb_l")) { pconfig->kb_p1l = strdup(value); }
+	else if (MATCH("gamepad1", "kb_r")) { pconfig->kb_p1r = strdup(value); }
+	else if (MATCH("gamepad1", "kb_select")) { pconfig->kb_p1select = strdup(value); }
+	else if (MATCH("gamepad1", "kb_start")) { pconfig->kb_p1start = strdup(value); }
+	else if (MATCH("gamepad1", "kb_a")) { pconfig->kb_p1a = strdup(value); }
+	else if (MATCH("gamepad1", "kb_b")) { pconfig->kb_p1b = strdup(value); }
+	else if (MATCH("gamepad1", "kb_ta")) { pconfig->kb_p1ta = strdup(value); }
+	else if (MATCH("gamepad1", "kb_tb")) { pconfig->kb_p1tb = strdup(value); }
+	
+	else if (MATCH("gamepad1", "js_u")) { pconfig->js_p1u = strdup(value); }
+	else if (MATCH("gamepad1", "js_d")) { pconfig->js_p1d = strdup(value); }
+	else if (MATCH("gamepad1", "js_l")) { pconfig->js_p1l = strdup(value); }
+	else if (MATCH("gamepad1", "js_r")) { pconfig->js_p1r = strdup(value); }
+	else if (MATCH("gamepad1", "js_select")) { pconfig->js_p1select = strdup(value); }
+	else if (MATCH("gamepad1", "js_start")) { pconfig->js_p1start = strdup(value); }
+	else if (MATCH("gamepad1", "js_a")) { pconfig->js_p1a = strdup(value); }
+	else if (MATCH("gamepad1", "js_b")) { pconfig->js_p1b = strdup(value); }
+	else if (MATCH("gamepad1", "js_ta")) { pconfig->js_p1ta = strdup(value); }
+	else if (MATCH("gamepad1", "js_tb")) { pconfig->js_p1tb = strdup(value); }
+	
+	// Player 2
+	else if (MATCH("gamepad2", "kb_u")) { pconfig->kb_p2u = strdup(value); }
+	else if (MATCH("gamepad2", "kb_d")) { pconfig->kb_p2d = strdup(value); }
+	else if (MATCH("gamepad2", "kb_l")) { pconfig->kb_p2l = strdup(value); }
+	else if (MATCH("gamepad2", "kb_r")) { pconfig->kb_p2r = strdup(value); }
+	else if (MATCH("gamepad2", "kb_select")) { pconfig->kb_p2select = strdup(value); }
+	else if (MATCH("gamepad2", "kb_start")) { pconfig->kb_p2start = strdup(value); }
+	else if (MATCH("gamepad2", "kb_a")) { pconfig->kb_p2a = strdup(value); }
+	else if (MATCH("gamepad2", "kb_b")) { pconfig->kb_p2b = strdup(value); }
+	else if (MATCH("gamepad2", "kb_ta")) { pconfig->kb_p2ta = strdup(value); }
+	else if (MATCH("gamepad2", "kb_tb")) { pconfig->kb_p2tb = strdup(value); }
+	
+	else if (MATCH("gamepad2", "js_u")) { pconfig->js_p2u = strdup(value); }
+	else if (MATCH("gamepad2", "js_d")) { pconfig->js_p2d = strdup(value); }
+	else if (MATCH("gamepad2", "js_l")) { pconfig->js_p2l = strdup(value); }
+	else if (MATCH("gamepad2", "js_r")) { pconfig->js_p2r = strdup(value); }
+	else if (MATCH("gamepad2", "js_select")) { pconfig->js_p2select = strdup(value); }
+	else if (MATCH("gamepad2", "js_start")) { pconfig->js_p2start = strdup(value); }
+	else if (MATCH("gamepad2", "js_a")) { pconfig->js_p2a = strdup(value); }
+	else if (MATCH("gamepad2", "js_b")) { pconfig->js_p2b = strdup(value); }
+	else if (MATCH("gamepad2", "js_ta")) { pconfig->js_p2ta = strdup(value); }
+	else if (MATCH("gamepad2", "js_tb")) { pconfig->js_p2tb = strdup(value); }
+	
+	else { return 0; }
+    return 1;
+}
+
 void input_config_read() {
 	// Read the input config file
 	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstpaths.nstdir);
@@ -922,84 +1000,6 @@ void input_set_default() {
 	player[1].jb = input_translate_string("j1b0");
 	player[1].jta = input_translate_string("j1b2");
 	player[1].jtb = input_translate_string("j1b3");
-}
-
-static int input_config_match(void* user, const char* section, const char* name, const char* value) {
-	// Match values from input config file and populate live config
-	inputsettings_t* pconfig = (inputsettings_t*)user;
-	
-	// User Interface
-	if (MATCH("ui", "qsave1")) { pconfig->qsave1 = strdup(value); }
-	else if (MATCH("ui", "qsave2")) { pconfig->qsave2 = strdup(value); }
-	else if (MATCH("ui", "qload1")) { pconfig->qload1 = strdup(value); }
-	else if (MATCH("ui", "qload2")) { pconfig->qload2 = strdup(value); }
-	
-	else if (MATCH("ui", "screenshot")) { pconfig->screenshot = strdup(value); }
-	
-	else if (MATCH("ui", "fdsflip")) { pconfig->fdsflip = strdup(value); }
-	else if (MATCH("ui", "fdsswitch")) { pconfig->fdsswitch = strdup(value); }
-	
-	else if (MATCH("ui", "insertcoin1")) { pconfig->insertcoin1 = strdup(value); }
-	else if (MATCH("ui", "insertcoin2")) { pconfig->insertcoin2 = strdup(value); }
-	
-	else if (MATCH("ui", "reset")) { pconfig->reset = strdup(value); }
-	
-	else if (MATCH("ui", "altspeed")) { pconfig->altspeed = strdup(value); }
-	else if (MATCH("ui", "rwstart")) { pconfig->rwstart = strdup(value); }
-	else if (MATCH("ui", "rwstop")) { pconfig->rwstop = strdup(value); }
-	
-	else if (MATCH("ui", "fullscreen")) { pconfig->fullscreen = strdup(value); }
-	else if (MATCH("ui", "filter")) { pconfig->filter = strdup(value); }
-	else if (MATCH("ui", "scalefactor")) { pconfig->scalefactor = strdup(value); }
-	
-	// Player 1
-	else if (MATCH("gamepad1", "kb_u")) { pconfig->kb_p1u = strdup(value); }
-	else if (MATCH("gamepad1", "kb_d")) { pconfig->kb_p1d = strdup(value); }
-	else if (MATCH("gamepad1", "kb_l")) { pconfig->kb_p1l = strdup(value); }
-	else if (MATCH("gamepad1", "kb_r")) { pconfig->kb_p1r = strdup(value); }
-	else if (MATCH("gamepad1", "kb_select")) { pconfig->kb_p1select = strdup(value); }
-	else if (MATCH("gamepad1", "kb_start")) { pconfig->kb_p1start = strdup(value); }
-	else if (MATCH("gamepad1", "kb_a")) { pconfig->kb_p1a = strdup(value); }
-	else if (MATCH("gamepad1", "kb_b")) { pconfig->kb_p1b = strdup(value); }
-	else if (MATCH("gamepad1", "kb_ta")) { pconfig->kb_p1ta = strdup(value); }
-	else if (MATCH("gamepad1", "kb_tb")) { pconfig->kb_p1tb = strdup(value); }
-	
-	else if (MATCH("gamepad1", "js_u")) { pconfig->js_p1u = strdup(value); }
-	else if (MATCH("gamepad1", "js_d")) { pconfig->js_p1d = strdup(value); }
-	else if (MATCH("gamepad1", "js_l")) { pconfig->js_p1l = strdup(value); }
-	else if (MATCH("gamepad1", "js_r")) { pconfig->js_p1r = strdup(value); }
-	else if (MATCH("gamepad1", "js_select")) { pconfig->js_p1select = strdup(value); }
-	else if (MATCH("gamepad1", "js_start")) { pconfig->js_p1start = strdup(value); }
-	else if (MATCH("gamepad1", "js_a")) { pconfig->js_p1a = strdup(value); }
-	else if (MATCH("gamepad1", "js_b")) { pconfig->js_p1b = strdup(value); }
-	else if (MATCH("gamepad1", "js_ta")) { pconfig->js_p1ta = strdup(value); }
-	else if (MATCH("gamepad1", "js_tb")) { pconfig->js_p1tb = strdup(value); }
-	
-	// Player 2
-	else if (MATCH("gamepad2", "kb_u")) { pconfig->kb_p2u = strdup(value); }
-	else if (MATCH("gamepad2", "kb_d")) { pconfig->kb_p2d = strdup(value); }
-	else if (MATCH("gamepad2", "kb_l")) { pconfig->kb_p2l = strdup(value); }
-	else if (MATCH("gamepad2", "kb_r")) { pconfig->kb_p2r = strdup(value); }
-	else if (MATCH("gamepad2", "kb_select")) { pconfig->kb_p2select = strdup(value); }
-	else if (MATCH("gamepad2", "kb_start")) { pconfig->kb_p2start = strdup(value); }
-	else if (MATCH("gamepad2", "kb_a")) { pconfig->kb_p2a = strdup(value); }
-	else if (MATCH("gamepad2", "kb_b")) { pconfig->kb_p2b = strdup(value); }
-	else if (MATCH("gamepad2", "kb_ta")) { pconfig->kb_p2ta = strdup(value); }
-	else if (MATCH("gamepad2", "kb_tb")) { pconfig->kb_p2tb = strdup(value); }
-	
-	else if (MATCH("gamepad2", "js_u")) { pconfig->js_p2u = strdup(value); }
-	else if (MATCH("gamepad2", "js_d")) { pconfig->js_p2d = strdup(value); }
-	else if (MATCH("gamepad2", "js_l")) { pconfig->js_p2l = strdup(value); }
-	else if (MATCH("gamepad2", "js_r")) { pconfig->js_p2r = strdup(value); }
-	else if (MATCH("gamepad2", "js_select")) { pconfig->js_p2select = strdup(value); }
-	else if (MATCH("gamepad2", "js_start")) { pconfig->js_p2start = strdup(value); }
-	else if (MATCH("gamepad2", "js_a")) { pconfig->js_p2a = strdup(value); }
-	else if (MATCH("gamepad2", "js_b")) { pconfig->js_p2b = strdup(value); }
-	else if (MATCH("gamepad2", "js_ta")) { pconfig->js_p2ta = strdup(value); }
-	else if (MATCH("gamepad2", "js_tb")) { pconfig->js_p2tb = strdup(value); }
-	
-	else { return 0; }
-    return 1;
 }
 
 int input_configure_item(int pnum, int bnum, int type) {

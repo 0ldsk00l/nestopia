@@ -62,6 +62,7 @@
 #ifdef _GTK
 #include "gtkui/gtkui.h"
 #include "gtkui/gtkui_archive.h"
+#include "gtkui/gtkui_input.h"
 #endif
 
 using namespace Nes::Api;
@@ -84,7 +85,7 @@ void *custompalette = NULL;
 
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
-static Input::Controllers *cNstPads;
+Input::Controllers *cNstPads;
 static Cartridge::Database::Entry dbentry;
 
 static std::ifstream *nstdb;
@@ -966,10 +967,14 @@ int main(int argc, char *argv[]) {
 	
 	// Set default input keys
 	input_set_default();
-	
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) gtkui_input_set_default();
+	#endif
 	// Read the input config file and override defaults
 	input_config_read();
-	
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) gtkui_input_config_read();
+	#endif
 	// Load the custom palette
 	nst_load_palette(nstpaths.palettepath);
 	
@@ -1090,7 +1095,9 @@ int main(int argc, char *argv[]) {
 	
 	// Write the input config file
 	input_config_write();
-	
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) gtkui_input_config_write();
+	#endif
 	// Write the config file
 	config_file_write();
 

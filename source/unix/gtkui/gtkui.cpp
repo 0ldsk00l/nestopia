@@ -33,6 +33,7 @@
 #include "gtkui_config.h"
 #include "gtkui_cheats.h"
 #include "gtkui_dialogs.h"
+#include "gtkui_input.h"
 
 GtkWidget *gtkwindow;
 GtkWidget *statusbar;
@@ -368,10 +369,10 @@ void gtkui_create() {
 	
 	// Key translation
 	g_signal_connect(G_OBJECT(gtkwindow), "key-press-event",
-		G_CALLBACK(gtkui_cb_convert_key), NULL);
+		G_CALLBACK(gtkui_input_process_key), NULL);
 	
 	g_signal_connect(G_OBJECT(gtkwindow), "key-release-event",
-		G_CALLBACK(gtkui_cb_convert_key), NULL);
+		G_CALLBACK(gtkui_input_process_key), NULL);
 	
 	// Mouse translation
 	gtk_widget_add_events(GTK_WIDGET(drawingarea), GDK_BUTTON_PRESS_MASK);
