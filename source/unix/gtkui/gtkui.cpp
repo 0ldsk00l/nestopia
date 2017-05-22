@@ -92,44 +92,37 @@ void gtkui_create() {
 	
 	// Define the File menu
 	GtkWidget *filemenu = gtk_menu_new();
-	GtkWidget *file = gtk_menu_item_new_with_mnemonic("_File");
-	GtkWidget *open = gtk_image_menu_item_new_from_stock(GTK_STOCK_OPEN, NULL);
-	GtkWidget *recent = gtk_image_menu_item_new_with_label("Open Recent");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(recent), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
+	GtkWidget *file = gtk_menu_item_new_with_label("File");
+	GtkWidget *open = gtk_menu_item_new_with_label("Open");
+	GtkWidget *recent = gtk_menu_item_new_with_label("Open Recent");
 	GtkWidget *sep_open = gtk_separator_menu_item_new();
-	GtkWidget *stateload = gtk_image_menu_item_new_with_mnemonic("_Load State...");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(stateload), gtk_image_new_from_stock(GTK_STOCK_GO_BACK, GTK_ICON_SIZE_MENU));
-	GtkWidget *statesave = gtk_image_menu_item_new_with_mnemonic("_Save State...");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(statesave), gtk_image_new_from_stock(GTK_STOCK_SAVE, GTK_ICON_SIZE_MENU));
+	GtkWidget *stateload = gtk_menu_item_new_with_label("Load State...");
+	GtkWidget *statesave = gtk_menu_item_new_with_label("Save State...");
 	
-	GtkWidget *quickload = gtk_image_menu_item_new_with_label("Quick Load");
+	GtkWidget *quickload = gtk_menu_item_new_with_label("Quick Load");
 	GtkWidget *qloadmenu = gtk_menu_new();
-		GtkWidget *qload0 = gtk_image_menu_item_new_with_label("0");
-		GtkWidget *qload1 = gtk_image_menu_item_new_with_label("1");
-		GtkWidget *qload2 = gtk_image_menu_item_new_with_label("2");
-		GtkWidget *qload3 = gtk_image_menu_item_new_with_label("3");
-		GtkWidget *qload4 = gtk_image_menu_item_new_with_label("4");
+		GtkWidget *qload0 = gtk_menu_item_new_with_label("0");
+		GtkWidget *qload1 = gtk_menu_item_new_with_label("1");
+		GtkWidget *qload2 = gtk_menu_item_new_with_label("2");
+		GtkWidget *qload3 = gtk_menu_item_new_with_label("3");
+		GtkWidget *qload4 = gtk_menu_item_new_with_label("4");
 	
-	GtkWidget *quicksave = gtk_image_menu_item_new_with_label("Quick Save");
+	GtkWidget *quicksave = gtk_menu_item_new_with_label("Quick Save");
 	GtkWidget *qsavemenu = gtk_menu_new();
-		GtkWidget *qsave0 = gtk_image_menu_item_new_with_label("0");
-		GtkWidget *qsave1 = gtk_image_menu_item_new_with_label("1");
-		GtkWidget *qsave2 = gtk_image_menu_item_new_with_label("2");
-		GtkWidget *qsave3 = gtk_image_menu_item_new_with_label("3");
-		GtkWidget *qsave4 = gtk_image_menu_item_new_with_label("4");
+		GtkWidget *qsave0 = gtk_menu_item_new_with_label("0");
+		GtkWidget *qsave1 = gtk_menu_item_new_with_label("1");
+		GtkWidget *qsave2 = gtk_menu_item_new_with_label("2");
+		GtkWidget *qsave3 = gtk_menu_item_new_with_label("3");
+		GtkWidget *qsave4 = gtk_menu_item_new_with_label("4");
 	
 	GtkWidget *sep_state = gtk_separator_menu_item_new();
-	GtkWidget *screenshot = gtk_image_menu_item_new_with_mnemonic("S_creenshot...");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(screenshot), gtk_image_new_from_stock(GTK_STOCK_SELECT_COLOR, GTK_ICON_SIZE_MENU));
+	GtkWidget *screenshot = gtk_menu_item_new_with_label("Screenshot...");
 	GtkWidget *sep_screenshot = gtk_separator_menu_item_new();
-	GtkWidget *movieload = gtk_image_menu_item_new_with_label("Load Movie...");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(movieload), gtk_image_new_from_stock(GTK_STOCK_OPEN, GTK_ICON_SIZE_MENU));
-	GtkWidget *moviesave = gtk_image_menu_item_new_with_label("Record Movie...");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(moviesave), gtk_image_new_from_stock(GTK_STOCK_MEDIA_RECORD, GTK_ICON_SIZE_MENU));
-	GtkWidget *moviestop = gtk_image_menu_item_new_with_label("Stop Movie");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(moviestop), gtk_image_new_from_stock(GTK_STOCK_MEDIA_STOP, GTK_ICON_SIZE_MENU));
+	GtkWidget *movieload = gtk_menu_item_new_with_label("Load Movie...");
+	GtkWidget *moviesave = gtk_menu_item_new_with_label("Record Movie...");
+	GtkWidget *moviestop = gtk_menu_item_new_with_label("Stop Movie");
 	GtkWidget *sep_movie = gtk_separator_menu_item_new();
-	GtkWidget *quit = gtk_image_menu_item_new_from_stock(GTK_STOCK_QUIT, NULL);
+	GtkWidget *quit = gtk_menu_item_new_with_label("Quit");
 	
 	// Set up the recently used items
 	GtkWidget *recent_items = gtk_recent_chooser_menu_new();
@@ -185,28 +178,21 @@ void gtkui_create() {
 	
 	// Define the Emulator menu
 	GtkWidget *emulatormenu = gtk_menu_new();
-	GtkWidget *emu = gtk_menu_item_new_with_mnemonic("_Emulator");
-	GtkWidget *cont = gtk_image_menu_item_new_with_mnemonic("C_ontinue");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cont), gtk_image_new_from_stock(GTK_STOCK_MEDIA_PLAY, GTK_ICON_SIZE_MENU));
-	GtkWidget *pause = gtk_image_menu_item_new_from_stock(GTK_STOCK_MEDIA_PAUSE, NULL);
+	GtkWidget *emu = gtk_menu_item_new_with_label("Emulator");
+	GtkWidget *cont = gtk_menu_item_new_with_label("Continue");
+	GtkWidget *pause = gtk_menu_item_new_with_label("Pause");
 	GtkWidget *sep_pause = gtk_separator_menu_item_new();
-	GtkWidget *resetsoft = gtk_image_menu_item_new_with_mnemonic("_Reset (Soft)");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(resetsoft), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
-	GtkWidget *resethard = gtk_image_menu_item_new_with_mnemonic("Reset (_Hard)");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(resethard), gtk_image_new_from_stock(GTK_STOCK_REFRESH, GTK_ICON_SIZE_MENU));
+	GtkWidget *resetsoft = gtk_menu_item_new_with_label("Reset (Soft)");
+	GtkWidget *resethard = gtk_menu_item_new_with_label("Reset (Hard)");
 	GtkWidget *sep_reset = gtk_separator_menu_item_new();
-	GtkWidget *fullscreen = gtk_image_menu_item_new_from_stock(GTK_STOCK_FULLSCREEN, NULL);
+	GtkWidget *fullscreen = gtk_menu_item_new_with_label("Fullscreen");
 	GtkWidget *sep_fullscreen = gtk_separator_menu_item_new();
-	GtkWidget *diskflip = gtk_image_menu_item_new_with_mnemonic("Flip FDS _Disk");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(diskflip), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
-	GtkWidget *diskswitch = gtk_image_menu_item_new_with_mnemonic("_Switch FDS Disk");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(diskswitch), gtk_image_new_from_stock(GTK_STOCK_FLOPPY, GTK_ICON_SIZE_MENU));
+	GtkWidget *diskflip = gtk_menu_item_new_with_label("Flip FDS Disk");
+	GtkWidget *diskswitch = gtk_menu_item_new_with_label("Switch FDS Disk");
 	GtkWidget *sep_disk = gtk_separator_menu_item_new();
-	GtkWidget *cheats = gtk_image_menu_item_new_with_mnemonic("Ch_eats...");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(cheats), gtk_image_new_from_stock(GTK_STOCK_DIALOG_WARNING, GTK_ICON_SIZE_MENU));
+	GtkWidget *cheats = gtk_menu_item_new_with_label("Cheats...");
 	GtkWidget *sep_cheats = gtk_separator_menu_item_new();
-	GtkWidget *configuration = gtk_image_menu_item_new_with_mnemonic("_Configuration...");
-		gtk_image_menu_item_set_image(GTK_IMAGE_MENU_ITEM(configuration), gtk_image_new_from_stock(GTK_STOCK_PREFERENCES, GTK_ICON_SIZE_MENU));
+	GtkWidget *configuration = gtk_menu_item_new_with_label("Configuration...");
 	
 	// Populate the Emulator menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(emu), emulatormenu);
@@ -227,8 +213,8 @@ void gtkui_create() {
 	
 	// Define the Help menu
 	GtkWidget *helpmenu = gtk_menu_new();
-	GtkWidget *help = gtk_menu_item_new_with_mnemonic("_Help");
-	GtkWidget *about = gtk_image_menu_item_new_from_stock(GTK_STOCK_ABOUT, NULL);
+	GtkWidget *help = gtk_menu_item_new_with_label("Help");
+	GtkWidget *about = gtk_menu_item_new_with_label("About");
 	
 	// Populate the Help menu
 	gtk_menu_item_set_submenu(GTK_MENU_ITEM(help), helpmenu);
@@ -459,23 +445,24 @@ void gtkui_message(const char* message) {
 void gtkui_cursor_set_crosshair() {
 	// Set the cursor to a crosshair
 	GdkCursor *cursor;
-	cursor = gdk_cursor_new(GDK_CROSSHAIR);
+	//cursor = gdk_cursor_new(GDK_CROSSHAIR);
+	cursor = gdk_cursor_new_for_display(gdk_cursor_get_display(cursor), GDK_CROSSHAIR);
 	
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
 	
 	gdk_window_set_cursor(gdkwindow, cursor);
 	gdk_flush();
-	gdk_cursor_unref(cursor);
+	g_object_unref(cursor);
 }
 
 void gtkui_cursor_set_default() {
 	// Set the cursor to the default
 	GdkCursor *cursor;
-	cursor = gdk_cursor_new(GDK_LEFT_PTR);
-	
+	//cursor = gdk_cursor_new(GDK_LEFT_PTR);
+	cursor = gdk_cursor_new_for_display(gdk_cursor_get_display(cursor), GDK_LEFT_PTR);
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
 	
 	gdk_window_set_cursor(gdkwindow, cursor);
 	gdk_flush();
-	gdk_cursor_unref(cursor);
+	g_object_unref(cursor);
 }

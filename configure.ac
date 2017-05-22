@@ -51,7 +51,7 @@ dnl Set CXXFLAGS, CPPFLAGS and LDFLAGS
 dnl ==================================
 AS_IF([test "x${enable_flags_setting}" = "xyes" && test "x${enable_debug}" = "xno"],
 	[
-	AX_APPEND_COMPILE_FLAGS([${cxxflags_test} -Wno-narrowing -Wno-deprecated-declarations], [CXXFLAGS])
+	AX_APPEND_COMPILE_FLAGS([${cxxflags_test} -Wno-narrowing], [CXXFLAGS])
 	CXXFLAGS=$( echo ${CXXFLAGS} | $SED -e 's/^ *//' -e 's/ *$//' )
 	
 	AX_APPEND_COMPILE_FLAGS([${cppflags_test}], [CPPFLAGS])

@@ -134,25 +134,23 @@ bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 		
 		GtkWidget *cancelbutton = gtk_widget_new(
 					GTK_TYPE_BUTTON,
-					"label", GTK_STOCK_CANCEL,
+					"label", "Cancel",
 					"halign", GTK_ALIGN_END,
 					"margin-top", 8,
 					"margin-bottom", 8,
 					"margin-right", 8,
 					NULL);
-		gtk_button_set_use_stock(GTK_BUTTON(cancelbutton), TRUE);
 		gtk_box_pack_start(GTK_BOX(buttonbox), cancelbutton, FALSE, FALSE, 0);
 		gtk_widget_show(cancelbutton);
 		
 		GtkWidget *okbutton = gtk_widget_new(
 					GTK_TYPE_BUTTON,
-					"label", GTK_STOCK_OK,
+					"label", "OK",
 					"halign", GTK_ALIGN_END,
 					"margin-top", 8,
 					"margin-bottom", 8,
 					"margin-right", 8,
 					NULL);
-		gtk_button_set_use_stock(GTK_BUTTON(okbutton), TRUE);
 		gtk_box_pack_start(GTK_BOX(buttonbox), okbutton, FALSE, FALSE, 0);
 		gtk_widget_show(okbutton);
 		
