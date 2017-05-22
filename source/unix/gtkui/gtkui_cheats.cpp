@@ -77,35 +77,32 @@ GtkWidget *gtkui_cheats() {
 	
 	GtkWidget *cheatopen = gtk_widget_new(
 				GTK_TYPE_BUTTON,
-				"label", GTK_STOCK_OPEN,
+				"label", "Open",
 				"halign", GTK_ALIGN_END,
 				"margin-top", 8,
 				"margin-bottom", 8,
 				"margin-right", 8,
 				NULL);
-	gtk_button_set_use_stock(GTK_BUTTON(cheatopen), TRUE);
 	gtk_box_pack_start(GTK_BOX(opensavebox), cheatopen, FALSE, FALSE, 0);
 	
 	GtkWidget *cheatclear = gtk_widget_new(
 				GTK_TYPE_BUTTON,
-				"label", GTK_STOCK_CLEAR,
+				"label", "Clear",
 				"halign", GTK_ALIGN_END,
 				"margin-top", 8,
 				"margin-bottom", 8,
 				"margin-right", 8,
 				NULL);
-	gtk_button_set_use_stock(GTK_BUTTON(cheatclear), TRUE);
 	gtk_box_pack_start(GTK_BOX(opensavebox), cheatclear, FALSE, FALSE, 0);
 	
 	GtkWidget *cheatremove = gtk_widget_new(
 				GTK_TYPE_BUTTON,
-				"label", GTK_STOCK_REMOVE,
+				"label", "Remove",
 				"halign", GTK_ALIGN_END,
 				"margin-top", 8,
 				"margin-bottom", 8,
 				"margin-right", 8,
 				NULL);
-	gtk_button_set_use_stock(GTK_BUTTON(cheatremove), TRUE);
 	gtk_box_pack_start(GTK_BOX(opensavebox), cheatremove, FALSE, FALSE, 0);
 	
 	GtkWidget *descbox = gtk_widget_new(
@@ -162,13 +159,12 @@ GtkWidget *gtkui_cheats() {
 	
 	GtkWidget *genieadd = gtk_widget_new(
 				GTK_TYPE_BUTTON,
-				"label", GTK_STOCK_ADD,
+				"label", "Add",
 				"halign", GTK_ALIGN_END,
 				"margin-top", 8,
 				"margin-bottom", 8,
 				"margin-right", 8,
 				NULL);
-	gtk_button_set_use_stock(GTK_BUTTON(genieadd), TRUE);
 	gtk_box_pack_start(GTK_BOX(ggbox), genieadd, FALSE, FALSE, 0);
 	
 	GtkWidget *parbox = gtk_widget_new(
@@ -199,24 +195,22 @@ GtkWidget *gtkui_cheats() {
 	
 	GtkWidget *paradd = gtk_widget_new(
 				GTK_TYPE_BUTTON,
-				"label", GTK_STOCK_ADD,
+				"label", "Add",
 				"halign", GTK_ALIGN_END,
 				"margin-top", 8,
 				"margin-bottom", 8,
 				"margin-right", 8,
 				NULL);
-	gtk_button_set_use_stock(GTK_BUTTON(paradd), TRUE);
 	gtk_box_pack_start(GTK_BOX(parbox), paradd, FALSE, FALSE, 0);
 	
 	GtkWidget *cheatok = gtk_widget_new(
 				GTK_TYPE_BUTTON,
-				"label", GTK_STOCK_OK,
+				"label", "OK",
 				"halign", GTK_ALIGN_END,
 				"margin-top", 8,
 				"margin-bottom", 8,
 				"margin-right", 8,
 				NULL);
-	gtk_button_set_use_stock(GTK_BUTTON(cheatok), TRUE);
 	gtk_box_pack_start(GTK_BOX(cheatbox), cheatok, FALSE, FALSE, 0);
 	
 	gtk_tree_view_set_fixed_height_mode(GTK_TREE_VIEW(treeview), FALSE);

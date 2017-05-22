@@ -37,10 +37,8 @@ void gtkui_file_open() {
 				"Select a ROM",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_OPEN,
-				GTK_STOCK_CANCEL,
-				GTK_RESPONSE_CANCEL,
-				GTK_STOCK_OPEN,
-				GTK_RESPONSE_ACCEPT,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Open", GTK_RESPONSE_ACCEPT,
 				NULL);
 	
 	if(conf.misc_last_folder != NULL)
@@ -88,8 +86,8 @@ void gtkui_state_save() {
 	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save State (.nst)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_SAVE,
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Save", GTK_RESPONSE_ACCEPT,
 				NULL);
 	
 	char statepath[512];
@@ -111,8 +109,8 @@ void gtkui_state_load() {
 	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load State (.nst)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_OPEN,
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Open", GTK_RESPONSE_ACCEPT,
 				NULL);
 
 	GtkFileFilter *filter = gtk_file_filter_new();
@@ -135,8 +133,8 @@ void gtkui_screenshot_save() {
 	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save screenshot (.png)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_SAVE,
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Save", GTK_RESPONSE_ACCEPT,
 				NULL);
 	
 	char sshotpath[512];
@@ -160,8 +158,8 @@ void gtkui_movie_save() {
 	GtkWidget *dialog = gtk_file_chooser_dialog_new("Save movie (.nsv)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_SAVE,
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				GTK_STOCK_SAVE, GTK_RESPONSE_ACCEPT,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Save", GTK_RESPONSE_ACCEPT,
 				NULL);
 	
 	char moviepath[512];
@@ -183,8 +181,8 @@ void gtkui_movie_load() {
 	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load movie (.nsv)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_OPEN,
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Open", GTK_RESPONSE_ACCEPT,
 				NULL);
 
 	GtkFileFilter *filter = gtk_file_filter_new();
@@ -211,8 +209,8 @@ void gtkui_cheats_load() {
 	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load cheats (.xml)",
 				GTK_WINDOW(gtkwindow),
 				GTK_FILE_CHOOSER_ACTION_OPEN,
-				GTK_STOCK_CANCEL, GTK_RESPONSE_CANCEL,
-				GTK_STOCK_OPEN, GTK_RESPONSE_ACCEPT,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Open", GTK_RESPONSE_ACCEPT,
 				NULL);
 
 	GtkFileFilter *filter = gtk_file_filter_new();

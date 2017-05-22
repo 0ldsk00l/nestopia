@@ -1127,13 +1127,12 @@ GtkWidget *gtkui_config() {
 	// The OK button
 	GtkWidget *okbutton = gtk_widget_new(
 				GTK_TYPE_BUTTON,
-				"label", GTK_STOCK_OK,
+				"label", "OK",
 				"halign", GTK_ALIGN_END,
 				"margin-top", 8,
 				"margin-bottom", 8,
 				"margin-right", 8,
 				NULL);
-	gtk_button_set_use_stock(GTK_BUTTON(okbutton), TRUE);
 	
 	// Connect the OK button to a callback
 	g_signal_connect(G_OBJECT(okbutton), "clicked",
