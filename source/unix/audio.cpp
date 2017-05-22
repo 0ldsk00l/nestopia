@@ -65,13 +65,12 @@ void audio_output_ao() {
 }
 
 void audio_deinit_sdl() {
-	SDL_CloseAudioDevice(dev);
+	if (dev) { SDL_CloseAudioDevice(dev); }
 }
 
 void audio_deinit_ao() {
 #ifndef _MINGW
-	ao_close(aodevice);
-	ao_shutdown();
+	if (aodevice) { ao_close(aodevice); ao_shutdown(); }
 #endif
 }
 

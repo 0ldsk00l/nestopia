@@ -978,6 +978,9 @@ int main(int argc, char *argv[]) {
 	// Load the custom palette
 	nst_load_palette(nstpaths.palettepath);
 	
+	// Set audio function pointers
+	audio_init();
+	
 	// Set the video dimensions
 	video_set_dimensions();
 	
