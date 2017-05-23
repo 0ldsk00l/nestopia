@@ -49,9 +49,7 @@ extern settings_t conf;
 void gtkui_init(int argc, char *argv[]) {
 	// Initialize the GTK+ GUI
 	gtk_init(&argc, &argv);
-	#ifndef _APPLE
 	gtkui_create();
-	#endif
 }
 
 static void gtkui_glarea_realize(GtkGLArea *glarea) {
@@ -396,9 +394,7 @@ void gtkui_resize() {
 }
 
 void gtkui_set_title(const char *title) {
-	#ifndef _APPLE
 	gtk_window_set_title(GTK_WINDOW(gtkwindow), title);
-	#endif
 }
 
 void gtkui_toggle_fullscreen() {

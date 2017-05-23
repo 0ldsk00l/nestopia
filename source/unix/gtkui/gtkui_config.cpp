@@ -1099,7 +1099,6 @@ GtkWidget *gtkui_config() {
 		G_CALLBACK(gtkui_cb_misc_disable_cursor), NULL);
 	
 	// Pause While Configuration Open
-	#ifndef _APPLE
 	GtkWidget *check_misc_config_pause = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
 				"label", "Pause While Configuration Open",
@@ -1112,7 +1111,6 @@ GtkWidget *gtkui_config() {
 	
 	g_signal_connect(G_OBJECT(check_misc_config_pause), "toggled",
 		G_CALLBACK(gtkui_cb_misc_config_pause), NULL);
-	#endif
 	
 	// Structuring the notebook
 	GtkWidget *label_video = gtk_label_new("Video");
