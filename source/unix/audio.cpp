@@ -45,7 +45,7 @@ static int16_t audiobuf[6400];
 
 static int framerate, channels, bufsize;
 
-static bool altspeed = false;
+static bool ffspeed = false;
 static bool paused = false;
 
 void (*audio_output)();
@@ -212,30 +212,18 @@ void audio_adj_volume() {
 
 // Timing Functions
 
-bool timing_frameskip() {
-	// Calculate whether to skip a frame or not
-	
-	if (conf.audio_api == 0) { // SDL
-		// Wait until the audio is drained
-		//while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
-		//	if (conf.timing_limiter) { SDL_Delay(1); }
-		//}
-	}
-	
-	static int fskip;
-	fskip = altspeed ? (fskip > 1 ? 0 : fskip + 1) : 0;
-	return fskip;
+int timing_runframes() {
+	// Calculate how many emulation frames to run
+	if (ffspeed) { return conf.timing_ffspeed; }
+	return 1;
+}
+
+void timing_set_ffspeed() {
+	// Set the framerate to the fast-forward speed
+	ffspeed = true;
 }
 
 void timing_set_default() {
 	// Set the framerate to the default
-	altspeed = false;
-	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
-	//if (conf.audio_api == 0) { SDL_ClearQueuedAudio(dev); }
-}
-
-void timing_set_altspeed() {
-	// Set the framerate to the alternate speed
-	altspeed = true;
-	framerate = conf.timing_altspeed;
+	ffspeed = false;
 }

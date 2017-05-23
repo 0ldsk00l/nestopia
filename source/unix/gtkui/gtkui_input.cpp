@@ -55,7 +55,7 @@ static int gtkui_input_config_match(void* user, const char* section, const char*
 	else if (MATCH("ui", "insertcoin1")) { pconfig->insertcoin1 = strdup(value); }
 	else if (MATCH("ui", "insertcoin2")) { pconfig->insertcoin2 = strdup(value); }
 	else if (MATCH("ui", "reset")) { pconfig->reset = strdup(value); }
-	else if (MATCH("ui", "altspeed")) { pconfig->altspeed = strdup(value); }
+	else if (MATCH("ui", "ffspeed")) { pconfig->ffspeed = strdup(value); }
 	else if (MATCH("ui", "rwstart")) { pconfig->rwstart = strdup(value); }
 	else if (MATCH("ui", "rwstop")) { pconfig->rwstop = strdup(value); }
 	else if (MATCH("ui", "fullscreen")) { pconfig->fullscreen = strdup(value); }
@@ -127,7 +127,7 @@ void gtkui_input_set_default() {
 	ui.insertcoin1 = GDK_KEY_F1;
 	ui.insertcoin2 = GDK_KEY_F2;
 	ui.reset = GDK_KEY_F12;
-	ui.altspeed = GDK_KEY_grave;
+	ui.ffspeed = GDK_KEY_grave;
 	ui.rwstart = GDK_KEY_BackSpace;
 	ui.rwstop = GDK_KEY_backslash;
 	ui.fullscreen = GDK_KEY_f;
@@ -155,7 +155,7 @@ void gtkui_input_config_read() {
 		ui.insertcoin1 = gdk_keyval_from_name(inputconf.insertcoin1);
 		ui.insertcoin2 = gdk_keyval_from_name(inputconf.insertcoin2);
 		ui.reset = gdk_keyval_from_name(inputconf.reset);
-		ui.altspeed = gdk_keyval_from_name(inputconf.altspeed);
+		ui.ffspeed = gdk_keyval_from_name(inputconf.ffspeed);
 		ui.rwstart = gdk_keyval_from_name(inputconf.rwstart);
 		ui.rwstop = gdk_keyval_from_name(inputconf.rwstop);
 		ui.fullscreen = gdk_keyval_from_name(inputconf.fullscreen);
@@ -207,7 +207,7 @@ void gtkui_input_config_write() {
 		fprintf(fp, "insertcoin1=%s\n", gdk_keyval_name(ui.insertcoin1));
 		fprintf(fp, "insertcoin2=%s\n", gdk_keyval_name(ui.insertcoin2));
 		fprintf(fp, "reset=%s\n", gdk_keyval_name(ui.reset));
-		fprintf(fp, "altspeed=%s\n", gdk_keyval_name(ui.altspeed));
+		fprintf(fp, "ffspeed=%s\n", gdk_keyval_name(ui.ffspeed));
 		fprintf(fp, "rwstart=%s\n", gdk_keyval_name(ui.rwstart));
 		fprintf(fp, "rwstop=%s\n", gdk_keyval_name(ui.rwstop));
 		fprintf(fp, "fullscreen=%s\n", gdk_keyval_name(ui.fullscreen));
@@ -282,7 +282,7 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 			else if (event->keyval == ui.insertcoin1) { cNstPads->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
 			else if (event->keyval == ui.insertcoin2) { cNstPads->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
 			else if (event->keyval == ui.reset) { nst_reset(0); }
-			else if (event->keyval == ui.altspeed) { timing_set_altspeed(); }
+			else if (event->keyval == ui.ffspeed) { timing_set_ffspeed(); }
 			else if (event->keyval == ui.rwstart) { nst_set_rewind(0); }
 			else if (event->keyval == ui.rwstop) { nst_set_rewind(1); }
 			else if (event->keyval == ui.filter) { video_toggle_filter(); }
@@ -290,7 +290,7 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 			break;
 		case GDK_KEY_RELEASE:
 			input.pressed = 0;			
-			if (event->keyval == ui.altspeed) { timing_set_default(); }
+			if (event->keyval == ui.ffspeed) { timing_set_default(); }
 			else if (event->keyval == ui.fullscreen) { video_toggle_fullscreen(); }
 			break;
 		default: break;

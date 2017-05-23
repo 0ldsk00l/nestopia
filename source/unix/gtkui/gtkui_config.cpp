@@ -986,33 +986,33 @@ GtkWidget *gtkui_config() {
 		G_CALLBACK(gtkui_cb_misc_power_state), NULL);
 	
 	// Alternate Speed
-	GtkAdjustment *adj_timing_altspeed = gtk_adjustment_new(conf.timing_altspeed, 1, 240, 1, 5, 0);
-	GtkWidget *box_timing_altspeed = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *label_timing_altspeed = gtk_widget_new(
+	GtkAdjustment *adj_timing_ffspeed = gtk_adjustment_new(conf.timing_ffspeed, 1, 8, 1, 5, 0);
+	GtkWidget *box_timing_ffspeed = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
+	GtkWidget *label_timing_ffspeed = gtk_widget_new(
 				GTK_TYPE_LABEL,
-				"label", "Alternate Speed",
+				"label", "Fast-Forward Speed",
 				"halign", GTK_ALIGN_START,
 				"margin-top", MARGIN_TB,
 				"margin-bottom", MARGIN_TB,
 				"margin-left", MARGIN_LR,
 				"margin-right", MARGIN_LR,
 				NULL);
-	GtkWidget *scale_timing_altspeed = gtk_widget_new(
+	GtkWidget *scale_timing_ffspeed = gtk_widget_new(
 				GTK_TYPE_SCALE,
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
 				"orientation", GTK_ORIENTATION_HORIZONTAL,
-				"adjustment", adj_timing_altspeed,
-				"width-request", 239,
+				"adjustment", adj_timing_ffspeed,
+				"width-request", 64,
 				"height-request", 32,
 				"digits", 0,
 				NULL);
-	gtk_box_pack_start(GTK_BOX(box_timing_altspeed), label_timing_altspeed, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_timing_altspeed), scale_timing_altspeed, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_misc), box_timing_altspeed, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_timing_ffspeed), label_timing_ffspeed, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_timing_ffspeed), scale_timing_ffspeed, FALSE, FALSE, 0);
+	gtk_box_pack_start(GTK_BOX(box_misc), box_timing_ffspeed, FALSE, FALSE, 0);
 	
-	g_signal_connect(G_OBJECT(scale_timing_altspeed), "value-changed",
-		G_CALLBACK(gtkui_cb_timing_altspeed), NULL);
+	g_signal_connect(G_OBJECT(scale_timing_ffspeed), "value-changed",
+		G_CALLBACK(gtkui_cb_timing_ffspeed), NULL);
 	
 	// Vsync
 	GtkWidget *check_timing_vsync = gtk_widget_new(

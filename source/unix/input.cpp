@@ -484,8 +484,8 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 
 	input_inject(controllers, input);
 	
-	if (event.key.keysym.scancode == ui.altspeed && event.type == SDL_KEYDOWN) { timing_set_altspeed(); }
-	if (event.key.keysym.scancode == ui.altspeed && event.type == SDL_KEYUP) { timing_set_default(); }
+	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYDOWN) { timing_set_ffspeed(); }
+	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYUP) { timing_set_default(); }
 	
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	
@@ -703,7 +703,7 @@ static int input_config_match(void* user, const char* section, const char* name,
 	
 	else if (MATCH("ui", "reset")) { pconfig->reset = strdup(value); }
 	
-	else if (MATCH("ui", "altspeed")) { pconfig->altspeed = strdup(value); }
+	else if (MATCH("ui", "ffspeed")) { pconfig->ffspeed = strdup(value); }
 	else if (MATCH("ui", "rwstart")) { pconfig->rwstart = strdup(value); }
 	else if (MATCH("ui", "rwstop")) { pconfig->rwstop = strdup(value); }
 	
@@ -787,7 +787,7 @@ void input_config_read() {
 		
 		ui.reset = SDL_GetScancodeFromName(inputconf.reset);
 		
-		ui.altspeed = SDL_GetScancodeFromName(inputconf.altspeed);
+		ui.ffspeed = SDL_GetScancodeFromName(inputconf.ffspeed);
 		ui.rwstart = SDL_GetScancodeFromName(inputconf.rwstart);
 		ui.rwstop = SDL_GetScancodeFromName(inputconf.rwstop);
 		
@@ -869,7 +869,7 @@ void input_config_write() {
 		
 		fprintf(fp, "reset=%s\n", SDL_GetScancodeName(ui.reset));
 		
-		fprintf(fp, "altspeed=%s\n", SDL_GetScancodeName(ui.altspeed));
+		fprintf(fp, "ffspeed=%s\n", SDL_GetScancodeName(ui.ffspeed));
 		fprintf(fp, "rwstart=%s\n", SDL_GetScancodeName(ui.rwstart));
 		fprintf(fp, "rwstop=%s\n", SDL_GetScancodeName(ui.rwstop));
 		
@@ -948,7 +948,7 @@ void input_set_default() {
 	
 	ui.reset = SDL_GetScancodeFromName("F12");
 	
-	ui.altspeed = SDL_GetScancodeFromName("`");
+	ui.ffspeed = SDL_GetScancodeFromName("`");
 	ui.rwstart = SDL_GetScancodeFromName("Backspace");
 	ui.rwstop = SDL_GetScancodeFromName("\\");
 	

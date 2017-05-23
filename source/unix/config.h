@@ -46,7 +46,7 @@ typedef struct {
 	
 	// Timing
 	int timing_speed;
-	int timing_altspeed;
+	int timing_ffspeed;
 	int timing_turbopulse;
 	bool timing_vsync;
 	bool timing_limiter;

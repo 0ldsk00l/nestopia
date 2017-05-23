@@ -112,8 +112,8 @@ void config_file_write() {
 		fprintf(fp, "[timing]\n");
 		fprintf(fp, "; Base speed for NTSC in Frames per Second.\n");
 		fprintf(fp, "speed=%d\n\n", conf.timing_speed);
-		fprintf(fp, "; Alternate speed (slow down or fast forward)\n");
-		fprintf(fp, "altspeed=%d\n\n", conf.timing_altspeed);
+		fprintf(fp, "; Fast-Forward Speed\n");
+		fprintf(fp, "ffspeed=%d\n\n", conf.timing_ffspeed);
 		fprintf(fp, "; Pulse turbo buttons every n frames. Minimum value is 2.\n");
 		fprintf(fp, "turbopulse=%d\n\n", conf.timing_turbopulse);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
@@ -188,7 +188,7 @@ void config_set_default() {
 	
 	// Timing
 	conf.timing_speed = 60;
-	conf.timing_altspeed = 180;
+	conf.timing_ffspeed = 3;
 	conf.timing_turbopulse = 3;
 	conf.timing_vsync = true;
 	conf.timing_limiter = true;
@@ -255,7 +255,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	
 	// Timing
 	else if (MATCH("timing", "speed")) { pconfig->timing_speed = atoi(value); }
-	else if (MATCH("timing", "altspeed")) { pconfig->timing_altspeed = atoi(value); }
+	else if (MATCH("timing", "ffspeed")) { pconfig->timing_ffspeed = atoi(value); }
 	else if (MATCH("timing", "turbopulse")) { pconfig->timing_turbopulse = atoi(value); }
 	else if (MATCH("timing", "vsync")) { pconfig->timing_vsync = atoi(value); }
 	else if (MATCH("timing", "limiter")) { pconfig->timing_limiter = atoi(value); }
