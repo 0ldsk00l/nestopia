@@ -402,6 +402,7 @@ elseif( UNIX )
 			source/unix/gtkui/gtkui_cheats.cpp
 			source/unix/gtkui/gtkui_config.cpp
 			source/unix/gtkui/gtkui_dialogs.cpp
+			source/unix/gtkui/gtkui_input.cpp
 		)
 	endif()
 endif()
