@@ -25,7 +25,7 @@ typedef struct {
 	guint insertcoin1;
 	guint insertcoin2;
 	guint reset;
-	guint altspeed;
+	guint ffspeed;
 	guint rwstart;
 	guint rwstop;
 	guint fullscreen;

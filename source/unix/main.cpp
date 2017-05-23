@@ -95,7 +95,6 @@ void *custompalette = NULL;
 extern void (*audio_deinit)();
 
 extern settings_t conf;
-extern bool altspeed;
 
 extern int drawtext;
 extern char textbuf[32];
@@ -937,11 +936,10 @@ void nst_emuloop() {
 		// Pulse the turbo buttons
 		input_pulse_turbo(cNstPads);
 		
-		// Execute a frame
-		if (timing_frameskip()) {
-			emulator.Execute(NULL, cNstSound, cNstPads);
+		// Execute frames
+		for (int i = 0; i < timing_runframes(); i++) {
+			emulator.Execute(cNstVideo, cNstSound, cNstPads);
 		}
-		else { emulator.Execute(cNstVideo, cNstSound, cNstPads); }
 	}
 }
 

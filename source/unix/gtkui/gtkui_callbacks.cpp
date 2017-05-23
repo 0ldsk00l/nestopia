@@ -229,9 +229,9 @@ void gtkui_cb_misc_power_state(GtkComboBox *combobox, gpointer userdata) {
 	conf.misc_power_state = gtk_combo_box_get_active(combobox);
 }
 
-void gtkui_cb_timing_altspeed(GtkRange *range, gpointer userdata) {
-	// Set altspeed
-	conf.timing_altspeed = (int)gtk_range_get_value(range);
+void gtkui_cb_timing_ffspeed(GtkRange *range, gpointer userdata) {
+	// Set Fast-Forward Speed
+	conf.timing_ffspeed = (int)gtk_range_get_value(range);
 }
 
 void gtkui_cb_timing_vsync(GtkToggleButton *togglebutton, gpointer userdata) {

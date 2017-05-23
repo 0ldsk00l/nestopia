@@ -16,8 +16,8 @@ void audio_unpause();
 void audio_set_params(Sound::Output *soundoutput);
 void audio_adj_volume();
 
-bool timing_frameskip();
+int timing_runframes();
+void timing_set_ffspeed();
 void timing_set_default();
-void timing_set_altspeed();
 
 #endif
