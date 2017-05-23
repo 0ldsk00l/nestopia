@@ -3,13 +3,6 @@
 
 #include <gtk/gtk.h>
 
-#ifdef _MINGW
-#include <gdk/gdkwin32.h>
-#elif _APPLE
-#else
-#include <gdk/gdkx.h>
-#endif
-
 void gtkui_init(int argc, char *argv[]);
 void gtkui_create();
 void gtkui_resize();

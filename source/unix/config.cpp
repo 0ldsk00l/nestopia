@@ -204,9 +204,6 @@ void config_set_default() {
 	#ifdef _MINGW
 	conf.misc_disable_gui = true; // Disable GUI for MinGW
 	#endif
-	#ifdef _APPLE
-	conf.misc_config_pause = true; // Always pause on OS X
-	#endif
 	conf.misc_last_folder = NULL;
 	conf.misc_power_state = 0;
 }
