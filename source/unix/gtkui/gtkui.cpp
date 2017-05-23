@@ -36,9 +36,9 @@
 #include "gtkui_input.h"
 
 GtkWidget *gtkwindow;
-GtkWidget *statusbar;
-GtkWidget *menubar;
-GtkWidget *drawingarea;
+static GtkWidget *statusbar;
+static GtkWidget *menubar;
+static GtkWidget *drawingarea;
 
 char iconpath[512];
 char padpath[512];
@@ -52,6 +52,16 @@ void gtkui_init(int argc, char *argv[]) {
 	#ifndef _APPLE
 	gtkui_create();
 	#endif
+}
+
+static void gtkui_glarea_realize(GtkGLArea *glarea) {
+	gtk_gl_area_make_current(glarea);
+	gtk_gl_area_set_has_depth_buffer(glarea, FALSE);
+}
+
+static void gtkui_swapbuffers() {
+	nst_emuloop();
+	gtk_widget_queue_draw(drawingarea);
 }
 
 void gtkui_state_quickload(GtkWidget *widget, gpointer userdata) {
@@ -226,8 +236,11 @@ void gtkui_create() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	// Create the DrawingArea/OpenGL context
-	drawingarea = gtk_drawing_area_new();
-	//gtk_widget_set_double_buffered(drawingarea, FALSE);
+	///drawingarea = gtk_drawing_area_new();
+	drawingarea = gtk_gl_area_new();
+	g_signal_connect(G_OBJECT(drawingarea), "realize", G_CALLBACK(gtkui_glarea_realize), NULL);
+	g_signal_connect(G_OBJECT(drawingarea), "render", gtkui_swapbuffers, NULL);
+	//gtk_widget_add_tick_callback(drawingarea, gtkui_tick, drawingarea, NULL);
 	
 	g_object_set_data(G_OBJECT(gtkwindow), "area", drawingarea);
 	
@@ -261,7 +274,7 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_drag_data), NULL);
 	
 	g_signal_connect(G_OBJECT(gtkwindow), "delete_event",
-		G_CALLBACK(nst_schedule_quit), NULL);
+		G_CALLBACK(gtk_main_quit), NULL);
 	
 	// File menu
 	g_signal_connect(G_OBJECT(open), "activate",
@@ -319,7 +332,7 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_movie_stop), NULL);
 	
 	g_signal_connect(G_OBJECT(quit), "activate",
-		G_CALLBACK(nst_schedule_quit), NULL);
+		G_CALLBACK(gtk_main_quit), NULL);
 	
 	// Emulator menu
 	g_signal_connect(G_OBJECT(cont), "activate",
@@ -371,6 +384,8 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_cb_convert_mouse), NULL);
 	
 	gtk_widget_show_all(gtkwindow);
+	
+	//gtk_main();
 }
 
 void gtkui_resize() {
@@ -445,7 +460,6 @@ void gtkui_message(const char* message) {
 void gtkui_cursor_set_crosshair() {
 	// Set the cursor to a crosshair
 	GdkCursor *cursor;
-	//cursor = gdk_cursor_new(GDK_CROSSHAIR);
 	cursor = gdk_cursor_new_for_display(gdk_cursor_get_display(cursor), GDK_CROSSHAIR);
 	
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
@@ -458,7 +472,6 @@ void gtkui_cursor_set_crosshair() {
 void gtkui_cursor_set_default() {
 	// Set the cursor to the default
 	GdkCursor *cursor;
-	//cursor = gdk_cursor_new(GDK_LEFT_PTR);
 	cursor = gdk_cursor_new_for_display(gdk_cursor_get_display(cursor), GDK_LEFT_PTR);
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
 	

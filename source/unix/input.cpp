@@ -38,8 +38,7 @@
 
 extern settings_t conf;
 extern nstpaths_t nstpaths;
-extern dimensions_t rendersize;
-extern SDL_DisplayMode displaymode;
+extern dimensions_t rendersize, screensize;
 extern Emulator emulator;
 extern bool nst_nsf;
 
@@ -581,11 +580,11 @@ void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
 			// Calculate fullscreen X coords
 			if (conf.video_fullscreen) {
 				if (conf.video_stretch_aspect) {
-					xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(displaymode.w);
+					xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(screensize.w);
 				}
 				else {
 					// Remove the same amount of pixels as the black area to the left of the screen
-					x -= displaymode.w / 2.0f - rendersize.w / 2.0f;
+					x -= screensize.w / 2.0f - rendersize.w / 2.0f;
 					xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(rendersize.w);
 				}
 			}
@@ -601,7 +600,7 @@ void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
 			
 			// Calculate fullscreen Y coords
 			if (conf.video_fullscreen) {
-				yaspect = (double)(conf.video_scale_factor * Video::Output::HEIGHT) / (double)(displaymode.h);
+				yaspect = (double)(conf.video_scale_factor * Video::Output::HEIGHT) / (double)(screensize.h);
 				controllers->zapper.y = (y * yaspect) / conf.video_scale_factor;
 			}
 			

@@ -46,4 +46,6 @@ void nst_switch_disk();
 
 void nst_dipswitch();
 
+void nst_emuloop();
+
 #endif

@@ -18,21 +18,6 @@
 #include <OpenGL/gl.h>
 #endif
 
-// This is part of an elaborate hack to embed the SDL window
-struct SDL_Window {
-	const void *magic;
-	Uint32 id;
-	char *title;
-	SDL_Surface *icon;
-	int x, y;
-	int w, h;
-	int min_w, min_h;
-	int max_w, max_h;
-	Uint32 flags;
-};
-typedef struct SDL_Window SDL_Window;
-//
-
 typedef struct {
 	int w;
 	int h;
@@ -43,8 +28,7 @@ void ogl_deinit();
 void ogl_render();
 
 void video_init();
-void video_create_standalone();
-void video_create_embedded();
+void video_create_sdlwindow();
 void video_create();
 void video_swapbuffers();
 void video_destroy();
