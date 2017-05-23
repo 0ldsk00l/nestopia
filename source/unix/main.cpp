@@ -94,6 +94,8 @@ static std::ifstream *fdsbios;
 static std::ifstream *moviefile;
 static std::fstream *movierecfile;
 
+static SDL_Event event;
+
 extern void (*audio_deinit)();
 
 extern settings_t conf;
@@ -928,10 +930,54 @@ void nst_load(const char *filename) {
 	nst_play();
 }
 
+void nst_emuloop() {
+	///////////////////////////////////////////////////////
+	//// This is only here because I need SDL Joystick ////
+	//// Separate it into its own piece later on       ////
+	///////////////////////////////////////////////////////
+	
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+			case SDL_QUIT:
+				nst_quit = 1;
+				break;
+			
+			case SDL_KEYDOWN:
+			case SDL_KEYUP:
+			case SDL_JOYHATMOTION:
+			case SDL_JOYAXISMOTION:
+			case SDL_JOYBUTTONDOWN:
+			case SDL_JOYBUTTONUP:
+			case SDL_MOUSEBUTTONDOWN:
+			case SDL_MOUSEBUTTONUP:
+				input_process(cNstPads, event);
+				break;
+			default: break;
+		}	
+	}
+	///////////////////////////////////////////////////////
+	
+	if (NES_SUCCEEDED(Rewinder(emulator).Enable(true))) {
+		Rewinder(emulator).EnableSound(true);
+	}
+	
+	audio_play();
+	ogl_render();
+	
+	if (updateok) {
+		// Pulse the turbo buttons
+		input_pulse_turbo(cNstPads);
+		
+		// Execute a frame
+		if (timing_frameskip()) {
+			emulator.Execute(NULL, cNstSound, cNstPads);
+		}
+		else { emulator.Execute(cNstVideo, cNstSound, cNstPads); }
+	}
+}
+
 int main(int argc, char *argv[]) {
 	// This is the main function
-	
-	static SDL_Event event;
 	void *userData = (void*)0xDEADC0DE;
 
 	// Set up directories
@@ -1030,57 +1076,24 @@ int main(int argc, char *argv[]) {
 		#endif
 	}
 	
-	// Start the main loop
-	nst_quit = 0;
-	
-	while (!nst_quit) {
-		#if defined(_APPLE) && defined(_GTK)
-		if (!playing) { gtk_main_iteration_do(TRUE); }
-		#elif _GTK
-		while (gtk_events_pending()) {
-			gtk_main_iteration_do(TRUE);
-		}
-		if (!playing) { gtk_main_iteration_do(TRUE); }
-		#endif
-		if (playing) {
-			while (SDL_PollEvent(&event)) {
-				switch (event.type) {
-					case SDL_QUIT:
-						nst_quit = 1;
-						break;
-					
-					case SDL_KEYDOWN:
-					case SDL_KEYUP:
-					case SDL_JOYHATMOTION:
-					case SDL_JOYAXISMOTION:
-					case SDL_JOYBUTTONDOWN:
-					case SDL_JOYBUTTONUP:
-					case SDL_MOUSEBUTTONDOWN:
-					case SDL_MOUSEBUTTONUP:
-						input_process(cNstPads, event);
-						break;
-					default: break;
-				}	
+	if (conf.misc_disable_gui) { // SDL Main loop
+		nst_quit = 0;
+		
+		while (!nst_quit) {
+			#if defined(_APPLE) && defined(_GTK)
+			if (!playing) { gtk_main_iteration_do(TRUE); }
+			#elif _GTK
+			while (gtk_events_pending()) {
+				gtk_main_iteration_do(TRUE);
 			}
-			
-			if (NES_SUCCEEDED(Rewinder(emulator).Enable(true))) {
-				Rewinder(emulator).EnableSound(true);
-			}
-			
-			audio_play();
-			
-			if (updateok) {
-				// Pulse the turbo buttons
-				input_pulse_turbo(cNstPads);
-				
-				// Execute a frame
-				if (timing_frameskip()) {
-					emulator.Execute(NULL, cNstSound, cNstPads);
-				}
-				else { emulator.Execute(cNstVideo, cNstSound, cNstPads); }
-			}
+			if (!playing) { gtk_main_iteration_do(TRUE); }
+			#endif
+			if (playing) { nst_emuloop(); }
 		}
 	}
+	#ifdef _GTK
+	else { gtk_main(); } // GTK+ main loop
+	#endif
 	
 	// Remove the cartridge and shut down the NES
 	nst_unload();
