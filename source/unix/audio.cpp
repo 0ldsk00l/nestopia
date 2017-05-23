@@ -37,7 +37,6 @@ static ao_sample_format format;
 extern settings_t conf;
 extern Emulator emulator;
 extern bool nst_pal;
-extern bool updateok;
 
 static SDL_AudioSpec spec, obtained;
 static SDL_AudioDeviceID dev;
@@ -75,10 +74,9 @@ void audio_deinit_ao() {
 }
 
 void audio_play() {
-	if (paused) { updateok = true; return; }
+	if (paused) { return; }
 	bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
 	audio_output();
-	updateok = true;
 }
 
 void audio_cb_sdl(void *data, uint8_t *stream, int len) {

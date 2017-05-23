@@ -2,7 +2,7 @@
  * Nestopia UE
  * 
  * Copyright (C) 2007-2008 R. Belmont
- * Copyright (C) 2012-2016 R. Danbrook
+ * Copyright (C) 2012-2017 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,21 +67,7 @@
 
 using namespace Nes::Api;
 
-// base class, all interfaces derives from this
 Emulator emulator;
-
-bool loaded = false;
-bool playing = false;
-bool updateok = false;
-
-bool nst_pal = false;
-bool nst_nsf = false;
-
-static int nst_quit = 0;
-
-nstpaths_t nstpaths;
-
-void *custompalette = NULL;
 
 static Video::Output *cNstVideo;
 static Sound::Output *cNstSound;
@@ -95,6 +81,16 @@ static std::ifstream *moviefile;
 static std::fstream *movierecfile;
 
 static SDL_Event event;
+
+static int nst_quit = 0;
+bool loaded = false;
+bool playing = false;
+bool nst_pal = false;
+bool nst_nsf = false;
+
+nstpaths_t nstpaths;
+
+void *custompalette = NULL;
 
 extern void (*audio_deinit)();
 
@@ -307,21 +303,10 @@ void nst_switch_disk() {
 
 static Machine::FavoredSystem nst_default_system() {
 	switch (conf.misc_default_system) {
-		case 2:
-			return Machine::FAVORED_NES_PAL;
-			break;
-		
-		case 3:
-			return Machine::FAVORED_FAMICOM;
-			break;
-		
-		case 4:
-			return Machine::FAVORED_DENDY;
-			break;
-		
-		default:
-			return Machine::FAVORED_NES_NTSC;
-			break;
+		case 2: return Machine::FAVORED_NES_PAL; break;
+		case 3: return Machine::FAVORED_FAMICOM; break;
+		case 4: return Machine::FAVORED_DENDY; break;
+		default: return Machine::FAVORED_NES_NTSC; break;
 	}
 }
 
@@ -454,7 +439,6 @@ void nst_play() {
 		video_disp_nsf();
 	}
 	
-	updateok = false;
 	playing = true;
 }
 
@@ -563,14 +547,8 @@ void nst_set_region() {
 void nst_set_rewind(int direction) {
 	// Set the rewinder backward or forward
 	switch (direction) {
-		case 0:
-			Rewinder(emulator).SetDirection(Rewinder::BACKWARD);
-			break;
-			
-		case 1:
-			Rewinder(emulator).SetDirection(Rewinder::FORWARD);
-			break;
-			
+		case 0: Rewinder(emulator).SetDirection(Rewinder::BACKWARD); break;
+		case 1: Rewinder(emulator).SetDirection(Rewinder::FORWARD); break;
 		default: break;
 	}
 }
@@ -683,23 +661,14 @@ bool nst_find_patch(char *filename) {
 	// Check for a patch in the same directory as the game
 	FILE *file;
 	
-	if (!conf.misc_soft_patching) {
-		return 0;
-	}
+	if (!conf.misc_soft_patching) { return 0; }
 	
 	snprintf(filename, sizeof(nstpaths.savename), "%s.ips", nstpaths.gamename);
 	
-	if ((file = fopen(filename, "rb")) != NULL) {
-		fclose(file);
-		return 1;
-	}
+	if ((file = fopen(filename, "rb")) != NULL) { fclose(file); return 1; }
 	else {
 		snprintf(filename, sizeof(nstpaths.savename), "%s.ups", nstpaths.gamename);
-		
-		if ((file = fopen(filename, "rb")) != NULL) {
-			fclose(file);
-			return 1;
-		}
+		if ((file = fopen(filename, "rb")) != NULL) { fclose(file); return 1; }
 	}
 	
 	return 0;
@@ -916,9 +885,9 @@ void nst_load(const char *filename) {
 	loaded = 1;
 	
 	// Set the title
-	video_set_title(nstpaths.gamename);
+	if (conf.misc_disable_gui) { video_set_title(nstpaths.gamename); }
 	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_set_title(nstpaths.gamename); }
+	else { gtkui_set_title(nstpaths.gamename); }
 	#endif
 	
 	// Set the RAM's power state
@@ -964,7 +933,7 @@ void nst_emuloop() {
 	audio_play();
 	ogl_render();
 	
-	if (updateok) {
+	if (playing) {
 		// Pulse the turbo buttons
 		input_pulse_turbo(cNstPads);
 		
@@ -1031,10 +1000,10 @@ int main(int argc, char *argv[]) {
 	video_set_dimensions();
 	
 	// Create the window
+	if (conf.misc_disable_gui) { video_create(); }
 	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_init(argc, argv); }
+	else { gtkui_init(argc, argv); }
 	#endif
-	video_create();
 	
 	// Set up the callbacks
 	Video::Output::lockCallback.Set(VideoLock, userData);
@@ -1078,18 +1047,7 @@ int main(int argc, char *argv[]) {
 	
 	if (conf.misc_disable_gui) { // SDL Main loop
 		nst_quit = 0;
-		
-		while (!nst_quit) {
-			#if defined(_APPLE) && defined(_GTK)
-			if (!playing) { gtk_main_iteration_do(TRUE); }
-			#elif _GTK
-			while (gtk_events_pending()) {
-				gtk_main_iteration_do(TRUE);
-			}
-			if (!playing) { gtk_main_iteration_do(TRUE); }
-			#endif
-			if (playing) { nst_emuloop(); }
-		}
+		while (!nst_quit) {	nst_emuloop(); }
 	}
 	#ifdef _GTK
 	else { gtk_main(); } // GTK+ main loop
@@ -1112,7 +1070,7 @@ int main(int argc, char *argv[]) {
 	// Write the input config file
 	input_config_write();
 	#ifdef _GTK
-	if (!conf.misc_disable_gui) gtkui_input_config_write();
+	if (!conf.misc_disable_gui) { gtkui_input_config_write(); }
 	#endif
 	// Write the config file
 	config_file_write();
