@@ -58,7 +58,7 @@ iconsvgdir = $(datarootdir)/icons/hicolor/scalable/apps
 dist_iconsvg_DATA = source/unix/icons/svg/nestopia.svg source/unix/icons/svg/nespad.svg
 
 # documentation
-dist_doc_DATA = AUTHORS ChangeLog README.md README.unix
+dist_doc_DATA = AUTHORS ChangeLog README.md
 dist_html_DATA = readme.html
 
 #####################
