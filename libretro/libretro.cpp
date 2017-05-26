@@ -1193,9 +1193,36 @@ void retro_cheat_set(unsigned index, bool enabled, const char *code)
 {
    Nes::Api::Cheats cheater(emulator);
    Nes::Api::Cheats::Code ggCode;
+   char codeCopy[256];
+   char *part;
 
-   if (Nes::Api::Cheats::GameGenieDecode(code, ggCode) == RESULT_OK)
-      cheater.SetCode(ggCode);
-   if (Nes::Api::Cheats::ProActionRockyDecode(code, ggCode) == RESULT_OK)
-      cheater.SetCode(ggCode);
+   if (code == NULL) return;
+   strcpy(codeCopy,code);
+   part = strtok(codeCopy,"+,;._ ");
+
+   while (part)
+   {
+      if ((strlen(part) == 7) && (part[4]==':'))
+      {
+         part[4]='\0';
+         ggCode.address=strtoul(part,NULL,16);
+         ggCode.value=strtoul(part+5,NULL,16);
+         cheater.SetCode(ggCode);
+      }
+      else if ((strlen(part)==10) && (part[4]=='?') && (part[7]==':'))
+      {
+         part[4]='\0';
+         part[7]='\0';
+         ggCode.address=strtoul(part,NULL,16);
+         ggCode.compare=strtoul(part+5,NULL,16);
+         ggCode.useCompare=true;
+         ggCode.value=strtoul(part+8,NULL,16);
+         cheater.SetCode(ggCode);
+      }
+      else if (Nes::Api::Cheats::GameGenieDecode(part, ggCode) == RESULT_OK)
+         cheater.SetCode(ggCode);
+      else if (Nes::Api::Cheats::ProActionRockyDecode(part, ggCode) == RESULT_OK)
+         cheater.SetCode(ggCode);
+      part = strtok(NULL,"+,;._ ");
+   }
 }
