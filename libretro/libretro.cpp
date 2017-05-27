@@ -23,6 +23,8 @@
 #define snprintf _snprintf
 #endif
 
+#define MIN(a,b)      ((a)<(b)?(a):(b))
+#define MAX(a,b)      ((a)>(b)?(a):(b))
 #define NES_NTSC_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (8.0 / 7.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
 #define NES_PAL_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (2950000.0 / 2128137.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
 #define NES_4_3_DAR (4.0 / 3.0);
@@ -195,19 +197,19 @@ static const byte nes_classic_fbx_fs_palette[64][3] =
 int crossx = 0;
 int crossy = 0;
 
+#define CROSSHAIR_SIZE 3
+
 void draw_crosshair(int x, int y)
 {
    uint32_t w = 0xFFFFFFFF;
    uint32_t b = 0x00000000;
-   
-   for(int i = -3; i < 4; i++) {
-      video_buffer[256 * y + x + i] = b;
-      video_buffer[256 * (y + i) + x] = b;
+
+   for (int i = MAX(-CROSSHAIR_SIZE, -x); i <= MIN(CROSSHAIR_SIZE, 255 - x); i++) {
+     video_buffer[256 * y + x + i] = i % 2 == 0 ? w : b;
    }
-   
-   for(int i = -2; i < 3; i += 2) {
-      video_buffer[256 * y + x + i] = w;
-      video_buffer[256 * (y + i) + x] = w;
+
+   for (int i = MAX(-CROSSHAIR_SIZE, -y); i <= MIN(CROSSHAIR_SIZE, 239 - y); i++) {
+     video_buffer[256 * (y + i) + x] = i % 2 == 0 ? w : b;
    }
 }
 
