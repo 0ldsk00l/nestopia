@@ -39,10 +39,6 @@ void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata)
 void gtkui_cb_misc_disable_cursor(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_config_pause(GtkToggleButton *togglebutton, gpointer userdata);
 
-unsigned int gtkui_cb_translate_gdk_sdl(int gdk_keyval);
-int gtkui_cb_convert_key(GtkWidget *grab, GdkEventKey *event, gpointer userdata);
-int gtkui_cb_convert_mouse(GtkDrawingArea *area, GdkEventButton *event, gpointer userdata);
-
 void gtkui_drag_data(GtkWidget *widget, GdkDragContext *dragcontext, gint x, gint y, GtkSelectionData *seldata, guint info, guint time, gpointer data);
 
 #endif

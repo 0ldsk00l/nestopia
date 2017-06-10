@@ -270,33 +270,6 @@ void gtkui_cb_misc_config_pause(GtkToggleButton *togglebutton, gpointer userdata
 	conf.misc_config_pause = gtk_toggle_button_get_active(togglebutton);
 }
 
-int gtkui_cb_convert_mouse(GtkDrawingArea *area, GdkEventButton *event, gpointer userdata) {
-	// Convert GDK mouse clicks to SDL mouse clicks
-	SDL_Event sdlevent;
-	
-	switch(event->type) {
-		case GDK_BUTTON_PRESS:
-			sdlevent.type = SDL_MOUSEBUTTONDOWN;
-			sdlevent.button.state = SDL_PRESSED;
-			break;
-		
-		case GDK_BUTTON_RELEASE:
-			sdlevent.type = SDL_MOUSEBUTTONUP;
-			sdlevent.button.state = SDL_RELEASED;
-			break;
-		
-		default: break;
-	}
-	
-	sdlevent.button.button = event->button == 1 ? SDL_BUTTON_LEFT : SDL_BUTTON_RIGHT;
-	sdlevent.button.x = (int)event->x;
-	sdlevent.button.y = (int)event->y;
-	
-	SDL_PushEvent(&sdlevent);
-	
-	return FALSE;
-}
-
 void gtkui_drag_data(GtkWidget *widget, GdkDragContext *dragcontext, gint x, gint y, GtkSelectionData *seldata, guint info, guint time, gpointer data) {
 	// Handle the Drag and Drop
 	if ((widget == NULL) || (dragcontext == NULL) || (seldata == NULL)) {	return;	}
