@@ -55,6 +55,7 @@ void gtkui_init(int argc, char *argv[]) {
 static void gtkui_glarea_realize(GtkGLArea *glarea) {
 	gtk_gl_area_make_current(glarea);
 	gtk_gl_area_set_has_depth_buffer(glarea, FALSE);
+	ogl_init();
 }
 
 static void gtkui_swapbuffers() {
