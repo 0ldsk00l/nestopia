@@ -155,6 +155,7 @@ void input_joysticks_close();
 void input_process(Input::Controllers *controllers, SDL_Event event);
 void input_pulse_turbo(Input::Controllers *controllers);
 void input_inject(Input::Controllers *controllers, nesinput_t input);
+void input_inject_mouse(Input::Controllers *controllers, int b, int s, int x, int y);
 void input_match_joystick(Input::Controllers *controllers, SDL_Event event);
 void input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
 void input_match_mouse(Input::Controllers *controllers, SDL_Event event);

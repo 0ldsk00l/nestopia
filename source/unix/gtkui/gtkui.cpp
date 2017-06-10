@@ -364,6 +364,16 @@ void gtkui_create() {
 	g_signal_connect(G_OBJECT(about), "activate",
 		G_CALLBACK(gtkui_about), NULL);
 	
+	// Mouse input events
+	gtk_widget_add_events(GTK_WIDGET(drawingarea), GDK_BUTTON_PRESS_MASK);
+	gtk_widget_add_events(GTK_WIDGET(drawingarea), GDK_BUTTON_RELEASE_MASK);
+	
+	gtk_widget_show_all(gtkwindow);
+	
+	//gtk_main();
+}
+
+void gtkui_signals_init() {
 	// Key translation
 	g_signal_connect(G_OBJECT(gtkwindow), "key-press-event",
 		G_CALLBACK(gtkui_input_process_key), NULL);
@@ -372,18 +382,27 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_input_process_key), NULL);
 	
 	// Mouse translation
-	gtk_widget_add_events(GTK_WIDGET(drawingarea), GDK_BUTTON_PRESS_MASK);
-	gtk_widget_add_events(GTK_WIDGET(drawingarea), GDK_BUTTON_RELEASE_MASK);
-	
 	g_signal_connect(G_OBJECT(drawingarea), "button-press-event",
-		G_CALLBACK(gtkui_cb_convert_mouse), NULL);
+		G_CALLBACK(gtkui_input_process_mouse), NULL);
 	
 	g_signal_connect(G_OBJECT(drawingarea), "button-release-event",
-		G_CALLBACK(gtkui_cb_convert_mouse), NULL);
+		G_CALLBACK(gtkui_input_process_mouse), NULL);
+}
+
+void gtkui_signals_deinit() {
+	// Key translation
+	g_signal_connect(G_OBJECT(gtkwindow), "key-press-event",
+		gtkui_input_null, NULL);
 	
-	gtk_widget_show_all(gtkwindow);
+	g_signal_connect(G_OBJECT(gtkwindow), "key-release-event",
+		gtkui_input_null, NULL);
 	
-	//gtk_main();
+	// Mouse translation
+	g_signal_connect(G_OBJECT(drawingarea), "button-press-event",
+		gtkui_input_null, NULL);
+	
+	g_signal_connect(G_OBJECT(drawingarea), "button-release-event",
+		gtkui_input_null, NULL);
 }
 
 void gtkui_resize() {

@@ -281,6 +281,57 @@ void input_inject(Input::Controllers *controllers, nesinput_t input) {
 	}
 }
 
+void input_inject_mouse(Input::Controllers *controllers, int b, int s, int x, int y) {
+	// Insert input signal for Zappers
+	
+	double xaspect;
+	double yaspect;
+	
+	if (s) {
+		// Get X coords
+		if (conf.video_filter == 1) { // NTSC
+			xaspect = (double)(Video::Output::WIDTH) / (double)(Video::Output::NTSC_WIDTH / 2);
+		}
+		else if (conf.video_tv_aspect) {
+			xaspect = (double)(Video::Output::WIDTH) / (double)(TV_WIDTH);
+		}
+		else { xaspect = 1.0; }
+		
+		// Calculate fullscreen X coords
+		if (conf.video_fullscreen) {
+			if (conf.video_stretch_aspect) {
+				xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(screensize.w);
+			}
+			else {
+				// Remove the same amount of pixels as the black area to the left of the screen
+				x -= screensize.w / 2.0f - rendersize.w / 2.0f;
+				xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(rendersize.w);
+			}
+		}
+		controllers->zapper.x = (int)(x * xaspect) / conf.video_scale_factor;
+		
+		// Get Y coords
+		if (conf.video_unmask_overscan) {
+			controllers->zapper.y = y / conf.video_scale_factor;
+		}
+		else {
+			controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
+		}
+		
+		// Calculate fullscreen Y coords
+		if (conf.video_fullscreen) {
+			yaspect = (double)(conf.video_scale_factor * Video::Output::HEIGHT) / (double)(screensize.h);
+			controllers->zapper.y = (y * yaspect) / conf.video_scale_factor;
+		}
+		
+		// Offscreen
+		if (b != 1) { controllers->zapper.x = ~1U; }
+		
+		controllers->zapper.fire = true;
+	}
+	else { controllers->zapper.fire = false; }
+}
+
 void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 	// Match NES buttons to joystick input
 	int j;
@@ -550,68 +601,8 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
 	// Match mouse input to NES input
 	int x, y;
-	double xaspect;
-	double yaspect;
-	#ifdef _GTK
-	if (conf.misc_disable_gui) { SDL_GetMouseState(&x, &y); }
-	else {
-		x = event.button.x;
-		y = event.button.y;
-	}
-	#else
 	SDL_GetMouseState(&x, &y);
-	#endif
-	
-	switch(event.type) {
-		case SDL_MOUSEBUTTONUP:
-			controllers->zapper.fire = false;
-			break;
-			
-		case SDL_MOUSEBUTTONDOWN:
-			// Get X coords
-			if (conf.video_filter == 1) { // NTSC
-				xaspect = (double)(Video::Output::WIDTH) / (double)(Video::Output::NTSC_WIDTH / 2);
-			}
-			else if (conf.video_tv_aspect) {
-				xaspect = (double)(Video::Output::WIDTH) / (double)(TV_WIDTH);
-			}
-			else { xaspect = 1.0; }
-			
-			// Calculate fullscreen X coords
-			if (conf.video_fullscreen) {
-				if (conf.video_stretch_aspect) {
-					xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(screensize.w);
-				}
-				else {
-					// Remove the same amount of pixels as the black area to the left of the screen
-					x -= screensize.w / 2.0f - rendersize.w / 2.0f;
-					xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(rendersize.w);
-				}
-			}
-			controllers->zapper.x = (int)(x * xaspect) / conf.video_scale_factor;
-			
-			// Get Y coords
-			if (conf.video_unmask_overscan) {
-				controllers->zapper.y = y / conf.video_scale_factor;
-			}
-			else {
-				controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
-			}
-			
-			// Calculate fullscreen Y coords
-			if (conf.video_fullscreen) {
-				yaspect = (double)(conf.video_scale_factor * Video::Output::HEIGHT) / (double)(screensize.h);
-				controllers->zapper.y = (y * yaspect) / conf.video_scale_factor;
-			}
-			
-			// Offscreen
-			if(event.button.button != SDL_BUTTON_LEFT) { controllers->zapper.x = ~1U; }
-			
-			controllers->zapper.fire = true;
-			break;
-			
-		default: break;
-	}
+	input_inject_mouse(controllers, event.button.button, event.type == SDL_MOUSEBUTTONDOWN ? 1 : 0, x, y);
 }
 
 char* input_translate_event(SDL_Event event) {
