@@ -13,5 +13,7 @@ void gtkui_message(const char* message);
 void gtkui_cursor_set_crosshair();
 void gtkui_cursor_set_default();
 void gtkui_toggle_fullscreen();
+void gtkui_signals_init();
+void gtkui_signals_deinit();
 
 #endif

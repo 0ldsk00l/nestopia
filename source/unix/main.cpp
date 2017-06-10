@@ -259,6 +259,10 @@ void nst_pause() {
 		audio_deinit();
 	}
 	
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) { gtkui_signals_deinit(); }
+	#endif
+	
 	playing = false;
 	video_set_cursor();
 }
@@ -424,6 +428,10 @@ void nst_play() {
 	audio_init();
 	input_init();
 	cheats_init();
+	
+	#ifdef _GTK
+	if (!conf.misc_disable_gui) { gtkui_signals_init(); }
+	#endif
 	
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;

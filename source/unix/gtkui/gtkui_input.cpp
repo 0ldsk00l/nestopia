@@ -248,8 +248,11 @@ void gtkui_input_config_item(int pnum, int bnum) {
 	
 }
 
+void gtkui_input_null() {}
+
 int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer userdata) {
 	// Process input from GDK events
+	
 	nesinput_t input;
 
 	input.nescode = input.player = input.pressed = input.turboa = input.turbob = 0;
@@ -299,4 +302,20 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 	input_inject(cNstPads, input);
 	
 	return TRUE;	
+}
+
+int gtkui_input_process_mouse(GtkWidget *widget, GdkEventButton *event, gpointer userdata) {
+	
+	switch(event->type) {
+		case GDK_BUTTON_PRESS:
+			input_inject_mouse(cNstPads, event->button, 1, (int)event->x, (int)event->y);
+			break;
+		
+		case GDK_BUTTON_RELEASE:
+			input_inject_mouse(cNstPads, event->button, 0, (int)event->x, (int)event->y);
+			break;
+		default: break;
+	}
+	
+	return TRUE;
 }
