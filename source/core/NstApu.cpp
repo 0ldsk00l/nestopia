@@ -272,11 +272,7 @@ namespace Nes
 					NES_DO_POKE(4015,0x4015,0x09);
 				}
 
-				if (cpu.GetModel() == CPU_DENDY)
-				{
-					ctrl = STATUS_NO_FRAME_IRQ;
-				}
-				else if (hard)
+				if (hard)
 				{
 					ctrl = STATUS_FRAME_IRQ_ENABLE;
 				}
@@ -289,10 +285,7 @@ namespace Nes
 			}
 			else
 			{
-				if (cpu.GetModel() == CPU_DENDY)
-					ctrl = STATUS_NO_FRAME_IRQ;
-				else
-					ctrl = STATUS_FRAME_IRQ_ENABLE;
+				ctrl = STATUS_FRAME_IRQ_ENABLE;
 			}
 		}
 
