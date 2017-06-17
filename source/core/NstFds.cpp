@@ -162,12 +162,13 @@ namespace Nes
 
 		Fds::Fds(Context& context)
 		:
-		Image   (DISK),
-		disks   (context.stream),
-		adapter (context.cpu,disks.sides),
-		cpu     (context.cpu),
-		ppu     (context.ppu),
-		sound   (context.apu)
+		Image         (DISK),
+		disks         (context.stream),
+		adapter       (context.cpu,disks.sides),
+		cpu           (context.cpu),
+		ppu           (context.ppu),
+		sound         (context.apu),
+		favoredSystem (context.favoredSystem)
 		{
 			if (!bios.Available())
 				throw RESULT_ERR_MISSING_BIOS;
@@ -269,6 +270,16 @@ namespace Nes
 					*ppu = PPU_RP2C02;
 
 				return SYSTEM_FAMICOM;
+			}
+			else if ((region == REGION_PAL) && (favoredSystem == FAVORED_DENDY))
+			{
+				if (cpu)
+					*cpu = CPU_DENDY;
+
+				if (ppu)
+					*ppu = PPU_DENDY;
+
+				return SYSTEM_DENDY;
 			}
 			else
 			{

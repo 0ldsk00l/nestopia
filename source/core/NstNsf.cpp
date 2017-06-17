@@ -229,6 +229,7 @@ namespace Nes
 		cpu      (context.cpu),
 		apu      (context.apu),
 		chips    (NULL),
+		favoredSystem (context.favoredSystem),
 		tuneMode (Api::Nsf::TUNE_MODE_NTSC)
 		{
 			if (context.patch && context.patchResult)
@@ -379,6 +380,24 @@ namespace Nes
 		Region Nsf::GetDesiredRegion() const
 		{
 			return tuneMode == Api::Nsf::TUNE_MODE_PAL ? REGION_PAL : REGION_NTSC;
+		}
+
+		System Nsf::GetDesiredSystem(Region region,CpuModel* cpu,PpuModel* ppu) const
+		{
+			if ((region == REGION_PAL) && (favoredSystem == FAVORED_DENDY))
+			{
+				if (cpu)
+					*cpu = CPU_DENDY;
+
+				if (ppu)
+					*ppu = PPU_DENDY;
+
+				return SYSTEM_DENDY;
+			}
+			else
+			{
+				return Image::GetDesiredSystem( region, cpu, ppu );
+			}
 		}
 
 		uint Nsf::GetChips() const
@@ -536,7 +555,7 @@ namespace Nes
 			routine.reset = Routine::RESET;
 			routine.nmi = Routine::NMI;
 
-			cpu.SetFrameCycles( cpu.GetModel() == CPU_RP2A07 ? PPU_RP2C07_HVSYNC : PPU_RP2C02_HVSYNC );
+			cpu.SetFrameCycles( cpu.GetModel() == CPU_RP2A03 ? PPU_RP2C02_HVSYNC : cpu.GetModel() == CPU_RP2A07 ? PPU_RP2C07_HVSYNC : PPU_DENDY_HVSYNC );
 		}
 
 		bool Nsf::PowerOff()

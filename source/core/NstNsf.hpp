@@ -56,6 +56,7 @@ namespace Nes
 			bool PowerOff();
 			void InitSong();
 			Region GetDesiredRegion() const;
+			System GetDesiredSystem(Region,CpuModel*,PpuModel*) const;
 
 			inline uint FetchLast(uint) const;
 
@@ -273,17 +274,18 @@ namespace Nes
 				{}
 			};
 
-			Prg        prg;
-			Routine    routine;
-			Cpu&       cpu;
-			Apu&       apu;
-			Chips*     chips;
-			Songs      songs;
-			Addressing addressing;
-			Speed      speed;
-			uint       tuneMode;
-			byte       banks[8];
-			byte       wrk[SIZE_8K];
+			Prg           prg;
+			Routine       routine;
+			Cpu&          cpu;
+			Apu&          apu;
+			Chips*        chips;
+			FavoredSystem favoredSystem;
+			Songs         songs;
+			Addressing    addressing;
+			Speed         speed;
+			uint          tuneMode;
+			byte          banks[8];
+			byte          wrk[SIZE_8K];
 
 		public:
 

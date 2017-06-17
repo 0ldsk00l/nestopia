@@ -473,6 +473,7 @@ namespace Nes
 			Ppu& ppu;
 			Ram ram;
 			Sound sound;
+			FavoredSystem favoredSystem;
 			mutable Checksum checksum;
 
 			class Bios;
