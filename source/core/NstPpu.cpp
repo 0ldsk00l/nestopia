@@ -137,7 +137,7 @@ namespace Nes
 					cpu.Map( i+7 ).Set( this,               &Ppu::Peek_2007,                   &Ppu::Poke_2007 );
 				}
 
-				if (model == (PPU_RC2C05_01 || PPU_RC2C05_04))
+				if (model == PPU_RC2C05_01 || model == PPU_RC2C05_04)
 				{
 					for (uint i=0x2002; i < 0x4000; i += 0x8)
 						cpu.Map( i ).Set( &Ppu::Peek_2002_RC2C05_01_04 );
