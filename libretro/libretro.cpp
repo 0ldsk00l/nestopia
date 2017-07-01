@@ -1066,6 +1066,7 @@ bool retro_load_game(const struct retro_game_info *info)
       Api::Input(emulator).AutoSelectController(1);
       Api::Input(emulator).AutoSelectController(2);
       Api::Input(emulator).AutoSelectController(3);
+      Api::Input(emulator).AutoSelectAdapter();
    }
    else
    {
