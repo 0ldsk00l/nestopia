@@ -146,7 +146,6 @@ else ifeq ($(platform), ctr)
 	PLATFORM_DEFINES += -march=armv6k -mtune=mpcore -mfloat-abi=hard
 	PLATFORM_DEFINES += -mword-relocations
 	PLATFORM_DEFINES += -fomit-frame-pointer -fstrict-aliasing -ffast-math
-	CXXFLAGS += -fno-rtti
 	STATIC_LINKING = 1
 
 # Raspberry Pi 2 (Raspbian)
@@ -317,13 +316,13 @@ ifeq ($(HAS_GCC), 1)
 GCC_FLAGS := -Wno-deprecated -Wno-write-strings
 C_VER = -std=gnu99
 CXXFLAGS += -std=gnu++98
-else
+CXXFLAGS += -fno-rtti
 endif
 
 DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES) $(GCC_FLAGS) $(GCC_WARNINGS) -DNST_NO_ZLIB $(INCFLAGS) $(INCFLAGS_PLATFORM)
 
 CFLAGS += $(fpic) $(DEFINES) $(C_VER)
-CXXFLAGS += $(fpic) $(DEFINES) -fno-rtti
+CXXFLAGS += $(fpic) $(DEFINES)
 
 INCDIRS := -I$(CORE_DIR) -I$(CORE_DIR)/source
 
