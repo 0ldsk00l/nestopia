@@ -45,7 +45,6 @@ static int16_t audiobuf[6400];
 
 static int framerate, channels, bufsize;
 
-static bool ffspeed = false;
 static bool paused = false;
 
 void (*audio_output)();
@@ -208,22 +207,4 @@ void audio_adj_volume() {
 	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);
 	
 	if (conf.audio_volume == 0) { memset(audiobuf, 0, sizeof(audiobuf)); }
-}
-
-// Timing Functions
-
-int timing_runframes() {
-	// Calculate how many emulation frames to run
-	if (ffspeed) { return conf.timing_ffspeed; }
-	return 1;
-}
-
-void timing_set_ffspeed() {
-	// Set the framerate to the fast-forward speed
-	ffspeed = true;
-}
-
-void timing_set_default() {
-	// Set the framerate to the default
-	ffspeed = false;
 }

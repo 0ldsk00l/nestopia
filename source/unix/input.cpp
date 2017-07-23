@@ -535,8 +535,8 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 
 	input_inject(controllers, input);
 	
-	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYDOWN) { timing_set_ffspeed(); }
-	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYUP) { timing_set_default(); }
+	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYDOWN) { nst_timing_set_ffspeed(); }
+	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYUP) { nst_timing_set_default(); }
 	
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	
