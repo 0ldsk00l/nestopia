@@ -83,6 +83,7 @@ static std::fstream *movierecfile;
 static SDL_Event event;
 
 static int nst_quit = 0;
+static bool ffspeed = false;
 bool loaded = false;
 bool playing = false;
 bool nst_pal = false;
@@ -906,6 +907,22 @@ void nst_load(const char *filename) {
 	nst_play();
 }
 
+int nst_timing_runframes() {
+	// Calculate how many emulation frames to run
+	if (ffspeed) { return conf.timing_ffspeed; }
+	return 1;
+}
+
+void nst_timing_set_ffspeed() {
+	// Set the framerate to the fast-forward speed
+	ffspeed = true;
+}
+
+void nst_timing_set_default() {
+	// Set the framerate to the default
+	ffspeed = false;
+}
+
 void nst_emuloop() {
 	///////////////////////////////////////////////////////
 	//// This is only here because I need SDL Joystick ////
@@ -945,7 +962,7 @@ void nst_emuloop() {
 		input_pulse_turbo(cNstPads);
 		
 		// Execute frames
-		for (int i = 0; i < timing_runframes(); i++) {
+		for (int i = 0; i < nst_timing_runframes(); i++) {
 			emulator.Execute(cNstVideo, cNstSound, cNstPads);
 		}
 	}
