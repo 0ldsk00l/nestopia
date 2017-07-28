@@ -16,7 +16,7 @@ typedef struct {
 
 bool nst_archive_checkext(const char *filename);
 bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile);
-bool nst_find_patch(char *filename);
+bool nst_find_patch(char *filename, const char *gamedir);
 void nst_load_db();
 void nst_load_fds_bios();
 void nst_load_palette(const char *filename);

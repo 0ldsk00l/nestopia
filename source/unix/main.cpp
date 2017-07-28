@@ -665,17 +665,17 @@ bool nst_archive_handle(const char *filename, char **rom, int *romsize, const ch
 	return false;
 }
 
-bool nst_find_patch(char *filename) {
+bool nst_find_patch(char *filename, const char *gamedir) {
 	// Check for a patch in the same directory as the game
 	FILE *file;
 	
 	if (!conf.misc_soft_patching) { return 0; }
 	
-	snprintf(filename, sizeof(nstpaths.savename), "%s.ips", nstpaths.gamename);
+	snprintf(filename, 512, "%s/%s.ips", gamedir, nstpaths.gamename);
 	
 	if ((file = fopen(filename, "rb")) != NULL) { fclose(file); return 1; }
 	else {
-		snprintf(filename, sizeof(nstpaths.savename), "%s.ups", nstpaths.gamename);
+		snprintf(filename, 512, "%s/%s.ups", gamedir, nstpaths.gamename);
 		if ((file = fopen(filename, "rb")) != NULL) { fclose(file); return 1; }
 	}
 	
@@ -814,7 +814,7 @@ void nst_load(const char *filename) {
 		// Set the file paths
 		nst_set_paths(filename);
 		
-		if (nst_find_patch(patchname)) { // Load with a patch if there is one
+		if (nst_find_patch(patchname, dirname((char*)filename))) { // Load with a patch if there is one
 			std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
 			Machine::Patch patch(pfile, false);
 			result = machine.Load(file, nst_default_system(), patch);
