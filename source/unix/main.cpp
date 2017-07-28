@@ -665,18 +665,28 @@ bool nst_archive_handle(const char *filename, char **rom, int *romsize, const ch
 	return false;
 }
 
-bool nst_find_patch(char *filename, const char *gamedir) {
+bool nst_find_patch(char *patchname, unsigned int patchname_length, const char *filename) {
 	// Check for a patch in the same directory as the game
 	FILE *file;
+	char filedir[512];
+
+	// Copy filename (will be used by dirname)
+	// dirname needs a copy because it can modify its argument
+	strncpy(filedir, filename, sizeof(filedir));
+	filedir[sizeof(filedir) - 1] = '\0';
+	// Use memmove because dirname can return the same pointer as its argument,
+	// since copying into same string as the argument we don't want any overlap
+	memmove(filedir, dirname(filedir), sizeof(filedir));
+	filedir[sizeof(filedir) - 1] = '\0';
 	
 	if (!conf.misc_soft_patching) { return 0; }
 	
-	snprintf(filename, 512, "%s/%s.ips", gamedir, nstpaths.gamename);
+	snprintf(patchname, patchname_length, "%s/%s.ips", filedir, nstpaths.gamename);
 	
-	if ((file = fopen(filename, "rb")) != NULL) { fclose(file); return 1; }
+	if ((file = fopen(patchname, "rb")) != NULL) { fclose(file); return 1; }
 	else {
-		snprintf(filename, 512, "%s/%s.ups", gamedir, nstpaths.gamename);
-		if ((file = fopen(filename, "rb")) != NULL) { fclose(file); return 1; }
+		snprintf(patchname, patchname_length, "%s/%s.ups", filedir, nstpaths.gamename);
+		if ((file = fopen(patchname, "rb")) != NULL) { fclose(file); return 1; }
 	}
 	
 	return 0;
@@ -814,7 +824,7 @@ void nst_load(const char *filename) {
 		// Set the file paths
 		nst_set_paths(filename);
 		
-		if (nst_find_patch(patchname, dirname((char*)filename))) { // Load with a patch if there is one
+		if (nst_find_patch(patchname, sizeof(patchname), filename)) { // Load with a patch if there is one
 			std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
 			Machine::Patch patch(pfile, false);
 			result = machine.Load(file, nst_default_system(), patch);
