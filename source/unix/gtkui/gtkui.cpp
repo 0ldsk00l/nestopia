@@ -40,11 +40,33 @@ static GtkWidget *statusbar;
 static GtkWidget *menubar;
 static GtkWidget *drawingarea;
 
+static GThread *emuthread;
+
 char iconpath[512];
 char padpath[512];
 
 extern dimensions_t basesize, rendersize;
 extern settings_t conf;
+extern int nst_quit;
+
+gpointer gtkui_emuloop(gpointer data) {
+	while(!nst_quit) { nst_emuloop(); }
+	g_thread_exit(emuthread);
+	return NULL;
+}
+
+void gtkui_emuloop_start() {
+	emuthread = g_thread_new("emuloop", gtkui_emuloop, NULL);
+}
+
+void gtkui_emuloop_stop() {
+	nst_quit = true;
+}
+
+void gtkui_quit() {
+	gtkui_emuloop_stop();
+	gtk_main_quit();
+}
 
 void gtkui_init(int argc, char *argv[]) {
 	// Initialize the GTK+ GUI
@@ -59,7 +81,7 @@ static void gtkui_glarea_realize(GtkGLArea *glarea) {
 }
 
 static void gtkui_swapbuffers() {
-	nst_emuloop();
+	ogl_render();
 	gtk_widget_queue_draw(drawingarea);
 }
 
@@ -273,7 +295,7 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_drag_data), NULL);
 	
 	g_signal_connect(G_OBJECT(gtkwindow), "delete_event",
-		G_CALLBACK(gtk_main_quit), NULL);
+		G_CALLBACK(gtkui_quit), NULL);
 	
 	// File menu
 	g_signal_connect(G_OBJECT(open), "activate",
@@ -331,7 +353,7 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_movie_stop), NULL);
 	
 	g_signal_connect(G_OBJECT(quit), "activate",
-		G_CALLBACK(gtk_main_quit), NULL);
+		G_CALLBACK(gtkui_quit), NULL);
 	
 	// Emulator menu
 	g_signal_connect(G_OBJECT(cont), "activate",
@@ -371,7 +393,7 @@ void gtkui_create() {
 	
 	gtk_widget_show_all(gtkwindow);
 	
-	//gtk_main();
+	gtkui_emuloop_start();
 }
 
 void gtkui_signals_init() {

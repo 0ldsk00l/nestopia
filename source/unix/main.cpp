@@ -82,7 +82,7 @@ static std::fstream *movierecfile;
 
 static SDL_Event event;
 
-static int nst_quit = 0;
+int nst_quit = 0;
 static bool ffspeed = false;
 bool loaded = false;
 bool playing = false;
@@ -965,7 +965,6 @@ void nst_emuloop() {
 	}
 	
 	audio_play();
-	ogl_render();
 	
 	if (playing) {
 		// Pulse the turbo buttons
@@ -1080,7 +1079,7 @@ int main(int argc, char *argv[]) {
 	
 	if (conf.misc_disable_gui) { // SDL Main loop
 		nst_quit = 0;
-		while (!nst_quit) {	nst_emuloop(); }
+		while (!nst_quit) { ogl_render(); nst_emuloop(); }
 	}
 	#ifdef _GTK
 	else { gtk_main(); } // GTK+ main loop

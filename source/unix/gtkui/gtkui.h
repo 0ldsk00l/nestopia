@@ -4,6 +4,8 @@
 #include <gtk/gtk.h>
 
 void gtkui_init(int argc, char *argv[]);
+void gtkui_emuloop_start();
+void gtkui_emuloop_stop();
 void gtkui_create();
 void gtkui_resize();
 void gtkui_set_title(const char *title);
