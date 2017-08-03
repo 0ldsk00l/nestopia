@@ -81,8 +81,8 @@ static void gtkui_glarea_realize(GtkGLArea *glarea) {
 }
 
 static void gtkui_swapbuffers() {
-	ogl_render();
 	gtk_widget_queue_draw(drawingarea);
+	ogl_render();
 }
 
 void gtkui_state_quickload(GtkWidget *widget, gpointer userdata) {
