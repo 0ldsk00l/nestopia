@@ -22,6 +22,10 @@ optionally:
 ```
 make install
 ```
+Requirements on Arch Linux: you need the package autoconf-archive for the necesseray m4 macros.
+```
+sudo pacman -S --needed --noconfirm base-devel autoconf-archive
+```
 Differences on OS X:
 ```
 export PKG_CONFIG_PATH=/usr/local/opt/libarchive/lib/pkgconfig/
