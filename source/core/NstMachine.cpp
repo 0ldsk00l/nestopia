@@ -278,8 +278,13 @@ namespace Nes
 
 					bool acknowledged = true;
 
-					if (image && ((image->GetDesiredSystem((state & Api::Machine::NTSC) ? REGION_NTSC : REGION_PAL))) == (SYSTEM_FAMICOM || SYSTEM_DENDY))
-						acknowledged = false;
+					if (image)
+					{
+						System desiredSystem = image->GetDesiredSystem((state & Api::Machine::NTSC) ? REGION_NTSC : REGION_PAL);
+
+						if (desiredSystem == SYSTEM_FAMICOM || desiredSystem == SYSTEM_DENDY)
+							acknowledged = false;
+					}
 
 					ppu.Reset( hard, acknowledged );
 
