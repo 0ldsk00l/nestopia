@@ -82,6 +82,9 @@ static void gtkui_glarea_realize(GtkGLArea *glarea) {
 
 static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
+	#ifdef __FreeBSD__
+	gtk_widget_queue_draw(menubar);
+	#endif
 	ogl_render();
 }
 
