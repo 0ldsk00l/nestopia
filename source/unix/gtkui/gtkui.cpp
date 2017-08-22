@@ -82,6 +82,7 @@ static void gtkui_glarea_realize(GtkGLArea *glarea) {
 
 static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
+	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
 	ogl_render();
 }
 
