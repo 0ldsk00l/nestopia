@@ -1,5 +1,34 @@
 ----------------------------------------------------------------
-1.48-WIP
+1.49-WIP
+----------------------------------------------------------------
+Shell:
+
+ Additions:
+  - Added more palettes to extras
+
+ Changes:
+  - Separated GTK+ and SDL input settings
+  - Removed deprecated functions from UI
+  - Use GTK+ OpenGL widget for GUI (Wayland support)
+  - Reworked Alternate Speed/Fast-Forward
+
+libretro:
+
+ Additions:
+  - Add support for multiline cheats and raw cheats (iLag)
+  - Add adapter autoselect using NstDatabase.xml (hunterk)
+
+ Fixes:
+  - Fixed heap corruption bug with crosshair (Arto Vainiolehto)
+
+Core:
+
+ Fixes:
+  - Fixed NSF and FDS in Dendy mode (Eugene.S)
+  - Fixed coding mistake in PPU (zeromus)
+
+----------------------------------------------------------------
+1.48
 ----------------------------------------------------------------
 Shell:
 
@@ -7,14 +36,28 @@ Shell:
   - Remember previous ROM directory (fabiengb)
   - Added an option to disable the cursor
   - Added ability to load custom palettes
+  - Added many palettes to extras (FirebrandX, BMF, others)
+  - Added monochrome blargg NTSC filter
+  - Added new build systems: CMake and Autotools (David Seifert)
+
+ Changes:
+  - TV Aspect Ratio changes depending on region
 
  Fixes:
   - Made the region selector more coherent
   - Fixed a bug that switches video modes rapidly
+  - Revamped region selector code
+  - Fixed fullscreen switching too fast
+  - Fixed region selector when the XML database is not present
 
 libretro:
+
+ Additions:
   - Added ability to load custom palettes
   - Added turbo buttons
+  - Added many palettes (Monroe88)
+  - Added monochrome blargg NTSC filter (dalter)
+  - Added Turbo A/B buttons
 
 Core:
 
@@ -25,6 +68,9 @@ Core:
  Fixes:
   - VRC2 Mirroring bug (koitsu, lidnariq)
   - Dendy timing and audio fixes (FHorse, Eugene.S)
+  - Removed unused code in APU
+  - Properly initialize RAM - fixes F-1 Race (koitsu)
+  - Silenced many build warnings (orbea)
 
 ----------------------------------------------------------------
 1.47
