@@ -53,7 +53,7 @@ void config_file_write() {
 		fprintf(fp, "[video]\n");
 		fprintf(fp, "; 0=None, 1=NTSC, 2=xBR, 3=HqX, 4=2xSaI, 5=ScaleX\n");
 		fprintf(fp, "filter=%d\n\n", conf.video_filter);
-		fprintf(fp, "; Valid values are 1 to 4.\n");
+		fprintf(fp, "; Valid values are 1 to 8.\n");
 		fprintf(fp, "scale_factor=%d\n\n", conf.video_scale_factor);
 		fprintf(fp, "; 0=YUV, 1=RGB, 2=Custom\n");
 		fprintf(fp, "palette_mode=%d\n\n", conf.video_palette_mode);

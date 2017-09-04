@@ -132,6 +132,10 @@ GtkWidget *gtkui_config() {
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_scale), "2x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_scale), "3x");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_scale), "4x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_scale), "5x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_scale), "6x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_scale), "7x");
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_video_scale), "8x");
 		
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_video_scale), conf.video_scale_factor - 1);
 	
