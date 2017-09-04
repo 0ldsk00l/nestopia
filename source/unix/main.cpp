@@ -764,8 +764,14 @@ void nst_load_palette(const char *filename) {
 	long filesize; // File size in bytes
 	size_t result;
 	
-	file = fopen(filename, "rb");
+	char custgamepalpath[512];
+	snprintf(custgamepalpath, sizeof(custgamepalpath), "%s%s%s", nstpaths.nstdir, nstpaths.gamename, ".pal");
 	
+	// Try the game-specific palette first
+	file = fopen(custgamepalpath, "rb");
+	if (!file) { file = fopen(filename, "rb"); }
+	
+	// Then try the global custom palette
 	if (!file) {
 		if (conf.video_palette_mode == 2) {
 			fprintf(stderr, "Custom palette: not found: %s\n", filename);
@@ -908,6 +914,9 @@ void nst_load(const char *filename) {
 	else { gtkui_set_title(nstpaths.gamename); }
 	#endif
 	
+	// Load the custom palette
+	nst_load_palette(nstpaths.palettepath);
+	
 	// Set the RAM's power state
 	machine.SetRamPowerState(conf.misc_power_state);
 	
@@ -1022,8 +1031,6 @@ int main(int argc, char *argv[]) {
 	#ifdef _GTK
 	if (!conf.misc_disable_gui) gtkui_input_config_read();
 	#endif
-	// Load the custom palette
-	nst_load_palette(nstpaths.palettepath);
 	
 	// Set audio function pointers
 	audio_init();
