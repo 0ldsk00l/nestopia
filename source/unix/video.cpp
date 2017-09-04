@@ -234,15 +234,7 @@ void video_toggle_fullscreen() {
 
 void video_toggle_filter() {
 	conf.video_filter++;
-	
-	// Intentionally leaving out scalex
-	if (conf.video_filter > 4) { conf.video_filter = 0; }
-	
-	// The scalex filter only allows 3x scale and crashes otherwise
-	if (conf.video_filter == 5 && conf.video_scale_factor == 4) {
-		conf.video_scale_factor = 3;
-	}
-	
+	if (conf.video_filter > 5) { conf.video_filter = 0; }
 	video_init();
 }
 
@@ -255,13 +247,7 @@ void video_toggle_filterupdate() {
 void video_toggle_scalefactor() {
 	// Toggle video scale factor
 	conf.video_scale_factor++;
-	if (conf.video_scale_factor > 4) { conf.video_scale_factor = 1; }
-	
-	// The scalex filter only allows 3x scale and crashes otherwise
-	if (conf.video_filter == 5 && conf.video_scale_factor == 4) {
-		conf.video_scale_factor = 1;
-	}
-	
+	if (conf.video_scale_factor > 8) { conf.video_scale_factor = 1; }
 	video_init();
 }
 
@@ -323,6 +309,8 @@ void video_set_filter() {
 	// Set the filter
 	Video video(emulator);
 	int scalefactor = conf.video_scale_factor;
+	if (conf.video_scale_factor > 4) { scalefactor = 4; }
+	if ((conf.video_scale_factor > 3) && (conf.video_filter == 5)) { scalefactor = 3; }
 	
 	switch(conf.video_filter) {
 		case 0:	// None
@@ -338,15 +326,12 @@ void video_set_filter() {
 				case 2:
 					filter = Video::RenderState::FILTER_2XBR;
 					break;
-
 				case 3:
 					filter = Video::RenderState::FILTER_3XBR;
 					break;
-
 				case 4:
 					filter = Video::RenderState::FILTER_4XBR;
 					break;
-
 				default:
 					filter = Video::RenderState::FILTER_NONE;
 					break;
@@ -358,15 +343,12 @@ void video_set_filter() {
 				case 2:
 					filter = Video::RenderState::FILTER_HQ2X;
 					break;
-
 				case 3:
 					filter = Video::RenderState::FILTER_HQ3X;
 					break;
-
 				case 4:
 					filter = Video::RenderState::FILTER_HQ4X;
 					break;
-
 				default:
 					filter = Video::RenderState::FILTER_NONE;
 					break;
@@ -382,11 +364,9 @@ void video_set_filter() {
 				case 2:
 					filter = Video::RenderState::FILTER_SCALE2X;
 					break;
-
 				case 3:
 					filter = Video::RenderState::FILTER_SCALE3X;
 					break;
-
 				default:
 					filter = Video::RenderState::FILTER_NONE;
 					break;
@@ -537,23 +517,26 @@ void video_set_dimensions() {
 	#endif
 	
 	int scalefactor = conf.video_scale_factor;
+	if (conf.video_scale_factor > 4) { scalefactor = 4; }
+	if ((conf.video_scale_factor > 3) && (conf.video_filter == 5)) { scalefactor = 3; }
+	int wscalefactor = conf.video_scale_factor;
 	int tvwidth = nst_pal ? PAL_TV_WIDTH : TV_WIDTH;
 	
 	switch(conf.video_filter) {
 		case 0:	// None
 			basesize.w = Video::Output::WIDTH;
 			basesize.h = Video::Output::HEIGHT;
-			conf.video_tv_aspect == true ? rendersize.w = tvwidth * scalefactor : rendersize.w = basesize.w * scalefactor;
-			rendersize.h = basesize.h * scalefactor;
+			conf.video_tv_aspect == true ? rendersize.w = tvwidth * wscalefactor : rendersize.w = basesize.w * wscalefactor;
+			rendersize.h = basesize.h * wscalefactor;
 			overscan_offset = basesize.w * OVERSCAN_TOP;
 			overscan_height = basesize.h - OVERSCAN_TOP - OVERSCAN_BOTTOM;
 			break;
 
 		case 1: // NTSC
 			basesize.w = Video::Output::NTSC_WIDTH;
-			rendersize.w = (basesize.w / 2) * scalefactor;
+			rendersize.w = (basesize.w / 2) * wscalefactor;
 			basesize.h = Video::Output::HEIGHT;
-			rendersize.h = basesize.h * scalefactor;
+			rendersize.h = basesize.h * wscalefactor;
 			overscan_offset = basesize.w * OVERSCAN_TOP;
 			overscan_height = basesize.h - OVERSCAN_TOP - OVERSCAN_BOTTOM;
 			break;
@@ -561,15 +544,10 @@ void video_set_dimensions() {
 		case 2: // xBR
 		case 3: // HqX
 		case 5: // ScaleX
-			if (conf.video_filter == 5 && scalefactor == 4) {
-				fprintf(stderr, "error: ScaleX filter cannot scale to 4x\n");
-				conf.video_scale_factor = scalefactor = 3;
-			}
-			
 			basesize.w = Video::Output::WIDTH * scalefactor;
 			basesize.h = Video::Output::HEIGHT * scalefactor;
-			conf.video_tv_aspect == true ? rendersize.w = tvwidth * scalefactor : rendersize.w = basesize.w;
-			rendersize.h = basesize.h;
+			conf.video_tv_aspect == true ? rendersize.w = tvwidth * wscalefactor : rendersize.w = Video::Output::WIDTH * wscalefactor;;
+			rendersize.h = Video::Output::HEIGHT * wscalefactor;
 			overscan_offset = basesize.w * OVERSCAN_TOP * scalefactor;
 			overscan_height = basesize.h - (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
 			break;
@@ -577,8 +555,8 @@ void video_set_dimensions() {
 		case 4: // 2xSaI
 			basesize.w = Video::Output::WIDTH * 2;
 			basesize.h = Video::Output::HEIGHT * 2;
-			conf.video_tv_aspect == true ? rendersize.w = tvwidth * scalefactor : rendersize.w = Video::Output::WIDTH * scalefactor;
-			rendersize.h = Video::Output::HEIGHT * scalefactor;
+			conf.video_tv_aspect == true ? rendersize.w = tvwidth * wscalefactor : rendersize.w = Video::Output::WIDTH * wscalefactor;
+			rendersize.h = Video::Output::HEIGHT * wscalefactor;
 			overscan_offset = basesize.w * OVERSCAN_TOP * 2;
 			overscan_height = basesize.h - (OVERSCAN_TOP + OVERSCAN_BOTTOM) * 2;
 			break;
