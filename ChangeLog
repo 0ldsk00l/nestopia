@@ -5,6 +5,8 @@ Shell:
 
  Additions:
   - Added more palettes to extras
+  - Game-specific custom palettes
+  - Scale factors up to 8x
 
  Changes:
   - Separated GTK+ and SDL input settings
@@ -20,12 +22,14 @@ libretro:
 
  Fixes:
   - Fixed heap corruption bug with crosshair (Arto Vainiolehto)
+  - Fixed black screen when non-existent custom palette is selected
 
 Core:
 
  Fixes:
   - Fixed NSF and FDS in Dendy mode (Eugene.S)
   - Fixed coding mistake in PPU (zeromus)
+  - Modified submappers for VRC2/VRC4 games (GeneralFailer)
 
 ----------------------------------------------------------------
 1.48
@@ -54,7 +58,6 @@ libretro:
 
  Additions:
   - Added ability to load custom palettes
-  - Added turbo buttons
   - Added many palettes (Monroe88)
   - Added monochrome blargg NTSC filter (dalter)
   - Added Turbo A/B buttons

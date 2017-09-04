@@ -356,7 +356,7 @@ void retro_set_environment(retro_environment_t cb)
 
    static const struct retro_variable vars[] = {
       { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb|monochrome" },
-      { "nestopia_palette", "Palette; consumer|canonical|alternative|rgb|cxa2025as|pal|composite-direct-fbx|pvm-style-d93-fbx|ntsc-hardware-fbx|nes-classic-fbx-fs|raw|custom" },
+      { "nestopia_palette", "Palette; cxa2025as|consumer|canonical|alternative|rgb|pal|composite-direct-fbx|pvm-style-d93-fbx|ntsc-hardware-fbx|nes-classic-fbx-fs|raw|custom" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
@@ -948,12 +948,13 @@ bool retro_load_game(const struct retro_game_info *info)
    
    if (custompalette->is_open())
    {
-      custompalette->read((char*)custpal, 64*3);
+      custompalette->read((char*)custpal, sizeof(custpal));
       if (log_cb)
          log_cb(RETRO_LOG_WARN, "custom.pal loaded from system directory.\n");
    }
    else
    {
+      memcpy(custpal, cxa2025as_palette, sizeof(custpal));
       if (log_cb)
          log_cb(RETRO_LOG_WARN, "custom.pal not found in system directory.\n");
    }
