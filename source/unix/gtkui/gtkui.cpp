@@ -36,7 +36,6 @@
 #include "gtkui_input.h"
 
 GtkWidget *gtkwindow;
-static GtkWidget *statusbar;
 static GtkWidget *menubar;
 static GtkWidget *drawingarea;
 
@@ -84,6 +83,7 @@ static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
 	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
 	ogl_render();
+	nst_emuloop();
 }
 
 void gtkui_state_quickload(GtkWidget *widget, gpointer userdata) {
@@ -269,13 +269,9 @@ void gtkui_create() {
 	// Set the Drawing Area to be the size of the game output
 	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
 	
-	// Create the statusbar
-	GtkWidget *statusbar = gtk_statusbar_new();
-	
 	// Pack the box with the menubar, drawingarea, and statusbar
 	gtk_box_pack_start(GTK_BOX(box), menubar, FALSE, FALSE, 0);
 	gtk_box_pack_start(GTK_BOX(box), drawingarea, TRUE, TRUE, 0);
-	//gtk_box_pack_start(GTK_BOX(box), statusbar, FALSE, FALSE, 0);
 	
 	// Make it dark if there's a dark theme
 	GtkSettings *gtksettings = gtk_settings_get_default();
@@ -394,7 +390,7 @@ void gtkui_create() {
 	
 	gtk_widget_show_all(gtkwindow);
 	
-	gtkui_emuloop_start();
+	//gtkui_emuloop_start();
 }
 
 void gtkui_signals_init() {
