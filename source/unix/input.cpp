@@ -359,10 +359,13 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 		player[1].jta, player[1].jtb
 	};
 	
+	SDL_Event rw[2] = { player[0].rwstart, player[0].rwstop };
+	
 	switch(event.type) {
 		// Handle button input
 		case SDL_JOYBUTTONUP:
 		case SDL_JOYBUTTONDOWN:
+			// Gamepad input
 			for (j = 0; j < TOTALBUTTONS; j++) {
 				if (buttons[j].jbutton.button == event.jbutton.button
 					&& buttons[j].jbutton.which == event.jbutton.which) {
@@ -374,6 +377,10 @@ void input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
 				}
 			}
 			input.pressed = event.jbutton.state;
+			
+			// Rewind
+			if (event.jbutton.button == rw[0].jbutton.button && event.jbutton.which == rw[0].jbutton.which) { nst_set_rewind(0); }
+			if (event.jbutton.button == rw[1].jbutton.button && event.jbutton.which == rw[1].jbutton.which) { nst_set_rewind(1); }
 			break;
 		
 		// Handling hat input can be a lot of fun if you like pain
@@ -725,6 +732,9 @@ static int input_config_match(void* user, const char* section, const char* name,
 	else if (MATCH("gamepad1", "js_ta")) { pconfig->js_p1ta = strdup(value); }
 	else if (MATCH("gamepad1", "js_tb")) { pconfig->js_p1tb = strdup(value); }
 	
+	else if (MATCH("gamepad1", "js_rwstart")) { pconfig->js_rwstart = strdup(value); }
+	else if (MATCH("gamepad1", "js_rwstop")) { pconfig->js_rwstop = strdup(value); }
+	
 	// Player 2
 	else if (MATCH("gamepad2", "kb_u")) { pconfig->kb_p2u = strdup(value); }
 	else if (MATCH("gamepad2", "kb_d")) { pconfig->kb_p2d = strdup(value); }
@@ -809,6 +819,9 @@ void input_config_read() {
 		player[0].jta = input_translate_string(inputconf.js_p1ta);
 		player[0].jtb = input_translate_string(inputconf.js_p1tb);
 		
+		player[0].rwstart = input_translate_string(inputconf.js_rwstart);
+		player[0].rwstop = input_translate_string(inputconf.js_rwstop);
+		
 		// Player 2
 		player[1].u = SDL_GetScancodeFromName(inputconf.kb_p2u);
 		player[1].d = SDL_GetScancodeFromName(inputconf.kb_p2d);
@@ -891,6 +904,9 @@ void input_config_write() {
 		fprintf(fp, "js_b=%s\n", input_translate_event(player[0].jb));
 		fprintf(fp, "js_ta=%s\n", input_translate_event(player[0].jta));
 		fprintf(fp, "js_tb=%s\n", input_translate_event(player[0].jtb));
+		
+		fprintf(fp, "js_rwstart=%s\n", input_translate_event(player[0].rwstart));
+		fprintf(fp, "js_rwstop=%s\n", input_translate_event(player[0].rwstop));
 		fprintf(fp, "\n"); // End of Section
 		
 		fprintf(fp, "[gamepad2]\n");
@@ -968,6 +984,9 @@ void input_set_default() {
 	player[0].jb = input_translate_string("j0b0");
 	player[0].jta = input_translate_string("j0b2");
 	player[0].jtb = input_translate_string("j0b3");
+	
+	player[0].rwstart = input_translate_string("j0b4");
+	player[0].rwstop = input_translate_string("j0b5");
 	
 	player[1].u = SDL_GetScancodeFromName("I");
 	player[1].d = SDL_GetScancodeFromName("K");
