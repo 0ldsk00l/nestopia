@@ -60,6 +60,8 @@ typedef struct {
 	SDL_Event jb;
 	SDL_Event jta;
 	SDL_Event jtb;
+	SDL_Event rwstart;
+	SDL_Event rwstop;
 } gamepad_t;
 
 typedef struct {
@@ -109,6 +111,9 @@ typedef struct {
 	char *js_p1b;
 	char *js_p1ta;
 	char *js_p1tb;
+	
+	char *js_rwstart;
+	char *js_rwstop;
 	
 	// Player 2
 	char *kb_p2u;
