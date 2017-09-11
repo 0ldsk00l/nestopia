@@ -819,8 +819,8 @@ void input_config_read() {
 		player[0].jta = input_translate_string(inputconf.js_p1ta);
 		player[0].jtb = input_translate_string(inputconf.js_p1tb);
 		
-		player[0].rwstart = input_translate_string(inputconf.js_rwstart);
-		player[0].rwstop = input_translate_string(inputconf.js_rwstop);
+		if (inputconf.js_rwstart) { player[0].rwstart = input_translate_string(inputconf.js_rwstart); }
+		if (inputconf.js_rwstop) { player[0].rwstop = input_translate_string(inputconf.js_rwstop); }
 		
 		// Player 2
 		player[1].u = SDL_GetScancodeFromName(inputconf.kb_p2u);
