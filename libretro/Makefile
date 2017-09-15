@@ -180,6 +180,40 @@ else ifeq ($(platform), psl1ght)
 	PLATFORM_DEFINES := -D__CELLOS_LV2__
 	STATIC_LINKING = 1
 
+# Windows MSVC 2003 Xbox 1
+else ifeq ($(platform), xbox1_msvc2003)
+TARGET := $(TARGET_NAME)_libretro_xdk1.lib
+MSVCBINDIRPREFIX = $(XDK)/xbox/bin/vc71
+CC  = "$(MSVCBINDIRPREFIX)/CL.exe"
+CXX  = "$(MSVCBINDIRPREFIX)/CL.exe"
+LD   = "$(MSVCBINDIRPREFIX)/lib.exe"
+
+PATH := $(shell IFS=$$'\n'; cygpath "$(MSVCBINDIRPREFIX)"):$(PATH)
+INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS71COMNTOOLS)../../Vc7/include")
+
+export INCLUDE := $(INCLUDE);$(XDK)/xbox/include
+export LIB := $(XDK)/xbox/lib
+PSS_STYLE :=2
+CFLAGS   += -D_XBOX -D_XBOX1
+CXXFLAGS += -D_XBOX -D_XBOX1
+STATIC_LINKING=1
+# Windows MSVC 2010 Xbox 360
+else ifeq ($(platform), xbox360_msvc2010)
+TARGET := $(TARGET_NAME)_libretro_xdk360.lib
+MSVCBINDIRPREFIX = $(XEDK)/bin/win32
+CC  = cl.exe
+CXX = cl.exe
+
+PATH := $(shell IFS=$$'\n'; cygpath "$(MSVCBINDIRPREFIX)"):$(PATH)
+INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/include")
+
+export INCLUDE := $(INCLUDE)
+export LIB := $(XEDK)/lib/xbox
+PSS_STYLE :=2
+CFLAGS   += -D_XBOX -D_XBOX360
+CXXFLAGS += -D_XBOX -D_XBOX360
+STATIC_LINKING=1
+
 # Windows MSVC 2017 all architectures
 else ifneq (,$(findstring windows_msvc2017,$(platform)))
 
@@ -529,7 +563,12 @@ LINKOUT  = -o
 ifneq (,$(findstring msvc,$(platform)))
 	OBJOUT = -Fo
 	LINKOUT = -out:
+ifeq ($(STATIC_LINKING),1)
+	LD ?= lib.exe
+	STATIC_LINKING=0
+else
 	LD = link.exe
+endif
 else
 	LD = $(CXX)
 endif
