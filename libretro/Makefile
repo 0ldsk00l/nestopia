@@ -209,6 +209,7 @@ TARGET := $(TARGET_NAME)_libretro_xdk360.lib
 MSVCBINDIRPREFIX = $(XEDK)/bin/win32
 CC  = cl.exe
 CXX = cl.exe
+LD  = lib.exe
 
 PATH := $(shell IFS=$$'\n'; cygpath "$(MSVCBINDIRPREFIX)"):$(PATH)
 
@@ -576,7 +577,7 @@ CORE_DIR = ..
 
 include Makefile.common
 
-OBJS := $(SOURCES_CXX:.cpp=.o)
+OBJECTS := $(SOURCES_CXX:.cpp=.o)
 
 ifeq ($(HAS_GCC), 1)
 
@@ -617,11 +618,11 @@ include $(THEOS_MAKE_PATH)/library.mk
 else
 all: $(TARGET)
 
-$(TARGET): $(OBJS)
+$(TARGET): $(OBJECTS)
 ifeq ($(STATIC_LINKING), 1)
-	$(AR) rcs $@ $(OBJS)
+	$(AR) rcs $@ $(OBJECTS)
 else
-	$(LD) $(LINKOUT)$@ $(SHARED) $(OBJS) $(LDFLAGS) $(LIBS)
+	$(LD) $(LINKOUT)$@ $(SHARED) $(OBJECTS) $(LDFLAGS) $(LIBS)
 endif
 
 %.o: %.cpp
@@ -631,10 +632,10 @@ endif
 	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS) $(INCDIRS)
 
 clean-objs:
-	rm -f $(OBJS)
+	rm -f $(OBJECTS)
 
 clean:
-	rm -f $(OBJS)
+	rm -f $(OBJECTS)
 	rm -f $(TARGET)
 
 install:
