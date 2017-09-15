@@ -1,7 +1,7 @@
 INCFLAGS := -I$(CORE_DIR)/libretro  -I$(CORE_DIR)
 
 # Core
-SOURCES_CXX += $(CORE_DIR)/source/core/NstApu.cpp
+SOURCES_CXX  = $(CORE_DIR)/source/core/NstApu.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/NstAssert.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/NstCartridge.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/NstCartridgeInes.cpp
