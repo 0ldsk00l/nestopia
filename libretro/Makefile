@@ -211,9 +211,8 @@ CC  = cl.exe
 CXX = cl.exe
 
 PATH := $(shell IFS=$$'\n'; cygpath "$(MSVCBINDIRPREFIX)"):$(PATH)
-INCLUDE := $(shell IFS=$$'\n'; cygpath "$(VS100COMNTOOLS)../../VC/include")
 
-export INCLUDE := $(INCLUDE)
+export INCLUDE := $(XEDK)/include/win32;$(XEDK)/include/xbox
 export LIB := $(XEDK)/lib/xbox
 PSS_STYLE :=2
 CFLAGS   += -D_XBOX -D_XBOX360
