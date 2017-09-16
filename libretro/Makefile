@@ -193,7 +193,7 @@ CC  = "$(MSVCBINDIRPREFIX)/CL.exe"
 CXX  = "$(MSVCBINDIRPREFIX)/CL.exe"
 LD   = "$(MSVCBINDIRPREFIX)/lib.exe"
 
-export INCLUDE := $(INCLUDE);$(XDK)/xbox/include
+export INCLUDE := $(XDK)/xbox/include
 export LIB := $(XDK)/xbox/lib
 PSS_STYLE :=2
 CFLAGS   += -D_XBOX -D_XBOX1
@@ -204,13 +204,11 @@ HAS_GCC := 0
 else ifeq ($(platform), xbox360_msvc2010)
 TARGET := $(TARGET_NAME)_libretro_xdk360.lib
 MSVCBINDIRPREFIX = $(XEDK)/bin/win32
-CC  = cl.exe
-CXX = cl.exe
-LD  = lib.exe
+CC  = "$(MSVCBINDIRPREFIX)/cl.exe"
+CXX  = "$(MSVCBINDIRPREFIX)/cl.exe"
+LD   = "$(MSVCBINDIRPREFIX)/lib.exe"
 
-PATH := $(shell IFS=$$'\n'; cygpath "$(MSVCBINDIRPREFIX)"):$(PATH)
-
-export INCLUDE := $(XEDK)/include/win32;$(XEDK)/include/xbox
+export INCLUDE := $(XEDK)/include/xbox
 export LIB := $(XEDK)/lib/xbox
 PSS_STYLE :=2
 CFLAGS   += -D_XBOX -D_XBOX360
