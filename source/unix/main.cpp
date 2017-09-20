@@ -973,9 +973,9 @@ void nst_emuloop() {
 		Rewinder(emulator).EnableSound(true);
 	}
 	
-	audio_play();
-	
 	if (playing) {
+		audio_play();
+		
 		// Pulse the turbo buttons
 		input_pulse_turbo(cNstPads);
 		
@@ -1033,7 +1033,7 @@ int main(int argc, char *argv[]) {
 	#endif
 	
 	// Set audio function pointers
-	audio_init();
+	audio_set_funcs();
 	
 	// Set the video dimensions
 	video_set_dimensions();
