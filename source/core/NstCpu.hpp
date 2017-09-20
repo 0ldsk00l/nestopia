@@ -487,6 +487,8 @@ namespace Nes
 			Ram ram;
 			Apu apu;
 			IoMap map;
+			bool cpuOverclocking;
+			uint extraCycles;
 
 			static dword logged;
 			static void (Cpu::*const opcodes[0x100])();
@@ -497,6 +499,12 @@ namespace Nes
 			Apu& GetApu()
 			{
 				return apu;
+			}
+
+			void SetOverclocking(bool overclocking,uint newCycles)
+			{
+				cpuOverclocking = overclocking;
+				extraCycles = newCycles;
 			}
 
 			Cycle Update(uint readAddress=0)

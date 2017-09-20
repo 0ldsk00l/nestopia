@@ -358,6 +358,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb|monochrome" },
       { "nestopia_palette", "Palette; cxa2025as|consumer|canonical|alternative|rgb|pal|composite-direct-fbx|pvm-style-d93-fbx|ntsc-hardware-fbx|nes-classic-fbx-fs|raw|custom" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
+      { "nestopia_overclock", "CPU Speed (Overclock); 1x|2x" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
       { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
@@ -603,6 +604,16 @@ static void check_variables(void)
          video.EnableUnlimSprites(false);
       else if (strcmp(var.value, "enabled") == 0)
          video.EnableUnlimSprites(true);
+   }
+   
+   var.key = "nestopia_overclock";
+   
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+   {
+      if (strcmp(var.value, "1x") == 0)
+         video.EnableOverclocking(false);
+      else if (strcmp(var.value, "2x") == 0)
+         video.EnableOverclocking(true);
    }
    
    var.key = "nestopia_fds_auto_insert";

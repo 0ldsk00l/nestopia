@@ -108,6 +108,7 @@ namespace Nes
 		yuvMap (NULL)
 		{
 			cycles.one = PPU_RP2C02_CC;
+			overclocked = false;
 			PowerOff();
 		}
 
@@ -553,6 +554,38 @@ namespace Nes
 						frame = PPU_DENDY_HVSYNCBOOT;
 					}
 					break;
+			}
+
+			if (overclocked)
+			{
+				Apu& audioSafeOverclock = cpu.GetApu();
+				if (audioSafeOverclock.GetOverclockSafety())
+				{
+					switch (model)
+					{
+						case PPU_RP2C02:
+						default:
+
+						cpu.SetOverclocking(true,PPU_RP2C02_HSYNC * PPU_RP2C02_VACTIVE);
+						break;
+
+						case PPU_RP2C07:
+
+						cpu.SetOverclocking(true,PPU_RP2C07_HSYNC * PPU_RP2C07_VACTIVE);
+						break;
+
+						case PPU_DENDY:
+
+						cpu.SetOverclocking(true,PPU_DENDY_HSYNC * PPU_DENDY_VACTIVE);
+						break;
+					}
+				}
+				else
+				{
+					cpu.SetOverclocking(false,0);
+				}
+
+				audioSafeOverclock.SetOverclockSafety(true);//overclocking is only safe if direct pcm audio has not been written for one frame
 			}
 
 			cpu.SetFrameCycles( frame );
