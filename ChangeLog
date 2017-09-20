@@ -7,6 +7,7 @@ Shell:
   - Added more palettes to extras
   - Game-specific custom palettes
   - Scale factors up to 8x
+  - Added option to enable overclocking
 
  Changes:
   - Separated GTK+ and SDL input settings
@@ -25,6 +26,9 @@ libretro:
   - Fixed black screen when non-existent custom palette is selected
 
 Core:
+
+ Additions:
+  - Added support for overclocking (meepingsnesroms)
 
  Fixes:
   - Fixed NSF and FDS in Dendy mode (Eugene.S)

@@ -38,6 +38,7 @@ void gtkui_cb_misc_genie_distortion(GtkToggleButton *togglebutton, gpointer user
 void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_disable_cursor(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_config_pause(GtkToggleButton *togglebutton, gpointer userdata);
+void gtkui_cb_misc_overclock(GtkToggleButton *togglebutton, gpointer userdata);
 
 void gtkui_drag_data(GtkWidget *widget, GdkDragContext *dragcontext, gint x, gint y, GtkSelectionData *seldata, guint info, guint time, gpointer data);
 
