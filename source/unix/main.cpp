@@ -1060,7 +1060,10 @@ int main(int argc, char *argv[]) {
 	fdsbios = NULL;
 	nst_load_db();
 	nst_load_fds_bios();
-
+	
+	Video video(emulator);
+	video.EnableOverclocking(conf.misc_overclock);
+	
 	// Load a rom from the command line
 	if (argc > 1) {
 		#ifdef _GTK // This is a dirty hack

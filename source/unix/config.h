@@ -62,6 +62,7 @@ typedef struct {
 	bool misc_config_pause;
 	char* misc_last_folder;
 	int misc_power_state;
+	bool misc_overclock;
 } settings_t;
 
 void config_file_read();

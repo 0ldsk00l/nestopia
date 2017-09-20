@@ -135,6 +135,7 @@ void config_file_write() {
 		fprintf(fp, "last_folder=%s\n", conf.misc_last_folder);
 		fprintf(fp, "; 0=0x00, 1=0xFF, 2=Random\n");
 		fprintf(fp, "power_state=%d\n", conf.misc_power_state);
+		fprintf(fp, "overclock=%d\n", conf.misc_overclock);
 		
 		fclose(fp);
 	}
@@ -206,6 +207,7 @@ void config_set_default() {
 	#endif
 	conf.misc_last_folder = NULL;
 	conf.misc_power_state = 0;
+	conf.misc_overclock = false;
 }
 
 static int config_match(void* user, const char* section, const char* name, const char* value) {
@@ -270,6 +272,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("misc", "disable_cursor")) { pconfig->misc_disable_cursor = atoi(value); }
 	else if (MATCH("misc", "last_folder")) { pconfig->misc_last_folder = strdup(value); }
 	else if (MATCH("misc", "power_state")) { pconfig->misc_power_state = atoi(value); }
+	else if (MATCH("misc", "overclock")) { pconfig->misc_overclock = atoi(value); }
     
 	else { return 0; }
 	return 1;
