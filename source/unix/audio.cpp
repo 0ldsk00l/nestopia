@@ -133,6 +133,17 @@ void audio_init_ao() {
 #endif
 }
 
+void audio_set_funcs() {
+	if (conf.audio_api == 0) { // SDL
+		audio_output = &audio_output_sdl;
+		audio_deinit = &audio_deinit_sdl;
+	}
+	else if (conf.audio_api == 1) { // libao
+		audio_output = &audio_output_ao;
+		audio_deinit = &audio_deinit_ao;
+	}
+}
+
 void audio_init() {
 	// Initialize audio device
 	
@@ -145,16 +156,10 @@ void audio_init() {
 	conf.audio_api = 0; // Set SDL audio for MinGW
 	#endif
 	
-	if (conf.audio_api == 0) { // SDL
-		audio_init_sdl();
-		audio_output = &audio_output_sdl;
-		audio_deinit = &audio_deinit_sdl;
-	}
-	else if (conf.audio_api == 1) { // libao
-		audio_init_ao();
-		audio_output = &audio_output_ao;
-		audio_deinit = &audio_deinit_ao;
-	}
+	audio_set_funcs();
+	
+	if (conf.audio_api == 0) { audio_init_sdl(); }
+	else if (conf.audio_api == 1) { audio_init_ao(); }
 	
 	paused = false;
 }
