@@ -204,6 +204,8 @@ namespace Nes
 			ticks   = 0;
 			logged  = 0;
 
+			cpuOverclocking = false;
+
 			pc = RESET_VECTOR;
 
 			cycles.count  = 0;
@@ -1899,6 +1901,18 @@ namespace Nes
 
 			if (interrupt.irqClock != CYCLE_MAX)
 				interrupt.irqClock = (interrupt.irqClock > cycles.frame ? interrupt.irqClock - cycles.frame : 0);
+
+			if (cpuOverclocking)
+			{
+				uint startCycle = cycles.count;
+				uint lastCycle = cycles.count + extraCycles;
+				do
+				{
+					ExecuteOp();
+				}
+				while (cycles.count < extraCycles);
+				cycles.count = startCycle;
+			}
 		}
 
 		void Cpu::Clock()

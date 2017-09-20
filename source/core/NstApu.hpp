@@ -527,6 +527,8 @@ namespace Nes
 
 				Dmc();
 
+				bool overclockingIsSafe;
+
 				void Reset(CpuModel);
 				void UpdateSettings(uint);
 				void LoadState(State::Loader&,const Cpu&,CpuModel,Cycle&);
@@ -623,6 +625,16 @@ namespace Nes
 			Settings settings;
 
 		public:
+
+			void SetOverclockSafety(bool safe)
+			{
+				dmc.overclockingIsSafe = safe;
+			}
+
+			bool GetOverclockSafety()
+			{
+				return dmc.overclockingIsSafe;
+			}
 
 			dword GetSampleRate() const
 			{
