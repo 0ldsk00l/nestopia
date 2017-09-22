@@ -547,6 +547,10 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	
 	const Uint8 *keys = SDL_GetKeyboardState(NULL);
 	
+	// Mic emulation
+	if (keys[SDL_SCANCODE_SPACE]) { controllers->pad[1].mic = 0x04; }
+	else { controllers->pad[1].mic = 0x00; }
+	
 	// Insert Coins
 	controllers->vsSystem.insertCoin = 0;
 	if (keys[ui.insertcoin1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
