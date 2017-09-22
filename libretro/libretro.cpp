@@ -441,9 +441,21 @@ static void update_input()
    if (Api::Input(emulator).GetConnectedController(1) == 5) {
       static int zapx = overscan_h ? 8 : 0; 
       static int zapy = overscan_v ? 8 : 0;
-      zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
-      zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
-   
+
+      if (zapx > 255)
+         zapx = 255;
+      else if (zapx < 0)
+         zapx = 0;
+      else
+         zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
+
+      if (zapy > 239)
+         zapy = 239;
+      else if (zapy < 0)
+         zapy = 0;
+      else
+         zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
+
       if (zapx >= 256) { crossx = 255; }
       else if (zapx <= 0) { crossx = 0; }
       else {crossx = zapx; }
