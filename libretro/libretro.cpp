@@ -434,6 +434,7 @@ static void update_input()
    input->pad[1].buttons = 0;
    input->pad[2].buttons = 0;
    input->pad[3].buttons = 0;
+   input->pad[1].mic = 0;
    input->zapper.fire = 0;
    input->vsSystem.insertCoin = 0;
    
@@ -476,6 +477,9 @@ static void update_input()
       }
       
    if (tstate) tstate--; else tstate = tpulse;
+   
+   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3))
+      input->pad[1].mic |= 0x04;
    
    if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2))
       input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_1;
@@ -890,6 +894,7 @@ bool retro_load_game(const struct retro_game_info *info)
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R,     "(FDS) Eject Disk" },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2,    "(VSSystem) Coin 1" },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2,    "(VSSystem) Coin 2" },
+      { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3,    "(Famicom) Microphone" },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_SELECT,   "Select" },
       { 0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_START,    "Start" },
 
