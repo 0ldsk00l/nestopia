@@ -441,29 +441,33 @@ static void update_input()
    if (Api::Input(emulator).GetConnectedController(1) == 5) {
       static int zapx = overscan_h ? 8 : 0; 
       static int zapy = overscan_v ? 8 : 0;
+      int min_x = overscan_h ? 8 : 0;
+      int max_x = overscan_h ? 247 : 255; 
+      int min_y = overscan_v ? 8 : 0;
+      int max_y = overscan_v ? 231 : 239;
 
-      if (zapx > 255)
-         zapx = 255;
-      else if (zapx < 0)
-         zapx = 0;
+      if (zapx > max_x)
+         zapx = max_x;
+      else if (zapx < min_x)
+         zapx = min_x;
       else
          zapx += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_X);
 
-      if (zapy > 239)
-         zapy = 239;
-      else if (zapy < 0)
-         zapy = 0;
+      if (zapy > max_y)
+         zapy = max_y;
+      else if (zapy < min_y)
+         zapy = min_y;
       else
          zapy += input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_Y);
 
-      if (zapx >= 256) { crossx = 255; }
-      else if (zapx <= 0) { crossx = 0; }
+      if (zapx > max_x) { crossx = max_x; }
+      else if (zapx < min_x) { crossx = min_x; }
       else {crossx = zapx; }
-      
-      if (zapy >= 240) { crossy = 239; }
-      else if (zapy <= 0) { crossy = 0; }
+
+      if (zapy > max_y) { crossy = max_y; }
+      else if (zapy < min_y) { crossy = min_y; }
       else {crossy = zapy; }
-      
+
       if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TRIGGER)) {
          input->zapper.x = zapx;
          input->zapper.y = zapy;
