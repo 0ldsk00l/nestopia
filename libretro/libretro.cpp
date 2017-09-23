@@ -203,13 +203,19 @@ void draw_crosshair(int x, int y)
 {
    uint32_t w = 0xFFFFFFFF;
    uint32_t b = 0x00000000;
+   int current_width = 256;
+   
+   if (blargg_ntsc){
+      x *= 2.36;
+      current_width = 602;
+   }
 
-   for (int i = MAX(-CROSSHAIR_SIZE, -x); i <= MIN(CROSSHAIR_SIZE, 255 - x); i++) {
-     video_buffer[256 * y + x + i] = i % 2 == 0 ? w : b;
+   for (int i = MAX(-CROSSHAIR_SIZE, -x); i <= MIN(CROSSHAIR_SIZE, current_width - x); i++) {
+     video_buffer[current_width * y + x + i] = i % 2 == 0 ? w : b;
    }
 
    for (int i = MAX(-CROSSHAIR_SIZE, -y); i <= MIN(CROSSHAIR_SIZE, 239 - y); i++) {
-     video_buffer[256 * (y + i) + x] = i % 2 == 0 ? w : b;
+     video_buffer[current_width * (y + i) + x] = i % 2 == 0 ? w : b;
    }
 }
 
@@ -843,8 +849,10 @@ void retro_run(void)
    }
    
    // Absolute mess of inline if statements...
-   video_cb(video_buffer + (overscan_v ? ((overscan_h ? 8 : 0) + (blargg_ntsc ? Api::Video::Output::NTSC_WIDTH : Api::Video::Output::WIDTH) * 8) : (overscan_h ? 8 : 0) + 0),
-         video_width - (overscan_h ? 16 : 0),
+   int dif = blargg_ntsc ? 18 : 8;
+
+   video_cb(video_buffer + (overscan_v ? ((overscan_h ? dif : 0) + (blargg_ntsc ? Api::Video::Output::NTSC_WIDTH : Api::Video::Output::WIDTH) * 8) : (overscan_h ? dif : 0) + 0),
+         video_width - (overscan_h ? 2 * dif : 0),
          Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0),
          pitch);
 }
