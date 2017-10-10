@@ -72,7 +72,7 @@ static void *sram;
 static unsigned long sram_size;
 static bool is_pal;
 static bool dbpresent;
-static unsigned char *custpal[64*3];
+static byte custpal[64*3];
 
 static const byte cxa2025as_palette[64][3] =
 {
