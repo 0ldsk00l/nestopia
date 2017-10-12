@@ -368,7 +368,7 @@ else ifneq (,$(findstring armv,$(platform)))
 else ifeq ($(platform),emscripten)
 	TARGET := $(TARGET_NAME)_libretro_$(platform).bc
 	STATIC_LINKING = 1
-	
+
 # Windows MSVC 2017 all architectures
 else ifneq (,$(findstring windows_msvc2017,$(platform)))
 
@@ -621,10 +621,10 @@ else
 endif
 
 %.o: %.cpp
-	$(CXX) -c $(OBJOUT)$@ $< $(CXXFLAGS) $(INCDIRS)
+	$(CXX) $(CPPFLAGS) -c $(OBJOUT)$@ $< $(CXXFLAGS) $(INCDIRS)
 
 %.o: %.c
-	$(CC) -c $(OBJOUT)$@ $< $(CFLAGS) $(INCDIRS)
+	$(CC) $(CPPFLAGS) -c $(OBJOUT)$@ $< $(CFLAGS) $(INCDIRS)
 
 clean-objs:
 	rm -f $(OBJECTS)
