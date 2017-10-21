@@ -13,6 +13,8 @@ env:
     - CORE=nestopia
     - COMPILER_NAME=gcc CXX=g++-7 CC=gcc-7
   matrix:
+    - PLATFORM=ngc
+    - PLATFORM=wii
     - PLATFORM=wiiu
 before_script:
   - pwd
