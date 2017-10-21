@@ -40,7 +40,7 @@ namespace Nes
 		{
 			namespace Acclaim
 			{
-				class NST_NO_VTABLE McAcc : public Board
+				class McAcc : public Board
 				{
 				public:
 
