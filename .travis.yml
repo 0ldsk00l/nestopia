@@ -10,9 +10,10 @@ addons:
       - ubuntu-toolchain-r-test
 env:
   global:
-    - CORE=nestopia
+    - CORE=snes9x2010
     - COMPILER_NAME=gcc CXX=g++-7 CC=gcc-7
   matrix:
+    - PLATFORM=linux_x64
     - PLATFORM=ngc
     - PLATFORM=wii
     - PLATFORM=wiiu
