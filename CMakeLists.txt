@@ -353,18 +353,18 @@ target_link_libraries( nestopia ${LibArchive_LIBRARIES} )
 
 # libao
 pkg_check_modules( LibAO REQUIRED ao )
-target_include_directories( nestopia PRIVATE ${LibAO_INCLUDE_DIRS} )
-target_link_libraries( nestopia ${LibAO_LIBRARIES} )
+target_compile_options( nestopia PRIVATE ${LibAO_CFLAGS} )
+target_link_libraries( nestopia ${LibAO_LDFLAGS} )
 
 # SDL2
 pkg_check_modules( SDL2 REQUIRED sdl2 )
-target_include_directories( nestopia PRIVATE ${SDL2_INCLUDE_DIRS} )
-target_link_libraries( nestopia ${SDL2_LIBRARIES} )
+target_compile_options( nestopia PRIVATE ${SDL2_CFLAGS} )
+target_link_libraries( nestopia ${SDL2_LDFLAGS} )
 
 # LibEpoxy
 pkg_check_modules( LibEpoxy REQUIRED epoxy )
-target_include_directories( nestopia PRIVATE ${LibEpoxy_INCLUDE_DIRS} )
-target_link_libraries( nestopia ${LibEpoxy_LIBRARIES} )
+target_compile_options( nestopia PRIVATE ${LibEpoxy_CFLAGS} )
+target_link_libraries( nestopia ${LibEpoxy_LDFLAGS} )
 
 if( MINGW )
 	# Building for MinGW
@@ -384,8 +384,8 @@ elseif( UNIX )
 		target_compile_definitions( nestopia PRIVATE -D_GTK )
 
 		pkg_check_modules( GTK3 REQUIRED gtk+-3.0 )
-		target_include_directories( nestopia PRIVATE ${GTK3_INCLUDE_DIRS} )
-		target_link_libraries( nestopia ${GTK3_LIBRARIES} )
+		target_compile_options( nestopia PRIVATE ${GTK3_CFLAGS} )
+		target_link_libraries( nestopia ${GTK3_LDFLAGS} )
 
 		# check whether compiler accepts -Wno-deprecated-declarations
 		# in order to silence GTK+3 deprecation warnings
