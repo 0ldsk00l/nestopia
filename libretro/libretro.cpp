@@ -66,6 +66,7 @@ size_t pitch;
 static Api::Video::Output *video;
 static Api::Sound::Output *audio;
 static Api::Input::Controllers *input;
+static unsigned input_type[4];
 static Api::Machine::FavoredSystem favsystem;
 
 static void *sram;
@@ -308,8 +309,12 @@ unsigned retro_api_version(void)
    return RETRO_API_VERSION;
 }
 
-void retro_set_controller_port_device(unsigned, unsigned)
+void retro_set_controller_port_device(unsigned port, unsigned device)
 {
+   if (port >= 4)
+      return;
+
+   input_type[port] = device;
 }
 
 void retro_get_system_info(struct retro_system_info *info)
