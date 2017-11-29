@@ -492,17 +492,18 @@ static void update_input()
    }
    
    static unsigned tstate = 2;
-   
-   for (unsigned p = 0; p < 4; p++)
+
+   for (unsigned p = 0; p < 4; p++) {
+      bool is_joypad = input_type[p] == RETRO_DEVICE_JOYPAD;
       for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
       {
-         input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
-         if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X))
+         input->pad[p].buttons |= is_joypad && input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
+         if (is_joypad && input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X))
             tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::A : input->pad[p].buttons |= Core::Input::Controllers::Pad::A;
-         if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y))
+         if (is_joypad && input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y))
             tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::B : input->pad[p].buttons |= Core::Input::Controllers::Pad::B;
       }
-      
+   }
    if (tstate) tstate--; else tstate = tpulse;
    
    if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3))
