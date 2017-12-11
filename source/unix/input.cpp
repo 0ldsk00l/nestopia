@@ -659,8 +659,6 @@ SDL_Event input_translate_string(const char *string) {
 	for (int i = 1; i <= whichdigits; i++) {
 		which += (string[i] - '0') * (pow (10, (whichdigits - i)));
 	}
-
-	fprintf(stderr, "value of which: %d\n", which);
 	
 	if ((unsigned char)string[whichdigits + 1] == 0x61) { // Axis
 		axis = string[whichdigits + 2] - '0';
