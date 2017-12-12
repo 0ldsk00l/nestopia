@@ -23,6 +23,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <math.h>
 
 #ifdef _GTK
 #include "gtkui/gtkui.h"
@@ -641,32 +643,44 @@ SDL_Event input_translate_string(const char *string) {
 	// Translate an inputcode to an SDL_Event
 	SDL_Event event;
 	
-	int type, which, axis, value;
+	int type, axis, value;
+
+	int which = 0, whichdigits = 0;
+
+	for (int i = 1; ; i++) {
+		if (isdigit(string[i])) {
+			whichdigits++;
+		}
+		else {
+			break;
+		}
+	}
+
+	for (int i = 1; i <= whichdigits; i++) {
+		which += (string[i] - '0') * (pow (10, (whichdigits - i)));
+	}
 	
-	if ((unsigned char)string[2] == 0x61) { // Axis
-		which = string[1] - '0';
-		axis = string[3] - '0';
-		value = string[4] - '0';
+	if ((unsigned char)string[whichdigits + 1] == 0x61) { // Axis
+		axis = string[whichdigits + 2] - '0';
+		value = string[whichdigits + 3] - '0';
 		event.type = SDL_JOYAXISMOTION;
 		event.jaxis.which = which;
 		event.jaxis.axis = axis;
 		event.jaxis.value = value;
 	}
-	else if ((unsigned char)string[2] == 0x62) { // Button
-		which = string[1] - '0';
-		value = string[3] - '0';
-		if (string[4]) {
-			value = ((string[3] - '0') * 10) + (string[4] - '0');
+	else if ((unsigned char)string[whichdigits + 1] == 0x62) { // Button
+		value = string[whichdigits + 2] - '0';
+		if (string[whichdigits + 3]) {
+			value = ((string[whichdigits + 2] - '0') * 10) + (string[whichdigits + 3] - '0');
 		}
 		event.type = SDL_JOYBUTTONDOWN;
 		event.jbutton.which = which;
 		event.jbutton.button = value;
 		
 	}
-	else if ((unsigned char)string[2] == 0x68) { // Hat
-		which = string[1] - '0';
-		axis = string[3] - '0';
-		value = string[4] - '0';
+	else if ((unsigned char)string[whichdigits + 1] == 0x68) { // Hat
+		axis = string[whichdigits + 2] - '0';
+		value = string[whichdigits + 3] - '0';
 		event.type = SDL_JOYHATMOTION;
 		event.jhat.which = which;
 		event.jhat.hat = axis;
