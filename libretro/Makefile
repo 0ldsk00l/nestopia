@@ -587,7 +587,7 @@ DEFINES := -D__LIBRETRO__ $(PLATFORM_DEFINES) $(GCC_FLAGS) $(GCC_WARNINGS) -DNST
 CFLAGS += $(fpic) $(DEFINES) $(C_VER)
 CXXFLAGS += $(fpic) $(DEFINES)
 
-INCDIRS := -I$(CORE_DIR) -I$(CORE_DIR)/source -I$(LIBRETRO_DIR)/libretro-common/include
+INCDIRS := -I$(CORE_DIR) -I$(CORE_DIR)/source
 
 OBJOUT   = -o
 LINKOUT  = -o 
