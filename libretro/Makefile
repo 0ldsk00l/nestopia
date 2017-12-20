@@ -233,12 +233,13 @@ else ifneq (,$(findstring windows_msvc2017,$(platform)))
 	endif
 
 	CFLAGS += $(MSVC2017CompileFlags)
-  CXXFLAGS += $(MSVC2017CompileFlags)
+    CXXFLAGS += $(MSVC2017CompileFlags)
 
 	TargetArchMoniker = $(subst $(WinPartition)_,,$(PlatformSuffix))
 
 	CC  = cl.exe
 	CXX = cl.exe
+	LD = link.exe
 
 	reg_query = $(call filter_out2,$(subst $2,,$(shell reg query "$2" -v "$1" 2>nul)))
 	fix_path = $(subst $(SPACE),\ ,$(subst \,/,$1))
