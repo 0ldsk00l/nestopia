@@ -19,10 +19,6 @@
 
 #define NST_VERSION "1.49-WIP"
 
-#ifdef _WIN32
-#define snprintf _snprintf
-#endif
-
 #define MIN(a,b)      ((a)<(b)?(a):(b))
 #define MAX(a,b)      ((a)>(b)?(a):(b))
 #define NES_NTSC_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (8.0 / 7.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
@@ -73,7 +69,7 @@ static void *sram;
 static unsigned long sram_size;
 static bool is_pal;
 static bool dbpresent;
-static unsigned char *custpal[64*3];
+static byte custpal[64*3];
 
 static const byte cxa2025as_palette[64][3] =
 {
@@ -253,7 +249,7 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
       case Api::User::File::LOAD_FDS:
          {
             char base[256];
-            snprintf(base, sizeof(base), "%s%c%s.sav", g_save_dir, slash, g_basename);
+            sprintf(base, "%s%c%s.sav", g_save_dir, slash, g_basename);
             if (log_cb)
                log_cb(RETRO_LOG_INFO, "Want to load FDS sav from: %s\n", base);
             std::ifstream in_tmp(base,std::ifstream::in|std::ifstream::binary);
@@ -267,7 +263,7 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
       case Api::User::File::SAVE_FDS:
          {
             char base[256];
-            snprintf(base, sizeof(base), "%s%c%s.sav", g_save_dir, slash, g_basename);
+            sprintf(base, "%s%c%s.sav", g_save_dir, slash, g_basename);
             if (log_cb)
                log_cb(RETRO_LOG_INFO, "Want to save FDS sav to: %s\n", base);
             std::ofstream out_tmp(base,std::ifstream::out|std::ifstream::binary);
@@ -985,7 +981,7 @@ bool retro_load_game(const struct retro_game_info *info)
    if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
       return false;
 
-   snprintf(palette_path, sizeof(palette_path), "%s%ccustom.pal", dir, slash);
+   sprintf(palette_path, "%s%ccustom.pal", dir, slash);
 
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "Custom palette path: %s\n", palette_path);
@@ -1006,7 +1002,7 @@ bool retro_load_game(const struct retro_game_info *info)
    }
    delete custompalette;
    
-   snprintf(db_path, sizeof(db_path), "%s%cNstDatabase.xml", dir, slash);
+   sprintf(db_path, "%s%cNstDatabase.xml", dir, slash);
 
    if (log_cb)
       log_cb(RETRO_LOG_INFO, "NstDatabase.xml path: %s\n", db_path);
@@ -1055,7 +1051,7 @@ bool retro_load_game(const struct retro_game_info *info)
          /* search for BIOS in system directory */
          bool found = false;
 
-         snprintf(fds_bios_path, sizeof(fds_bios_path), "%s%cdisksys.rom", dir, slash);
+         sprintf(fds_bios_path, "%s%cdisksys.rom", dir, slash);
          if (log_cb)
             log_cb(RETRO_LOG_INFO, "FDS BIOS path: %s\n", fds_bios_path);
 
