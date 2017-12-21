@@ -1,3 +1,6 @@
+[![Build Status](https://travis-ci.org/libretro/nestopia.svg?branch=master)](https://travis-ci.org/libretro/nestopia)
+[![Build status](https://ci.appveyor.com/api/projects/status/wcs7u48485ma8mm3/branch/master?svg=true)](https://ci.appveyor.com/project/bparker06/nestopia/branch/master)
+
 This project is a fork of the original Nestopia source code, plus the 
 Linux port. The purpose of the project is to enhance the original, and
 ensure it continues to work on modern operating systems.
