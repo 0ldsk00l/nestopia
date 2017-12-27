@@ -82,6 +82,15 @@ PKG_CHECK_MODULES([SDL2], [sdl2])
 dnl LibEpoxy
 PKG_CHECK_MODULES([LIBEPOXY], [epoxy])
 
+dnl JACK audio
+AC_ARG_WITH([jack],
+	AS_HELP_STRING([--with-jack], [Build with JACK audio support]))
+
+AS_IF([test "x$with_jack" = "xyes"], [
+	PKG_CHECK_MODULES([JACK],[jack])
+])
+AM_CONDITIONAL([ENABLE_JACK], [test "x$with_jack" = "xyes"])
+
 dnl GTK3
 AC_ARG_ENABLE([gui],
 	AS_HELP_STRING([--disable-gui], [Disable building GUI with GTK+3]))

@@ -450,6 +450,9 @@ GtkWidget *gtkui_config() {
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "SDL");
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "libao");
+	#ifdef _JACK
+	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "jack");
+	#endif
 		
 	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_api), conf.audio_api);
 	

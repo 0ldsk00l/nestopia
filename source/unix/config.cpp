@@ -87,7 +87,7 @@ void config_file_write() {
 		
 		// Audio
 		fprintf(fp, "[audio]\n");
-		fprintf(fp, "; 0=SDL, 1=libao\n");
+		fprintf(fp, "; 0=SDL, 1=libao, 2=jack\n");
 		fprintf(fp, "api=%d\n\n", conf.audio_api);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "stereo=%d\n\n", conf.audio_stereo);
