@@ -19,6 +19,9 @@ if( NOT CMAKE_BUILD_TYPE )
 	set( CMAKE_BUILD_TYPE "Release" )
 endif()
 
+# add module for jack
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules")
+
 # Adhere to GNU filesystem layout conventions
 include( GNUInstallDirs )
 
@@ -376,6 +379,13 @@ elseif( APPLE )
 
 elseif( UNIX )
 	# most likely, building on Unix
+	find_package(Jack)
+	if( JACK_FOUND )
+		target_compile_definitions( nestopia PRIVATE -D_JACK )
+		target_include_directories( nestopia PRIVATE ${JACK_INCLUDE_DIRS} )
+		target_compile_options( nestopia PRIVATE ${JACK_DEFINITIONS} )
+		target_link_libraries( nestopia ${JACK_LIBRARIES} )
+	endif( JACK_FOUND )
 	# GTK+3
 	option( ENABLE_GTK "Build GTK+3 based UI" ON )
 	if( ENABLE_GTK )
