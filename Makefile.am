@@ -28,6 +28,11 @@ nestopia_CPPFLAGS += -D_GTK $(GTK3_CFLAGS)
 nestopia_LDADD += $(GTK3_LIBS)
 endif
 
+if ENABLE_JACK
+nestopia_CPPFLAGS += -D_JACK $(JACK_CFLAGS)
+nestopia_LDADD += $(JACK_LIBS)
+endif
+
 ################
 # Installation #
 ################
