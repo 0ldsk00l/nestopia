@@ -34,6 +34,20 @@ static ao_device *aodevice;
 static ao_sample_format format;
 #endif
 
+#ifdef _JACK
+#define JACK_CLIENT_NAME "nestopia"
+#define JACK_RB_SIZE 6400
+
+#include <jack/jack.h>
+#include <jack/ringbuffer.h>
+
+static jack_port_t *jack_output_port1, *jack_output_port2;
+static jack_client_t *jack_client;
+static jack_ringbuffer_t *jack_rb = NULL;
+static bool jack_ready = false;
+const size_t jack_sample_size = sizeof(jack_default_audio_sample_t);
+#endif
+
 extern settings_t conf;
 extern Emulator emulator;
 extern bool nst_pal;
@@ -133,6 +147,103 @@ void audio_init_ao() {
 #endif
 }
 
+#ifdef _JACK
+int audio_cb_jack(jack_nframes_t nframes, void *arg) {
+	jack_default_audio_sample_t *out1, *out2;
+	int i;
+
+	if(!jack_ready)
+		return 0;
+
+	out1 = (jack_default_audio_sample_t*) jack_port_get_buffer(jack_output_port1, nframes);
+	out2 = (jack_default_audio_sample_t*) jack_port_get_buffer(jack_output_port2, nframes);
+	// it is safe to not check if we have enough data
+	// because jack_ringbuffer_read does a noop if you ask for too much
+	for(i=0; i<nframes; i++) {
+		jack_ringbuffer_read(jack_rb,(char *) (out1+i),jack_sample_size);
+		if(channels == 1)
+			out2[i] = out1[i];
+		else if(channels == 2)
+			jack_ringbuffer_read(jack_rb,(char *) (out2+i),jack_sample_size);
+	}
+	return 0;
+}
+
+void audio_jack_shutdown(void *arg) {
+	jack_ready = false;
+}
+
+void audio_deinit_jack() {
+	if(jack_client != NULL)
+		jack_deactivate(jack_client);
+	if(jack_rb != NULL)
+		jack_ringbuffer_free(jack_rb);
+	jack_ready = false;
+}
+
+void audio_init_jack() {
+	const char **ports;
+	jack_options_t options = JackNullOption;
+	jack_status_t status;
+
+	jack_client = jack_client_open(JACK_CLIENT_NAME,options,&status,NULL);
+	if(jack_client == NULL) {
+		fprintf(stderr, "Audio: jack - jack_client_open() failed, status = 0x%2.0x\n", status);
+		if(status & JackServerFailed)
+			fprintf(stderr, "Audio: jack - Unable to connect to JACK server\n");
+		return;
+	}
+	// JACK needs sample rate to match server sample rate
+	conf.audio_sample_rate = (int) jack_get_sample_rate(jack_client);
+	fprintf(stderr, "Audio: jack - Setting sample rate to %d\n", conf.audio_sample_rate);
+	jack_set_process_callback(jack_client, audio_cb_jack,NULL);
+
+	// set up ringbuffer for callback
+	jack_rb = jack_ringbuffer_create(JACK_RB_SIZE * channels * jack_sample_size);
+	memset(jack_rb->buf, 0, jack_rb->size);
+
+	jack_set_process_callback(jack_client, audio_cb_jack, NULL);
+	jack_on_shutdown(jack_client, audio_jack_shutdown, NULL);
+
+	jack_output_port1 = jack_port_register(jack_client, "nes out left", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	jack_output_port2 = jack_port_register(jack_client, "nes out right", JACK_DEFAULT_AUDIO_TYPE, JackPortIsOutput, 0);
+	if((jack_output_port1 == NULL)||(jack_output_port2 == NULL)) {
+		fprintf(stderr, "Audio: jack - No new ports available\n");
+		return;
+	}
+	jack_activate(jack_client);
+	ports = jack_get_ports(jack_client, NULL, NULL, JackPortIsPhysical | JackPortIsInput);
+	if(ports == NULL) {
+		fprintf(stderr, "Audio: jack - No playback ports available\n");
+		return;
+	}
+	jack_connect(jack_client, jack_port_name(jack_output_port1), ports[0]);
+	jack_connect(jack_client, jack_port_name(jack_output_port2), ports[1]);
+	jack_free(ports);
+	jack_ready = true;
+}
+
+void audio_output_jack() {
+	size_t i;
+	jack_default_audio_sample_t sample;
+
+	if(!jack_ready)
+		return;
+
+	if(bufsize > (jack_ringbuffer_write_space(jack_rb) / jack_sample_size)) {
+		fprintf(stderr, "Audio: jack - ringbuffer full!\n");
+		bufsize = jack_ringbuffer_write_space(jack_rb) / jack_sample_size;
+	}
+
+	for(i = 0; i < (bufsize/2); i++) {
+		// convert the audio to 32 bit float to make JACK happy
+		sample = (float) audiobuf[i];
+		sample /= (float) 0x8000;
+		jack_ringbuffer_write(jack_rb, (char *) &sample, jack_sample_size);
+	}
+}
+#endif // _JACK
+
 void audio_set_funcs() {
 	if (conf.audio_api == 0) { // SDL
 		audio_output = &audio_output_sdl;
@@ -142,6 +253,12 @@ void audio_set_funcs() {
 		audio_output = &audio_output_ao;
 		audio_deinit = &audio_deinit_ao;
 	}
+	#ifdef _JACK
+	else if (conf.audio_api == 2) { //JACK
+		audio_output = &audio_output_jack;
+		audio_deinit = &audio_deinit_jack;
+	}
+	#endif
 }
 
 void audio_init() {
@@ -160,6 +277,9 @@ void audio_init() {
 	
 	if (conf.audio_api == 0) { audio_init_sdl(); }
 	else if (conf.audio_api == 1) { audio_init_ao(); }
+	#ifdef _JACK
+	else if (conf.audio_api == 2) { audio_init_jack(); }
+	#endif
 	
 	paused = false;
 }
