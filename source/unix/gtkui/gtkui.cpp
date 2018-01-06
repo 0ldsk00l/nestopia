@@ -41,8 +41,6 @@ static GtkWidget *drawingarea;
 
 static GThread *emuthread;
 
-bool running = false;
-
 char iconpath[512];
 char padpath[512];
 
@@ -53,7 +51,7 @@ extern int nst_quit;
 gpointer gtkui_emuloop(gpointer data) {
 	while(!nst_quit)
 	{
-		if (running)
+		if (romLoaded)
 		{
 			nst_emuloop();
 		}
@@ -91,7 +89,7 @@ static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
 	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
 	ogl_render();
-	if (running)
+	if (romLoaded)
 	{
 		nst_emuloop();
 	}
@@ -110,7 +108,11 @@ void gtkui_state_quicksave(GtkWidget *widget, gpointer userdata) {
 void gtkui_open_recent(GtkWidget *widget, gpointer userdata) {
 	// Open a recently used item
 	gchar *uri = gtk_recent_chooser_get_current_uri((GtkRecentChooser*)widget);
-	running = nst_load(g_filename_from_uri(uri, NULL, NULL));
+	nst_load(g_filename_from_uri(uri, NULL, NULL));
+	if (romLoaded)
+	{
+		nst_play();
+	}
 }
 
 void gtkui_create() {
@@ -307,7 +309,7 @@ void gtkui_create() {
 	
 	// File menu
 	g_signal_connect(G_OBJECT(open), "activate",
-		G_CALLBACK(gtkui_file_open), &running);
+		G_CALLBACK(gtkui_file_open), NULL);
 	
 	g_signal_connect(G_OBJECT(recent_items), "item-activated",
 		G_CALLBACK(gtkui_open_recent), NULL);

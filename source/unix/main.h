@@ -14,13 +14,15 @@ typedef struct {
 	char palettepath[512];
 } nstpaths_t;
 
+extern bool romLoaded;
+
 bool nst_archive_checkext(const char *filename);
 bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile);
 bool nst_find_patch(char *patchname, unsigned int patchname_length, const char *filename);
 void nst_load_db();
 void nst_load_fds_bios();
 void nst_load_palette(const char *filename);
-bool nst_load(const char *filename);
+void nst_load(const char *filename);
 void nst_play();
 void nst_pause();
 void nst_reset(bool hardreset);

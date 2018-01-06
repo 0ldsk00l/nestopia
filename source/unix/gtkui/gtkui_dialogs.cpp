@@ -31,8 +31,7 @@ extern nstpaths_t nstpaths;
 extern settings_t conf;
 extern GtkWidget *gtkwindow;
 
-void gtkui_file_open(GtkMenuItem *menuitem, gpointer user_data) {
-	bool *running = (bool *) user_data;
+void gtkui_file_open() {
 	// Open a file using a GTK+ dialog
 	GtkWidget *dialog = gtk_file_chooser_dialog_new(
 				"Select a ROM",
@@ -76,7 +75,11 @@ void gtkui_file_open(GtkMenuItem *menuitem, gpointer user_data) {
 			
 		conf.misc_last_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
 		gtk_widget_destroy(dialog);
-		*running = nst_load(filename);
+		nst_load(filename);
+		if(romLoaded)
+		{
+			nst_play();
+		}
 		g_free(filename);
 	}
 	else { gtk_widget_destroy(dialog); }

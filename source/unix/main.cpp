@@ -84,10 +84,10 @@ static SDL_Event event;
 
 int nst_quit = 0;
 static bool ffspeed = false;
-bool loaded = false;
 bool playing = false;
 bool nst_pal = false;
 bool nst_nsf = false;
+bool romLoaded = false;
 
 nstpaths_t nstpaths;
 
@@ -243,7 +243,7 @@ static void nst_unload() {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
 	
-	if (!loaded) { return; }
+	if (!romLoaded) { return; }
 	
 	// Power down the NES
 	fprintf(stderr, "\rEmulation stopped\n");
@@ -793,7 +793,7 @@ void nst_load_palette(const char *filename) {
 	fclose(file);
 }
 
-bool nst_load(const char *filename) {
+void nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
 	Nsf nsf(emulator);
@@ -884,7 +884,7 @@ bool nst_load(const char *filename) {
 		}
 		#endif
 		
-		return playing;
+		return;
 	}
 	
 	// Deal with any DIP Switches
@@ -907,7 +907,7 @@ bool nst_load(const char *filename) {
 	sound.SetGenie(conf.misc_genie_distortion);
 	
 	// Note that something is loaded
-	loaded = 1;
+	romLoaded = true;
 	
 	// Set the title
 	if (conf.misc_disable_gui) { video_set_title(nstpaths.gamename); }
@@ -923,8 +923,6 @@ bool nst_load(const char *filename) {
 	
 	// Power on
 	machine.Power(true);
-	
-	return playing;
 }
 
 int nst_timing_runframes() {
@@ -1070,7 +1068,7 @@ int main(int argc, char *argv[]) {
 		#ifdef _GTK // This is a dirty hack
 		if (conf.misc_disable_gui) {
 			nst_load(argv[argc - 1]);
-			if (!loaded) {
+			if (!romLoaded) {
 				fprintf(stderr, "Fatal: Could not load ROM\n");
 				exit(1);
 			}
@@ -1081,7 +1079,7 @@ int main(int argc, char *argv[]) {
 		#else
 		conf.misc_disable_gui = true;
 		nst_load(argv[argc - 1]);
-		if (!loaded) {
+		if (!romLoaded) {
 			fprintf(stderr, "Fatal: Could not load ROM\n");
 			exit(1);
 		}
