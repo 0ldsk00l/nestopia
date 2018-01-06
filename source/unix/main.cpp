@@ -1068,6 +1068,10 @@ int main(int argc, char *argv[]) {
 		#ifdef _GTK // This is a dirty hack
 		if (conf.misc_disable_gui) {
 			nst_load(argv[argc - 1]);
+			if (romLoaded)
+			{
+				nst_play();
+			}
 			if (!romLoaded) {
 				fprintf(stderr, "Fatal: Could not load ROM\n");
 				exit(1);
@@ -1079,6 +1083,10 @@ int main(int argc, char *argv[]) {
 		#else
 		conf.misc_disable_gui = true;
 		nst_load(argv[argc - 1]);
+		if (romLoaded)
+		{
+			nst_play();
+		}
 		if (!romLoaded) {
 			fprintf(stderr, "Fatal: Could not load ROM\n");
 			exit(1);
@@ -1086,7 +1094,7 @@ int main(int argc, char *argv[]) {
 		#endif
 	}
 	
-	if (conf.misc_disable_gui) { // SDL Main loop
+	if (conf.misc_disable_gui && romLoaded) { // SDL Main loop
 		nst_quit = 0;
 		while (!nst_quit) { ogl_render(); nst_emuloop(); }
 	}
