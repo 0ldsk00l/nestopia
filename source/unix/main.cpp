@@ -87,7 +87,6 @@ static bool ffspeed = false;
 bool playing = false;
 bool nst_pal = false;
 bool nst_nsf = false;
-bool romLoaded = false;
 
 nstpaths_t nstpaths;
 
@@ -243,7 +242,7 @@ static void nst_unload() {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
 	
-	if (!romLoaded) { return; }
+	if (!playing) { return; }
 	
 	// Power down the NES
 	fprintf(stderr, "\rEmulation stopped\n");
@@ -906,9 +905,6 @@ void nst_load(const char *filename) {
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);
 	
-	// Note that something is loaded
-	romLoaded = true;
-	
 	// Set the title
 	if (conf.misc_disable_gui) { video_set_title(nstpaths.gamename); }
 	#ifdef _GTK
@@ -1070,7 +1066,7 @@ int main(int argc, char *argv[]) {
 		#ifdef _GTK // This is a dirty hack
 		if (conf.misc_disable_gui) {
 			nst_load(argv[argc - 1]);
-			if (!romLoaded) {
+			if (!playing) {
 				fprintf(stderr, "Fatal: Could not load ROM\n");
 				exit(1);
 			}
@@ -1084,14 +1080,14 @@ int main(int argc, char *argv[]) {
 		#else
 		conf.misc_disable_gui = true;
 		nst_load(argv[argc - 1]);
-		if (!romLoaded) {
+		if (!playing) {
 			fprintf(stderr, "Fatal: Could not load ROM\n");
 			exit(1);
 		}
 		#endif
 	}
 	
-	if (conf.misc_disable_gui && romLoaded) { // SDL Main loop
+	if (conf.misc_disable_gui && playing) { // SDL Main loop
 		nst_quit = 0;
 		while (!nst_quit) { ogl_render(); nst_emuloop(); }
 	}

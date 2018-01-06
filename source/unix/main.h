@@ -14,7 +14,7 @@ typedef struct {
 	char palettepath[512];
 } nstpaths_t;
 
-extern bool romLoaded;
+extern bool playing;
 
 bool nst_archive_checkext(const char *filename);
 bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile);

@@ -301,7 +301,7 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 		default: break;
 	}
 
-	if (romLoaded)
+	if (playing)
 	{
 		input_inject(cNstPads, input);
 	}
@@ -310,7 +310,7 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 }
 
 int gtkui_input_process_mouse(GtkWidget *widget, GdkEventButton *event, gpointer userdata) {
-	if (romLoaded)
+	if (playing)
 	{
 		switch(event->type) {
 			case GDK_BUTTON_PRESS:

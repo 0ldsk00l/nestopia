@@ -51,7 +51,7 @@ extern int nst_quit;
 gpointer gtkui_emuloop(gpointer data) {
 	while(!nst_quit)
 	{
-		if (romLoaded)
+		if (playing)
 		{
 			nst_emuloop();
 		}
@@ -89,7 +89,7 @@ static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
 	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
 	ogl_render();
-	if (romLoaded)
+	if (playing)
 	{
 		nst_emuloop();
 	}
