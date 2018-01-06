@@ -1078,7 +1078,14 @@ int main(int argc, char *argv[]) {
 			}
 		}
 		else {
-			if (strcmp(argv[argc - 1], "-e")) { nst_load(argv[argc - 1]); }
+			if (strcmp(argv[argc - 1], "-e"))
+			{
+				nst_load(argv[argc - 1]);
+				if (romLoaded)
+				{
+					nst_play();
+				}
+			}
 		}
 		#else
 		conf.misc_disable_gui = true;
