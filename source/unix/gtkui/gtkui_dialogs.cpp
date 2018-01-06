@@ -76,6 +76,10 @@ void gtkui_file_open() {
 		conf.misc_last_folder = gtk_file_chooser_get_current_folder(GTK_FILE_CHOOSER(dialog));
 		gtk_widget_destroy(dialog);
 		nst_load(filename);
+		if(romLoaded)
+		{
+			nst_play();
+		}
 		g_free(filename);
 	}
 	else { gtk_widget_destroy(dialog); }

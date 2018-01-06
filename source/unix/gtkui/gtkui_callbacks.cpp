@@ -288,5 +288,9 @@ void gtkui_drag_data(GtkWidget *widget, GdkDragContext *dragcontext, gint x, gin
 		if (filename[ln] == '\r') { filename[ln] = '\0'; }
 		
 		nst_load(filename);
+		if (romLoaded)
+		{
+			nst_play();
+		}
 	}
 }
