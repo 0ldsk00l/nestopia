@@ -1,7 +1,7 @@
 #ifndef _GTKUI_DIALOGS_H_
 #define _GTKUI_DIALOGS_H_
 
-void gtkui_file_open();
+void gtkui_file_open(GtkMenuItem *menuitem, gpointer user_data);
 void gtkui_state_save();
 void gtkui_state_load();
 

@@ -421,33 +421,36 @@ void nst_movie_stop() {
 	}
 }
 
-void nst_play() {
+bool nst_play() {
 	// Play the game
-	if (playing || !loaded) { return; }
-	
-	video_init();
-	audio_init();
-	input_init();
-	cheats_init();
-	
-	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_signals_init(); }
-	#endif
-	
-	cNstVideo = new Video::Output;
-	cNstSound = new Sound::Output;
-	cNstPads  = new Input::Controllers;
-	
-	audio_set_params(cNstSound);
-	audio_unpause();
-	
-	if (nst_nsf) {
-		Nsf nsf(emulator);
-		nsf.PlaySong();
-		video_disp_nsf();
+	if (!playing)
+	{
+		video_init();
+		audio_init();
+		input_init();
+		cheats_init();
+		
+		#ifdef _GTK
+		if (!conf.misc_disable_gui) { gtkui_signals_init(); }
+		#endif
+		
+		cNstVideo = new Video::Output;
+		cNstSound = new Sound::Output;
+		cNstPads  = new Input::Controllers;
+		
+		audio_set_params(cNstSound);
+		audio_unpause();
+		
+		if (nst_nsf) {
+			Nsf nsf(emulator);
+			nsf.PlaySong();
+			video_disp_nsf();
+		}
+		
+		playing = true;
 	}
-	
-	playing = true;
+
+	return playing;
 }
 
 void nst_reset(bool hardreset) {
@@ -792,7 +795,7 @@ void nst_load_palette(const char *filename) {
 	fclose(file);
 }
 
-void nst_load(const char *filename) {
+bool nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
 	Nsf nsf(emulator);
@@ -883,7 +886,7 @@ void nst_load(const char *filename) {
 		}
 		#endif
 		
-		return;
+		return playing;
 	}
 	
 	// Deal with any DIP Switches
@@ -923,7 +926,7 @@ void nst_load(const char *filename) {
 	// Power on
 	machine.Power(true);
 	
-	nst_play();
+	return nst_play();
 }
 
 int nst_timing_runframes() {
