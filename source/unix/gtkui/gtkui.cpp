@@ -49,7 +49,13 @@ extern settings_t conf;
 extern int nst_quit;
 
 gpointer gtkui_emuloop(gpointer data) {
-	while(!nst_quit) { nst_emuloop(); }
+	while(!nst_quit)
+	{
+		if (romLoaded)
+		{
+			nst_emuloop();
+		}
+	}
 	g_thread_exit(emuthread);
 	return NULL;
 }
@@ -83,7 +89,10 @@ static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
 	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
 	ogl_render();
-	nst_emuloop();
+	if (romLoaded)
+	{
+		nst_emuloop();
+	}
 }
 
 void gtkui_state_quickload(GtkWidget *widget, gpointer userdata) {
