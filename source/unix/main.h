@@ -21,7 +21,7 @@ void nst_load_db();
 void nst_load_fds_bios();
 void nst_load_palette(const char *filename);
 bool nst_load(const char *filename);
-bool nst_play();
+void nst_play();
 void nst_pause();
 void nst_reset(bool hardreset);
 void nst_schedule_quit();

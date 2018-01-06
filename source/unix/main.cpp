@@ -421,7 +421,7 @@ void nst_movie_stop() {
 	}
 }
 
-bool nst_play() {
+void nst_play() {
 	// Play the game
 	if (!playing)
 	{
@@ -449,8 +449,6 @@ bool nst_play() {
 		
 		playing = true;
 	}
-
-	return playing;
 }
 
 void nst_reset(bool hardreset) {
@@ -926,7 +924,7 @@ bool nst_load(const char *filename) {
 	// Power on
 	machine.Power(true);
 	
-	return nst_play();
+	return playing;
 }
 
 int nst_timing_runframes() {
