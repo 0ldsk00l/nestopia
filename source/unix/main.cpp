@@ -93,6 +93,8 @@ nstpaths_t nstpaths;
 
 void *custompalette = NULL;
 
+void (*nst_inputloop)();
+
 extern void (*audio_deinit)();
 
 extern settings_t conf;
@@ -942,12 +944,7 @@ void nst_timing_set_default() {
 	ffspeed = false;
 }
 
-void nst_emuloop() {
-	///////////////////////////////////////////////////////
-	//// This is only here because I need SDL Joystick ////
-	//// Separate it into its own piece later on       ////
-	///////////////////////////////////////////////////////
-	
+void nst_inputloop_sdl() {
 	while (SDL_PollEvent(&event)) {
 		switch (event.type) {
 			case SDL_QUIT:
@@ -967,7 +964,11 @@ void nst_emuloop() {
 			default: break;
 		}	
 	}
-	///////////////////////////////////////////////////////
+}
+
+void nst_emuloop() {
+	
+	nst_inputloop();
 	
 	if (NES_SUCCEEDED(Rewinder(emulator).Enable(true))) {
 		Rewinder(emulator).EnableSound(true);
@@ -1031,6 +1032,9 @@ int main(int argc, char *argv[]) {
 	#ifdef _GTK
 	if (!conf.misc_disable_gui) gtkui_input_config_read();
 	#endif
+	
+	// Set input function pointer
+	nst_inputloop = &nst_inputloop_sdl;
 	
 	// Set audio function pointers
 	audio_set_funcs();

@@ -46,6 +46,8 @@ void nst_switch_disk();
 
 void nst_dipswitch();
 
+void nst_inputloop_sdl();
+
 void nst_emuloop();
 int nst_timing_runframes();
 void nst_timing_set_ffspeed();
