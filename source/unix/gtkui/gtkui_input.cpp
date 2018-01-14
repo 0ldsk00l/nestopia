@@ -300,23 +300,28 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 			break;
 		default: break;
 	}
-	
-	input_inject(cNstPads, input);
-	
+
+	if (playing)
+	{
+		input_inject(cNstPads, input);
+	}
+
 	return TRUE;	
 }
 
 int gtkui_input_process_mouse(GtkWidget *widget, GdkEventButton *event, gpointer userdata) {
-	
-	switch(event->type) {
-		case GDK_BUTTON_PRESS:
-			input_inject_mouse(cNstPads, event->button, 1, (int)event->x, (int)event->y);
-			break;
-		
-		case GDK_BUTTON_RELEASE:
-			input_inject_mouse(cNstPads, event->button, 0, (int)event->x, (int)event->y);
-			break;
-		default: break;
+	if (playing)
+	{
+		switch(event->type) {
+			case GDK_BUTTON_PRESS:
+				input_inject_mouse(cNstPads, event->button, 1, (int)event->x, (int)event->y);
+				break;
+			
+			case GDK_BUTTON_RELEASE:
+				input_inject_mouse(cNstPads, event->button, 0, (int)event->x, (int)event->y);
+				break;
+			default: break;
+		}
 	}
 	
 	return TRUE;

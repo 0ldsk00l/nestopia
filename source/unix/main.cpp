@@ -84,7 +84,6 @@ static SDL_Event event;
 
 int nst_quit = 0;
 static bool ffspeed = false;
-bool loaded = false;
 bool playing = false;
 bool nst_pal = false;
 bool nst_nsf = false;
@@ -243,7 +242,7 @@ static void nst_unload() {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
 	
-	if (!loaded) { return; }
+	if (!playing) { return; }
 	
 	// Power down the NES
 	fprintf(stderr, "\rEmulation stopped\n");
@@ -423,31 +422,32 @@ void nst_movie_stop() {
 
 void nst_play() {
 	// Play the game
-	if (playing || !loaded) { return; }
-	
-	video_init();
-	audio_init();
-	input_init();
-	cheats_init();
-	
-	#ifdef _GTK
-	if (!conf.misc_disable_gui) { gtkui_signals_init(); }
-	#endif
-	
-	cNstVideo = new Video::Output;
-	cNstSound = new Sound::Output;
-	cNstPads  = new Input::Controllers;
-	
-	audio_set_params(cNstSound);
-	audio_unpause();
-	
-	if (nst_nsf) {
-		Nsf nsf(emulator);
-		nsf.PlaySong();
-		video_disp_nsf();
+	if (!playing)
+	{
+		video_init();
+		audio_init();
+		input_init();
+		cheats_init();
+		
+		#ifdef _GTK
+		if (!conf.misc_disable_gui) { gtkui_signals_init(); }
+		#endif
+		
+		cNstVideo = new Video::Output;
+		cNstSound = new Sound::Output;
+		cNstPads  = new Input::Controllers;
+		
+		audio_set_params(cNstSound);
+		audio_unpause();
+		
+		if (nst_nsf) {
+			Nsf nsf(emulator);
+			nsf.PlaySong();
+			video_disp_nsf();
+		}
+		
+		playing = true;
 	}
-	
-	playing = true;
 }
 
 void nst_reset(bool hardreset) {
@@ -905,9 +905,6 @@ void nst_load(const char *filename) {
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);
 	
-	// Note that something is loaded
-	loaded = 1;
-	
 	// Set the title
 	if (conf.misc_disable_gui) { video_set_title(nstpaths.gamename); }
 	#ifdef _GTK
@@ -922,7 +919,7 @@ void nst_load(const char *filename) {
 	
 	// Power on
 	machine.Power(true);
-	
+
 	nst_play();
 }
 
@@ -1069,25 +1066,28 @@ int main(int argc, char *argv[]) {
 		#ifdef _GTK // This is a dirty hack
 		if (conf.misc_disable_gui) {
 			nst_load(argv[argc - 1]);
-			if (!loaded) {
+			if (!playing) {
 				fprintf(stderr, "Fatal: Could not load ROM\n");
 				exit(1);
 			}
 		}
 		else {
-			if (strcmp(argv[argc - 1], "-e")) { nst_load(argv[argc - 1]); }
+			if (strcmp(argv[argc - 1], "-e"))
+			{
+				nst_load(argv[argc - 1]);
+			}
 		}
 		#else
 		conf.misc_disable_gui = true;
 		nst_load(argv[argc - 1]);
-		if (!loaded) {
+		if (!playing) {
 			fprintf(stderr, "Fatal: Could not load ROM\n");
 			exit(1);
 		}
 		#endif
 	}
 	
-	if (conf.misc_disable_gui) { // SDL Main loop
+	if (conf.misc_disable_gui && playing) { // SDL Main loop
 		nst_quit = 0;
 		while (!nst_quit) { ogl_render(); nst_emuloop(); }
 	}

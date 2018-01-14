@@ -268,10 +268,6 @@ void input_pulse_turbo(Input::Controllers *controllers) {
 }
 
 void input_inject(Input::Controllers *controllers, nesinput_t input) {
-	// If there is no game loaded this is still called. Do a noop if this is the case
-	if(controllers == NULL) {
-		return;
-	}
 	// Insert the input signal into the NES
 	if (input.pressed) {
 		controllers->pad[input.player].buttons |= input.nescode;
