@@ -22,15 +22,14 @@
 
 #include <SDL.h>
 
-#include "../main.h"
-#include "../config.h"
-#include "../video.h"
-#include "../input.h"
+#include "main.h"
+#include "config.h"
+#include "video.h"
+#include "input.h"
 
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 
-extern settings_t conf;
 extern bool playing, kbactivate, confrunning;
 
 //// Menu ////

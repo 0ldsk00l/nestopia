@@ -11,12 +11,12 @@ using namespace Nes::Api;
 
 typedef Nes::Core::Xml Xml;
 
-void cheats_init();
-void cheats_code_gg_add(const wchar_t *data);
-void cheats_code_par_add(const wchar_t *data);
-void cheats_code_raw_add(Xml::Node node);
+void nst_cheats_init(const char *cheatpath);
+void nst_cheats_code_gg_add(const wchar_t *data);
+void nst_cheats_code_par_add(const wchar_t *data);
+void nst_cheats_code_raw_add(Xml::Node node);
 
 // DIP Switches
-void dip_handle();
+void nst_dip_handle(const char *dippath);
 
 #endif

@@ -1,7 +1,7 @@
 /*
  * Nestopia UE
  * 
- * Copyright (C) 2012-2016 R. Danbrook
+ * Copyright (C) 2012-2018 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,23 +23,18 @@
 #include <iostream>
 #include <fstream>
 
-#include <stdio.h>
-#include <stdlib.h>
-
-#include "main.h"
 #include "cheats.h"
 
 extern Emulator emulator;
-extern nstpaths_t nstpaths;
 
-void cheats_init() {
+void nst_cheats_init(const char *cheatpath) {
 	// Initialize cheat engine
 	Cheats cheats(emulator);
 	Xml xml;
 	
 	cheats.ClearCodes();
 	
-	std::ifstream cheatfile(nstpaths.cheatpath, std::ifstream::in|std::ifstream::binary);
+	std::ifstream cheatfile(cheatpath, std::ifstream::in|std::ifstream::binary);
 	
 	if (cheatfile.is_open()) {
 		xml.Read(cheatfile);
@@ -54,15 +49,15 @@ void cheats_init() {
 				if (node.GetAttribute(L"enabled").IsValue(L"1")) {
 					
 					if (node.GetChild(L"genie")) { // Game Genie
-						cheats_code_gg_add(node.GetChild(L"genie").GetValue());
+						nst_cheats_code_gg_add(node.GetChild(L"genie").GetValue());
 					}
 					
 					else if (node.GetChild(L"rocky")) { // Pro Action Rocky
-						cheats_code_par_add(node.GetChild(L"rocky").GetValue());
+						nst_cheats_code_par_add(node.GetChild(L"rocky").GetValue());
 					}
 					
 					else if (node.GetChild(L"address")) { // Raw
-						cheats_code_raw_add(node);
+						nst_cheats_code_raw_add(node);
 					}
 					
 					//fprintf(stderr, "Cheat: %ls\n", node.GetChild(L"description").GetValue());
@@ -74,7 +69,7 @@ void cheats_init() {
 	}
 }
 
-/*void cheats_list() {
+/*void nst_cheats_list() {
 	// List the active cheats
 	Cheats cheats(emulator);
 	Cheats::Code code;
@@ -89,7 +84,7 @@ void cheats_init() {
 	}
 }*/
 
-void cheats_code_gg_add(const wchar_t *data) {
+void nst_cheats_code_gg_add(const wchar_t *data) {
 	// Add a Game Genie code
 	Cheats cheats(emulator);
 	Cheats::Code code;
@@ -101,7 +96,7 @@ void cheats_code_gg_add(const wchar_t *data) {
 	cheats.SetCode(code);
 }
 
-void cheats_code_par_add(const wchar_t *data) {
+void nst_cheats_code_par_add(const wchar_t *data) {
 	// Add a Pro Action Rocky code
 	Cheats cheats(emulator);
 	Cheats::Code code;
@@ -113,7 +108,7 @@ void cheats_code_par_add(const wchar_t *data) {
 	cheats.SetCode(code);
 }
 
-void cheats_code_raw_add(Xml::Node node) {
+void nst_cheats_code_raw_add(Xml::Node node) {
 	// Add a Raw code
 	Cheats cheats(emulator);
 	Cheats::Code code;
@@ -132,13 +127,10 @@ void cheats_code_raw_add(Xml::Node node) {
 }
 
 // DIP Switches
-void dip_handle() {
+void nst_dip_handle(const char *dippath) {
 	// Handle the DIP switch file
 	DipSwitches dipswitches(emulator);
 	Xml xml;
-	
-	char dippath[512];
-	snprintf(dippath, sizeof(dippath), "%s%s.dip", nstpaths.savedir, nstpaths.gamename);
 	
 	std::ifstream dipfile(dippath, std::ifstream::in|std::ifstream::binary);
 	

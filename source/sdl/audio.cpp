@@ -48,7 +48,6 @@ static bool jack_ready = false;
 const size_t jack_sample_size = sizeof(jack_default_audio_sample_t);
 #endif
 
-extern settings_t conf;
 extern Emulator emulator;
 extern bool nst_pal;
 

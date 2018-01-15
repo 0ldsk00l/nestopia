@@ -20,15 +20,14 @@
  * 
  */
 
-#include "../main.h"
-#include "../video.h"
-#include "../config.h"
+#include "main.h"
+#include "video.h"
+#include "config.h"
 
 #include "gtkui.h"
 #include "gtkui_cheats.h"
 
 extern nstpaths_t nstpaths;
-extern settings_t conf;
 extern GtkWidget *gtkwindow;
 
 void gtkui_file_open() {

@@ -2,7 +2,7 @@
  * Nestopia UE
  * 
  * Copyright (C) 2007-2008 R. Belmont
- * Copyright (C) 2012-2017 R. Danbrook
+ * Copyright (C) 2012-2018 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@
 #include "png.h"
 
 #ifdef _GTK
-#include "gtkui/gtkui.h"
+#include "gtkui.h"
 #endif
 
 using namespace Nes::Api;
@@ -65,7 +65,6 @@ dimensions_t basesize, rendersize, screensize;
 extern void *custompalette;
 
 extern bool playing, nst_nsf, nst_pal;
-extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
 

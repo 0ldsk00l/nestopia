@@ -24,17 +24,16 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "../main.h"
-#include "../config.h"
-#include "../audio.h"
-#include "../input.h"
+#include "main.h"
+#include "config.h"
+#include "audio.h"
+#include "input.h"
 
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_config.h"
 #include "gtkui_input.h"
 
-extern settings_t conf;
 extern gamepad_t player[NUMGAMEPADS];
 extern gpad_t pad[NUMGAMEPADS];
 extern char padpath[512];

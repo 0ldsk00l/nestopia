@@ -38,7 +38,6 @@
 #include "input.h"
 #include "ini.h"
 
-extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern dimensions_t rendersize, screensize;
 extern Emulator emulator;

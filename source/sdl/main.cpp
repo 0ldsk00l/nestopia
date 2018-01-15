@@ -2,7 +2,7 @@
  * Nestopia UE
  * 
  * Copyright (C) 2007-2008 R. Belmont
- * Copyright (C) 2012-2017 R. Danbrook
+ * Copyright (C) 2012-2018 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -60,9 +60,9 @@
 #include "cheats.h"
 
 #ifdef _GTK
-#include "gtkui/gtkui.h"
-#include "gtkui/gtkui_archive.h"
-#include "gtkui/gtkui_input.h"
+#include "gtkui.h"
+#include "gtkui_archive.h"
+#include "gtkui_input.h"
 #endif
 
 using namespace Nes::Api;
@@ -96,8 +96,6 @@ void *custompalette = NULL;
 void (*nst_inputloop)();
 
 extern void (*audio_deinit)();
-
-extern settings_t conf;
 
 extern int drawtext;
 extern char textbuf[32];
@@ -331,7 +329,10 @@ void nst_dipswitch() {
 				fprintf(stderr, " %d: %s\n", j, dipswitches.GetValueName(i, j));
 			}
 		}
-		dip_handle();
+		
+		char dippath[512];
+		snprintf(dippath, sizeof(dippath), "%s%s.dip", nstpaths.savedir, nstpaths.gamename);
+		nst_dip_handle(dippath);
 	}
 }
 
@@ -430,7 +431,7 @@ void nst_play() {
 	video_init();
 	audio_init();
 	input_init();
-	cheats_init();
+	nst_cheats_init(nstpaths.cheatpath);
 	
 	#ifdef _GTK
 	if (!conf.misc_disable_gui) { gtkui_signals_init(); }
@@ -998,7 +999,7 @@ int main(int argc, char *argv[]) {
 	config_set_default();
 	
 	// Read the config file and override defaults
-	config_file_read();
+	config_file_read(nstpaths.nstdir);
 	
 	// Exit if there is no CLI argument
 	#ifdef _GTK
@@ -1119,7 +1120,7 @@ int main(int argc, char *argv[]) {
 	if (!conf.misc_disable_gui) { gtkui_input_config_write(); }
 	#endif
 	// Write the config file
-	config_file_write();
+	config_file_write(nstpaths.nstdir);
 
 	return 0;
 }
