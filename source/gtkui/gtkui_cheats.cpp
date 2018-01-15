@@ -25,16 +25,15 @@
 
 #include <stdlib.h>
 
-#include "../main.h"
-#include "../config.h"
-#include "../cheats.h"
+#include "main.h"
+#include "config.h"
+#include "cheats.h"
 
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_cheats.h"
 #include "gtkui_dialogs.h"
 
-extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
 
@@ -350,7 +349,7 @@ void gtkui_cheats_fill_tree(char *filename) {
 								1, codebuf,
 								4, descbuf,
 								-1);
-					if (enabled) { cheats_code_gg_add(node.GetChild(L"genie").GetValue()); }
+					if (enabled) { nst_cheats_code_gg_add(node.GetChild(L"genie").GetValue()); }
 				}
 				
 				else if (node.GetChild(L"rocky")) { // Pro Action Rocky
@@ -361,7 +360,7 @@ void gtkui_cheats_fill_tree(char *filename) {
 								2, codebuf,
 								4, descbuf,
 								-1);
-					if (enabled) { cheats_code_par_add(node.GetChild(L"rocky").GetValue()); }
+					if (enabled) { nst_cheats_code_par_add(node.GetChild(L"rocky").GetValue()); }
 				}
 				
 				else if (node.GetChild(L"address")) { // Raw
@@ -378,7 +377,7 @@ void gtkui_cheats_fill_tree(char *filename) {
 								3, rawbuf,
 								4, descbuf,
 								-1);
-					if (enabled) { cheats_code_raw_add(node); }
+					if (enabled) { nst_cheats_code_raw_add(node); }
 				}
 				
 				node = node.GetNextSibling();

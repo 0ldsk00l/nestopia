@@ -2,12 +2,14 @@
 # Definitions #
 ###############
 bin_PROGRAMS = nestopia
-nestopia_SOURCES = source/unix/main.cpp
 
 EXTRA_DIST = doc
 
 nestopia_CPPFLAGS = \
 	-I$(top_srcdir)/source \
+	-I$(top_srcdir)/source/common \
+	-I$(top_srcdir)/source/gtkui \
+	-I$(top_srcdir)/source/sdl \
 	-DDATADIR=\"$(datadir)/nestopia\" \
 	-DDATAROOTDIR=\"$(datarootdir)\" \
 	-DNST_PRAGMA_ONCE \
@@ -42,25 +44,25 @@ dist_database_DATA = NstDatabase.xml
 
 # freedesktop.org-specific files
 desktopdir = $(datarootdir)/applications
-dist_desktop_DATA = source/unix/icons/nestopia.desktop
+dist_desktop_DATA = icons/nestopia.desktop
 
 icon32dir = $(datarootdir)/icons/hicolor/32x32/apps
-dist_icon32_DATA = source/unix/icons/32/nestopia.png
+dist_icon32_DATA = icons/32/nestopia.png
 
 icon48dir = $(datarootdir)/icons/hicolor/48x48/apps
-dist_icon48_DATA = source/unix/icons/48/nestopia.png
+dist_icon48_DATA = icons/48/nestopia.png
 
 icon64dir = $(datarootdir)/icons/hicolor/64x64/apps
-dist_icon64_DATA = source/unix/icons/64/nestopia.png
+dist_icon64_DATA = icons/64/nestopia.png
 
 icon96dir = $(datarootdir)/icons/hicolor/96x96/apps
-dist_icon96_DATA = source/unix/icons/96/nestopia.png
+dist_icon96_DATA = icons/96/nestopia.png
 
 icon128dir = $(datarootdir)/icons/hicolor/128x128/apps
-dist_icon128_DATA = source/unix/icons/128/nestopia.png
+dist_icon128_DATA = icons/128/nestopia.png
 
 iconsvgdir = $(datarootdir)/icons/hicolor/scalable/apps
-dist_iconsvg_DATA = source/unix/icons/svg/nestopia.svg source/unix/icons/svg/nespad.svg
+dist_iconsvg_DATA = icons/svg/nestopia.svg icons/svg/nespad.svg
 
 # documentation
 dist_doc_DATA = AUTHORS ChangeLog README.md
@@ -76,7 +78,7 @@ EXTRA_DIST += \
 	source/core/NstSoundRenderer.inl \
 	source/nes_ntsc/nes_ntsc.inl
 
-nestopia_SOURCES += \
+nestopia_SOURCES = \
 	source/core/NstTrackerMovie.hpp \
 	source/core/NstFile.hpp \
 	source/core/NstAssert.cpp \
@@ -689,44 +691,49 @@ nestopia_SOURCES += \
 	source/nes_ntsc/nes_ntsc_impl.h \
 	source/nes_ntsc/nes_ntsc_config.h \
 	source/nes_ntsc/nes_ntsc.h \
-	source/nes_ntsc/demo_impl.h \
-	source/unix/input.cpp \
-	source/unix/ini.cpp \
-	source/unix/config.h \
-	source/unix/png.cpp \
-	source/unix/png.h \
-	source/unix/config.cpp \
-	source/unix/cheats.h \
-	source/unix/cursor.h \
-	source/unix/audio.cpp \
-	source/unix/cli.h \
-	source/unix/audio.h \
-	source/unix/video.h \
-	source/unix/cli.cpp \
-	source/unix/cursor.cpp \
-	source/unix/ini.h \
-	source/unix/font.h \
-	source/unix/video.cpp \
-	source/unix/main.h \
-	source/unix/input.h \
-	source/unix/cheats.cpp
+	source/nes_ntsc/demo_impl.h
+
+nestopia_SOURCES += \
+	source/common/cheats.cpp \
+	source/common/cheats.h \
+	source/common/cli.cpp \
+	source/common/cli.h \
+	source/common/config.cpp \
+	source/common/config.h \
+	source/common/video.cpp \
+	source/common/video.h \
+	source/common/font.h \
+	source/common/ini.cpp \
+	source/common/ini.h \
+	source/common/png.cpp \
+	source/common/png.h
+
+nestopia_SOURCES += \
+	source/sdl/audio.cpp \
+	source/sdl/audio.h \
+	source/sdl/input.cpp \
+	source/sdl/input.h \
+	source/sdl/cursor.cpp \
+	source/sdl/cursor.h \
+	source/sdl/main.cpp \
+	source/sdl/main.h
 
 if ENABLE_GUI
 nestopia_SOURCES += \
-	source/unix/gtkui/gtkui_config.h \
-	source/unix/gtkui/gtkui_archive.h \
-	source/unix/gtkui/gtkui_cheats.cpp \
-	source/unix/gtkui/gtkui_callbacks.h \
-	source/unix/gtkui/gtkui_callbacks.cpp \
-	source/unix/gtkui/gtkui_dialogs.cpp \
-	source/unix/gtkui/gtkui_cheats.h \
-	source/unix/gtkui/gtkui_dialogs.h \
-	source/unix/gtkui/gtkui_archive.cpp \
-	source/unix/gtkui/gtkui.cpp \
-	source/unix/gtkui/gtkui.h \
-	source/unix/gtkui/gtkui_input.cpp \
-	source/unix/gtkui/gtkui_input.h \
-	source/unix/gtkui/gtkui_config.cpp
+	source/gtkui/gtkui_config.h \
+	source/gtkui/gtkui_archive.h \
+	source/gtkui/gtkui_cheats.cpp \
+	source/gtkui/gtkui_callbacks.h \
+	source/gtkui/gtkui_callbacks.cpp \
+	source/gtkui/gtkui_dialogs.cpp \
+	source/gtkui/gtkui_cheats.h \
+	source/gtkui/gtkui_dialogs.h \
+	source/gtkui/gtkui_archive.cpp \
+	source/gtkui/gtkui.cpp \
+	source/gtkui/gtkui.h \
+	source/gtkui/gtkui_input.cpp \
+	source/gtkui/gtkui_input.h \
+	source/gtkui/gtkui_config.cpp
 endif
 
 # install full HTML suite

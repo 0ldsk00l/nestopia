@@ -3,7 +3,7 @@ AC_PREREQ([2.69])
 AC_INIT(
 	[nestopia],
 	[1.49-WIP])
-AC_CONFIG_SRCDIR([source/unix/main.cpp])
+AC_CONFIG_SRCDIR([source])
 AC_LANG([C++])
 
 

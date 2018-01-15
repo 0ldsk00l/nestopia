@@ -65,8 +65,10 @@ typedef struct {
 	bool misc_overclock;
 } settings_t;
 
-void config_file_read();
-void config_file_write();
+void config_file_read(const char *nstdir);
+void config_file_write(const char *nstdir);
 void config_set_default();
 static int config_match(void* user, const char* section, const char* name, const char* value);
+
+extern settings_t conf;
 #endif

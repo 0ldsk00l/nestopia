@@ -24,27 +24,27 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "main.h"
 #include "config.h"
 #include "ini.h"
 
 settings_t conf;
 
-char confpath[256];
-extern nstpaths_t nstpaths;
-
-void config_file_read() {
+void config_file_read(const char *nstdir) {
 	// Read the config file
 
-	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstpaths.nstdir);
+	char confpath[256];
+	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstdir);
 
 	if (ini_parse(confpath, config_match, &conf) < 0) {
 		fprintf(stderr, "Failed to read config file %s: Using defaults.\n", confpath);
 	}
 }
 
-void config_file_write() {
+void config_file_write(const char *nstdir) {
 	// Write the config file
+	
+	char confpath[256];
+	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstdir);
 	
 	FILE *fp = fopen(confpath, "w");
 	if (fp != NULL)	{

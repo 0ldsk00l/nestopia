@@ -24,11 +24,8 @@
 #include <stdlib.h>
 #include <getopt.h>
 
-#include "main.h"
 #include "cli.h"
 #include "config.h"
-
-extern settings_t conf;
 
 void cli_error(const char *message) {
 	cli_show_usage();

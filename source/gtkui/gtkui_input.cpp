@@ -20,12 +20,11 @@
  * 
  */
 
-#include "../main.h"
-#include "../config.h"
-#include "../input.h"
-#include "../video.h"
-#include "../audio.h"
-#include "../ini.h"
+#include "main.h"
+#include "input.h"
+#include "video.h"
+#include "audio.h"
+#include "ini.h"
 
 #include "gtkui.h"
 #include "gtkui_input.h"
@@ -36,7 +35,6 @@ gpad_t pad[NUMGAMEPADS];
 
 static char inputconfpath[256];
 
-//extern settings_t conf;
 extern nstpaths_t nstpaths;
 extern Input::Controllers *cNstPads;
 

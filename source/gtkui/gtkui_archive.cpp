@@ -24,17 +24,15 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include "../main.h"
-#include "../config.h"
+#include "main.h"
+#include "config.h"
 
 #include "gtkui.h"
 #include "gtkui_archive.h"
 
-bool windowopen, cancelled;
+static bool windowopen, cancelled;
 
-GtkWidget *archivewindow;
-
-extern settings_t conf;
+static GtkWidget *archivewindow;
 
 bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 	// Select a filename to pull out of the archive

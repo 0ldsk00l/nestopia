@@ -1,7 +1,7 @@
 /*
  * Nestopia UE
  * 
- * Copyright (C) 2012-2017 R. Danbrook
+ * Copyright (C) 2012-2018 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,9 +24,9 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-#include "../main.h"
-#include "../config.h"
-#include "../video.h"
+#include "main.h"
+#include "config.h"
+#include "video.h"
 
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
@@ -45,7 +45,6 @@ char iconpath[512];
 char padpath[512];
 
 extern dimensions_t basesize, rendersize;
-extern settings_t conf;
 extern int nst_quit;
 
 gpointer gtkui_emuloop(gpointer data) {
@@ -459,7 +458,7 @@ GtkWidget *gtkui_about() {
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), VERSION);
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "Cycle-Accurate Nintendo Entertainment System Emulator");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/nestopia/");
-	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2017, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
+	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2018, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
 	gtk_dialog_run(GTK_DIALOG(aboutdialog));
 	gtk_widget_destroy(aboutdialog);
 	
@@ -474,10 +473,10 @@ void gtkui_image_paths() {
 	// Load the SVG from local source dir if make install hasn't been done
 	struct stat svgstat;
 	if (stat(iconpath, &svgstat) == -1) {
-		snprintf(iconpath, sizeof(iconpath), "source/unix/icons/nestopia.svg");
+		snprintf(iconpath, sizeof(iconpath), "icons/nestopia.svg");
 	}
 	if (stat(padpath, &svgstat) == -1) {
-		snprintf(padpath, sizeof(padpath), "source/unix/icons/nespad.svg");
+		snprintf(padpath, sizeof(padpath), "icons/nespad.svg");
 	}
 }
 
