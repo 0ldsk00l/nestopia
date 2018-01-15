@@ -694,6 +694,8 @@ nestopia_SOURCES = \
 	source/nes_ntsc/demo_impl.h
 
 nestopia_SOURCES += \
+	source/common/nstcommon.cpp \
+	source/common/nstcommon.h \
 	source/common/cheats.cpp \
 	source/common/cheats.h \
 	source/common/cli.cpp \

@@ -31,6 +31,8 @@
 #include "gtkui/gtkui_config.h"
 #endif
 
+#include "nstcommon.h"
+
 #include "main.h"
 #include "config.h"
 #include "audio.h"
@@ -564,8 +566,8 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[ui.insertcoin2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
 	
 	// Process non-game events
-	if (keys[ui.fdsflip]) { nst_flip_disk(); }
-	if (keys[ui.fdsswitch]) { nst_switch_disk(); }
+	if (keys[ui.fdsflip]) { nst_fds_flip(); }
+	if (keys[ui.fdsswitch]) { nst_fds_switch(); }
 	if (keys[ui.qsave1]) { nst_state_quicksave(0); }
 	if (keys[ui.qsave2]) { nst_state_quicksave(1); }
 	if (keys[ui.qload1]) { nst_state_quickload(0); }
