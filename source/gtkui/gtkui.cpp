@@ -437,7 +437,7 @@ void gtkui_set_title(const char *title) {
 	gtk_window_set_title(GTK_WINDOW(gtkwindow), title);
 }
 
-void gtkui_toggle_fullscreen() {
+void gtkui_video_toggle_fullscreen() {
 	
 	video_toggle_fullscreen();
 	
@@ -449,6 +449,18 @@ void gtkui_toggle_fullscreen() {
 		gtk_window_unfullscreen(GTK_WINDOW(gtkwindow));
 		gtk_widget_show(menubar);
 	}
+	gtkui_resize();
+	video_init();
+}
+
+void gtkui_video_toggle_filter() {
+	video_toggle_filter();
+	gtkui_resize();
+	video_init();
+}
+
+void gtkui_video_toggle_scale() {
+	video_toggle_scalefactor();
 	gtkui_resize();
 	video_init();
 }
