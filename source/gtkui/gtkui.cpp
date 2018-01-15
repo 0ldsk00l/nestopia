@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
-#include "main.h"
+#include "nstcommon.h"
 #include "config.h"
 #include "video.h"
 
@@ -365,13 +365,13 @@ void gtkui_create() {
 		G_CALLBACK(gtkui_cb_reset), gpointer(1));
 	
 	g_signal_connect(G_OBJECT(fullscreen), "activate",
-		G_CALLBACK(video_toggle_fullscreen), NULL);
+		G_CALLBACK(gtkui_video_toggle_fullscreen), NULL);
 	
 	g_signal_connect(G_OBJECT(diskflip), "activate",
-		G_CALLBACK(nst_flip_disk), NULL);
+		G_CALLBACK(nst_fds_flip), NULL);
 	
 	g_signal_connect(G_OBJECT(diskswitch), "activate",
-		G_CALLBACK(nst_switch_disk), NULL);
+		G_CALLBACK(nst_fds_switch), NULL);
 	
 	g_signal_connect(G_OBJECT(cheats), "activate",
 		G_CALLBACK(gtkui_cheats), NULL);

@@ -22,7 +22,7 @@
 
 #include <stdlib.h>
 
-#include "main.h"
+#include "nstcommon.h"
 #include "video.h"
 #include "config.h"
 

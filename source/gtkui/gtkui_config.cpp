@@ -24,7 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#include "main.h"
+#include "nstcommon.h"
 #include "config.h"
 #include "audio.h"
 #include "input.h"
