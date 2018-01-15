@@ -25,7 +25,7 @@
 
 #include <stdlib.h>
 
-#include "main.h"
+#include "nstcommon.h"
 #include "config.h"
 #include "cheats.h"
 

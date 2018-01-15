@@ -24,7 +24,7 @@
 #include <archive.h>
 #include <archive_entry.h>
 
-#include "main.h"
+#include "nstcommon.h"
 #include "config.h"
 
 #include "gtkui.h"

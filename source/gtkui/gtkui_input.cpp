@@ -20,7 +20,7 @@
  * 
  */
 
-#include "main.h"
+#include "nstcommon.h"
 #include "input.h"
 #include "video.h"
 #include "audio.h"
@@ -278,8 +278,8 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 			else if (event->keyval == ui.qload1) { nst_state_quickload(0); }
 			else if (event->keyval == ui.qload2) { nst_state_quickload(1); }
 			else if (event->keyval == ui.screenshot) { video_screenshot(NULL); }
-			else if (event->keyval == ui.fdsflip) { nst_flip_disk(); }
-			else if (event->keyval == ui.fdsswitch) { nst_switch_disk(); }
+			else if (event->keyval == ui.fdsflip) { nst_fds_flip(); }
+			else if (event->keyval == ui.fdsswitch) { nst_fds_switch(); }
 			else if (event->keyval == ui.insertcoin1) { cNstPads->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
 			else if (event->keyval == ui.insertcoin2) { cNstPads->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
 			else if (event->keyval == ui.reset) { nst_reset(0); }

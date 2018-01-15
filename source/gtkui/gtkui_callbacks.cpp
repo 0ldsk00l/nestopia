@@ -22,7 +22,7 @@
 
 #include <SDL.h>
 
-#include "main.h"
+#include "nstcommon.h"
 #include "config.h"
 #include "video.h"
 #include "input.h"
