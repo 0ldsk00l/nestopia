@@ -27,7 +27,6 @@
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiInput.hpp"
 #include "core/api/NstApiVideo.hpp"
-#include "core/api/NstApiNsf.hpp"
 using namespace Nes::Api;
 extern Emulator emulator;
 
@@ -38,6 +37,7 @@ extern Emulator emulator;
 // Nst SDL
 #include "main.h"
 #include "cursor.h"
+#include "sdlvideo.h"
 
 static SDL_GLContext glcontext;
 SDL_Window *sdlwindow; // Make static when done

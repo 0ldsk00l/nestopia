@@ -286,14 +286,14 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 			else if (event->keyval == ui.ffspeed) { nst_timing_set_ffspeed(); }
 			else if (event->keyval == ui.rwstart) { nst_set_rewind(0); }
 			else if (event->keyval == ui.rwstop) { nst_set_rewind(1); }
-			else if (event->keyval == ui.filter) { video_toggle_filter(); }
-			else if (event->keyval == ui.scalefactor) { video_toggle_scalefactor(); }
+			else if (event->keyval == ui.filter) { gtkui_video_toggle_filter(); }
+			else if (event->keyval == ui.scalefactor) { gtkui_video_toggle_scale(); }
 			else if (event->keyval == gdk_keyval_from_name("space")) { cNstPads->pad[1].mic = 0x04; }
 			break;
 		case GDK_KEY_RELEASE:
 			input.pressed = 0;			
 			if (event->keyval == ui.ffspeed) { nst_timing_set_default(); }
-			else if (event->keyval == ui.fullscreen) { gtkui_toggle_fullscreen(); }
+			else if (event->keyval == ui.fullscreen) { gtkui_video_toggle_fullscreen(); }
 			else if (event->keyval == gdk_keyval_from_name("space")) { cNstPads->pad[1].mic = 0x00; }
 			break;
 		default: break;
