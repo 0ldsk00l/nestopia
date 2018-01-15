@@ -30,7 +30,7 @@
 #include "core/api/NstApiVideo.hpp"
 #include "core/api/NstApiNsf.hpp"
 
-#include "main.h"
+#include "nstcommon.h"
 #include "video.h"
 #include "config.h"
 #include "font.h"

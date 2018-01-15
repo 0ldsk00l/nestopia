@@ -1,7 +1,6 @@
 /*
  * Nestopia UE
  * 
- * Copyright (C) 2007-2008 R. Belmont
  * Copyright (C) 2012-2018 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -31,6 +30,7 @@ using namespace Nes::Api;
 extern Emulator emulator;
 
 // Nst Common
+#include "nstcommon.h"
 #include "config.h"
 #include "video.h"
 
@@ -40,7 +40,7 @@ extern Emulator emulator;
 #include "sdlvideo.h"
 
 static SDL_GLContext glcontext;
-SDL_Window *sdlwindow; // Make static when done
+static SDL_Window *sdlwindow;
 
 // Externs to get rid of
 extern nstpaths_t nstpaths;
