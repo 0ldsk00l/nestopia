@@ -20,6 +20,8 @@
  * 
  */
 
+#include <stdlib.h>
+
 #include "main.h"
 #include "video.h"
 #include "config.h"

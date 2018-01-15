@@ -44,7 +44,7 @@ static GThread *emuthread;
 char iconpath[512];
 char padpath[512];
 
-extern dimensions_t basesize, rendersize;
+extern dimensions_t rendersize; // Get rid of this extern
 extern int nst_quit;
 
 gpointer gtkui_emuloop(gpointer data) {
@@ -75,13 +75,13 @@ void gtkui_init(int argc, char *argv[]) {
 static void gtkui_glarea_realize(GtkGLArea *glarea) {
 	gtk_gl_area_make_current(glarea);
 	gtk_gl_area_set_has_depth_buffer(glarea, FALSE);
-	ogl_init();
+	nst_ogl_init();
 }
 
 static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
 	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
-	ogl_render();
+	nst_ogl_render();
 	nst_emuloop();
 }
 
@@ -427,7 +427,9 @@ void gtkui_signals_deinit() {
 void gtkui_resize() {
 	// Resize the GTK+ window
 	if (gtkwindow) {
+		video_set_dimensions();
 		gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
+		//printf("w: %d\th: %d\n", rendersize.w, rendersize.h);
 	}
 }
 
@@ -436,6 +438,9 @@ void gtkui_set_title(const char *title) {
 }
 
 void gtkui_toggle_fullscreen() {
+	
+	video_toggle_fullscreen();
+	
 	if (conf.video_fullscreen) {
 		gtk_widget_hide(menubar);
 		gtk_window_fullscreen(GTK_WINDOW(gtkwindow));
@@ -445,6 +450,7 @@ void gtkui_toggle_fullscreen() {
 		gtk_widget_show(menubar);
 	}
 	gtkui_resize();
+	video_init();
 }
 
 GtkWidget *gtkui_about() {

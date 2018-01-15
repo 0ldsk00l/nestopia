@@ -11,9 +11,6 @@
 #define VIDBUF_MAXSIZE 31457280
 
 #include <epoxy/gl.h>
-#include <SDL.h>
-#include <SDL_opengl.h>
-#include <SDL_endian.h>
 #ifdef _APPLE
 #include <OpenGL/gl.h>
 #endif
@@ -23,30 +20,28 @@ typedef struct {
 	int h;
 } dimensions_t;
 
-void ogl_init();
-void ogl_deinit();
-void ogl_render();
+void nst_ogl_init();
+void nst_ogl_deinit();
+void nst_ogl_render();
 
 void video_init();
-void video_create_sdlwindow();
-void video_create();
-void video_swapbuffers();
-void video_destroy();
 void video_toggle_fullscreen();
 void video_toggle_filter();
 void video_toggle_filterupdate();
 void video_toggle_scalefactor();
 void video_set_filter();
+
+dimensions_t nst_video_get_dimensions();
 void video_set_dimensions();
-void video_set_cursor();
-void video_set_title(const char *title);
+
+void nst_video_set_scrsize(dimensions_t scrsize); // Temporary?
 
 long video_lock_screen(void*& ptr);
 void video_unlock_screen(void*);
 void video_screenshot(const char* filename);
 void video_clear_buffer();
 void video_disp_nsf();
-void video_text_draw(const char *text, int xpos, int ypos);
-void video_text_match(const char *text, int *xpos, int *ypos, int strpos);
+void nst_video_text_draw(const char *text, int xpos, int ypos);
+void nst_video_text_match(const char *text, int *xpos, int *ypos, int strpos);
 
 #endif

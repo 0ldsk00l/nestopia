@@ -38,6 +38,8 @@
 #include "input.h"
 #include "ini.h"
 
+#include "sdlvideo.h"
+
 extern nstpaths_t nstpaths;
 extern dimensions_t rendersize, screensize;
 extern Emulator emulator;
@@ -174,7 +176,7 @@ void input_init() {
 		fprintf(stderr, "Port %d: %s\n", i + 1, controller);
 	}
 	
-	video_set_cursor();
+	nstsdl_video_set_cursor();
 }
 
 void input_joysticks_detect() {
@@ -580,9 +582,9 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	if (keys[ui.rwstop]) { nst_set_rewind(1); }
 	
 	// Video
-	if (event.key.keysym.scancode == ui.fullscreen && event.type == SDL_KEYUP) { video_toggle_fullscreen(); }
-	if (keys[ui.filter]) { video_toggle_filter(); }
-	if (keys[ui.scalefactor]) { video_toggle_scalefactor(); }
+	if (event.key.keysym.scancode == ui.fullscreen && event.type == SDL_KEYUP) { nstsdl_video_toggle_fullscreen(); }
+	if (keys[ui.filter]) { nstsdl_video_toggle_filter(); }
+	if (keys[ui.scalefactor]) { nstsdl_video_toggle_scale(); }
 	
 	// NSF
 	if (nst_nsf) {
