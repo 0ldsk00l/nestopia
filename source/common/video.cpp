@@ -31,16 +31,10 @@
 #include "core/api/NstApiNsf.hpp"
 
 #include "main.h"
-#include "audio.h"
 #include "video.h"
 #include "config.h"
-#include "cursor.h"
 #include "font.h"
 #include "png.h"
-
-#ifdef _GTK
-#include "gtkui.h"
-#endif
 
 using namespace Nes::Api;
 
@@ -53,9 +47,6 @@ char timebuf[6];
 static int overscan_offset, overscan_height;
 
 static uint32_t videobuf[VIDBUF_MAXSIZE]; // Maximum possible internal size
-
-static SDL_Window *sdlwindow;
-static SDL_GLContext glcontext;
 
 static Video::RenderState::Filter filter;
 static Video::RenderState renderstate;
@@ -95,7 +86,7 @@ GLuint fshader;
 GLuint gl_shader_prog = 0;
 GLuint gl_texture_id = 0;
 
-void ogl_init() {
+void nst_ogl_init() {
 	// Initialize OpenGL
 	
 	float vertices[] = {
@@ -166,7 +157,7 @@ void ogl_init() {
 	glUniform1i(glGetUniformLocation(gl_shader_prog, "nestex"), 0);
 }
 
-void ogl_deinit() {
+void nst_ogl_deinit() {
 	// Deinitialize OpenGL
 	if (gl_texture_id) { glDeleteTextures(1, &gl_texture_id); }
 	if (gl_shader_prog) { glDeleteProgram(gl_shader_prog); }
@@ -176,7 +167,7 @@ void ogl_deinit() {
 	if (vbo) { glDeleteBuffers(1, &vbo); }
 }
 
-void ogl_render() {
+void nst_ogl_render() {
 	// Render the scene
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
@@ -191,50 +182,39 @@ void ogl_render() {
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+void nst_video_refresh() {
+	// Refresh the video settings
 	
-	if (sdlwindow) { video_swapbuffers(); }
+	nst_ogl_deinit();
+	
+	nst_ogl_init();
 }
 
 void video_init() {
 	// Initialize video
-	ogl_deinit();
+	nst_ogl_deinit();
 	
 	video_set_dimensions();
 	video_set_filter();
 	
-	ogl_init();
+	nst_ogl_init();
 	
 	if (nst_nsf) { video_clear_buffer(); video_disp_nsf(); }
-	
-	video_set_cursor();
 }
 
 void video_toggle_fullscreen() {
 	// Toggle between fullscreen and window mode
 	if (!playing) { return; }
-	
 	conf.video_fullscreen ^= 1;
-	
-	if (conf.misc_disable_gui) {
-		Uint32 flags;
-		if (conf.video_fullscreen) {
-			flags = SDL_WINDOW_FULLSCREEN_DESKTOP;
-		}
-		else { flags = 0; }
-		SDL_SetWindowFullscreen(sdlwindow, flags);
-		SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
-	}
-	#ifdef _GTK
-	else { gtkui_toggle_fullscreen(); }
-	#endif
-	video_set_cursor();
-	video_init();
 }
 
 void video_toggle_filter() {
 	conf.video_filter++;
 	if (conf.video_filter > 5) { conf.video_filter = 0; }
-	video_init();
+	//video_init();
+	//nst_video_refresh();
 }
 
 void video_toggle_filterupdate() {
@@ -247,61 +227,11 @@ void video_toggle_scalefactor() {
 	// Toggle video scale factor
 	conf.video_scale_factor++;
 	if (conf.video_scale_factor > 8) { conf.video_scale_factor = 1; }
-	video_init();
+	//video_init();
 }
 
-void video_create_sdlwindow() {
-	// Create a standalone SDL window
-	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
-	
-	if (conf.video_fullscreen) {
-		SDL_ShowCursor(0);
-		windowflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	}
-	
-	sdlwindow = SDL_CreateWindow(
-		nstpaths.gamename,					//    window title
-		SDL_WINDOWPOS_UNDEFINED,			//    initial x position
-		SDL_WINDOWPOS_UNDEFINED,			//    initial y position
-		rendersize.w,						//    width, in pixels
-		rendersize.h,						//    height, in pixels
-		windowflags);
-	
-	if(sdlwindow == NULL) {
-		fprintf(stderr, "Could not create window: %s\n", SDL_GetError());
-	}
-	
-	SDL_GL_MakeCurrent(sdlwindow, glcontext);
-	SDL_GL_SetSwapInterval(conf.timing_vsync);
-}
-
-void video_create() {
-	// Create the window
-	
-	if (conf.misc_disable_gui) {
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
-		SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-		
-		video_create_sdlwindow();
-		glcontext = SDL_GL_CreateContext(sdlwindow);
-		
-		if(glcontext == NULL) {
-			fprintf(stderr, "Could not create glcontext: %s\n", SDL_GetError());
-		}
-		
-		fprintf(stderr, "OpenGL: %s\n", glGetString(GL_VERSION));
-	}
-}
-
-void video_swapbuffers() {
-	// Swap Buffers
-	SDL_GL_SwapWindow(sdlwindow);
-}
-
-void video_destroy() {
-	// Destroy the video window
-	SDL_DestroyWindow(sdlwindow);
+void nst_video_set_scrsize(dimensions_t scrsize) { // This should be temporary during rework FIXME
+	screensize = scrsize;
 }
 
 void video_set_filter() {
@@ -483,38 +413,31 @@ void video_set_filter() {
 	renderstate.height = basesize.h;
 	renderstate.bits.count = 32;
 	
-	#if SDL_BYTEORDER == SDL_BIG_ENDIAN
-	renderstate.bits.mask.r = 0x000000ff;
-	renderstate.bits.mask.g = 0xff000000;
-	renderstate.bits.mask.b = 0x00ff0000;
-	#else
-	renderstate.bits.mask.r = 0x00ff0000;
-	renderstate.bits.mask.g = 0x0000ff00;
-	renderstate.bits.mask.b = 0x000000ff;
-	#endif
-
+	int e = 1; // Check Endianness
+	if ((int)*((unsigned char *)&e) == 1) { // Little Endian
+		renderstate.bits.mask.r = 0x00ff0000;
+		renderstate.bits.mask.g = 0x0000ff00;
+		renderstate.bits.mask.b = 0x000000ff;
+	}
+	else { // Big Endian
+		renderstate.bits.mask.r = 0x000000ff;
+		renderstate.bits.mask.g = 0xff000000;
+		renderstate.bits.mask.b = 0x00ff0000;
+	}
+	
 	if (NES_FAILED(video.SetRenderState(renderstate))) {
 		fprintf(stderr, "Nestopia core rejected render state\n");
 		exit(1);
 	}
 }
 
+dimensions_t nst_video_get_dimensions() {
+	// Return the dimensions of the rendered video
+	return rendersize;
+}
+
 void video_set_dimensions() {
 	// Set up the video dimensions
-	
-	if (conf.misc_disable_gui) {
-		SDL_DisplayMode displaymode;
-		int displayindex = SDL_GetWindowDisplayIndex(sdlwindow);
-		SDL_GetDesktopDisplayMode(displayindex, &displaymode);
-		screensize.w = displaymode.w;
-		screensize.h = displaymode.h;
-	}
-	#ifdef _GTK
-	else {
-		// Do this later
-	}
-	#endif
-	
 	int scalefactor = conf.video_scale_factor;
 	if (conf.video_scale_factor > 4) { scalefactor = 4; }
 	if ((conf.video_scale_factor > 3) && (conf.video_filter == 5)) { scalefactor = 3; }
@@ -577,41 +500,6 @@ void video_set_dimensions() {
 		rendersize.h = screensize.h;
 		rendersize.w = screensize.w;
 	}
-	
-	if (conf.misc_disable_gui) { SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h); }
-	#ifdef _GTK
-	else { gtkui_resize(); }
-	#endif
-}
-
-void video_set_cursor() {
-	// Set the cursor to what it needs to be
-	int cursor;
-	bool special;
-	
-	if (conf.misc_disable_cursor) { SDL_ShowCursor(false); }
-	else {
-		if (Input(emulator).GetConnectedController(0) == Input::ZAPPER ||
-			Input(emulator).GetConnectedController(1) == Input::ZAPPER) {
-			special = true;
-			SDL_ShowCursor(true); // Must be set true to be modified if special
-			cursor_set_special(Input::ZAPPER);
-		}
-		else {
-			special = false;
-			cursor_set_default();
-		}
-		
-		if (conf.video_fullscreen) { cursor = special; }
-		else { cursor = true; }
-		
-		SDL_ShowCursor(cursor);
-	}
-}
-
-void video_set_title(const char *title) {
-	// Set the window title
-	SDL_SetWindowTitle(sdlwindow, title);
 }
 
 long video_lock_screen(void*& ptr) {
@@ -626,12 +514,12 @@ void video_unlock_screen(void*) {
 	
 	if (drawtext) {
 		//video_text_draw(textbuf, 8 * wscale, 16 * hscale); // Top
-		video_text_draw(textbuf, 8 * wscale, 218 * hscale); // Bottom
+		nst_video_text_draw(textbuf, 8 * wscale, 218 * hscale); // Bottom
 		drawtext--;
 	}
 	
 	if (drawtime) {
-		video_text_draw(timebuf, 208 * wscale, 218 * hscale);
+		nst_video_text_draw(timebuf, 208 * wscale, 218 * hscale);
 	}
 }
 
@@ -687,18 +575,18 @@ void video_disp_nsf() {
 	int wscale = renderstate.width / 256;
 	int hscale = renderstate.height / 240;
 	
-	video_text_draw(nsf.GetName(), 4 * wscale, 16 * hscale);
-	video_text_draw(nsf.GetArtist(), 4 * wscale, 28 * hscale);
-	video_text_draw(nsf.GetCopyright(), 4 * wscale, 40 * hscale);
+	nst_video_text_draw(nsf.GetName(), 4 * wscale, 16 * hscale);
+	nst_video_text_draw(nsf.GetArtist(), 4 * wscale, 28 * hscale);
+	nst_video_text_draw(nsf.GetCopyright(), 4 * wscale, 40 * hscale);
 	
 	char currentsong[10];
 	snprintf(currentsong, sizeof(currentsong), "%d / %d", nsf.GetCurrentSong() +1, nsf.GetNumSongs());
-	video_text_draw(currentsong, 4 * wscale, 52 * hscale);
+	nst_video_text_draw(currentsong, 4 * wscale, 52 * hscale);
 	
-	ogl_render();
+	nst_ogl_render();
 }
 
-void video_text_draw(const char *text, int xpos, int ypos) {
+void nst_video_text_draw(const char *text, int xpos, int ypos) {
 	// Draw text on screen
 	uint32_t w = 0xc0c0c0c0;
 	uint32_t b = 0x00000000;
@@ -710,7 +598,7 @@ void video_text_draw(const char *text, int xpos, int ypos) {
 	int letternum = 0;
 	
 	for (int tpos = 0; tpos < (8 * numchars); tpos+=8) {
-		video_text_match(text, &letterxpos, &letterypos, letternum);
+		nst_video_text_match(text, &letterxpos, &letterypos, letternum);
 		for (int row = 0; row < 8; row++) { // Draw Rows
 			for (int col = 0; col < 8; col++) { // Draw Columns
 				switch (nesfont[row + letterypos][col + letterxpos]) {
@@ -730,7 +618,7 @@ void video_text_draw(const char *text, int xpos, int ypos) {
 	}
 }
 
-void video_text_match(const char *text, int *xpos, int *ypos, int strpos) {
+void nst_video_text_match(const char *text, int *xpos, int *ypos, int strpos) {
 	// Match letters to draw on screen
 	switch (text[strpos]) {
 		case ' ': *xpos = 0; *ypos = 0; break;

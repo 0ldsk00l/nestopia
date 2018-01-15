@@ -48,7 +48,7 @@ void gtkui_cb_video_refresh() {
 	if (playing) {
 		video_init();
 	}
-	else { video_set_dimensions(); }
+	else { gtkui_resize(); }
 }
 
 // Video //
@@ -261,7 +261,7 @@ void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata)
 void gtkui_cb_misc_disable_cursor(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Enable or Disable the Cursor
 	conf.misc_disable_cursor = gtk_toggle_button_get_active(togglebutton);
-	video_set_cursor();
+	//video_set_cursor();
 }
 
 void gtkui_cb_misc_config_pause(GtkToggleButton *togglebutton, gpointer userdata) {

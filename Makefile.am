@@ -715,6 +715,8 @@ nestopia_SOURCES += \
 	source/sdl/input.h \
 	source/sdl/cursor.cpp \
 	source/sdl/cursor.h \
+	source/sdl/sdlvideo.cpp \
+	source/sdl/sdlvideo.h \
 	source/sdl/main.cpp \
 	source/sdl/main.h
 

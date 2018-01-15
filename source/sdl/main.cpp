@@ -59,6 +59,9 @@
 #include "config.h"
 #include "cheats.h"
 
+// Nst SDL
+#include "sdlvideo.h"
+
 #ifdef _GTK
 #include "gtkui.h"
 #include "gtkui_archive.h"
@@ -265,7 +268,7 @@ void nst_pause() {
 	#endif
 	
 	playing = false;
-	video_set_cursor();
+	nstsdl_video_set_cursor();
 }
 
 void nst_fds_info() {
@@ -877,10 +880,10 @@ void nst_load(const char *filename) {
 		if (conf.misc_disable_gui) { cli_error(errorstring); }
 		else {
 			if (conf.video_fullscreen) {
-				video_destroy();
+				//nstsdl_video_destroy();
 				conf.video_fullscreen = false;
-				video_create();
-				video_set_cursor();
+				//video_create();
+				//nstsdl_video_set_cursor();
 			}
 			gtkui_message(errorstring);
 		}
@@ -912,7 +915,7 @@ void nst_load(const char *filename) {
 	loaded = 1;
 	
 	// Set the title
-	if (conf.misc_disable_gui) { video_set_title(nstpaths.gamename); }
+	if (conf.misc_disable_gui) { nstsdl_video_set_title(nstpaths.gamename); }
 	#ifdef _GTK
 	else { gtkui_set_title(nstpaths.gamename); }
 	#endif
@@ -1044,7 +1047,7 @@ int main(int argc, char *argv[]) {
 	video_set_dimensions();
 	
 	// Create the window
-	if (conf.misc_disable_gui) { video_create(); }
+	if (conf.misc_disable_gui) { nstsdl_video_create(); }
 	#ifdef _GTK
 	else { gtkui_init(argc, argv); }
 	#endif
@@ -1094,7 +1097,11 @@ int main(int argc, char *argv[]) {
 	
 	if (conf.misc_disable_gui) { // SDL Main loop
 		nst_quit = 0;
-		while (!nst_quit) { ogl_render(); nst_emuloop(); }
+		while (!nst_quit) {
+			nst_ogl_render();
+			nstsdl_video_swapbuffers();
+			nst_emuloop();
+		}
 	}
 	#ifdef _GTK
 	else { gtk_main(); } // GTK+ main loop

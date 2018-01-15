@@ -293,7 +293,7 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 		case GDK_KEY_RELEASE:
 			input.pressed = 0;			
 			if (event->keyval == ui.ffspeed) { nst_timing_set_default(); }
-			else if (event->keyval == ui.fullscreen) { video_toggle_fullscreen(); }
+			else if (event->keyval == ui.fullscreen) { gtkui_toggle_fullscreen(); }
 			else if (event->keyval == gdk_keyval_from_name("space")) { cNstPads->pad[1].mic = 0x00; }
 			break;
 		default: break;
