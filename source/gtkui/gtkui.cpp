@@ -25,8 +25,11 @@
 #include <sys/stat.h>
 
 #include "nstcommon.h"
+#include "cli.h"
 #include "config.h"
+#include "audio.h"
 #include "video.h"
+#include "input.h"
 
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
@@ -45,7 +48,8 @@ char iconpath[512];
 char padpath[512];
 
 extern dimensions_t rendersize; // Get rid of this extern
-extern int nst_quit;
+extern nstpaths_t nstpaths;
+int nst_quit = 0;
 
 gpointer gtkui_emuloop(gpointer data) {
 	while(!nst_quit) { nst_emuloop(); }
@@ -530,4 +534,74 @@ void gtkui_cursor_set_default() {
 	gdk_window_set_cursor(gdkwindow, cursor);
 	gdk_flush();
 	g_object_unref(cursor);
+}
+
+int main(int argc, char *argv[]) {
+	
+	// Set up directories
+	nst_set_dirs();
+	
+	// Set default config options
+	config_set_default();
+	
+	// Read the config file and override defaults
+	config_file_read(nstpaths.nstdir);
+	
+	// Handle command line arguments
+	cli_handle_command(argc, argv);
+	
+	// Detect Joysticks
+	//input_joysticks_detect();
+	
+	// Set default input keys
+	gtkui_input_set_default();
+	
+	// Read the input config file and override defaults
+	gtkui_input_config_read();
+	
+	// Set audio function pointers
+	audio_set_funcs();
+	
+	// Set the video dimensions
+	video_set_dimensions();
+	
+	// Set up callbacks
+	nst_set_callbacks();
+	
+	// Initialize and load FDS BIOS and NstDatabase.xml
+	nst_fds_bios_load();
+	nst_db_load();
+	
+	gtkui_init(argc, argv);
+	
+	// Load a rom from the command line
+	if (argc > 1) { nst_load(argv[argc - 1]); }
+	
+	/////////// DO THE MAIN LOOP
+	
+	gtkui_signals_init();
+	
+	gtk_main();
+	
+	// Remove the cartridge and shut down the NES
+	nst_unload();
+	
+	// Unload the FDS BIOS, NstDatabase.xml, and the custom palette
+	nst_db_unload();
+	nst_fds_bios_unload();
+	nst_palette_unload();
+	
+	// Deinitialize audio
+	audio_deinit();
+	
+	// Deinitialize joysticks
+	//input_joysticks_close();
+	
+	// Write the input config file
+	gtkui_input_config_write();
+	
+	// Write the config file
+	config_file_write(nstpaths.nstdir);
+
+	return 0;
 }

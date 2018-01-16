@@ -194,6 +194,10 @@ void nst_video_refresh() {
 
 void video_init() {
 	// Initialize video
+	
+	Video video(emulator);
+	video.EnableOverclocking(conf.misc_overclock);
+	
 	nst_ogl_deinit();
 	
 	video_set_dimensions();
