@@ -30,21 +30,6 @@ Differences on OS X:
 export PKG_CONFIG_PATH=/usr/local/opt/libarchive/lib/pkgconfig/
 ./configure --disable-gui
 ```
-
-## Building with CMake
-In order to build with CMake:
-```
-mkdir BUILD
-cd BUILD
-cmake -DCMAKE_INSTALL_PREFIX=<INSTALLATION PREFIX> ..
-make -j<NUMBER OF CORES>
-```
-optionally:
-```
-make install
-```
-The CMake build system can also be used with Ninja by adding `-GNinja` to the `cmake` line.
-
 In order to bootstrap the Autotools you will need:
 
 1.  **Autoconf**; latest 2.69 release (http://www.gnu.org/software/autoconf/)
