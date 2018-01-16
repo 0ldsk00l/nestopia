@@ -33,7 +33,7 @@
 
 #include "nstcommon.h"
 
-#include "main.h"
+#include "sdlmain.h"
 #include "config.h"
 #include "audio.h"
 #include "video.h"
@@ -613,9 +613,9 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 	}
 	
 	// Escape exits when not in GUI mode
-	if (keys[SDL_SCANCODE_ESCAPE]) {
+	/*if (keys[SDL_SCANCODE_ESCAPE]) {
 		if (conf.misc_disable_gui) { nst_schedule_quit(); }
-	}
+	}*/
 }
 
 void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {

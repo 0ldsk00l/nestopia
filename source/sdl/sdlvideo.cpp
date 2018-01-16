@@ -35,7 +35,7 @@ extern Emulator emulator;
 #include "video.h"
 
 // Nst SDL
-#include "main.h"
+//#include "main.h"
 #include "cursor.h"
 #include "sdlvideo.h"
 

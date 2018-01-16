@@ -21,11 +21,7 @@
  * 
  */
 
-#include <iostream>
-#include <fstream>
-#include <sstream>
-
-#include "main.h"
+#include "sdlmain.h"
 #include "cli.h"
 #include "audio.h"
 #include "video.h"
@@ -41,12 +37,9 @@
 
 using namespace Nes::Api;
 
-extern Emulator emulator;
-extern Video::Output *cNstVideo;
-extern Sound::Output *cNstSound;
-extern Input::Controllers *cNstPads;
-
 int nst_quit = 0;
+
+extern Input::Controllers *cNstPads;
 
 extern nstpaths_t nstpaths;
 
@@ -92,9 +85,6 @@ int main(int argc, char *argv[]) {
 	// Read the input config file and override defaults
 	input_config_read();
 	
-	// Set input function pointer
-	//nst_inputloop = &nst_inputloop_sdl;
-	
 	// Set audio function pointers
 	audio_set_funcs();
 	
@@ -111,12 +101,8 @@ int main(int argc, char *argv[]) {
 	nst_fds_bios_load();
 	nst_db_load();
 	
-	Video video(emulator);
-	video.EnableOverclocking(conf.misc_overclock);
-	
 	// Load a rom from the command line
 	if (argc > 1) {
-		conf.misc_disable_gui = true;
 		nst_load(argv[argc - 1]);
 		/*if (!loaded) {
 			fprintf(stderr, "Fatal: Could not load ROM\n");

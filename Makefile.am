@@ -718,9 +718,7 @@ nestopia_SOURCES += \
 	source/sdl/cursor.cpp \
 	source/sdl/cursor.h \
 	source/sdl/sdlvideo.cpp \
-	source/sdl/sdlvideo.h \
-	source/sdl/main.cpp \
-	source/sdl/main.h
+	source/sdl/sdlvideo.h
 
 if ENABLE_GUI
 nestopia_SOURCES += \
@@ -738,6 +736,10 @@ nestopia_SOURCES += \
 	source/gtkui/gtkui_input.cpp \
 	source/gtkui/gtkui_input.h \
 	source/gtkui/gtkui_config.cpp
+else
+nestopia_SOURCES += \
+	source/sdl/sdlmain.cpp \
+	source/sdl/sdlmain.h
 endif
 
 # install full HTML suite
