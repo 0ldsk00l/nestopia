@@ -69,7 +69,6 @@ static std::fstream *movierecfile;
 void *custompalette = NULL;
 
 bool playing = false;
-bool loaded = false;
 bool nst_nsf = false;
 bool nst_pal = false;
 
@@ -769,10 +768,7 @@ void nst_unload() {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
 	
-	if (!loaded) { return; }
-	
 	// Power down the NES
-	fprintf(stderr, "\rEmulation stopped\n");
 	machine.Power(false);
 
 	// Remove the cartridge
@@ -792,7 +788,7 @@ void nst_pause() {
 
 void nst_play() {
 	// Play the game
-	if (playing || !loaded) { return; }
+	if (playing) { return; }
 	
 	video_init();
 	audio_init();
@@ -815,7 +811,7 @@ void nst_play() {
 	playing = true;
 }
 
-void nst_load(const char *filename) {
+int nst_load(const char *filename) {
 	// Load a Game ROM
 	Machine machine(emulator);
 	Nsf nsf(emulator);
@@ -829,7 +825,8 @@ void nst_load(const char *filename) {
 	if (playing) { nst_pause(); }
 	
 	// Pull out any inserted cartridges
-	nst_unload(); //drawtime = false;
+	static int loaded = 0;
+	if (loaded) { nst_unload(); } //drawtime = false;
 	
 	// Handle the file as an archive if it is one
 	if (nst_archive_handle(filename, &rom, &romsize, NULL)) {
@@ -883,7 +880,7 @@ void nst_load(const char *filename) {
 		
 		fprintf(stderr, "%s\n", errorstring);
 		
-		return;
+		return 0;
 	}
 	
 	// Deal with any DIP Switches
@@ -905,14 +902,12 @@ void nst_load(const char *filename) {
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);
 	
-	// Note that something is loaded
-	loaded = 1;
-	
-	// Set the title
-	//nstsdl_video_set_title(nstpaths.gamename);
-	
 	// Load the custom palette
 	nst_palette_load(nstpaths.palettepath);
+	
+	// Set video overclocking
+	Video video(emulator);
+	video.EnableOverclocking(conf.misc_overclock);
 	
 	// Set the RAM's power state
 	machine.SetRamPowerState(conf.misc_power_state);
@@ -920,5 +915,6 @@ void nst_load(const char *filename) {
 	// Power on
 	machine.Power(true);
 	
-	nst_play();
+	loaded = 1;
+	return loaded;
 }
