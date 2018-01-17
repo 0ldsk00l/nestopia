@@ -22,28 +22,20 @@
 
 #include <SDL.h>
 
-// Get rid of these over time FIXME
-#include "core/api/NstApiEmulator.hpp"
-#include "core/api/NstApiInput.hpp"
-#include "core/api/NstApiVideo.hpp"
-using namespace Nes::Api;
-extern Emulator emulator;
-
 // Nst Common
 #include "nstcommon.h"
 #include "config.h"
 #include "video.h"
 
 // Nst SDL
-//#include "main.h"
 #include "cursor.h"
 #include "sdlvideo.h"
 
 static SDL_GLContext glcontext;
 static SDL_Window *sdlwindow;
 
-// Externs to get rid of
 extern nstpaths_t nstpaths;
+extern Emulator emulator;
 
 void nstsdl_video_create() {
 	// Create the window
@@ -53,15 +45,10 @@ void nstsdl_video_create() {
 	
 	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
 	
-	if (conf.video_fullscreen) {
-		SDL_ShowCursor(0);
-		windowflags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
-	}
-	
-	dimensions_t rendersize = nst_video_get_dimensions();
+	dimensions_t rendersize = nst_video_get_dimensions_render();
 	
 	sdlwindow = SDL_CreateWindow(
-		nstpaths.gamename,					//    window title
+		NULL,								//    window title
 		SDL_WINDOWPOS_UNDEFINED,			//    initial x position
 		SDL_WINDOWPOS_UNDEFINED,			//    initial y position
 		rendersize.w,						//    width, in pixels
@@ -81,6 +68,11 @@ void nstsdl_video_create() {
 	}
 	
 	fprintf(stderr, "OpenGL: %s\n", glGetString(GL_VERSION));
+	
+	nst_video_set_dimensions_screen(nstsdl_video_get_dimensions());
+	
+	// Fullscreen the window after creation
+	if (conf.video_fullscreen) { nstsdl_video_toggle_fullscreen(); }
 }
 
 void nstsdl_video_destroy() {
@@ -100,7 +92,7 @@ dimensions_t nstsdl_video_get_dimensions() {
 }
 
 void nstsdl_video_resize() {
-	dimensions_t rendersize = nst_video_get_dimensions();
+	dimensions_t rendersize = nst_video_get_dimensions_render();
 	SDL_SetWindowSize(sdlwindow, rendersize.w, rendersize.h);
 }
 
@@ -151,7 +143,7 @@ void nstsdl_video_toggle_fullscreen() {
 	
 	nstsdl_video_set_cursor();
 	
-	nst_video_set_scrsize(nstsdl_video_get_dimensions());
+	nst_video_set_dimensions_screen(nstsdl_video_get_dimensions());
 	
 	video_init();
 	
@@ -160,14 +152,14 @@ void nstsdl_video_toggle_fullscreen() {
 
 void nstsdl_video_toggle_filter() {
 	video_toggle_filter();
-	nst_video_set_scrsize(nstsdl_video_get_dimensions());
+	nst_video_set_dimensions_screen(nstsdl_video_get_dimensions());
 	video_init();
 	nstsdl_video_resize();
 }
 
 void nstsdl_video_toggle_scale() {
 	video_toggle_scalefactor();
-	nst_video_set_scrsize(nstsdl_video_get_dimensions());
+	nst_video_set_dimensions_screen(nstsdl_video_get_dimensions());
 	video_init();
 	nstsdl_video_resize();
 }

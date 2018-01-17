@@ -40,10 +40,10 @@
 #include "input.h"
 #include "ini.h"
 
+#include "sdlmain.h"
 #include "sdlvideo.h"
 
 extern nstpaths_t nstpaths;
-extern dimensions_t rendersize, screensize;
 extern Emulator emulator;
 extern bool nst_nsf;
 
@@ -305,6 +305,9 @@ void input_inject_mouse(Input::Controllers *controllers, int b, int s, int x, in
 			xaspect = (double)(Video::Output::WIDTH) / (double)(TV_WIDTH);
 		}
 		else { xaspect = 1.0; }
+		
+		dimensions_t rendersize = nst_video_get_dimensions_render();
+		dimensions_t screensize = nst_video_get_dimensions_screen();
 		
 		// Calculate fullscreen X coords
 		if (conf.video_fullscreen) {
@@ -612,10 +615,8 @@ void input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
 		}
 	}
 	
-	// Escape exits when not in GUI mode
-	/*if (keys[SDL_SCANCODE_ESCAPE]) {
-		if (conf.misc_disable_gui) { nst_schedule_quit(); }
-	}*/
+	// Escape exits
+	//if (keys[SDL_SCANCODE_ESCAPE]) { nst_schedule_quit(); } // This should only be in the SDL build
 }
 
 void input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
@@ -1039,7 +1040,7 @@ void input_set_default() {
 int input_configure_item(int pnum, int bnum, int type) {
 	// Configure an input item
 	
-	if (confrunning) { return 0; }
+	/*if (confrunning) { return 0; }
 	
 	SDL_Event event, eventbuf;
 	
@@ -1117,7 +1118,7 @@ int input_configure_item(int pnum, int bnum, int type) {
 			}
 		}
 		if (confstop) { confrunning = false; }
-	}
+	}*/
 	
 	return 1;
 }

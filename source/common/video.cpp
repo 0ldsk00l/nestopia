@@ -51,7 +51,7 @@ static uint32_t videobuf[VIDBUF_MAXSIZE]; // Maximum possible internal size
 static Video::RenderState::Filter filter;
 static Video::RenderState renderstate;
 
-dimensions_t basesize, rendersize, screensize;
+static dimensions_t basesize, rendersize, screensize;
 
 extern void *custompalette;
 
@@ -195,9 +195,6 @@ void nst_video_refresh() {
 void video_init() {
 	// Initialize video
 	
-	Video video(emulator);
-	video.EnableOverclocking(conf.misc_overclock);
-	
 	nst_ogl_deinit();
 	
 	video_set_dimensions();
@@ -232,10 +229,6 @@ void video_toggle_scalefactor() {
 	conf.video_scale_factor++;
 	if (conf.video_scale_factor > 8) { conf.video_scale_factor = 1; }
 	//video_init();
-}
-
-void nst_video_set_scrsize(dimensions_t scrsize) { // This should be temporary during rework FIXME
-	screensize = scrsize;
 }
 
 void video_set_filter() {
@@ -435,9 +428,18 @@ void video_set_filter() {
 	}
 }
 
-dimensions_t nst_video_get_dimensions() {
+dimensions_t nst_video_get_dimensions_render() {
 	// Return the dimensions of the rendered video
 	return rendersize;
+}
+
+dimensions_t nst_video_get_dimensions_screen() {
+	// Return the dimensions of the screen
+	return screensize;
+}
+
+void nst_video_set_dimensions_screen(dimensions_t scrsize) {
+	screensize = scrsize;
 }
 
 void video_set_dimensions() {

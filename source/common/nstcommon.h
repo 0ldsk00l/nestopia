@@ -82,7 +82,7 @@ void nst_reset(bool hardreset);
 void nst_emuloop();
 
 // Unsorted
-void nst_load(const char *filename);
+int nst_load(const char *filename);
 void nst_unload();
 void nst_play();
 void nst_pause();

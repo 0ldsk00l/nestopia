@@ -31,10 +31,10 @@ void video_toggle_filterupdate();
 void video_toggle_scalefactor();
 void video_set_filter();
 
-dimensions_t nst_video_get_dimensions();
+dimensions_t nst_video_get_dimensions_render();
+dimensions_t nst_video_get_dimensions_screen();
+void nst_video_set_dimensions_screen(dimensions_t scrsize);
 void video_set_dimensions();
-
-void nst_video_set_scrsize(dimensions_t scrsize); // Temporary?
 
 long video_lock_screen(void*& ptr);
 void video_unlock_screen(void*);

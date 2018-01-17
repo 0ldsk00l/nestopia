@@ -21,26 +21,23 @@
  * 
  */
 
-#include "sdlmain.h"
+// Nst Common
+#include "nstcommon.h"
 #include "cli.h"
 #include "audio.h"
 #include "video.h"
 #include "input.h"
 #include "config.h"
-#include "cheats.h"
-
-// Nst Common
-#include "nstcommon.h"
 
 // Nst SDL
+#include "sdlmain.h"
 #include "sdlvideo.h"
 
 using namespace Nes::Api;
 
-int nst_quit = 0;
+static int nst_quit = 0;
 
 extern Input::Controllers *cNstPads;
-
 extern nstpaths_t nstpaths;
 
 extern void (*audio_deinit)();
@@ -70,6 +67,9 @@ int main(int argc, char *argv[]) {
 	// Handle command line arguments
 	cli_handle_command(argc, argv);
 	
+	// Set up callbacks
+	nst_set_callbacks();
+	
 	// Initialize SDL
 	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
@@ -91,27 +91,24 @@ int main(int argc, char *argv[]) {
 	// Set the video dimensions
 	video_set_dimensions();
 	
-	// Create the window
-	nstsdl_video_create();
-	
-	// Set up callbacks
-	nst_set_callbacks();
-	
 	// Initialize and load FDS BIOS and NstDatabase.xml
 	nst_fds_bios_load();
 	nst_db_load();
 	
 	// Load a rom from the command line
 	if (argc > 1) {
-		nst_load(argv[argc - 1]);
-		/*if (!loaded) {
-			fprintf(stderr, "Fatal: Could not load ROM\n");
-			exit(1);
-		}*/
+		if (!nst_load(argv[argc - 1])) { nst_quit = 1; }
+		else {
+			// Create the window
+			nstsdl_video_create();
+			nstsdl_video_set_title(nstpaths.gamename);
+			
+			// Set play in motion
+			nst_play();
+		}
 	}
 	
 	// Start the main loop
-	nst_quit = 0;
 	SDL_Event event;
 	while (!nst_quit) {
 		nst_ogl_render();

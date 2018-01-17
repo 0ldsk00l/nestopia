@@ -24,6 +24,8 @@
 #include <stdlib.h>
 #include <sys/stat.h>
 
+#include <SDL.h>
+
 #include "nstcommon.h"
 #include "cli.h"
 #include "config.h"
@@ -47,7 +49,7 @@ static GThread *emuthread;
 char iconpath[512];
 char padpath[512];
 
-extern dimensions_t rendersize; // Get rid of this extern
+extern Input::Controllers *cNstPads;
 extern nstpaths_t nstpaths;
 int nst_quit = 0;
 
@@ -87,6 +89,20 @@ static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
 	nst_ogl_render();
 	nst_emuloop();
+	
+	// Move this later FIXME
+	SDL_Event event;
+	while (SDL_PollEvent(&event)) {
+		switch (event.type) {
+			case SDL_JOYHATMOTION:
+			case SDL_JOYAXISMOTION:
+			case SDL_JOYBUTTONDOWN:
+			case SDL_JOYBUTTONUP:
+				input_process(cNstPads, event);
+				break;
+			default: break;
+		}	
+	}
 }
 
 void gtkui_state_quickload(GtkWidget *widget, gpointer userdata) {
@@ -103,6 +119,21 @@ void gtkui_open_recent(GtkWidget *widget, gpointer userdata) {
 	// Open a recently used item
 	gchar *uri = gtk_recent_chooser_get_current_uri((GtkRecentChooser*)widget);
 	nst_load(g_filename_from_uri(uri, NULL, NULL));
+	nst_play();
+	gtkui_set_title(nstpaths.gamename);
+}
+
+dimensions_t gtkui_video_get_dimensions() {
+	// Return the dimensions of the current screen
+	dimensions_t scrsize;
+	GdkDisplay *display = gdk_display_get_default();
+	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(gtkwindow));
+	GdkMonitor *monitor = gdk_display_get_monitor_at_window(display, gdkwindow);
+	GdkRectangle geom;
+	gdk_monitor_get_geometry(monitor, &geom);
+	scrsize.w = geom.width;
+	scrsize.h = geom.height;
+	return scrsize;
 }
 
 void gtkui_create() {
@@ -270,6 +301,7 @@ void gtkui_create() {
 	g_object_set_data(G_OBJECT(gtkwindow), "area", drawingarea);
 	
 	// Set the Drawing Area to be the size of the game output
+	dimensions_t rendersize = nst_video_get_dimensions_render();
 	gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
 	
 	// Pack the box with the menubar, drawingarea, and statusbar
@@ -393,6 +425,8 @@ void gtkui_create() {
 	
 	gtk_widget_show_all(gtkwindow);
 	
+	nst_video_set_dimensions_screen(gtkui_video_get_dimensions());
+	
 	//gtkui_emuloop_start();
 }
 
@@ -432,8 +466,8 @@ void gtkui_resize() {
 	// Resize the GTK+ window
 	if (gtkwindow) {
 		video_set_dimensions();
+		dimensions_t rendersize = nst_video_get_dimensions_render();
 		gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
-		//printf("w: %d\th: %d\n", rendersize.w, rendersize.h);
 	}
 }
 
@@ -453,8 +487,9 @@ void gtkui_video_toggle_fullscreen() {
 		gtk_window_unfullscreen(GTK_WINDOW(gtkwindow));
 		gtk_widget_show(menubar);
 	}
-	gtkui_resize();
+	nst_video_set_dimensions_screen(gtkui_video_get_dimensions());
 	video_init();
+	gtkui_resize();
 }
 
 void gtkui_video_toggle_filter() {
@@ -550,17 +585,11 @@ int main(int argc, char *argv[]) {
 	// Handle command line arguments
 	cli_handle_command(argc, argv);
 	
-	// Detect Joysticks
-	//input_joysticks_detect();
-	
 	// Set default input keys
 	gtkui_input_set_default();
 	
 	// Read the input config file and override defaults
 	gtkui_input_config_read();
-	
-	// Set audio function pointers
-	audio_set_funcs();
 	
 	// Set the video dimensions
 	video_set_dimensions();
@@ -568,19 +597,35 @@ int main(int argc, char *argv[]) {
 	// Set up callbacks
 	nst_set_callbacks();
 	
+	// Initialize SDL Audio and Joystick
+	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
+		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+		return 1;
+	}
+	
+	// Set audio function pointers
+	audio_set_funcs();
+	
+	// Detect and set up Joysticks
+	input_joysticks_detect();
+	input_set_default();
+	input_config_read();
+	
 	// Initialize and load FDS BIOS and NstDatabase.xml
 	nst_fds_bios_load();
 	nst_db_load();
 	
 	gtkui_init(argc, argv);
-	
-	// Load a rom from the command line
-	if (argc > 1) { nst_load(argv[argc - 1]); }
-	
-	/////////// DO THE MAIN LOOP
-	
 	gtkui_signals_init();
 	
+	// Load a rom from the command line
+	if (argc > 1) {
+		nst_load(argv[argc - 1]);
+		nst_play();
+		gtkui_set_title(nstpaths.gamename);
+	}
+	
+	// Start GTK+ main loop
 	gtk_main();
 	
 	// Remove the cartridge and shut down the NES
@@ -595,7 +640,10 @@ int main(int argc, char *argv[]) {
 	audio_deinit();
 	
 	// Deinitialize joysticks
-	//input_joysticks_close();
+	input_joysticks_close();
+	
+	// Write the input config file
+	input_config_write();
 	
 	// Write the input config file
 	gtkui_input_config_write();
