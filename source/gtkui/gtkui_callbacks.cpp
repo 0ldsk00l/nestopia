@@ -253,10 +253,10 @@ void gtkui_cb_misc_genie_distortion(GtkToggleButton *togglebutton, gpointer user
 	conf.misc_genie_distortion = gtk_toggle_button_get_active(togglebutton);
 }
 
-void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata) {
+/*void gtkui_cb_misc_disable_gui(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Enable or Disable the GUI
 	conf.misc_disable_gui = gtk_toggle_button_get_active(togglebutton);
-}
+}*/
 
 void gtkui_cb_misc_disable_cursor(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Enable or Disable the Cursor

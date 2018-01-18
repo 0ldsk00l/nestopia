@@ -129,7 +129,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
 		//fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
 		fprintf(fp, "genie_distortion=%d\n", conf.misc_genie_distortion);
-		fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
+		//fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
 		fprintf(fp, "disable_cursor=%d\n", conf.misc_disable_cursor);
 		fprintf(fp, "config_pause=%d\n", conf.misc_config_pause);
 		fprintf(fp, "last_folder=%s\n", conf.misc_last_folder);
@@ -199,12 +199,9 @@ void config_set_default() {
 	conf.misc_soft_patching = true;
 	//conf.misc_suppress_screensaver = true;
 	conf.misc_genie_distortion = false;
-	conf.misc_disable_gui = false;
+	//conf.misc_disable_gui = false;
 	conf.misc_disable_cursor = false;
 	conf.misc_config_pause = false;
-	#ifdef _MINGW
-	conf.misc_disable_gui = true; // Disable GUI for MinGW
-	#endif
 	conf.misc_last_folder = NULL;
 	conf.misc_power_state = 0;
 	conf.misc_overclock = false;
@@ -267,7 +264,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
 	//else if (MATCH("misc", "suppress_screensaver")) { pconfig->misc_suppress_screensaver = atoi(value); }
 	else if (MATCH("misc", "genie_distortion")) { pconfig->misc_genie_distortion = atoi(value); }
-	else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
+	//else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
 	else if (MATCH("misc", "config_pause")) { pconfig->misc_config_pause = atoi(value); }
 	else if (MATCH("misc", "disable_cursor")) { pconfig->misc_disable_cursor = atoi(value); }
 	else if (MATCH("misc", "last_folder")) { pconfig->misc_last_folder = strdup(value); }

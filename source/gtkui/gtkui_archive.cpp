@@ -54,22 +54,6 @@ bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
 	}
 	// If it is an archive, handle it
 	else {
-		// Don't try to bring up a GUI selector if the GUI is disabled
-		if (conf.misc_disable_gui) {
-			// Fill the treestore with the filenames
-			while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-				const char *currentfile = archive_entry_pathname(entry);
-				if (nst_archive_checkext(currentfile)) {
-					snprintf(reqfile, reqsize, "%s", currentfile);
-					break;
-				}
-			}
-			archive_read_data_skip(a);
-			// Free the archive
-			r = archive_read_free(a);
-			return true;
-		}
-		
 		// Set up the archive window
 		GtkTreeIter iter;
 		GtkTreeModel *model;

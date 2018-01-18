@@ -1091,7 +1091,7 @@ GtkWidget *gtkui_config() {
 		G_CALLBACK(gtkui_cb_misc_genie_distortion), NULL);
 	
 	// Disable GUI
-	GtkWidget *check_misc_disable_gui = gtk_widget_new(
+	/*GtkWidget *check_misc_disable_gui = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
 				"label", "Disable GUI",
 				"halign", GTK_ALIGN_START,
@@ -1102,7 +1102,7 @@ GtkWidget *gtkui_config() {
 	//gtk_box_pack_start(GTK_BOX(box_misc), check_misc_disable_gui, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(check_misc_disable_gui), "toggled",
-		G_CALLBACK(gtkui_cb_misc_disable_gui), NULL);
+		G_CALLBACK(gtkui_cb_misc_disable_gui), NULL);*/
 	
 	// Disable Cursor
 	GtkWidget *check_misc_disable_cursor = gtk_widget_new(
