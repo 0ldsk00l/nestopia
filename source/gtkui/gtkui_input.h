@@ -33,6 +33,56 @@ typedef struct {
 	guint scalefactor;
 } gkeys_t;
 
+typedef struct {
+	// User Interface
+	char *qsave1;
+	char *qsave2;
+	char *qload1;
+	char *qload2;
+	
+	char *screenshot;
+	
+	char *fdsflip;
+	char *fdsswitch;
+	
+	char *insertcoin1;
+	char *insertcoin2;
+	
+	char *reset;
+	
+	char *ffspeed;
+	char *rwstart;
+	char *rwstop;
+	
+	char *fullscreen;
+	char *filter;
+	char *scalefactor;
+	
+	// Player 1
+	char *kb_p1u;
+	char *kb_p1d;
+	char *kb_p1l;
+	char *kb_p1r;
+	char *kb_p1select;
+	char *kb_p1start;
+	char *kb_p1a;
+	char *kb_p1b;
+	char *kb_p1ta;
+	char *kb_p1tb;
+	
+	// Player 2
+	char *kb_p2u;
+	char *kb_p2d;
+	char *kb_p2l;
+	char *kb_p2r;
+	char *kb_p2select;
+	char *kb_p2start;
+	char *kb_p2a;
+	char *kb_p2b;
+	char *kb_p2ta;
+	char *kb_p2tb;
+} ginputsettings_t;
+
 void gtkui_input_set_default();
 void gtkui_input_config_read();
 void gtkui_input_config_write();

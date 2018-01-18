@@ -704,6 +704,8 @@ nestopia_SOURCES += \
 	source/common/config.h \
 	source/common/video.cpp \
 	source/common/video.h \
+	source/common/input.cpp \
+	source/common/input.h \
 	source/common/font.h \
 	source/common/ini.cpp \
 	source/common/ini.h \
@@ -713,8 +715,8 @@ nestopia_SOURCES += \
 nestopia_SOURCES += \
 	source/sdl/audio.cpp \
 	source/sdl/audio.h \
-	source/sdl/input.cpp \
-	source/sdl/input.h \
+	source/sdl/sdlinput.cpp \
+	source/sdl/sdlinput.h \
 	source/sdl/cursor.cpp \
 	source/sdl/cursor.h \
 	source/sdl/sdlvideo.cpp \

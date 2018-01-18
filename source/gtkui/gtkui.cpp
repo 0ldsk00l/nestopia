@@ -33,6 +33,8 @@
 #include "video.h"
 #include "input.h"
 
+#include "sdlinput.h"
+
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_config.h"
@@ -98,7 +100,7 @@ static void gtkui_swapbuffers() {
 			case SDL_JOYAXISMOTION:
 			case SDL_JOYBUTTONDOWN:
 			case SDL_JOYBUTTONUP:
-				input_process(cNstPads, event);
+				nstsdl_input_process(cNstPads, event);
 				break;
 			default: break;
 		}	
@@ -617,9 +619,9 @@ int main(int argc, char *argv[]) {
 	audio_set_funcs();
 	
 	// Detect and set up Joysticks
-	input_joysticks_detect();
-	input_set_default();
-	input_config_read();
+	nstsdl_input_joysticks_detect();
+	nstsdl_input_conf_defaults();
+	nstsdl_input_conf_read();
 	
 	// Initialize and load FDS BIOS and NstDatabase.xml
 	nst_fds_bios_load();
@@ -649,10 +651,10 @@ int main(int argc, char *argv[]) {
 	audio_deinit();
 	
 	// Deinitialize joysticks
-	input_joysticks_close();
+	nstsdl_input_joysticks_close();
 	
 	// Write the input config file
-	input_config_write();
+	nstsdl_input_conf_write();
 	
 	// Write the input config file
 	gtkui_input_config_write();

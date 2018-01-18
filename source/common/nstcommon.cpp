@@ -208,7 +208,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 	}
 }
 
-Machine::FavoredSystem nst_default_system() {
+static Machine::FavoredSystem nst_default_system() {
 	switch (conf.misc_default_system) {
 		case 2: return Machine::FAVORED_NES_PAL; break;
 		case 3: return Machine::FAVORED_FAMICOM; break;
@@ -216,6 +216,10 @@ Machine::FavoredSystem nst_default_system() {
 		default: return Machine::FAVORED_NES_NTSC; break;
 	}
 }
+
+void* nst_ptr_video() { return &cNstVideo; }
+void* nst_ptr_sound() { return &cNstSound; }
+void* nst_ptr_input() { return &cNstPads; }
 
 bool nst_archive_checkext(const char *filename) {
 	// Check if the file extension is valid
@@ -755,7 +759,7 @@ void nst_emuloop() {
 		audio_play();
 		
 		// Pulse the turbo buttons
-		input_pulse_turbo(cNstPads);
+		nst_input_turbo_pulse(cNstPads);
 		
 		// Execute frames
 		for (int i = 0; i < nst_timing_runframes(); i++) {
@@ -792,7 +796,7 @@ void nst_play() {
 	
 	video_init();
 	audio_init();
-	input_init();
+	nst_input_init();
 	nst_cheats_init(nstpaths.cheatpath);
 	
 	cNstVideo = new Video::Output;

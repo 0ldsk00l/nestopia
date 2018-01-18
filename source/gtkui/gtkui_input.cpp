@@ -29,7 +29,7 @@
 #include "gtkui.h"
 #include "gtkui_input.h"
 
-static inputsettings_t inputconf;
+static ginputsettings_t inputconf;
 static gkeys_t ui;
 gpad_t pad[NUMGAMEPADS];
 
@@ -40,7 +40,7 @@ extern Input::Controllers *cNstPads;
 
 static int gtkui_input_config_match(void* user, const char* section, const char* name, const char* value) {
 	// Match values from input config file and populate live config
-	inputsettings_t* pconfig = (inputsettings_t*)user;
+	ginputsettings_t* pconfig = (ginputsettings_t*)user;
 	
 	// User Interface
 	if (MATCH("ui", "qsave1")) { pconfig->qsave1 = strdup(value); }
@@ -191,7 +191,7 @@ void gtkui_input_config_write() {
 	
 	FILE *fp = fopen(inputconfpath, "w");
 	if (fp != NULL)	{
-		fprintf(fp, "; Nestopia UE Input Configuration File\n\n");
+		fprintf(fp, "; Nestopia UE GTK+ Input Configuration File\n\n");
 		fprintf(fp, "; Values for keyboard input are these values with the GDK_KEY_ prefix removed:\n; https://git.gnome.org/browse/gtk+/plain/gdk/gdkkeysyms.h\n\n");
 		
 		fprintf(fp, "[ui]\n");
@@ -299,23 +299,21 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 		default: break;
 	}
 	
-	input_inject(cNstPads, input);
+	nst_input_inject(cNstPads, input);
 	
 	return TRUE;	
 }
 
 int gtkui_input_process_mouse(GtkWidget *widget, GdkEventButton *event, gpointer userdata) {
-	
 	switch(event->type) {
 		case GDK_BUTTON_PRESS:
-			input_inject_mouse(cNstPads, event->button, 1, (int)event->x, (int)event->y);
+			nst_input_inject_mouse(cNstPads, event->button, 1, (int)event->x, (int)event->y);
 			break;
 		
 		case GDK_BUTTON_RELEASE:
-			input_inject_mouse(cNstPads, event->button, 0, (int)event->x, (int)event->y);
+			nst_input_inject_mouse(cNstPads, event->button, 0, (int)event->x, (int)event->y);
 			break;
 		default: break;
 	}
-	
 	return TRUE;
 }

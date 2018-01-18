@@ -32,6 +32,7 @@
 // Nst SDL
 #include "sdlmain.h"
 #include "sdlvideo.h"
+#include "sdlinput.h"
 
 using namespace Nes::Api;
 
@@ -77,13 +78,13 @@ int main(int argc, char *argv[]) {
 	}
 	
 	// Detect Joysticks
-	input_joysticks_detect();
+	nstsdl_input_joysticks_detect();
 	
 	// Set default input keys
-	input_set_default();
+	nstsdl_input_conf_defaults();
 	
 	// Read the input config file and override defaults
-	input_config_read();
+	nstsdl_input_conf_read();
 	
 	// Set audio function pointers
 	audio_set_funcs();
@@ -105,6 +106,9 @@ int main(int argc, char *argv[]) {
 			
 			// Set play in motion
 			nst_play();
+			
+			// Set the cursor if needed
+			nstsdl_video_set_cursor();
 		}
 	}
 	
@@ -128,7 +132,7 @@ int main(int argc, char *argv[]) {
 				case SDL_JOYBUTTONUP:
 				case SDL_MOUSEBUTTONDOWN:
 				case SDL_MOUSEBUTTONUP:
-					input_process(cNstPads, event);
+					nstsdl_input_process(cNstPads, event);
 					break;
 				default: break;
 			}	
@@ -149,10 +153,10 @@ int main(int argc, char *argv[]) {
 	audio_deinit();
 	
 	// Deinitialize joysticks
-	input_joysticks_close();
+	nstsdl_input_joysticks_close();
 	
 	// Write the input config file
-	input_config_write();
+	nstsdl_input_conf_write();
 	
 	// Write the config file
 	config_file_write(nstpaths.nstdir);
