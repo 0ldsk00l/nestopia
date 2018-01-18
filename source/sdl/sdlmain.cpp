@@ -41,6 +41,7 @@ static int nst_quit = 0;
 extern Input::Controllers *cNstPads;
 extern nstpaths_t nstpaths;
 
+extern bool (*nst_archive_select)(const char*, char*, size_t);
 extern void (*audio_deinit)();
 
 void nst_schedule_quit() {
@@ -85,6 +86,9 @@ int main(int argc, char *argv[]) {
 	
 	// Read the input config file and override defaults
 	nstsdl_input_conf_read();
+	
+	// Set archive handler function pointer
+	nst_archive_select = &nst_archive_select_file;
 	
 	// Set audio function pointers
 	audio_set_funcs();

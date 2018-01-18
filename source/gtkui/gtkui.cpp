@@ -36,6 +36,7 @@
 #include "sdlinput.h"
 
 #include "gtkui.h"
+#include "gtkui_archive.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_config.h"
 #include "gtkui_cheats.h"
@@ -50,6 +51,8 @@ static GThread *emuthread;
 
 char iconpath[512];
 char padpath[512];
+
+extern bool (*nst_archive_select)(const char*, char*, size_t);
 
 extern Input::Controllers *cNstPads;
 extern nstpaths_t nstpaths;
@@ -614,6 +617,9 @@ int main(int argc, char *argv[]) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
+	
+	// Set archive handler function pointer
+	nst_archive_select = &gtkui_archive_select;
 	
 	// Set audio function pointers
 	audio_set_funcs();

@@ -68,6 +68,8 @@ static std::fstream *movierecfile;
 
 void *custompalette = NULL;
 
+bool (*nst_archive_select)(const char*, char*, size_t);
+
 bool playing = false;
 bool nst_nsf = false;
 bool nst_pal = false;
@@ -236,8 +238,48 @@ bool nst_archive_checkext(const char *filename) {
 	return false;
 }
 
-bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile) {
-	// Handle archives
+bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize) {
+	// Select a filename to pull out of the archive
+#ifndef _MINGW
+	struct archive *a;
+	struct archive_entry *entry;
+	int r, numarchives = 0;
+	
+	a = archive_read_new();
+	archive_read_support_filter_all(a);
+	archive_read_support_format_all(a);
+	r = archive_read_open_filename(a, filename, 10240);
+	
+	// Test if it's actually an archive
+	if (r != ARCHIVE_OK) {
+		r = archive_read_free(a);
+		return false;
+	}
+	// If it is an archive, handle it
+	else {
+		// Find files with valid extensions within the archive
+		while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+			const char *currentfile = archive_entry_pathname(entry);
+			if (nst_archive_checkext(currentfile)) {
+				numarchives++;
+				snprintf(reqfile, reqsize, "%s", currentfile);
+			}
+			archive_read_data_skip(a);
+			break; // Load the first one found
+		}
+		// Free the archive
+		r = archive_read_free(a);
+		
+		// If there are no valid files in the archive, return
+		if (numarchives == 0) {	return false; }
+		else { return true; }
+	}
+#endif
+	return false;
+}
+
+bool nst_archive_open(const char *filename, char **rom, int *romsize, const char *reqfile) {
+	// Opens archives
 #ifndef _MINGW
 	struct archive *a;
 	struct archive_entry *entry;
@@ -832,15 +874,19 @@ int nst_load(const char *filename) {
 	static int loaded = 0;
 	if (loaded) { nst_unload(); } //drawtime = false;
 	
-	// Handle the file as an archive if it is one
-	if (nst_archive_handle(filename, &rom, &romsize, NULL)) {
+	// Check if the file is an archive and select the file within
+	char reqfile[256]; // Requested file inside the archive
+	if (nst_archive_select(filename, reqfile, sizeof(reqfile))) {
+		// Extract the contents
+		nst_archive_open(filename, &rom, &romsize, reqfile);
+		
 		// Convert the malloc'd char* to an istream
 		std::string rombuf(rom, romsize);
 		std::istringstream file(rombuf);
+		
 		result = machine.Load(file, nst_default_system());
 	}
-	// Otherwise just load the file
-	else {
+	else { // Otherwise just load the file
 		std::ifstream file(filename, std::ios::in|std::ios::binary);
 		
 		// Set the file paths

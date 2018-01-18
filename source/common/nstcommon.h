@@ -35,7 +35,8 @@ void* nst_ptr_input();
 
 // Archives
 bool nst_archive_checkext(const char *filename);
-bool nst_archive_handle(const char *filename, char **rom, int *romsize, const char *reqfile);
+bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize);
+bool nst_archive_open(const char *filename, char **rom, int *romsize, const char *reqfile);
 
 // DIP Switches
 void nst_dipswitch();
