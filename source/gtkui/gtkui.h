@@ -19,5 +19,7 @@ void gtkui_video_toggle_filter();
 void gtkui_video_toggle_scale();
 void gtkui_signals_init();
 void gtkui_signals_deinit();
+void gtkui_play();
+void gtkui_pause();
 
 #endif

@@ -175,4 +175,6 @@ void input_set_default();
 int input_configure_item(int pnum, int bnum, int type);
 void input_set_item(SDL_Event event, int type, int pnum, int counter);
 
+int nst_input_zapper_present();
+
 #endif

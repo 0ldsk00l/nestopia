@@ -119,8 +119,8 @@ void gtkui_open_recent(GtkWidget *widget, gpointer userdata) {
 	// Open a recently used item
 	gchar *uri = gtk_recent_chooser_get_current_uri((GtkRecentChooser*)widget);
 	nst_load(g_filename_from_uri(uri, NULL, NULL));
-	nst_play();
 	gtkui_set_title(nstpaths.gamename);
+	gtkui_play();
 }
 
 dimensions_t gtkui_video_get_dimensions() {
@@ -389,10 +389,10 @@ void gtkui_create() {
 	
 	// Emulator menu
 	g_signal_connect(G_OBJECT(cont), "activate",
-		G_CALLBACK(nst_play), NULL);
+		G_CALLBACK(gtkui_play), NULL);
 	
 	g_signal_connect(G_OBJECT(pause), "activate",
-		G_CALLBACK(nst_pause), NULL);
+		G_CALLBACK(gtkui_pause), NULL);
 	
 	g_signal_connect(G_OBJECT(resetsoft), "activate",
 		G_CALLBACK(gtkui_cb_reset), gpointer(0));
@@ -551,10 +551,9 @@ void gtkui_message(const char* message) {
 void gtkui_cursor_set_crosshair() {
 	// Set the cursor to a crosshair
 	GdkCursor *cursor;
-	cursor = gdk_cursor_new_for_display(gdk_cursor_get_display(cursor), GDK_CROSSHAIR);
-	
+	GdkDisplay *display = gdk_display_get_default();
+	cursor = gdk_cursor_new_from_name(display, "crosshair");
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
-	
 	gdk_window_set_cursor(gdkwindow, cursor);
 	gdk_flush();
 	g_object_unref(cursor);
@@ -563,12 +562,23 @@ void gtkui_cursor_set_crosshair() {
 void gtkui_cursor_set_default() {
 	// Set the cursor to the default
 	GdkCursor *cursor;
-	cursor = gdk_cursor_new_for_display(gdk_cursor_get_display(cursor), GDK_LEFT_PTR);
+	GdkDisplay *display = gdk_display_get_default();
+	cursor = gdk_cursor_new_from_name(display, "default");
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
-	
 	gdk_window_set_cursor(gdkwindow, cursor);
 	gdk_flush();
 	g_object_unref(cursor);
+}
+
+void gtkui_play() {
+	gtkui_signals_init();
+	nst_play();
+	nst_input_zapper_present() ? gtkui_cursor_set_crosshair() : gtkui_cursor_set_default();
+}
+
+void gtkui_pause() {
+	gtkui_signals_deinit();
+	nst_pause();
 }
 
 int main(int argc, char *argv[]) {
@@ -616,12 +626,11 @@ int main(int argc, char *argv[]) {
 	nst_db_load();
 	
 	gtkui_init(argc, argv);
-	gtkui_signals_init();
 	
 	// Load a rom from the command line
 	if (argc > 1) {
 		nst_load(argv[argc - 1]);
-		nst_play();
+		gtkui_play();
 		gtkui_set_title(nstpaths.gamename);
 	}
 	

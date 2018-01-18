@@ -1156,3 +1156,12 @@ void input_set_item(SDL_Event event, int type, int pnum, int counter) {
 		}
 	}
 }
+
+int nst_input_zapper_present() {
+	// Check if a Zapper is presently connected
+	if (Input(emulator).GetConnectedController(0) == Input::ZAPPER ||
+			Input(emulator).GetConnectedController(1) == Input::ZAPPER) {
+			return 1;
+	}
+	else { return 0; }
+}
