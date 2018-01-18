@@ -34,11 +34,11 @@
 #include "gtkui_config.h"
 #include "gtkui_input.h"
 
-extern gamepad_t player[NUMGAMEPADS];
+//extern gamepad_t player[NUMGAMEPADS];
 extern gpad_t pad[NUMGAMEPADS];
 extern char padpath[512];
 extern bool playing;
-extern bool confrunning;
+bool confrunning;
 
 GtkWidget *configwindow;
 GtkWidget *notebook;
@@ -1230,12 +1230,12 @@ void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer 
 		gtkui_input_config_item(pnum, bnum);
 	}
 	else { // Joystick
-		input_configure_item(pnum, bnum, type);
+		//input_configure_item(pnum, bnum, type);
 	}
 	
 	// Replace the text with the new key
 	//gtkui_config_input_fields(type, pnum); // This can be used in place of the below if statement
-	if (type == 0) { // Keyboard
+	/*if (type == 0) { // Keyboard
 		switch (bnum) {
 			case 0:
 				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].u), -1);
@@ -1304,7 +1304,7 @@ void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer 
 				break;
 			default: break;
 		}
-	}
+	}*/
 }
 
 void gtkui_config_input_refresh() {
@@ -1320,7 +1320,7 @@ void gtkui_config_input_fields(int type, int pnum) {
 	
 	gtk_tree_store_clear(treestore_input);
 	
-	if (type == 0) {
+	/*if (type == 0) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
 		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, gdk_keyval_name(pad[pnum].u), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
@@ -1363,11 +1363,11 @@ void gtkui_config_input_fields(int type, int pnum) {
 		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, input_translate_event(player[pnum].jta), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
 		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, input_translate_event(player[pnum].jtb), -1);
-	}
+	}*/
 }
 
 void gtkui_config_input_defaults() {
 	// Restore input defaults
-	input_set_default();
+	gtkui_input_set_default();
 	gtkui_config_input_refresh();
 }

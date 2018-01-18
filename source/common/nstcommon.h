@@ -10,6 +10,7 @@
 #include "core/api/NstApiMachine.hpp"
 #include "core/api/NstApiCartridge.hpp"
 #include "core/api/NstApiFds.hpp"
+#include "core/api/NstApiNsf.hpp"
 #include "core/api/NstApiUser.hpp"
 #include "core/api/NstApiRewinder.hpp"
 #include "core/api/NstApiMovie.hpp"
@@ -27,7 +28,10 @@ typedef struct {
 	char palettepath[512];
 } nstpaths_t;
 
-Machine::FavoredSystem nst_default_system();
+// Pointers
+void* nst_ptr_video();
+void* nst_ptr_sound();
+void* nst_ptr_input();
 
 // Archives
 bool nst_archive_checkext(const char *filename);
