@@ -34,7 +34,7 @@ static bool windowopen, cancelled;
 
 static GtkWidget *archivewindow;
 
-bool gtkui_archive_handle(const char *filename, char *reqfile, size_t reqsize) {
+bool gtkui_archive_select(const char *filename, char *reqfile, size_t reqsize) {
 	// Select a filename to pull out of the archive
 	struct archive *a;
 	struct archive_entry *entry;
