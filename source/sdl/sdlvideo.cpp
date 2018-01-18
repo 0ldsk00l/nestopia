@@ -26,6 +26,7 @@
 #include "nstcommon.h"
 #include "config.h"
 #include "video.h"
+#include "input.h"
 
 // Nst SDL
 #include "cursor.h"
@@ -103,8 +104,7 @@ void nstsdl_video_set_cursor() {
 	
 	if (conf.misc_disable_cursor) { SDL_ShowCursor(false); }
 	else {
-		if (Input(emulator).GetConnectedController(0) == Input::ZAPPER ||
-			Input(emulator).GetConnectedController(1) == Input::ZAPPER) {
+		if (nst_input_zapper_present()) {
 			special = true;
 			SDL_ShowCursor(true); // Must be set true to be modified if special
 			cursor_set_special(Input::ZAPPER);
