@@ -64,6 +64,12 @@ void nst_nsf_stop();
 void nst_nsf_prev();
 void nst_nsf_next();
 
+// PAL
+bool nst_pal();
+
+// Play check
+bool nst_playing();
+
 // Palette
 void nst_palette_load(const char *filename);
 void nst_palette_unload();

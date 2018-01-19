@@ -24,6 +24,7 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "nstcommon.h"
 #include "config.h"
 #include "audio.h"
 
@@ -49,7 +50,6 @@ const size_t jack_sample_size = sizeof(jack_default_audio_sample_t);
 #endif
 
 extern Emulator emulator;
-extern bool nst_pal;
 
 static SDL_AudioSpec spec, obtained;
 static SDL_AudioDeviceID dev;
@@ -264,7 +264,7 @@ void audio_init() {
 	// Initialize audio device
 	
 	// Set the framerate based on the region. For PAL: (60 / 6) * 5 = 50
-	framerate = nst_pal ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
+	framerate = nst_pal() ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
 	channels = conf.audio_stereo ? 2 : 1;
 	memset(audiobuf, 0, sizeof(audiobuf));
 	

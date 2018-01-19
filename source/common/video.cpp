@@ -55,7 +55,6 @@ static dimensions_t basesize, rendersize, screensize;
 
 extern void *custompalette;
 
-extern bool playing, nst_pal;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
 
@@ -207,7 +206,7 @@ void video_init() {
 
 void video_toggle_fullscreen() {
 	// Toggle between fullscreen and window mode
-	if (!playing) { return; }
+	if (!nst_playing()) { return; }
 	conf.video_fullscreen ^= 1;
 }
 
@@ -448,7 +447,7 @@ void video_set_dimensions() {
 	if (conf.video_scale_factor > 4) { scalefactor = 4; }
 	if ((conf.video_scale_factor > 3) && (conf.video_filter == 5)) { scalefactor = 3; }
 	int wscalefactor = conf.video_scale_factor;
-	int tvwidth = nst_pal ? PAL_TV_WIDTH : TV_WIDTH;
+	int tvwidth = nst_pal() ? PAL_TV_WIDTH : TV_WIDTH;
 	
 	switch(conf.video_filter) {
 		case 0:	// None
