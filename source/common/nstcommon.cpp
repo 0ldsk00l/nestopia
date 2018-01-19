@@ -71,7 +71,6 @@ void *custompalette = NULL;
 bool (*nst_archive_select)(const char*, char*, size_t);
 
 bool playing = false;
-bool nst_nsf = false;
 bool nst_pal = false;
 
 extern int drawtext;
@@ -510,6 +509,37 @@ void nst_movie_stop() {
 	}
 }
 
+bool nst_nsf() {
+	Machine machine(emulator);
+	return machine.Is(Machine::SOUND);
+}
+
+void nst_nsf_play() {
+	Nsf nsf(emulator);
+	nsf.PlaySong();
+	video_clear_buffer();
+	video_disp_nsf();
+}
+
+void nst_nsf_stop() {
+	Nsf nsf(emulator);
+	nsf.StopSong();
+}
+
+void nst_nsf_prev() {
+	Nsf nsf(emulator);
+	nsf.SelectPrevSong();
+	video_clear_buffer();
+	video_disp_nsf();
+}
+
+void nst_nsf_next() {
+	Nsf nsf(emulator);
+	nsf.SelectNextSong();
+	video_clear_buffer();
+	video_disp_nsf();
+}
+
 void nst_palette_load(const char *filename) {
 	// Load a custom palette
 	
@@ -848,7 +878,7 @@ void nst_play() {
 	audio_set_params(cNstSound);
 	audio_unpause();
 	
-	if (nst_nsf) {
+	if (nst_nsf()) {
 		Nsf nsf(emulator);
 		nsf.PlaySong();
 		video_disp_nsf();
@@ -946,8 +976,7 @@ int nst_load(const char *filename) {
 	}
 	
 	// Check if this is an NSF
-	nst_nsf = (machine.Is(Machine::SOUND));
-	if (nst_nsf) { nsf.StopSong(); }
+	if (nst_nsf()) { nsf.StopSong(); }
 	
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);

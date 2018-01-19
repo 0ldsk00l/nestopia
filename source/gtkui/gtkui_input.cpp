@@ -304,6 +304,16 @@ int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer user
 	return TRUE;	
 }
 
+int gtkui_input_process_key_nsf(GtkWidget *widget, GdkEventKey *event, gpointer userdata) {
+	if (event->type == GDK_KEY_RELEASE) {
+		if (event->keyval == GDK_KEY_Up) { nst_nsf_play(); }
+		if (event->keyval == GDK_KEY_Down) { nst_nsf_stop(); }
+		if (event->keyval == GDK_KEY_Left) { nst_nsf_prev(); }
+		if (event->keyval == GDK_KEY_Right) { nst_nsf_next(); }
+	}
+	return TRUE;
+}
+
 int gtkui_input_process_mouse(GtkWidget *widget, GdkEventButton *event, gpointer userdata) {
 	switch(event->type) {
 		case GDK_BUTTON_PRESS:

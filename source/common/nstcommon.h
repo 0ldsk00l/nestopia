@@ -57,6 +57,13 @@ void nst_movie_save(char *filename);
 void nst_movie_load(char *filename);
 void nst_movie_stop();
 
+// NSF
+bool nst_nsf();
+void nst_nsf_play();
+void nst_nsf_stop();
+void nst_nsf_prev();
+void nst_nsf_next();
+
 // Palette
 void nst_palette_load(const char *filename);
 void nst_palette_unload();

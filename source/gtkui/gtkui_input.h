@@ -89,6 +89,7 @@ void gtkui_input_config_write();
 void gtkui_input_config_item(int pnum, int bnum);
 void gtkui_input_null();
 int gtkui_input_process_key(GtkWidget *widget, GdkEventKey *event, gpointer userdata);
+int gtkui_input_process_key_nsf(GtkWidget *widget, GdkEventKey *event, gpointer userdata);
 int gtkui_input_process_mouse(GtkWidget *widget, GdkEventButton *event, gpointer userdata);
 
 #endif

@@ -437,12 +437,20 @@ void gtkui_create() {
 
 void gtkui_signals_init() {
 	// Key translation
-	g_signal_connect(G_OBJECT(gtkwindow), "key-press-event",
-		G_CALLBACK(gtkui_input_process_key), NULL);
-	
-	g_signal_connect(G_OBJECT(gtkwindow), "key-release-event",
-		G_CALLBACK(gtkui_input_process_key), NULL);
-	
+	if (nst_nsf()) {
+		g_signal_connect(G_OBJECT(gtkwindow), "key-press-event",
+			G_CALLBACK(gtkui_input_process_key_nsf), NULL);
+		
+		g_signal_connect(G_OBJECT(gtkwindow), "key-release-event",
+			G_CALLBACK(gtkui_input_process_key_nsf), NULL);
+	}
+	else {
+		g_signal_connect(G_OBJECT(gtkwindow), "key-press-event",
+			G_CALLBACK(gtkui_input_process_key), NULL);
+		
+		g_signal_connect(G_OBJECT(gtkwindow), "key-release-event",
+			G_CALLBACK(gtkui_input_process_key), NULL);
+	}
 	// Mouse translation
 	g_signal_connect(G_OBJECT(drawingarea), "button-press-event",
 		G_CALLBACK(gtkui_input_process_mouse), NULL);
