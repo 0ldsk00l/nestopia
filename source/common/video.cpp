@@ -55,7 +55,7 @@ static dimensions_t basesize, rendersize, screensize;
 
 extern void *custompalette;
 
-extern bool playing, nst_nsf, nst_pal;
+extern bool playing, nst_pal;
 extern nstpaths_t nstpaths;
 extern Emulator emulator;
 
@@ -202,7 +202,7 @@ void video_init() {
 	
 	nst_ogl_init();
 	
-	if (nst_nsf) { video_clear_buffer(); video_disp_nsf(); }
+	if (nst_nsf()) { video_clear_buffer(); video_disp_nsf(); }
 }
 
 void video_toggle_fullscreen() {

@@ -64,7 +64,6 @@ static unsigned char nescodes[TOTALBUTTONS] = {
 };
 
 extern Emulator emulator;
-extern bool nst_nsf;
 extern nstpaths_t nstpaths;
 
 void nstsdl_input_joysticks_detect() {
@@ -186,31 +185,17 @@ void nstsdl_input_match_keyboard(Input::Controllers *controllers, SDL_Event even
 	if (keys[ui.scalefactor]) { nstsdl_video_toggle_scale(); }
 	
 	// NSF
-	if (nst_nsf) {
-		Nsf nsf(emulator);
-		
-		if (keys[SDL_SCANCODE_UP]) {
-			nsf.PlaySong();
-			video_clear_buffer();
-			video_disp_nsf();
-		}
-		if (keys[SDL_SCANCODE_DOWN]) {
-			//nsf.StopSong();
-		}
-		if (keys[SDL_SCANCODE_LEFT]) {
-			nsf.SelectPrevSong();
-			video_clear_buffer();
-			video_disp_nsf();
-		}
-		if (keys[SDL_SCANCODE_RIGHT]) {
-			nsf.SelectNextSong();
-			video_clear_buffer();
-			video_disp_nsf();
-		}
+	if (nst_nsf()) {
+		if (keys[SDL_SCANCODE_UP]) { nst_nsf_play(); }
+		if (keys[SDL_SCANCODE_DOWN]) { nst_nsf_stop(); }
+		if (keys[SDL_SCANCODE_LEFT]) { nst_nsf_prev(); }
+		if (keys[SDL_SCANCODE_RIGHT]) { nst_nsf_next(); }
 	}
 	
 	// Escape exits
-	//if (keys[SDL_SCANCODE_ESCAPE]) { nst_schedule_quit(); }
+#ifndef _GTK	
+	if (keys[SDL_SCANCODE_ESCAPE]) { nst_schedule_quit(); }
+#endif
 }
 
 void nstsdl_input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
