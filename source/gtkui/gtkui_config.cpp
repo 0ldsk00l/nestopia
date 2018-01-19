@@ -37,7 +37,6 @@
 //extern gamepad_t player[NUMGAMEPADS];
 extern gpad_t pad[NUMGAMEPADS];
 extern char padpath[512];
-extern bool playing;
 bool confrunning;
 
 GtkWidget *configwindow;
@@ -60,7 +59,7 @@ GtkWidget *gtkui_config() {
 	// Create the Configuration window
 	
 	if (configwindow) { return NULL; }
-	if (conf.misc_config_pause) { if (playing) { nst_pause(); } }
+	if (conf.misc_config_pause) { if (nst_playing()) { nst_pause(); } }
 	
 	configwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_title(GTK_WINDOW(configwindow), "Configuration");

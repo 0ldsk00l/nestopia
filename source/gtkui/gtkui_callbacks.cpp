@@ -30,7 +30,7 @@
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 
-extern bool playing, kbactivate, confrunning;
+extern bool kbactivate, confrunning;
 
 //// Menu ////
 
@@ -45,10 +45,8 @@ void gtkui_cb_nothing() {
 
 void gtkui_cb_video_refresh() {
 	// Refresh the Video output after changes
-	if (playing) {
-		video_init();
-	}
-	else { gtkui_resize(); }
+	if (nst_playing()) { video_init(); }
+	gtkui_resize();
 }
 
 // Video //
@@ -162,7 +160,7 @@ void gtkui_cb_video_hue(GtkRange *range, gpointer userdata) {
 
 void gtkui_cb_audio_api(GtkComboBox *combobox, gpointer userdata) {
 	// Change the Audio API
-	if (playing) {
+	if (nst_playing()) {
 		nst_pause();
 		conf.audio_api = gtk_combo_box_get_active(combobox);
 		nst_play();
@@ -193,7 +191,7 @@ void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata) {
 			break;
 	}
 	
-	if (playing) {
+	if (nst_playing()) {
 		nst_pause();
 		nst_play();
 	}
@@ -203,7 +201,7 @@ void gtkui_cb_audio_stereo(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Toggle Stereo
 	conf.audio_stereo = gtk_toggle_button_get_active(togglebutton);
 	
-	if (playing) {
+	if (nst_playing()) {
 		nst_pause();
 		nst_play();
 	}

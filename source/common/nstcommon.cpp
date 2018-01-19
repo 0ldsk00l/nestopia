@@ -58,6 +58,7 @@ Input::Controllers *cNstPads;
 nstpaths_t nstpaths;
 
 static bool ffspeed = false;
+static bool playing = false;
 
 static std::ifstream *nstdb;
 
@@ -69,9 +70,6 @@ static std::fstream *movierecfile;
 void *custompalette = NULL;
 
 bool (*nst_archive_select)(const char*, char*, size_t);
-
-bool playing = false;
-bool nst_pal = false;
 
 extern int drawtext;
 extern char textbuf[32];
@@ -540,6 +538,13 @@ void nst_nsf_next() {
 	video_disp_nsf();
 }
 
+bool nst_pal() {
+	Machine machine(emulator);
+	return machine.GetMode() == Machine::PAL;
+}
+
+bool nst_playing() { return playing; }
+
 void nst_palette_load(const char *filename) {
 	// Load a custom palette
 	
@@ -727,15 +732,6 @@ void nst_set_region() {
 		case 2: machine.SetMode(Machine::PAL); break; // PAL
 		case 3: machine.SetMode(Machine::NTSC); break; // Famicom
 		case 4: machine.SetMode(Machine::PAL); break; // Dendy
-	}
-
-	if (machine.GetMode() == Machine::PAL) {
-		fprintf(stderr, "Region: PAL\n");
-		nst_pal = true;
-	}
-	else {
-		fprintf(stderr, "Region: NTSC\n");
-		nst_pal = false;
 	}
 }
 
