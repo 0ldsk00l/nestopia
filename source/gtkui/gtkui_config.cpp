@@ -842,13 +842,6 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(combo_input_type), "changed",
 		G_CALLBACK(gtkui_config_input_refresh), NULL);
 	
-	// Key Translation
-	g_signal_connect(G_OBJECT(configwindow), "key-press-event",
-		G_CALLBACK(gtkui_input_process_key), gpointer(1));
-	
-	g_signal_connect(G_OBJECT(configwindow), "key-release-event",
-		G_CALLBACK(gtkui_input_process_key), NULL);
-	
 	// The Treeview
 	GtkWidget *treeview = gtk_widget_new(GTK_TYPE_TREE_VIEW,
 				"margin-top", MARGIN_TB,
@@ -1233,8 +1226,7 @@ void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer 
 	}
 	
 	// Replace the text with the new key
-	//gtkui_config_input_fields(type, pnum); // This can be used in place of the below if statement
-	/*if (type == 0) { // Keyboard
+	if (type == 0) { // Keyboard
 		switch (bnum) {
 			case 0:
 				gtk_tree_store_set(treestore_input, &iter, 1, gdk_keyval_name(pad[pnum].u), -1);
@@ -1269,7 +1261,7 @@ void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer 
 			default: break;
 		}
 	}
-	else { // Joystick
+	/*else { // Joystick
 		switch (bnum) {
 			case 0:
 				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].ju), -1);
@@ -1319,7 +1311,7 @@ void gtkui_config_input_fields(int type, int pnum) {
 	
 	gtk_tree_store_clear(treestore_input);
 	
-	/*if (type == 0) {
+	if (type == 0) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
 		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, gdk_keyval_name(pad[pnum].u), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
@@ -1341,7 +1333,7 @@ void gtkui_config_input_fields(int type, int pnum) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
 		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, gdk_keyval_name(pad[pnum].tb), -1);
 	}
-	if (type == 1) {
+	/*if (type == 1) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
 		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, input_translate_event(player[pnum].ju), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
