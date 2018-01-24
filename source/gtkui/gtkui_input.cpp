@@ -35,6 +35,7 @@ gpad_t pad[NUMGAMEPADS];
 
 static char inputconfpath[256];
 
+extern GtkWidget *configwindow;
 extern nstpaths_t nstpaths;
 extern Input::Controllers *cNstPads;
 
@@ -242,8 +243,60 @@ void gtkui_input_config_write() {
 	}
 }
 
+static bool confrunning = false;
+static guint keyval = 0;
+void gtkui_input_config_process_key(GtkWidget *widget, GdkEventKey *event, gpointer userdata) {
+	keyval = event->keyval;
+	if (keyval == GDK_KEY_Escape || keyval == GDK_KEY_space) { keyval = 0; }
+	confrunning = false;
+}
+
+void gtkui_input_config_signals_init() {
+	// Key translation
+	g_signal_connect(G_OBJECT(configwindow), "key-press-event",
+		G_CALLBACK(gtkui_input_config_process_key), NULL);
+	
+	g_signal_connect(G_OBJECT(configwindow), "key-release-event",
+		G_CALLBACK(gtkui_input_config_process_key), NULL);
+}
+
+void gtkui_input_config_signals_deinit() {
+	// Key translation
+	g_signal_connect(G_OBJECT(configwindow), "key-press-event",
+		gtkui_input_null, NULL);
+	
+	g_signal_connect(G_OBJECT(configwindow), "key-release-event",
+		gtkui_input_null, NULL);
+}
+
 void gtkui_input_config_item(int pnum, int bnum) {
 	
+	// Connect signals
+	gtkui_input_config_signals_init();
+	
+	// Wait for input
+	confrunning = true;
+	while (confrunning) { gtk_main_iteration(); }
+	
+	// Set the keyval for the input item
+	if (keyval != 0) {
+		switch (bnum) {
+			case 0: pad[pnum].u = keyval; break;
+			case 1: pad[pnum].d = keyval; break;
+			case 2: pad[pnum].l = keyval; break;
+			case 3: pad[pnum].r = keyval; break;
+			case 4: pad[pnum].select = keyval; break;
+			case 5: pad[pnum].start = keyval; break;
+			case 6: pad[pnum].a = keyval; break;
+			case 7: pad[pnum].b = keyval; break;
+			case 8: pad[pnum].ta = keyval; break;
+			case 9: pad[pnum].tb = keyval; break;
+			default: break;
+		}
+	}
+	
+	// Disconnect signals
+	gtkui_input_config_signals_deinit();
 }
 
 void gtkui_input_null() {}
