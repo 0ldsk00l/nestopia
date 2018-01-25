@@ -23,6 +23,9 @@
 #include <stdio.h>
 
 #include <SDL.h>
+#ifdef _GTK
+#include "gtkui/gtkui.h"
+#endif
 
 #include "nstcommon.h"
 #include "video.h"
@@ -35,7 +38,7 @@
 #include "sdlinput.h"
 
 static SDL_Joystick *joystick;
-static gamepad_t player[NUMGAMEPADS];
+gamepad_t player[NUMGAMEPADS];
 static uiinput_t ui;
 static inputsettings_t inputconf;
 static char inputconfpath[256];
@@ -905,4 +908,40 @@ void nstsdl_input_conf(int type, int pnum) {
 	}
 	
 	nst_play();
+}
+
+void nstsdl_input_conf_button(int pnum, int bnum) {
+	// Configure Inputs for single Joystick Buttons
+	SDL_Event event, eventbuf;
+	int axis = 0, axisnoise = 0, confrunning = 1;
+	
+	while (confrunning) {
+		#ifdef _GTK
+		while (gtk_events_pending()) { gtk_main_iteration(); }
+		#endif
+		while (SDL_PollEvent(&event)) {
+			if (event.type == SDL_JOYAXISMOTION) {
+				if (abs(event.jaxis.value) >= DEADZONE) {
+					eventbuf = event;
+					axisnoise = 1;
+					axis = event.jaxis.axis;
+				}
+				else if (abs(event.jaxis.value) < DEADZONE && axisnoise && event.jaxis.axis == axis) {
+					nstsdl_input_conf_set(eventbuf, 1, pnum, bnum);
+					axisnoise = 0;
+					confrunning = 0;
+				}
+			}
+			else if (event.type == SDL_JOYHATMOTION) {
+				if (event.jhat.value != SDL_HAT_CENTERED) {
+					nstsdl_input_conf_set(event, 1, pnum, bnum);
+					confrunning = 0;
+				}
+			}
+			else if (event.type == SDL_JOYBUTTONDOWN) {
+				nstsdl_input_conf_set(event, 1, pnum, bnum);
+				confrunning = 0;
+			}
+		}
+	}
 }

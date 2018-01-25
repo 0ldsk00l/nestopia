@@ -26,6 +26,8 @@
 #include "audio.h"
 #include "ini.h"
 
+#include "sdlinput.h"
+
 #include "gtkui.h"
 #include "gtkui_input.h"
 
@@ -34,6 +36,8 @@ static gkeys_t ui;
 gpad_t pad[NUMGAMEPADS];
 
 static char inputconfpath[256];
+static bool confrunning = false;
+static guint keyval = 0;
 
 extern GtkWidget *configwindow;
 extern nstpaths_t nstpaths;
@@ -243,8 +247,6 @@ void gtkui_input_config_write() {
 	}
 }
 
-static bool confrunning = false;
-static guint keyval = 0;
 void gtkui_input_config_process_key(GtkWidget *widget, GdkEventKey *event, gpointer userdata) {
 	keyval = event->keyval;
 	if (keyval == GDK_KEY_Escape || keyval == GDK_KEY_space) { keyval = 0; }
@@ -269,8 +271,7 @@ void gtkui_input_config_signals_deinit() {
 		gtkui_input_null, NULL);
 }
 
-void gtkui_input_config_item(int pnum, int bnum) {
-	
+void gtkui_input_config_key(int pnum, int bnum) {
 	// Connect signals
 	gtkui_input_config_signals_init();
 	
@@ -297,6 +298,11 @@ void gtkui_input_config_item(int pnum, int bnum) {
 	
 	// Disconnect signals
 	gtkui_input_config_signals_deinit();
+}
+
+void gtkui_input_config_js(int pnum, int bnum) {
+	// Wait for input
+	nstsdl_input_conf_button(pnum, bnum);
 }
 
 void gtkui_input_null() {}

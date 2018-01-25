@@ -29,12 +29,14 @@
 #include "audio.h"
 #include "input.h"
 
+#include "sdlinput.h"
+
 #include "gtkui.h"
 #include "gtkui_callbacks.h"
 #include "gtkui_config.h"
 #include "gtkui_input.h"
 
-//extern gamepad_t player[NUMGAMEPADS];
+extern gamepad_t player[NUMGAMEPADS];
 extern gpad_t pad[NUMGAMEPADS];
 extern char padpath[512];
 bool confrunning;
@@ -1082,20 +1084,6 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(check_misc_genie_distortion), "toggled",
 		G_CALLBACK(gtkui_cb_misc_genie_distortion), NULL);
 	
-	// Disable GUI
-	/*GtkWidget *check_misc_disable_gui = gtk_widget_new(
-				GTK_TYPE_CHECK_BUTTON,
-				"label", "Disable GUI",
-				"halign", GTK_ALIGN_START,
-				"margin-left", MARGIN_LR,
-				NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_disable_gui), conf.misc_disable_gui);
-	
-	//gtk_box_pack_start(GTK_BOX(box_misc), check_misc_disable_gui, FALSE, FALSE, 0);
-	
-	g_signal_connect(G_OBJECT(check_misc_disable_gui), "toggled",
-		G_CALLBACK(gtkui_cb_misc_disable_gui), NULL);*/
-	
 	// Disable Cursor
 	GtkWidget *check_misc_disable_cursor = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
@@ -1219,10 +1207,10 @@ void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer 
 	
 	// Set the key
 	if (type == 0) { // Keyboard
-		gtkui_input_config_item(pnum, bnum);
+		gtkui_input_config_key(pnum, bnum);
 	}
 	else { // Joystick
-		//input_configure_item(pnum, bnum, type);
+		gtkui_input_config_js(pnum, bnum);
 	}
 	
 	// Replace the text with the new key
@@ -1261,41 +1249,41 @@ void gtkui_config_input_activate(GtkWidget *widget, GtkTreePath *path, gpointer 
 			default: break;
 		}
 	}
-	/*else { // Joystick
+	else { // Joystick
 		switch (bnum) {
 			case 0:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].ju), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].ju), -1);
 				break;
 			case 1:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jd), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jd), -1);
 				break;
 			case 2:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jl), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jl), -1);
 				break;
 			case 3:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jr), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jr), -1);
 				break;
 			case 4:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jselect), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jselect), -1);
 				break;
 			case 5:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jstart), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jstart), -1);
 				break;
 			case 6:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].ja), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].ja), -1);
 				break;
 			case 7:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jb), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jb), -1);
 				break;
 			case 8:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jta), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jta), -1);
 				break;
 			case 9:
-				gtk_tree_store_set(treestore_input, &iter, 1, input_translate_event(player[pnum].jtb), -1);
+				gtk_tree_store_set(treestore_input, &iter, 1, nstsdl_input_translate_event(player[pnum].jtb), -1);
 				break;
 			default: break;
 		}
-	}*/
+	}
 }
 
 void gtkui_config_input_refresh() {
@@ -1333,28 +1321,28 @@ void gtkui_config_input_fields(int type, int pnum) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
 		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, gdk_keyval_name(pad[pnum].tb), -1);
 	}
-	/*if (type == 1) {
+	if (type == 1) {
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, input_translate_event(player[pnum].ju), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Up", 1, nstsdl_input_translate_event(player[pnum].ju), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, input_translate_event(player[pnum].jd), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Down", 1, nstsdl_input_translate_event(player[pnum].jd), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, input_translate_event(player[pnum].jl), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Left", 1, nstsdl_input_translate_event(player[pnum].jl), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, input_translate_event(player[pnum].jr), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Right", 1, nstsdl_input_translate_event(player[pnum].jr), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, input_translate_event(player[pnum].jselect), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Select", 1, nstsdl_input_translate_event(player[pnum].jselect), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, input_translate_event(player[pnum].jstart), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Start", 1, nstsdl_input_translate_event(player[pnum].jstart), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, input_translate_event(player[pnum].ja), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "A", 1, nstsdl_input_translate_event(player[pnum].ja), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, input_translate_event(player[pnum].jb), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "B", 1, nstsdl_input_translate_event(player[pnum].jb), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, input_translate_event(player[pnum].jta), -1);
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo A", 1, nstsdl_input_translate_event(player[pnum].jta), -1);
 		gtk_tree_store_append(treestore_input, &iter, NULL);
-		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, input_translate_event(player[pnum].jtb), -1);
-	}*/
+		gtk_tree_store_set(treestore_input, &iter, 0, "Turbo B", 1, nstsdl_input_translate_event(player[pnum].jtb), -1);
+	}
 }
 
 void gtkui_config_input_defaults() {
