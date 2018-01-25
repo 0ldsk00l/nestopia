@@ -39,6 +39,7 @@ static gamepad_t player[NUMGAMEPADS];
 static uiinput_t ui;
 static inputsettings_t inputconf;
 static char inputconfpath[256];
+extern int drawtext;
 
 static unsigned char nescodes[TOTALBUTTONS] = {
 	Input::Controllers::Pad::UP,
@@ -191,6 +192,12 @@ void nstsdl_input_match_keyboard(Input::Controllers *controllers, SDL_Event even
 		if (keys[SDL_SCANCODE_LEFT]) { nst_nsf_prev(); }
 		if (keys[SDL_SCANCODE_RIGHT]) { nst_nsf_next(); }
 	}
+	
+	// Input Config
+	if (keys[SDL_SCANCODE_LCTRL] && keys[SDL_SCANCODE_1]) { nstsdl_input_conf(0, 0); } // Keyboard Player 1
+	if (keys[SDL_SCANCODE_LCTRL] && keys[SDL_SCANCODE_2]) { nstsdl_input_conf(0, 1); } // Keyboard Player 2
+	if (keys[SDL_SCANCODE_LSHIFT] && keys[SDL_SCANCODE_1]) { nstsdl_input_conf(1, 0); } // Joystick Player 1
+	if (keys[SDL_SCANCODE_LSHIFT] && keys[SDL_SCANCODE_2]) { nstsdl_input_conf(1, 1); } // Joystick Player 2
 	
 	// Escape exits
 #ifndef _GTK	
@@ -817,4 +824,85 @@ SDL_Event nstsdl_input_translate_string(const char *string) {
 	}
 	
 	return event;
+}
+
+void nstsdl_input_conf(int type, int pnum) {
+	// Configure Inputs
+	nst_pause();
+	
+	SDL_Event event, eventbuf;
+	int axis = 0, axisnoise = 0, print = 0;
+	
+	if (type == 0) { // Keyboard
+		for (int i = 0; i < 10;) {
+			if (print == i) {
+				char buttontext[8];
+				switch (i) {
+					case 0: snprintf(buttontext, sizeof(buttontext), "Up"); break;
+					case 1: snprintf(buttontext, sizeof(buttontext), "Down"); break;
+					case 2: snprintf(buttontext, sizeof(buttontext), "Left"); break;
+					case 3: snprintf(buttontext, sizeof(buttontext), "Right"); break;
+					case 4: snprintf(buttontext, sizeof(buttontext), "Select"); break;
+					case 5: snprintf(buttontext, sizeof(buttontext), "Start"); break;
+					case 6: snprintf(buttontext, sizeof(buttontext), "A"); break;
+					case 7: snprintf(buttontext, sizeof(buttontext), "B"); break;
+					case 8: snprintf(buttontext, sizeof(buttontext), "Turbo A"); break;
+					case 9: snprintf(buttontext, sizeof(buttontext), "Turbo B"); break;
+				}
+				fprintf(stderr, "Keyboard Input for Player %d - %s\n", pnum + 1, buttontext);
+				print++;
+			}
+			while (SDL_PollEvent(&event)) {
+				if (event.type == SDL_KEYDOWN) { nstsdl_input_conf_set(event, type, pnum, i); i++; }
+			}
+		}
+	}
+	else if (type == 1) { // Joystick
+		for (int i = 0; i < 10;) {
+			if (print == i) {
+				char buttontext[8];
+				switch (i) {
+					case 0: snprintf(buttontext, sizeof(buttontext), "Up"); break;
+					case 1: snprintf(buttontext, sizeof(buttontext), "Down"); break;
+					case 2: snprintf(buttontext, sizeof(buttontext), "Left"); break;
+					case 3: snprintf(buttontext, sizeof(buttontext), "Right"); break;
+					case 4: snprintf(buttontext, sizeof(buttontext), "Select"); break;
+					case 5: snprintf(buttontext, sizeof(buttontext), "Start"); break;
+					case 6: snprintf(buttontext, sizeof(buttontext), "A"); break;
+					case 7: snprintf(buttontext, sizeof(buttontext), "B"); break;
+					case 8: snprintf(buttontext, sizeof(buttontext), "Turbo A"); break;
+					case 9: snprintf(buttontext, sizeof(buttontext), "Turbo B"); break;
+				}
+				fprintf(stderr, "Joystick Input for Player %d - %s\n", pnum + 1, buttontext);
+				print++;
+			}
+			
+			while (SDL_PollEvent(&event)) {
+				if (event.type == SDL_JOYAXISMOTION) {
+					if (abs(event.jaxis.value) >= DEADZONE) {
+						eventbuf = event;
+						axisnoise = 1;
+						axis = event.jaxis.axis;
+					}
+					else if (abs(event.jaxis.value) < DEADZONE && axisnoise && event.jaxis.axis == axis) {
+						nstsdl_input_conf_set(eventbuf, type, pnum, i);
+						axisnoise = 0;
+						i++;
+					}
+				}
+				else if (event.type == SDL_JOYHATMOTION) {
+					if (event.jhat.value != SDL_HAT_CENTERED) {
+						nstsdl_input_conf_set(event, type, pnum, i);
+						i++;
+					}
+				}
+				else if (event.type == SDL_JOYBUTTONDOWN) {
+					nstsdl_input_conf_set(event, type, pnum, i);
+					i++;
+				}
+			}
+		}
+	}
+	
+	nst_play();
 }

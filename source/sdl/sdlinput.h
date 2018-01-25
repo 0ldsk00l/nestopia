@@ -133,6 +133,7 @@ typedef struct {
 } inputsettings_t;
 
 
+void nstsdl_input_conf(int type, int pnum);
 void nstsdl_input_conf_defaults();
 void nstsdl_input_conf_set(SDL_Event event, int type, int pnum, int counter);
 void nstsdl_input_conf_read();
