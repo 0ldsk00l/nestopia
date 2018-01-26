@@ -649,6 +649,8 @@ void nstsdl_input_conf_write() {
 		fprintf(fp, "; Possible values for keyboard input are in the Key Name column:\n; https://wiki.libsdl.org/SDL_Scancode\n\n");
 		fprintf(fp, "; Possible values for joystick input:\n; j[joystick number][a|b|h][button/hat/axis number][1/0 = +/- (axes only)]\n");
 		fprintf(fp, "; Example: j0b3 = joystick 0, button 3. j1a11 = joystick 1, axis 1 +\n\n");
+		fprintf(fp, "; Press Ctrl or Shift + [player number] to configure input in-game.\n; Ctrl for Keyboard, Shift for Joystick.\n");
+		fprintf(fp, "; Example: Shift + 1 for Joystick input for Player 1\n\n");
 		
 		fprintf(fp, "[ui]\n");
 		fprintf(fp, "qsave1=%s\n", SDL_GetScancodeName(ui.qsave1));
@@ -835,24 +837,11 @@ void nstsdl_input_conf(int type, int pnum) {
 	
 	SDL_Event event, eventbuf;
 	int axis = 0, axisnoise = 0, print = 0;
-	
 	if (type == 0) { // Keyboard
 		for (int i = 0; i < 10;) {
 			if (print == i) {
-				char buttontext[8];
-				switch (i) {
-					case 0: snprintf(buttontext, sizeof(buttontext), "Up"); break;
-					case 1: snprintf(buttontext, sizeof(buttontext), "Down"); break;
-					case 2: snprintf(buttontext, sizeof(buttontext), "Left"); break;
-					case 3: snprintf(buttontext, sizeof(buttontext), "Right"); break;
-					case 4: snprintf(buttontext, sizeof(buttontext), "Select"); break;
-					case 5: snprintf(buttontext, sizeof(buttontext), "Start"); break;
-					case 6: snprintf(buttontext, sizeof(buttontext), "A"); break;
-					case 7: snprintf(buttontext, sizeof(buttontext), "B"); break;
-					case 8: snprintf(buttontext, sizeof(buttontext), "Turbo A"); break;
-					case 9: snprintf(buttontext, sizeof(buttontext), "Turbo B"); break;
-				}
-				fprintf(stderr, "Keyboard Input for Player %d - %s\n", pnum + 1, buttontext);
+				nst_video_disp_inputconf(type, pnum, i);
+				nstsdl_video_swapbuffers();
 				print++;
 			}
 			while (SDL_PollEvent(&event)) {
@@ -863,20 +852,8 @@ void nstsdl_input_conf(int type, int pnum) {
 	else if (type == 1) { // Joystick
 		for (int i = 0; i < 10;) {
 			if (print == i) {
-				char buttontext[8];
-				switch (i) {
-					case 0: snprintf(buttontext, sizeof(buttontext), "Up"); break;
-					case 1: snprintf(buttontext, sizeof(buttontext), "Down"); break;
-					case 2: snprintf(buttontext, sizeof(buttontext), "Left"); break;
-					case 3: snprintf(buttontext, sizeof(buttontext), "Right"); break;
-					case 4: snprintf(buttontext, sizeof(buttontext), "Select"); break;
-					case 5: snprintf(buttontext, sizeof(buttontext), "Start"); break;
-					case 6: snprintf(buttontext, sizeof(buttontext), "A"); break;
-					case 7: snprintf(buttontext, sizeof(buttontext), "B"); break;
-					case 8: snprintf(buttontext, sizeof(buttontext), "Turbo A"); break;
-					case 9: snprintf(buttontext, sizeof(buttontext), "Turbo B"); break;
-				}
-				fprintf(stderr, "Joystick Input for Player %d - %s\n", pnum + 1, buttontext);
+				nst_video_disp_inputconf(type, pnum, i);
+				nstsdl_video_swapbuffers();
 				print++;
 			}
 			
