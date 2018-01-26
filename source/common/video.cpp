@@ -571,16 +571,48 @@ void video_disp_nsf() {
 	// Display NSF text
 	Nsf nsf(emulator);
 	
-	int wscale = renderstate.width / Video::Output::WIDTH;;
-	int hscale = renderstate.height / Video::Output::HEIGHT;;
+	int xscale = renderstate.width / Video::Output::WIDTH;;
+	int yscale = renderstate.height / Video::Output::HEIGHT;;
 	
-	nst_video_text_draw(nsf.GetName(), 4 * wscale, 16 * hscale, false);
-	nst_video_text_draw(nsf.GetArtist(), 4 * wscale, 28 * hscale, false);
-	nst_video_text_draw(nsf.GetCopyright(), 4 * wscale, 40 * hscale, false);
+	nst_video_text_draw(nsf.GetName(), 4 * xscale, 16 * yscale, false);
+	nst_video_text_draw(nsf.GetArtist(), 4 * xscale, 28 * yscale, false);
+	nst_video_text_draw(nsf.GetCopyright(), 4 * xscale, 40 * yscale, false);
 	
 	char currentsong[10];
 	snprintf(currentsong, sizeof(currentsong), "%d / %d", nsf.GetCurrentSong() +1, nsf.GetNumSongs());
-	nst_video_text_draw(currentsong, 4 * wscale, 52 * hscale, false);
+	nst_video_text_draw(currentsong, 4 * xscale, 52 * yscale, false);
+	
+	nst_ogl_render();
+}
+
+void nst_video_disp_inputconf(int type, int pnum, int bnum) {
+	
+	int xscale = renderstate.width / Video::Output::WIDTH;;
+	int yscale = renderstate.height / Video::Output::HEIGHT;;
+	
+	char textbuf[32];
+	char buttontext[8];
+	
+	if (type == 0) { snprintf(textbuf, sizeof(textbuf), "Player %d Keyboard Configuration", pnum + 1); }
+	else { snprintf(textbuf, sizeof(textbuf), "Player %d Joystick Configuration", pnum + 1); }
+	
+	switch (bnum) {
+		case 0: snprintf(buttontext, sizeof(buttontext), "Up"); break;
+		case 1: snprintf(buttontext, sizeof(buttontext), "Down"); break;
+		case 2: snprintf(buttontext, sizeof(buttontext), "Left"); break;
+		case 3: snprintf(buttontext, sizeof(buttontext), "Right"); break;
+		case 4: snprintf(buttontext, sizeof(buttontext), "Select"); break;
+		case 5: snprintf(buttontext, sizeof(buttontext), "Start"); break;
+		case 6: snprintf(buttontext, sizeof(buttontext), "A"); break;
+		case 7: snprintf(buttontext, sizeof(buttontext), "B"); break;
+		case 8: snprintf(buttontext, sizeof(buttontext), "Turbo A"); break;
+		case 9: snprintf(buttontext, sizeof(buttontext), "Turbo B"); break;
+	}
+	
+	video_clear_buffer();
+	
+	nst_video_text_draw(textbuf, 4 * xscale, 64 * yscale, false);
+	nst_video_text_draw(buttontext, 112 * xscale, 128 * yscale, false);
 	
 	nst_ogl_render();
 }
