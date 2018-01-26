@@ -71,12 +71,6 @@ void *custompalette = NULL;
 
 bool (*nst_archive_select)(const char*, char*, size_t);
 
-extern int drawtext;
-extern char textbuf[32];
-
-extern bool drawtime;
-extern char timebuf[6];
-
 static bool NST_CALLBACK nst_cb_videolock(void* userData, Video::Output& video) {
 	video.pitch = video_lock_screen(video.pixels);
 	return true; // true=lock success, false=lock failed (Nestopia will carry on but skip video)
@@ -105,8 +99,7 @@ static void NST_CALLBACK nst_cb_event(void *userData, User::Event event, const v
 			break;
 		case User::EVENT_DISPLAY_TIMER:
 			fprintf(stderr, "\r%s", (const char*)data);
-			snprintf(timebuf, sizeof(timebuf), "%s", (const char*)data + strlen((char*)data) - 5);
-			drawtime = true;
+			nst_video_print_time((const char*)data + strlen((char*)data) - 5, true);
 			break;
 		default: break;
 	}
@@ -432,12 +425,14 @@ void nst_fds_info() {
 
 	const char* disk;
 	const char* side;
-
+	char textbuf[24];
+	
 	fds.GetCurrentDisk() == 0 ? disk = "1" : disk = "2";
 	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
 
 	fprintf(stderr, "Fds: Disk %s Side %s\n", disk, side);
-	//snprintf(textbuf, sizeof(textbuf), "Disk %s Side %s", disk, side); drawtext = 120;
+	snprintf(textbuf, sizeof(textbuf), "Disk %s Side %s", disk, side);
+	nst_video_print((const char*)textbuf, 8, 16, 2, true);
 }
 
 void nst_fds_flip() {
@@ -752,7 +747,7 @@ void nst_state_save(char *filename) {
 	
 	if (statefile.is_open()) { machine.SaveState(statefile, Nes::Api::Machine::NO_COMPRESSION); }
 	fprintf(stderr, "State Saved: %s\n", filename);
-	//snprintf(textbuf, sizeof(textbuf), "State Saved."); drawtext = 120;
+	nst_video_print("State Saved", 8, 212, 2, true);
 }
 
 void nst_state_load(char *filename) {
@@ -763,7 +758,7 @@ void nst_state_load(char *filename) {
 	
 	if (statefile.is_open()) { machine.LoadState(statefile); }
 	fprintf(stderr, "State Loaded: %s\n", filename);
-	//snprintf(textbuf, sizeof(textbuf), "State Loaded."); drawtext = 120; 
+	nst_video_print("State Loaded", 8, 212, 2, true);
 }
 
 void nst_state_quicksave(int slot) {
@@ -782,7 +777,7 @@ void nst_state_quickload(int slot) {
 	struct stat qloadstat;
 	if (stat(slotpath, &qloadstat) == -1) {
 		fprintf(stderr, "No State to Load\n");
-		//snprintf(textbuf, sizeof(textbuf), "No State to Load."); drawtext = 120;
+		nst_video_print("No State to Load", 8, 212, 2, true);
 		return;
 	}
 	
@@ -898,7 +893,8 @@ int nst_load(const char *filename) {
 	
 	// Pull out any inserted cartridges
 	static int loaded = 0;
-	if (loaded) { nst_unload(); } //drawtime = false;
+	if (loaded) { nst_unload(); }
+	nst_video_print_time("", false);
 	
 	// Check if the file is an archive and select the file within
 	char reqfile[256]; // Requested file inside the archive

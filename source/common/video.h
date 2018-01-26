@@ -20,6 +20,16 @@ typedef struct {
 	int h;
 } dimensions_t;
 
+typedef struct {
+	int xpos;
+	int ypos;
+	char textbuf[32];
+	char timebuf[6];
+	int drawtext;
+	bool drawtime;
+	bool bg;
+} osdtext_t;
+
 void nst_ogl_init();
 void nst_ogl_deinit();
 void nst_ogl_render();
@@ -41,7 +51,9 @@ void video_unlock_screen(void*);
 void video_screenshot(const char* filename);
 void video_clear_buffer();
 void video_disp_nsf();
-void nst_video_text_draw(const char *text, int xpos, int ypos);
+void nst_video_print(const char *text, int xpos, int ypos, int seconds, bool bg);
+void nst_video_print_time(const char *timebuf, bool drawtime);
+void nst_video_text_draw(const char *text, int xpos, int ypos, bool bg);
 void nst_video_text_match(const char *text, int *xpos, int *ypos, int strpos);
 
 #endif

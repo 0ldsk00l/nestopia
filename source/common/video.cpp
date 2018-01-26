@@ -38,12 +38,6 @@
 
 using namespace Nes::Api;
 
-int drawtext = 0;
-char textbuf[32];
-
-bool drawtime = false;
-char timebuf[6];
-
 static int overscan_offset, overscan_height;
 
 static uint32_t videobuf[VIDBUF_MAXSIZE]; // Maximum possible internal size
@@ -52,6 +46,7 @@ static Video::RenderState::Filter filter;
 static Video::RenderState renderstate;
 
 static dimensions_t basesize, rendersize, screensize;
+static osdtext_t osdtext;
 
 extern void *custompalette;
 
@@ -514,17 +509,16 @@ long video_lock_screen(void*& ptr) {
 
 void video_unlock_screen(void*) {
 	
-	int wscale = renderstate.width / 256;
-	int hscale = renderstate.height / 240;
+	int xscale = renderstate.width / Video::Output::WIDTH;;
+	int yscale = renderstate.height / Video::Output::HEIGHT;
 	
-	if (drawtext) {
-		//video_text_draw(textbuf, 8 * wscale, 16 * hscale); // Top
-		nst_video_text_draw(textbuf, 8 * wscale, 218 * hscale); // Bottom
-		drawtext--;
+	if (osdtext.drawtext) {
+		nst_video_text_draw(osdtext.textbuf, osdtext.xpos * xscale, osdtext.ypos * yscale, osdtext.bg);
+		osdtext.drawtext--;
 	}
 	
-	if (drawtime) {
-		nst_video_text_draw(timebuf, 208 * wscale, 218 * hscale);
+	if (osdtext.drawtime) {
+		nst_video_text_draw(osdtext.timebuf, 208 * xscale, 218 * yscale, false);
 	}
 }
 
@@ -577,30 +571,56 @@ void video_disp_nsf() {
 	// Display NSF text
 	Nsf nsf(emulator);
 	
-	int wscale = renderstate.width / 256;
-	int hscale = renderstate.height / 240;
+	int wscale = renderstate.width / Video::Output::WIDTH;;
+	int hscale = renderstate.height / Video::Output::HEIGHT;;
 	
-	nst_video_text_draw(nsf.GetName(), 4 * wscale, 16 * hscale);
-	nst_video_text_draw(nsf.GetArtist(), 4 * wscale, 28 * hscale);
-	nst_video_text_draw(nsf.GetCopyright(), 4 * wscale, 40 * hscale);
+	nst_video_text_draw(nsf.GetName(), 4 * wscale, 16 * hscale, false);
+	nst_video_text_draw(nsf.GetArtist(), 4 * wscale, 28 * hscale, false);
+	nst_video_text_draw(nsf.GetCopyright(), 4 * wscale, 40 * hscale, false);
 	
 	char currentsong[10];
 	snprintf(currentsong, sizeof(currentsong), "%d / %d", nsf.GetCurrentSong() +1, nsf.GetNumSongs());
-	nst_video_text_draw(currentsong, 4 * wscale, 52 * hscale);
+	nst_video_text_draw(currentsong, 4 * wscale, 52 * hscale, false);
 	
 	nst_ogl_render();
 }
 
-void nst_video_text_draw(const char *text, int xpos, int ypos) {
+void nst_video_print(const char *text, int xpos, int ypos, int seconds, bool bg) {
+	snprintf(osdtext.textbuf, sizeof(osdtext.textbuf), "%s", text);
+	osdtext.xpos = xpos;
+	osdtext.ypos = ypos;
+	osdtext.drawtext = seconds * nst_pal() ? 50 : 60;
+	osdtext.bg = bg;
+}
+
+void nst_video_print_time(const char *timebuf, bool drawtime) {
+	snprintf(osdtext.timebuf, sizeof(osdtext.timebuf), "%s", timebuf);
+	osdtext.drawtime = drawtime;
+}
+
+void nst_video_text_draw(const char *text, int xpos, int ypos, bool bg) {
 	// Draw text on screen
-	uint32_t w = 0xc0c0c0c0;
-	uint32_t b = 0x00000000;
+	uint32_t w = 0xc0c0c0c0; // "White", actually Grey
+	uint32_t b = 0x00000000; // Black
+	uint32_t g = 0x00358570; // Nestopia UE Green
+	uint32_t d = 0x00255f65; // Nestopia UE Dark Green
 	
 	int numchars = strlen(text);
 	
 	int letterypos;
 	int letterxpos;
 	int letternum = 0;
+	
+	if (bg) { // Draw background borders
+		for (int i = 0; i < numchars * 8; i++) { // Rows above and below
+			videobuf[(xpos + i) + ((ypos - 1) * renderstate.width)] = g;
+			videobuf[(xpos + i) + ((ypos + 8) * renderstate.width)] = g;
+		}
+		for (int i = 0; i < 8; i++) { // Columns on both sides
+			videobuf[(xpos - 1) + ((ypos + i) * renderstate.width)] = g;
+			videobuf[(xpos + (numchars * 8)) + ((ypos + i) * renderstate.width)] = g;
+		}
+	}
 	
 	for (int tpos = 0; tpos < (8 * numchars); tpos+=8) {
 		nst_video_text_match(text, &letterxpos, &letterypos, letternum);
@@ -612,10 +632,12 @@ void nst_video_text_draw(const char *text, int xpos, int ypos) {
 						break;
 					
 					case '+':
-						videobuf[xpos + ((ypos + row) * renderstate.width) + (col + tpos)] = b;
+						videobuf[xpos + ((ypos + row) * renderstate.width) + (col + tpos)] = g;
 						break;
 					
-					default: break;
+					default:
+						if (bg) { videobuf[xpos + ((ypos + row) * renderstate.width) + (col + tpos)] = d; }
+						break;
 				}
 			}
 		}
