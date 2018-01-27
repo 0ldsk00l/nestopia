@@ -65,6 +65,7 @@ gpointer gtkui_emuloop(gpointer data) {
 }
 
 void gtkui_emuloop_start() {
+	nst_quit = 0;
 	emuthread = g_thread_new("emuloop", gtkui_emuloop, NULL);
 }
 
@@ -164,7 +165,7 @@ void gtkui_create() {
 	// Define the File menu
 	GtkWidget *filemenu = gtk_menu_new();
 	GtkWidget *file = gtk_menu_item_new_with_label("File");
-	GtkWidget *open = gtk_menu_item_new_with_label("Open");
+	GtkWidget *open = gtk_menu_item_new_with_label("Open...");
 	GtkWidget *recent = gtk_menu_item_new_with_label("Open Recent");
 	GtkWidget *sep_open = gtk_separator_menu_item_new();
 	GtkWidget *stateload = gtk_menu_item_new_with_label("Load State...");
@@ -187,6 +188,8 @@ void gtkui_create() {
 		GtkWidget *qsave4 = gtk_menu_item_new_with_label("4");
 	
 	GtkWidget *sep_state = gtk_separator_menu_item_new();
+	GtkWidget *palette = gtk_menu_item_new_with_label("Open Palette...");
+	GtkWidget *sep_palette = gtk_separator_menu_item_new();
 	GtkWidget *screenshot = gtk_menu_item_new_with_label("Screenshot...");
 	GtkWidget *sep_screenshot = gtk_separator_menu_item_new();
 	GtkWidget *movieload = gtk_menu_item_new_with_label("Load Movie...");
@@ -239,6 +242,8 @@ void gtkui_create() {
 		gtk_menu_shell_append(GTK_MENU_SHELL(qsavemenu), qsave3);
 		gtk_menu_shell_append(GTK_MENU_SHELL(qsavemenu), qsave4);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_state);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), palette);
+	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_palette);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), screenshot);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), sep_screenshot);
 	gtk_menu_shell_append(GTK_MENU_SHELL(filemenu), movieload);
@@ -380,6 +385,9 @@ void gtkui_create() {
 	g_signal_connect(G_OBJECT(screenshot), "activate",
 		G_CALLBACK(gtkui_screenshot_save), NULL);
 	
+	g_signal_connect(G_OBJECT(palette), "activate",
+		G_CALLBACK(gtkui_palette_load), NULL);
+	
 	g_signal_connect(G_OBJECT(moviesave), "activate",
 		G_CALLBACK(gtkui_movie_save), NULL);
 	
@@ -431,8 +439,6 @@ void gtkui_create() {
 	gtk_widget_show_all(gtkwindow);
 	
 	nst_video_set_dimensions_screen(gtkui_video_get_dimensions());
-	
-	//gtkui_emuloop_start();
 }
 
 void gtkui_signals_init() {
@@ -586,11 +592,13 @@ void gtkui_cursor_set_default() {
 void gtkui_play() {
 	gtkui_signals_init();
 	nst_play();
+	//gtkui_emuloop_start();
 	nst_input_zapper_present() ? gtkui_cursor_set_crosshair() : gtkui_cursor_set_default();
 }
 
 void gtkui_pause() {
 	gtkui_signals_deinit();
+	//gtkui_emuloop_stop();
 	nst_pause();
 }
 
