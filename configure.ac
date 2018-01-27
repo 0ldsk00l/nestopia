@@ -93,13 +93,13 @@ AM_CONDITIONAL([ENABLE_JACK], [test "x$with_jack" = "xyes"])
 
 dnl GTK3
 AC_ARG_ENABLE([gui],
-	AS_HELP_STRING([--disable-gui], [Disable building GUI with GTK+3]))
+	AS_HELP_STRING([--enable-gui], [Enable building GUI with GTK+3]))
 
-AS_IF([test "x$enable_gui" != "xno"], [
+AS_IF([test "x$enable_gui" = "xyes"], [
 	dnl GUI with GTK+3 requested
 	PKG_CHECK_MODULES([GTK3], [gtk+-3.0])
 ])
-AM_CONDITIONAL([ENABLE_GUI], [test "x$enable_gui" != "xno"])
+AM_CONDITIONAL([ENABLE_GUI], [test "x$enable_gui" = "xyes"])
 
 dnl full HTML suite
 AC_ARG_ENABLE([doc],
