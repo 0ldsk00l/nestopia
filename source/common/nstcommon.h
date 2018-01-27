@@ -72,6 +72,7 @@ bool nst_playing();
 
 // Palette
 void nst_palette_load(const char *filename);
+void nst_palette_save();
 void nst_palette_unload();
 
 // Patch

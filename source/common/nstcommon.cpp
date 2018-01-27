@@ -68,6 +68,7 @@ static std::ifstream *moviefile;
 static std::fstream *movierecfile;
 
 void *custompalette = NULL;
+static size_t custpalsize;
 
 bool (*nst_archive_select)(const char*, char*, size_t);
 
@@ -569,10 +570,28 @@ void nst_palette_load(const char *filename) {
 	
 	if (custompalette) { free(custompalette); }
 	custompalette = malloc(filesize * sizeof(uint8_t));
+	custpalsize = filesize * sizeof(uint8_t);
 	
 	result = fread(custompalette, sizeof(uint8_t), filesize, file);
 	
 	fclose(file);
+}
+
+void nst_palette_save() {
+	// Save a custom palette
+	FILE *file;
+	void *custpalout;
+	
+	file = fopen(nstpaths.palettepath, "wb");
+	if (!file) { return; }
+	
+	custpalout = malloc(custpalsize);
+	
+	memcpy(custpalout, custompalette, custpalsize);
+	
+	fwrite(custpalout, custpalsize, sizeof(uint8_t), file);
+	fclose(file);
+	free(custpalout);
 }
 
 void nst_palette_unload() {

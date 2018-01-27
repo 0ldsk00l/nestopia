@@ -13,4 +13,6 @@ void gtkui_movie_stop();
 
 void gtkui_cheats_load();
 
+void gtkui_palette_load();
+
 #endif

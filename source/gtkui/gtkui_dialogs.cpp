@@ -230,3 +230,29 @@ void gtkui_cheats_load() {
 	
 	gtk_widget_destroy(dialog);
 }
+
+void gtkui_palette_load() {
+	// Load a palette from the GUI
+	GtkWidget *dialog = gtk_file_chooser_dialog_new("Load palette (.pal)",
+				GTK_WINDOW(gtkwindow),
+				GTK_FILE_CHOOSER_ACTION_OPEN,
+				"Cancel", GTK_RESPONSE_CANCEL,
+				"Open", GTK_RESPONSE_ACCEPT,
+				NULL);
+
+	GtkFileFilter *filter = gtk_file_filter_new();
+	gtk_file_filter_set_name(filter, "NES Palettes");
+	gtk_file_filter_add_pattern(filter, "*.pal");
+	gtk_file_chooser_add_filter(GTK_FILE_CHOOSER(dialog), filter);
+	
+	if (gtk_dialog_run(GTK_DIALOG(dialog)) == GTK_RESPONSE_ACCEPT) {
+		char *filename = gtk_file_chooser_get_filename(GTK_FILE_CHOOSER(dialog));
+		nst_palette_load(filename);
+		nst_palette_save();
+		g_free(filename);
+		conf.video_palette_mode = 2;
+		video_init();
+	}
+	
+	gtk_widget_destroy(dialog);
+}
