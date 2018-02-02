@@ -449,7 +449,9 @@ GtkWidget *gtkui_config() {
 				"margin-left", MARGIN_LR,
 				NULL);
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "SDL");
+	#ifdef _LIBAO
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "libao");
+	#endif
 	#ifdef _JACK
 	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "jack");
 	#endif

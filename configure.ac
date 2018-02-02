@@ -73,14 +73,19 @@ PKG_CHECK_MODULES([ZLIB], [zlib])
 dnl libarchive
 PKG_CHECK_MODULES([LIBARCHIVE], [libarchive])
 
-dnl libao
-PKG_CHECK_MODULES([LIBAO], [ao])
-
 dnl SDL2
 PKG_CHECK_MODULES([SDL2], [sdl2])
 
 dnl LibEpoxy
 PKG_CHECK_MODULES([LIBEPOXY], [epoxy])
+
+dnl libao
+AC_ARG_WITH([ao],
+	AS_HELP_STRING([--with-ao], [Build with libao audio support]))
+AS_IF([test "x$with_ao" = "xyes"], [
+	PKG_CHECK_MODULES([LIBAO],[ao])
+])
+AM_CONDITIONAL([ENABLE_LIBAO], [test "x$with_ao" = "xyes"])
 
 dnl JACK audio
 AC_ARG_WITH([jack],
