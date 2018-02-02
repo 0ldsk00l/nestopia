@@ -28,7 +28,7 @@
 #include "config.h"
 #include "audio.h"
 
-#ifndef _MINGW
+#ifdef _LIBAO
 #include <ao/ao.h>
 
 static ao_device *aodevice;
@@ -72,20 +72,8 @@ void audio_output_sdl() {
 	if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufsize * 3)) { SDL_ClearQueuedAudio(dev); }
 }
 
-void audio_output_ao() {
-#ifndef _MINGW
-	ao_play(aodevice, (char*)audiobuf, bufsize);
-#endif
-}
-
 void audio_deinit_sdl() {
 	if (dev) { SDL_CloseAudioDevice(dev); }
-}
-
-void audio_deinit_ao() {
-#ifndef _MINGW
-	if (aodevice) { ao_close(aodevice); ao_shutdown(); }
-#endif
 }
 
 void audio_play() {
@@ -123,8 +111,16 @@ void audio_init_sdl() {
 	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
 }
 
+#ifdef _LIBAO
+void audio_output_ao() {
+	ao_play(aodevice, (char*)audiobuf, bufsize);
+}
+
+void audio_deinit_ao() {
+	if (aodevice) { ao_close(aodevice); ao_shutdown(); }
+}
+
 void audio_init_ao() {
-#ifndef _MINGW
 	ao_initialize();
 	
 	int default_driver = ao_default_driver_id();
@@ -143,8 +139,8 @@ void audio_init_ao() {
 	else {
 		fprintf(stderr, "Audio: libao - %dHz, %d-bit, %d channel(s)\n", format.rate, format.bits, format.channels);
 	}
-#endif
 }
+#endif
 
 #ifdef _JACK
 int audio_cb_jack(jack_nframes_t nframes, void *arg) {
@@ -248,16 +244,22 @@ void audio_set_funcs() {
 		audio_output = &audio_output_sdl;
 		audio_deinit = &audio_deinit_sdl;
 	}
+	#ifdef _LIBAO
 	else if (conf.audio_api == 1) { // libao
 		audio_output = &audio_output_ao;
 		audio_deinit = &audio_deinit_ao;
 	}
+	#endif
 	#ifdef _JACK
 	else if (conf.audio_api == 2) { //JACK
 		audio_output = &audio_output_jack;
 		audio_deinit = &audio_deinit_jack;
 	}
 	#endif
+	else { // SDL
+		audio_output = &audio_output_sdl;
+		audio_deinit = &audio_deinit_sdl;
+	}
 }
 
 void audio_init() {
@@ -268,17 +270,16 @@ void audio_init() {
 	channels = conf.audio_stereo ? 2 : 1;
 	memset(audiobuf, 0, sizeof(audiobuf));
 	
-	#ifdef _MINGW
-	conf.audio_api = 0; // Set SDL audio for MinGW
-	#endif
-	
 	audio_set_funcs();
 	
 	if (conf.audio_api == 0) { audio_init_sdl(); }
+	#ifdef _LIBAO
 	else if (conf.audio_api == 1) { audio_init_ao(); }
+	#endif
 	#ifdef _JACK
 	else if (conf.audio_api == 2) { audio_init_jack(); }
 	#endif
+	else { conf.audio_api = 0; audio_init_sdl(); }
 	
 	paused = false;
 }
