@@ -24,6 +24,8 @@ configure
 depcomp
 install-sh
 missing
+source/common/.deps/
+source/common/.dirstamp
 source/core/.deps/
 source/core/.dirstamp
 source/core/api/.deps/
@@ -34,8 +36,10 @@ source/core/input/.deps/
 source/core/input/.dirstamp
 source/core/vssystem/.deps/
 source/core/vssystem/.dirstamp
+source/gtkui/.deps/
+source/sdl/.deps/
+source/sdl/.dirstamp
 source/unix/.deps/
 source/unix/.dirstamp
 source/unix/gtkui/.deps/
 source/unix/gtkui/.dirstamp
-
