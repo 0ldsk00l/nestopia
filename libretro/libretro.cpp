@@ -366,6 +366,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_palette", "Palette; cxa2025as|consumer|canonical|alternative|rgb|pal|composite-direct-fbx|pvm-style-d93-fbx|ntsc-hardware-fbx|nes-classic-fbx-fs|raw|custom" },
       { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
       { "nestopia_overclock", "CPU Speed (Overclock); 1x|2x" },
+	  { "nestopia_select_adapter", "4 Player Adapter; auto|ntsc|famicom" },
       { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
       { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
       { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
@@ -805,6 +806,21 @@ static void check_variables(void)
        aspect_ratio_mode = 0;
    }
    
+   var.key = "nestopia_select_adapter";
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
+   {
+
+	   if (!strcmp(var.value, "ntsc"))
+		   Api::Input(emulator).ConnectAdapter(Api::Input::ADAPTER_NES);
+	   else if (!strcmp(var.value, "famicom"))
+		   Api::Input(emulator).ConnectAdapter(Api::Input::ADAPTER_FAMICOM);
+	   else
+		   if (dbpresent)
+		   {
+			   Api::Input(emulator).AutoSelectAdapter();
+		   }
+   }
+
    var.key = "nestopia_turbo_pulse";
 
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
