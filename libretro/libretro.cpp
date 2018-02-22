@@ -808,17 +808,25 @@ static void check_variables(void)
    
    var.key = "nestopia_select_adapter";
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
-   {
-
-	   if (!strcmp(var.value, "ntsc"))
-		   Api::Input(emulator).ConnectAdapter(Api::Input::ADAPTER_NES);
-	   else if (!strcmp(var.value, "famicom"))
-		   Api::Input(emulator).ConnectAdapter(Api::Input::ADAPTER_FAMICOM);
-	   else
+   { 
+	   if (!strcmp(var.value, "auto")) {
 		   if (dbpresent)
 		   {
+			   Api::Input(emulator).AutoSelectController(2);
+			   Api::Input(emulator).AutoSelectController(3);
 			   Api::Input(emulator).AutoSelectAdapter();
 		   }
+	   }
+	   else if (!strcmp(var.value, "ntsc")) {
+		   Api::Input(emulator).ConnectController(2, Api::Input::PAD3);
+	       Api::Input(emulator).ConnectController(3, Api::Input::PAD4);
+		   Api::Input(emulator).ConnectAdapter(Api::Input::ADAPTER_NES);
+		}
+	   else if (!strcmp(var.value, "famicom")) {
+		   Api::Input(emulator).ConnectController(2, Api::Input::PAD3);
+		   Api::Input(emulator).ConnectController(3, Api::Input::PAD4);
+		   Api::Input(emulator).ConnectAdapter(Api::Input::ADAPTER_FAMICOM);
+		}
    }
 
    var.key = "nestopia_turbo_pulse";
@@ -1122,17 +1130,12 @@ bool retro_load_game(const struct retro_game_info *info)
    {
       Api::Input(emulator).AutoSelectController(0);
       Api::Input(emulator).AutoSelectController(1);
-      Api::Input(emulator).AutoSelectController(2);
-      Api::Input(emulator).AutoSelectController(3);
-      Api::Input(emulator).AutoSelectAdapter();
    }
    else
    {
       Api::Input(emulator).ConnectController(0, Api::Input::PAD1);
       Api::Input(emulator).ConnectController(1, Api::Input::PAD2);
       //Api::Input(emulator).ConnectController(1, Api::Input::ZAPPER);
-      Api::Input(emulator).ConnectController(2, Api::Input::PAD3);
-      Api::Input(emulator).ConnectController(3, Api::Input::PAD4);
    }
 
    machine->Power(true);
