@@ -17,6 +17,8 @@
 #include "../source/core/api/NstApiUser.hpp"
 #include "../source/core/api/NstApiFds.hpp"
 
+#include "../source/core/NstMachine.hpp"
+
 #define NST_VERSION "1.49-WIP"
 
 #define MIN(a,b)      ((a)<(b)?(a):(b))
@@ -1233,18 +1235,33 @@ bool retro_unserialize(const void *data, size_t size)
 
 void *retro_get_memory_data(unsigned id)
 {
-   if (id != RETRO_MEMORY_SAVE_RAM)
-      return 0;
+   Core::Machine& machineGet = emulator;
+   switch(id)
+   {
+      case RETRO_MEMORY_SAVE_RAM:
+      return sram;
+       
+      case RETRO_MEMORY_SYSTEM_RAM:
+      return (void*)&machineGet.cpu.GetRam()[0];
+       
+   }
 
-   return sram;
+   return NULL;
 }
 
 size_t retro_get_memory_size(unsigned id)
 {
-   if (id != RETRO_MEMORY_SAVE_RAM)
-      return 0;
+   Core::Machine& machineGet = emulator;
+   switch(id)
+   {
+      case RETRO_MEMORY_SAVE_RAM:
+         return sram_size;
+       
+      case RETRO_MEMORY_SYSTEM_RAM:
+         return machineGet.cpu.RAM_SIZE;
+   }
 
-   return sram_size;
+   return 0;
 }
 
 void retro_cheat_reset(void)
