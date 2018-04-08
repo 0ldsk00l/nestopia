@@ -433,6 +433,8 @@ namespace Nes
 						KONAMI_VRC7_0              = MakeId<   85,  512,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						KONAMI_VRC7_1              = MakeId<   85,  512,  256,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						KONAMI_VSSYSTEM            = MakeId<  151,   64,   64,  0,  0, CRM_0,  NMT_4,  0 >::ID,
+						//Magic Kid Googoo
+						MAGICKIDGOOGOO             = MakeId<  190,  256,  128,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						// Magic Series
 						MAGICSERIES_MAGICDRAGON    = MakeId<  107,  128,   64,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Namcot

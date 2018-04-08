@@ -73,6 +73,7 @@
 #include "NstBoardKasing.hpp"
 #include "NstBoardKay.hpp"
 #include "NstBoardKonami.hpp"
+#include "NstBoardMagicKidGoogoo.hpp"
 #include "NstBoardMagicSeries.hpp"
 #include "NstBoardNanjing.hpp"
 #include "NstBoardNihon.hpp"
@@ -2880,6 +2881,12 @@ namespace Nes
 						id = Type::TXC_TW;
 						break;
 
+					case 190:
+
+						name = "MAGICKIDGOOGOO";
+						id = Type::MAGICKIDGOOGOO;
+						break;
+
 					case 191:
 
 						name = "WAIXING (b)";
@@ -3579,6 +3586,7 @@ namespace Nes
 					case Type::KONAMI_VRC7_0              :
 					case Type::KONAMI_VRC7_1              : return new Konami::Vrc7(c);
 					case Type::KONAMI_VSSYSTEM            : return new Konami::VsSystem(c);
+					case Type::MAGICKIDGOOGOO             : return new MagicKidGoogoo(c);
 					case Type::MAGICSERIES_MAGICDRAGON    : return new MagicSeries::MagicDragon(c);
 					case Type::NAMCOT_3425                : return new Namcot::N3425(c);
 					case Type::NAMCOT_3433                : return new Namcot::N3433(c);

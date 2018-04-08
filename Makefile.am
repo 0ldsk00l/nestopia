@@ -547,6 +547,7 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardBmcFamily4646B.cpp \
 	source/core/board/NstBoardBtlT230.cpp \
 	source/core/board/NstBoardBmc1200in1.hpp \
+	source/core/board/NstBoardMagicKidGoogoo.cpp \
 	source/core/board/NstBoardMagicSeries.cpp \
 	source/core/board/NstBoardSunsoft2.hpp \
 	source/core/board/NstBoardBmcGoldenCard6in1.hpp \
