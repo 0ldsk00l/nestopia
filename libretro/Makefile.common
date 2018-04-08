@@ -190,6 +190,7 @@ SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardKonamiVrc4.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardKonamiVrc6.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardKonamiVrc7.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardKonamiVsSystem.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardMagicKidGoogoo.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardMagicSeries.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardMmc1.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardMmc2.cpp
