@@ -567,25 +567,15 @@ void gtkui_message(const char* message) {
 	gtk_widget_destroy(messagewindow);
 }
 
-void gtkui_cursor_set_crosshair() {
-	// Set the cursor to a crosshair
+void gtkui_cursor_set(int curtype) {
+	// Set the cursor
 	GdkCursor *cursor;
 	GdkDisplay *display = gdk_display_get_default();
-	cursor = gdk_cursor_new_from_name(display, "crosshair");
+	cursor = curtype ? gdk_cursor_new_from_name(display, "crosshair") :
+		gdk_cursor_new_from_name(display, "default");
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
 	gdk_window_set_cursor(gdkwindow, cursor);
-	gdk_flush();
-	g_object_unref(cursor);
-}
-
-void gtkui_cursor_set_default() {
-	// Set the cursor to the default
-	GdkCursor *cursor;
-	GdkDisplay *display = gdk_display_get_default();
-	cursor = gdk_cursor_new_from_name(display, "default");
-	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
-	gdk_window_set_cursor(gdkwindow, cursor);
-	gdk_flush();
+	gdk_display_flush(display);
 	g_object_unref(cursor);
 }
 
@@ -593,7 +583,7 @@ void gtkui_play() {
 	gtkui_signals_init();
 	nst_play();
 	//gtkui_emuloop_start();
-	nst_input_zapper_present() ? gtkui_cursor_set_crosshair() : gtkui_cursor_set_default();
+	nst_input_zapper_present() ? gtkui_cursor_set(1) : gtkui_cursor_set(0);
 }
 
 void gtkui_pause() {
