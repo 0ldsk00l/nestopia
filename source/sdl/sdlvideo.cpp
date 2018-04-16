@@ -44,7 +44,7 @@ void nstsdl_video_create() {
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 2);
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
 	
-	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL|SDL_WINDOW_RESIZABLE;
+	Uint32 windowflags = SDL_WINDOW_SHOWN|SDL_WINDOW_OPENGL;
 	
 	dimensions_t rendersize = nst_video_get_dimensions_render();
 	
