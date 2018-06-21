@@ -99,25 +99,18 @@ void nstsdl_video_resize() {
 
 void nstsdl_video_set_cursor() {
 	// Set the cursor to what it needs to be
-	int cursor;
-	bool special;
-	
-	if (conf.misc_disable_cursor) { SDL_ShowCursor(false); }
-	else {
-		if (nst_input_zapper_present()) {
-			special = true;
-			SDL_ShowCursor(true); // Must be set true to be modified if special
-			cursor_set_special(Input::ZAPPER);
+	if (nst_input_zapper_present()) {
+		if (conf.misc_disable_cursor_special) {
+			SDL_ShowCursor(false);
 		}
 		else {
-			special = false;
-			cursor_set_default();
+			SDL_ShowCursor(true); // Must be set true before being modified if special
+			cursor_set_special(Input::ZAPPER);
 		}
-		
-		if (conf.video_fullscreen) { cursor = special; }
-		else { cursor = true; }
-		
-		SDL_ShowCursor(cursor);
+	}
+	else {
+		if (conf.misc_disable_cursor || conf.video_fullscreen) { SDL_ShowCursor(false); }
+		else { SDL_ShowCursor(true); }
 	}
 }
 

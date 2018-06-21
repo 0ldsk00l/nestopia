@@ -571,8 +571,14 @@ void gtkui_cursor_set(int curtype) {
 	// Set the cursor
 	GdkCursor *cursor;
 	GdkDisplay *display = gdk_display_get_default();
-	cursor = curtype ? gdk_cursor_new_from_name(display, "crosshair") :
-		gdk_cursor_new_from_name(display, "default");
+	
+	switch (curtype) {
+		case 0: cursor = gdk_cursor_new_from_name(display, "none"); break;
+		case 1: cursor = gdk_cursor_new_from_name(display, "default"); break;
+		case 2: cursor = gdk_cursor_new_from_name(display, "crosshair"); break;
+		default: cursor = gdk_cursor_new_from_name(display, "default"); break;
+	}
+	
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(drawingarea));
 	gdk_window_set_cursor(gdkwindow, cursor);
 	gdk_display_flush(display);
@@ -583,7 +589,12 @@ void gtkui_play() {
 	gtkui_signals_init();
 	nst_play();
 	//gtkui_emuloop_start();
-	nst_input_zapper_present() ? gtkui_cursor_set(1) : gtkui_cursor_set(0);
+	if (nst_input_zapper_present()) {
+		gtkui_cursor_set(conf.misc_disable_cursor_special ? 0 : 2);
+	}
+	else {
+		gtkui_cursor_set(conf.misc_disable_cursor ? 0 : 1);
+	}
 }
 
 void gtkui_pause() {

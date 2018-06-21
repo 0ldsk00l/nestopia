@@ -131,6 +131,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "genie_distortion=%d\n", conf.misc_genie_distortion);
 		//fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
 		fprintf(fp, "disable_cursor=%d\n", conf.misc_disable_cursor);
+		fprintf(fp, "disable_cursor_special=%d\n", conf.misc_disable_cursor_special);
 		fprintf(fp, "config_pause=%d\n", conf.misc_config_pause);
 		fprintf(fp, "last_folder=%s\n", conf.misc_last_folder);
 		fprintf(fp, "; 0=0x00, 1=0xFF, 2=Random\n");
@@ -201,6 +202,7 @@ void config_set_default() {
 	conf.misc_genie_distortion = false;
 	//conf.misc_disable_gui = false;
 	conf.misc_disable_cursor = false;
+	conf.misc_disable_cursor_special = false;
 	conf.misc_config_pause = false;
 	conf.misc_last_folder = NULL;
 	conf.misc_power_state = 0;
@@ -267,6 +269,7 @@ static int config_match(void* user, const char* section, const char* name, const
 	//else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
 	else if (MATCH("misc", "config_pause")) { pconfig->misc_config_pause = atoi(value); }
 	else if (MATCH("misc", "disable_cursor")) { pconfig->misc_disable_cursor = atoi(value); }
+	else if (MATCH("misc", "disable_cursor_special")) { pconfig->misc_disable_cursor_special = atoi(value); }
 	else if (MATCH("misc", "last_folder")) { pconfig->misc_last_folder = strdup(value); }
 	else if (MATCH("misc", "power_state")) { pconfig->misc_power_state = atoi(value); }
 	else if (MATCH("misc", "overclock")) { pconfig->misc_overclock = atoi(value); }

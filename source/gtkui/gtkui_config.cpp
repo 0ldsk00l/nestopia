@@ -1100,6 +1100,20 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(check_misc_disable_cursor), "toggled",
 		G_CALLBACK(gtkui_cb_misc_disable_cursor), NULL);
 	
+	// Disable Special Cursor
+	GtkWidget *check_misc_disable_cursor_special = gtk_widget_new(
+				GTK_TYPE_CHECK_BUTTON,
+				"label", "Disable Special Cursor",
+				"halign", GTK_ALIGN_START,
+				"margin-left", MARGIN_LR,
+				NULL);
+	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_disable_cursor_special), conf.misc_disable_cursor_special);
+	
+	gtk_box_pack_start(GTK_BOX(box_misc), check_misc_disable_cursor_special, FALSE, FALSE, 0);
+	
+	g_signal_connect(G_OBJECT(check_misc_disable_cursor_special), "toggled",
+		G_CALLBACK(gtkui_cb_misc_disable_cursor_special), NULL);
+	
 	// Pause While Configuration Open
 	GtkWidget *check_misc_config_pause = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
