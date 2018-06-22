@@ -26,6 +26,7 @@ typedef struct {
 	char statepath[512];
 	char cheatpath[512];
 	char palettepath[512];
+	char sampdir[512];
 } nstpaths_t;
 
 // Pointers

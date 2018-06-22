@@ -711,6 +711,8 @@ nestopia_SOURCES += \
 	source/common/video.h \
 	source/common/input.cpp \
 	source/common/input.h \
+	source/common/samples.cpp \
+	source/common/samples.h \
 	source/common/font.h \
 	source/common/ini.cpp \
 	source/common/ini.h \
