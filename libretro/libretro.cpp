@@ -51,6 +51,7 @@ static Api::Fds *fds;
 static char g_basename[256];
 static char g_rom_dir[256];
 static char *g_save_dir;
+static char samp_dir[256];
 static unsigned blargg_ntsc;
 static bool fds_auto_insert;
 static bool overscan_v;
@@ -72,6 +73,7 @@ static unsigned long sram_size;
 static bool is_pal;
 static bool dbpresent;
 static byte custpal[64*3];
+static char slash;
 
 static const byte cxa2025as_palette[64][3] =
 {
@@ -218,11 +220,42 @@ void draw_crosshair(int x, int y)
    }
 }
 
+static void load_wav(const char* sampgame, Api::User::File& file)
+{
+   char samp_path[292];
+
+   snprintf(samp_path, sizeof(samp_path), "%s%c%s%c%02d.wav", samp_dir, slash, sampgame, slash, file.GetId());
+
+   std::ifstream samp_file(samp_path, std::ifstream::in|std::ifstream::binary);
+
+   if (samp_file) {
+	   samp_file.seekg(0, samp_file.end);
+	   int length = samp_file.tellg();
+	   samp_file.seekg(0, samp_file.beg);
+	   char wavfile[length];
+	   samp_file.read(wavfile, length);
+
+	   // Check to see if it has a valid header
+	   char fmt[4] = { 0x66, 0x6d, 0x74, 0x20};
+	   char subchunk2id[4] = { 0x64, 0x61, 0x74, 0x61};
+	   if (memcmp(&wavfile[0x00], "RIFF", 4) != 0) { return; }
+	   if (memcmp(&wavfile[0x08], "WAVE", 4) != 0) { return; }
+	   if (memcmp(&wavfile[0x0c], &fmt, 4) != 0) { return; }
+	   if (memcmp(&wavfile[0x24], &subchunk2id, 4) != 0) { return; }
+
+	   // Load the sample into the emulator
+	   char *dataptr = &wavfile[0x2c];
+	   int blockalign = wavfile[0x21] << 8 | wavfile[0x20];
+	   int numchannels = wavfile[0x17] << 8 | wavfile[0x16];
+	   int bitspersample = wavfile[0x23] << 8 | wavfile[0x22];
+	   file.SetSampleContent(dataptr, (length - 44) / blockalign, 0, bitspersample, 44100);
+   }
+}
+
 static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 {
    const void *addr;
    unsigned long addr_size;
-   char slash;
 
 #ifdef _WIN32
    slash = '\\';
@@ -232,6 +265,17 @@ static void NST_CALLBACK file_io_callback(void*, Api::User::File &file)
 
    switch (file.GetAction())
    {
+      case Api::User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU:
+         load_wav("moepro", file); break;
+      case Api::User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU_88:
+         load_wav("moepro88", file); break;
+      case Api::User::File::LOAD_SAMPLE_MOERO_PRO_TENNIS:
+         load_wav("mptennis", file); break;
+      case Api::User::File::LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU:
+         load_wav("terao", file); break;
+      case Api::User::File::LOAD_SAMPLE_AEROBICS_STUDIO:
+         load_wav("ftaerobi", file); break;
+
       case Api::User::File::LOAD_BATTERY:
       case Api::User::File::LOAD_EEPROM:
       case Api::User::File::LOAD_TAPE:
@@ -1005,6 +1049,8 @@ bool retro_load_game(const struct retro_game_info *info)
 
    if (!environ_cb(RETRO_ENVIRONMENT_GET_SYSTEM_DIRECTORY, &dir) || !dir)
       return false;
+
+   sprintf(samp_dir, "%s%cnestopia%csamples", dir, slash, slash);
 
    sprintf(palette_path, "%s%ccustom.pal", dir, slash);
 
