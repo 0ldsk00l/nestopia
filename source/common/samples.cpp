@@ -143,7 +143,6 @@ void nst_sample_load_samples(User::File& file, const char* sampgame) {
 	}
 	else { // Otherwise load .wav files from an extracted directory
 		snprintf(samppath, sizeof(samppath), "%s%s/%s", nstpaths.sampdir, sampgame, reqfile);
-		printf("samppath: %s\treqfile: %s\n", samppath, reqfile);
 		if (nst_sample_load_file(samppath)) {
 			nst_sample_setcontent(file);
 			nst_sample_unload_file();

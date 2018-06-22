@@ -8,6 +8,8 @@ Shell:
   - Game-specific custom palettes
   - Scale factors up to 8x
   - Added option to enable overclocking
+  - Add .wav sample loading
+
 
  Changes:
   - Separated GTK+ and SDL input settings
@@ -20,6 +22,7 @@ libretro:
  Additions:
   - Add support for multiline cheats and raw cheats (iLag)
   - Add adapter autoselect using NstDatabase.xml (hunterk)
+  - Add .wav sample loading
 
  Fixes:
   - Fixed heap corruption bug with crosshair (Arto Vainiolehto)
