@@ -49,6 +49,7 @@
 #include "input.h"
 #include "audio.h"
 #include "video.h"
+#include "samples.h"
 
 Emulator emulator;
 Video::Output *cNstVideo;
@@ -121,14 +122,12 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 			// Nothing here for now			
 			break;
 
-		case User::File::LOAD_SAMPLE:
-		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU:
-		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU_88:
-		case User::File::LOAD_SAMPLE_MOERO_PRO_TENNIS:
-		case User::File::LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU:
-		case User::File::LOAD_SAMPLE_AEROBICS_STUDIO:
-			// Nothing here for now
-			break;
+		case User::File::LOAD_SAMPLE: break;
+		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU: nst_sample_load_samples(file, "moepro"); break;
+		case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU_88: nst_sample_load_samples(file, "moepro88"); break;
+		case User::File::LOAD_SAMPLE_MOERO_PRO_TENNIS: nst_sample_load_samples(file, "mptennis"); break;
+		case User::File::LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU: nst_sample_load_samples(file, "terao"); break;
+		case User::File::LOAD_SAMPLE_AEROBICS_STUDIO: nst_sample_load_samples(file, "ftaerobi"); break;
 
 		case User::File::LOAD_BATTERY: // load in battery data from a file
 		case User::File::LOAD_EEPROM: // used by some Bandai games, can be treated the same as battery files
@@ -292,10 +291,8 @@ bool nst_archive_open(const char *filename, char **rom, int *romsize, const char
 	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 		char *rombuf;
 		const char *currentfile = archive_entry_pathname(entry);
-		
 		if (nst_archive_checkext(currentfile)) {
 			nst_set_paths(currentfile);
-			
 			// If there's a specific file we want, load it
 			if (reqfile != NULL) {
 				if (!strcmp(currentfile, reqfile)) {
@@ -693,6 +690,16 @@ void nst_set_dirs() {
 	
 	// Construct the custom palette path
 	snprintf(nstpaths.palettepath, sizeof(nstpaths.palettepath), "%s%s", nstpaths.nstdir, "custom.pal");
+	
+	// Construct samples directory if it doesn't exist
+	snprintf(dirstr, sizeof(dirstr), "%ssamples", nstpaths.nstdir);
+#ifdef _MINGW	
+	if (mkdir(dirstr) && errno != EEXIST) {
+#else
+	if (mkdir(dirstr, 0755) && errno != EEXIST) {
+#endif
+		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
+	}
 }
 
 void nst_set_paths(const char *filename) {
@@ -710,6 +717,9 @@ void nst_set_paths(const char *filename) {
 			break;
 		}
 	}
+	
+	// Set up the sample directory
+	snprintf(nstpaths.sampdir, sizeof(nstpaths.sampdir), "%ssamples/", nstpaths.nstdir);
 	
 	// Get the name of the game minus file path and extension
 	snprintf(nstpaths.gamename, sizeof(nstpaths.gamename), "%s", basename(nstpaths.savename));
@@ -924,6 +934,7 @@ int nst_load(const char *filename) {
 		// Convert the malloc'd char* to an istream
 		std::string rombuf(rom, romsize);
 		std::istringstream file(rombuf);
+		free(rom);
 		
 		result = machine.Load(file, nst_default_system());
 	}
