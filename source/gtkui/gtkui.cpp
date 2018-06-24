@@ -439,6 +439,8 @@ void gtkui_create() {
 	gtk_widget_show_all(gtkwindow);
 	
 	nst_video_set_dimensions_screen(gtkui_video_get_dimensions());
+	
+	if (conf.video_fullscreen) { gtkui_video_toggle_fullscreen(); }
 }
 
 void gtkui_signals_init() {
@@ -501,10 +503,18 @@ void gtkui_video_toggle_fullscreen() {
 	if (conf.video_fullscreen) {
 		gtk_widget_hide(menubar);
 		gtk_window_fullscreen(GTK_WINDOW(gtkwindow));
+		if (nst_input_zapper_present()) {
+			gtkui_cursor_set(conf.misc_disable_cursor_special ? 0 : 2);
+		}
+		else {gtkui_cursor_set(0); }
 	}
 	else {
 		gtk_window_unfullscreen(GTK_WINDOW(gtkwindow));
 		gtk_widget_show(menubar);
+		if (nst_input_zapper_present()) {
+			gtkui_cursor_set(conf.misc_disable_cursor_special ? 0 : 2);
+		}
+		else {gtkui_cursor_set(1); }
 	}
 	nst_video_set_dimensions_screen(gtkui_video_get_dimensions());
 	video_init();
