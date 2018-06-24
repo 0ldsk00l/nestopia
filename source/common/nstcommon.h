@@ -1,8 +1,6 @@
 #ifndef _NSTCOMMON_H_
 #define _NSTCOMMON_H_
 
-#define VERSION "1.49-WIP"
-
 // Nst Core
 #include "core/api/NstApiEmulator.hpp"
 #include "core/api/NstApiVideo.hpp"
