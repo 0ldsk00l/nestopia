@@ -559,10 +559,10 @@ void gtkui_image_paths() {
 	// Load the SVG from local source dir if make install hasn't been done
 	struct stat svgstat;
 	if (stat(iconpath, &svgstat) == -1) {
-		snprintf(iconpath, sizeof(iconpath), "icons/nestopia.svg");
+		snprintf(iconpath, sizeof(iconpath), "icons/svg/nestopia.svg");
 	}
 	if (stat(padpath, &svgstat) == -1) {
-		snprintf(padpath, sizeof(padpath), "icons/nespad.svg");
+		snprintf(padpath, sizeof(padpath), "icons/svg/nespad.svg");
 	}
 }
 
