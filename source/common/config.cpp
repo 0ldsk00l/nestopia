@@ -172,9 +172,9 @@ void config_set_default() {
 	conf.video_xbr_pixel_blending = false;
 	
 	// Audio
-	conf.audio_api = 1;
+	conf.audio_api = 0;
 	conf.audio_stereo = false;
-	conf.audio_sample_rate = 44100;
+	conf.audio_sample_rate = 48000;
 	conf.audio_volume = 85;
 	conf.audio_vol_sq1 = 85;
 	conf.audio_vol_sq2 = 85;
