@@ -8,7 +8,10 @@ Shell:
   - Game-specific custom palettes
   - Scale factors up to 8x
   - Added option to enable overclocking
-  - Add .wav sample loading
+  - Added rewind controls to gamepad
+  - Famicom Mic support
+  - Optional JACK Audio support (McKayJT)
+  - Added .wav sample loading
 
 
  Changes:
@@ -16,17 +19,26 @@ Shell:
   - Removed deprecated functions from UI
   - Use GTK+ OpenGL widget for GUI (Wayland support)
   - Reworked Alternate Speed/Fast-Forward
+  - Allow mapping more than 9 joysticks (Lou-Cipher)
+  - Restructured build system, separated SDL and GTK builds
+  - Cursor options split int normal and special cursor options
+
+ Fixes:
+  - Fixed automatic ROM patching, improved patching function (hugoarpin)
 
 libretro:
 
  Additions:
   - Add support for multiline cheats and raw cheats (iLag)
   - Add adapter autoselect using NstDatabase.xml (hunterk)
+  - Famicom Mic support
+  - Cheevos ram access support (meepingsnesroms)
   - Add .wav sample loading
 
  Fixes:
   - Fixed heap corruption bug with crosshair (Arto Vainiolehto)
   - Fixed black screen when non-existent custom palette is selected
+  - Fixed crosshair and overscan with blargg filter
 
 Core:
 
@@ -37,6 +49,8 @@ Core:
   - Fixed NSF and FDS in Dendy mode (Eugene.S)
   - Fixed coding mistake in PPU (zeromus)
   - Modified submappers for VRC2/VRC4 games (GeneralFailer)
+  - Fixed compilation error in SetRamPowerState (Arto Vainiolehto)
+  - Fix for McAcc games (joepogo)
 
 ----------------------------------------------------------------
 1.48
