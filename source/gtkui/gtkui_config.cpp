@@ -261,7 +261,7 @@ GtkWidget *gtkui_config() {
 		G_CALLBACK(gtkui_cb_video_unmask_overscan), NULL);
 		
 	// Stretch Aspect
-	GtkWidget *check_video_stretch_aspect = gtk_widget_new(
+	/*GtkWidget *check_video_stretch_aspect = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
 				"label", "Stretch Aspect Ratio",
 				"halign", GTK_ALIGN_START,
@@ -272,7 +272,7 @@ GtkWidget *gtkui_config() {
 	gtk_box_pack_start(GTK_BOX(box_video_l), check_video_stretch_aspect, FALSE, FALSE, 0);
 	
 	g_signal_connect(G_OBJECT(check_video_stretch_aspect), "toggled",
-		G_CALLBACK(gtkui_cb_video_stretch_aspect), NULL);
+		G_CALLBACK(gtkui_cb_video_stretch_aspect), NULL);*/
 	
 	// Unlimited Sprites
 	GtkWidget *check_video_unlimited_sprites = gtk_widget_new(
