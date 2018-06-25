@@ -223,6 +223,14 @@ void draw_crosshair(int x, int y)
 static void load_wav(const char* sampgame, Api::User::File& file)
 {
    char samp_path[292];
+   int length = 0;
+   int blockalign = 0;
+   int numchannels = 0;
+   int bitspersample = 0;
+   char fmt[4] = { 0x66, 0x6d, 0x74, 0x20};
+   char subchunk2id[4] = { 0x64, 0x61, 0x74, 0x61};
+   char *wavfile;
+   char *dataptr;
 
    sprintf(samp_path, "%s%c%s%c%02d.wav", samp_dir, slash, sampgame, slash, file.GetId());
 
@@ -230,25 +238,24 @@ static void load_wav(const char* sampgame, Api::User::File& file)
 
    if (samp_file) {
 	   samp_file.seekg(0, samp_file.end);
-	   int length = samp_file.tellg();
+	   length = samp_file.tellg();
 	   samp_file.seekg(0, samp_file.beg);
-	   char wavfile[length];
+	   wavfile = (char*)malloc(length * sizeof(char));
 	   samp_file.read(wavfile, length);
 
 	   // Check to see if it has a valid header
-	   char fmt[4] = { 0x66, 0x6d, 0x74, 0x20};
-	   char subchunk2id[4] = { 0x64, 0x61, 0x74, 0x61};
 	   if (memcmp(&wavfile[0x00], "RIFF", 4) != 0) { return; }
 	   if (memcmp(&wavfile[0x08], "WAVE", 4) != 0) { return; }
 	   if (memcmp(&wavfile[0x0c], &fmt, 4) != 0) { return; }
 	   if (memcmp(&wavfile[0x24], &subchunk2id, 4) != 0) { return; }
 
 	   // Load the sample into the emulator
-	   char *dataptr = &wavfile[0x2c];
-	   int blockalign = wavfile[0x21] << 8 | wavfile[0x20];
-	   int numchannels = wavfile[0x17] << 8 | wavfile[0x16];
-	   int bitspersample = wavfile[0x23] << 8 | wavfile[0x22];
+	   dataptr = &wavfile[0x2c];
+	   blockalign = wavfile[0x21] << 8 | wavfile[0x20];
+	   numchannels = wavfile[0x17] << 8 | wavfile[0x16];
+	   bitspersample = wavfile[0x23] << 8 | wavfile[0x22];
 	   file.SetSampleContent(dataptr, (length - 44) / blockalign, 0, bitspersample, 44100);
+	   free(wavfile);
    }
 }
 
