@@ -19,7 +19,7 @@
 
 #include "../source/core/NstMachine.hpp"
 
-#define NST_VERSION "1.49"
+#define NST_VERSION "1.50-WIP"
 
 #define MIN(a,b)      ((a)<(b)?(a):(b))
 #define MAX(a,b)      ((a)>(b)?(a):(b))
@@ -224,7 +224,7 @@ static void load_wav(const char* sampgame, Api::User::File& file)
 {
    char samp_path[292];
 
-   snprintf(samp_path, sizeof(samp_path), "%s%c%s%c%02d.wav", samp_dir, slash, sampgame, slash, file.GetId());
+   sprintf(samp_path, "%s%c%s%c%02d.wav", samp_dir, slash, sampgame, slash, file.GetId());
 
    std::ifstream samp_file(samp_path, std::ifstream::in|std::ifstream::binary);
 
