@@ -63,6 +63,9 @@ typedef struct {
 	char* misc_last_folder;
 	int misc_power_state;
 	bool misc_overclock;
+	int misc_homebrew_exit;
+	int misc_homebrew_stdout;
+	int misc_homebrew_stderr;
 } settings_t;
 
 void config_file_read(const char *nstdir);

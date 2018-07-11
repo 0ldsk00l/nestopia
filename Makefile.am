@@ -150,6 +150,7 @@ nestopia_SOURCES = \
 	source/core/NstCartridge.hpp \
 	source/core/NstStream.cpp \
 	source/core/NstCheats.hpp \
+	source/core/NstHomebrew.hpp \
 	source/core/vssystem/NstVsSystem.hpp \
 	source/core/vssystem/NstVsRbiBaseball.hpp \
 	source/core/vssystem/NstVsSuperXevious.cpp \
@@ -199,6 +200,7 @@ nestopia_SOURCES = \
 	source/core/api/NstApiEmulator.hpp \
 	source/core/api/NstApiVideo.cpp \
 	source/core/api/NstApiCheats.cpp \
+	source/core/api/NstApiHomebrew.cpp \
 	source/core/api/NstApiMovie.hpp \
 	source/core/api/NstApiCartridge.cpp \
 	source/core/api/NstApi.hpp \
@@ -221,6 +223,7 @@ nestopia_SOURCES = \
 	source/core/api/NstApiFds.hpp \
 	source/core/api/NstApiVideo.hpp \
 	source/core/api/NstApiCheats.hpp \
+	source/core/api/NstApiHomebrew.hpp \
 	source/core/api/NstApiBarcodeReader.cpp \
 	source/core/api/NstApiInput.hpp \
 	source/core/api/NstApiInput.cpp \
@@ -234,6 +237,7 @@ nestopia_SOURCES = \
 	source/core/NstFpuPrecision.hpp \
 	source/core/NstRam.hpp \
 	source/core/NstCheats.cpp \
+	source/core/NstHomebrew.cpp \
 	source/core/NstZlib.cpp \
 	source/core/NstStream.hpp \
 	source/core/NstBase.hpp \
@@ -703,6 +707,8 @@ nestopia_SOURCES += \
 	source/common/nstcommon.h \
 	source/common/cheats.cpp \
 	source/common/cheats.h \
+	source/common/homebrew.cpp \
+	source/common/homebrew.h \
 	source/common/cli.cpp \
 	source/common/cli.h \
 	source/common/config.cpp \
