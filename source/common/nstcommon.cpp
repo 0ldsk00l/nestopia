@@ -3,7 +3,8 @@
  * 
  * Copyright (C) 2007-2008 R. Belmont
  * Copyright (C) 2012-2018 R. Danbrook
- * 
+ * Copyright (C) 2018-2018 Phil Smith
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -46,6 +47,7 @@
 #include "nstcommon.h"
 #include "config.h"
 #include "cheats.h"
+#include "homebrew.h"
 #include "input.h"
 #include "audio.h"
 #include "video.h"
@@ -890,7 +892,8 @@ void nst_play() {
 	audio_init();
 	nst_input_init();
 	nst_cheats_init(nstpaths.cheatpath);
-	
+	nst_homebrew_init();
+
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
