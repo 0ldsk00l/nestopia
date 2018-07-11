@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2018-2018 Phil Smith
 //
 // This file is part of Nestopia.
 //
@@ -25,6 +26,7 @@
 #include "NstMachine.hpp"
 #include "NstCartridge.hpp"
 #include "NstCheats.hpp"
+#include "NstHomebrew.hpp"
 #include "NstNsf.hpp"
 #include "NstImageDatabase.hpp"
 #include "input/NstInpDevice.hpp"
@@ -49,6 +51,7 @@ namespace Nes
 		expPort       (new Input::Device( cpu )),
 		image         (NULL),
 		cheats        (NULL),
+		homebrew      (NULL),
 		imageDatabase (NULL),
 		ppu           (cpu)
 		{
@@ -60,6 +63,7 @@ namespace Nes
 
 			delete imageDatabase;
 			delete cheats;
+			delete homebrew;
 			delete expPort;
 
 			for (uint ports=extPort->NumPorts(), i=0; i < ports; ++i)
@@ -294,6 +298,9 @@ namespace Nes
 					if (cheats)
 						cheats->Reset();
 
+					if (homebrew)
+						homebrew->Reset();
+
 					tracker.Reset();
 				}
 				else
@@ -513,7 +520,7 @@ namespace Nes
 
 				cpu.ExecuteFrame( sound );
 				ppu.EndFrame();
-				
+
 				renderer.bgColor = ppu.output.bgColor;
 
 				if (video)

@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2018-2018 Phil Smith
 //
 // This file is part of Nestopia.
 //
@@ -58,6 +59,7 @@ namespace Nes
 
 		class Image;
 		class Cheats;
+		class Homebrew;
 		class ImageDatabase;
 
 		class Machine
@@ -128,6 +130,7 @@ namespace Nes
 			Input::Device* expPort;
 			Image* image;
 			Cheats* cheats;
+			Homebrew* homebrew;
 			ImageDatabase* imageDatabase;
 			Tracker tracker;
 			Ppu ppu;
