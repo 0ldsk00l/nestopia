@@ -58,7 +58,7 @@ int main(int argc, char *argv[]) {
 	config_set_default();
 	
 	// Read the config file and override defaults
-	config_file_read(nstpaths.nstdir);
+	config_file_read(nstpaths.confdir);
 	
 	// Exit if there is no CLI argument
 	if (argc == 1) {
@@ -163,7 +163,7 @@ int main(int argc, char *argv[]) {
 	nstsdl_input_conf_write();
 	
 	// Write the config file
-	config_file_write(nstpaths.nstdir);
+	config_file_write(nstpaths.confdir);
 
 	return 0;
 }

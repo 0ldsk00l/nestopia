@@ -645,13 +645,35 @@ void nst_set_dirs() {
 	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "");
 #else
 	// create system directory if it doesn't exist
-	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/.nestopia/", getenv("HOME"));
+	const char* datadir = getenv("XDG_DATA_HOME");
+	char dirstr[256];
+	if (!datadir) {
+		snprintf(dirstr, sizeof(dirstr), "%s/.local/share", getenv("HOME"));
+		datadir = dirstr;
+	}
+	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/nestopia/", datadir);
 	if (mkdir(nstpaths.nstdir, 0755) && errno != EEXIST) {	
 		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.nstdir, errno);
 	}
 #endif
+
+    // Set up config directory
+#ifdef _MINGW
+	snprintf(nstpaths.confdir, sizeof(nstpaths.confdir), "");
+#else
+	// create config directory if it doesn't exist
+	const char* confdir = getenv("XDG_CONFIG_HOME");
+	if (!confdir) {
+		snprintf(dirstr, sizeof(dirstr), "%s/.config", getenv("HOME"));
+		confdir = dirstr;
+	}
+	snprintf(nstpaths.confdir, sizeof(nstpaths.confdir), "%s/nestopia/", confdir);
+	if (mkdir(nstpaths.confdir, 0755) && errno != EEXIST) {
+		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.confdir, errno);
+	}
+#endif
+
 	// create save and state directories if they don't exist
-	char dirstr[256];
 	snprintf(dirstr, sizeof(dirstr), "%ssave", nstpaths.nstdir);
 #ifdef _MINGW	
 	if (mkdir(dirstr) && errno != EEXIST) {

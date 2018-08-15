@@ -140,7 +140,7 @@ void gtkui_input_set_default() {
 
 void gtkui_input_config_read() {
 	// Read the input config file
-	snprintf(inputconfpath, sizeof(inputconfpath), "%sgtkinput.conf", nstpaths.nstdir);
+	snprintf(inputconfpath, sizeof(inputconfpath), "%sgtkinput.conf", nstpaths.confdir);
 	if (ini_parse(inputconfpath, gtkui_input_config_match, &inputconf) < 0) {
 		fprintf(stderr, "Failed to load input config file %s: Using defaults.\n", inputconfpath);
 	}

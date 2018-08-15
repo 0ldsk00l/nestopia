@@ -30,22 +30,22 @@
 
 settings_t conf;
 
-void config_file_read(const char *nstdir) {
+void config_file_read(const char *confdir) {
 	// Read the config file
 
 	char confpath[256];
-	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstdir);
+	snprintf(confpath, sizeof(confpath), "%snestopia.conf", confdir);
 
 	if (ini_parse(confpath, config_match, &conf) < 0) {
 		fprintf(stderr, "Failed to read config file %s: Using defaults.\n", confpath);
 	}
 }
 
-void config_file_write(const char *nstdir) {
+void config_file_write(const char *confdir) {
 	// Write the config file
 	
 	char confpath[256];
-	snprintf(confpath, sizeof(confpath), "%snestopia.conf", nstdir);
+	snprintf(confpath, sizeof(confpath), "%snestopia.conf", confdir);
 	
 	FILE *fp = fopen(confpath, "w");
 	if (fp != NULL)	{

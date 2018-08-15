@@ -68,8 +68,8 @@ typedef struct {
 	int misc_homebrew_stderr;
 } settings_t;
 
-void config_file_read(const char *nstdir);
-void config_file_write(const char *nstdir);
+void config_file_read(const char *confdir);
+void config_file_write(const char *confdir);
 void config_set_default();
 static int config_match(void* user, const char* section, const char* name, const char* value);
 
