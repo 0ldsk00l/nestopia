@@ -560,7 +560,7 @@ static int nstsdl_input_config_match(void* user, const char* section, const char
 
 void nstsdl_input_conf_read() {
 	// Read the input config file
-	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstpaths.nstdir);
+	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstpaths.confdir);
 	
 	if (ini_parse(inputconfpath, nstsdl_input_config_match, &inputconf) < 0) {
 		fprintf(stderr, "Failed to load input config file %s: Using defaults.\n", inputconfpath);

@@ -17,6 +17,7 @@ using namespace Nes::Api;
 
 typedef struct {
 	char nstdir[256];
+    char confdir[256];
 	char savedir[256];
 	char gamename[256];
 	char savename[512];
