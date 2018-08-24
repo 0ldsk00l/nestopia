@@ -66,6 +66,7 @@
 #include "NstBoardHes.hpp"
 #include "NstBoardHenggedianzi.hpp"
 #include "NstBoardHosenkan.hpp"
+#include "NstBoardInlNsf.hpp"
 #include "NstBoardIrem.hpp"
 #include "NstBoardJaleco.hpp"
 #include "NstBoardJyCompany.hpp"
@@ -1914,6 +1915,12 @@ namespace Nes
 						id = Type::UNL_WORLDHERO;
 						break;
 
+					case 31:
+
+						name = "INLNSF";
+						id = Type::INLNSF;
+						break;
+
 					case 32:
 
 						name = "IREM G-101";
@@ -3515,6 +3522,7 @@ namespace Nes
 					case Type::HENGEDIANZI_STD            : return new Hengedianzi::Standard(c);
 					case Type::HENGEDIANZI_XJZB           : return new Hengedianzi::Xjzb(c);
 					case Type::HOSENKAN_STD               : return new Hosenkan::Standard(c);
+					case Type::INLNSF                     : return new InlNsf(c);
 					case Type::IREM_G101A_0               :
 					case Type::IREM_G101A_1               :
 					case Type::IREM_G101B_0               :
