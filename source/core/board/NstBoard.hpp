@@ -355,6 +355,8 @@ namespace Nes
 						HES_STD                    = MakeId<  113,  256,  128,  0,  0, CRM_0,  NMT_H,  0 >::ID,
 						// Hosenkan
 						HOSENKAN_STD               = MakeId<  182,  512,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
+						// Infinite NES Lives
+						INLNSF                     = MakeId<   31, 1024,    8,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Irem
 						IREM_G101A_0               = MakeId<   32,  256,  128,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						IREM_G101A_1               = MakeId<   32,  256,  128,  8,  0, CRM_0,  NMT_V,  0 >::ID,
