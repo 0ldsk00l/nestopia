@@ -40,7 +40,7 @@ namespace Nes
 				Map ( 0x5000U, 0x5FFFU, &InlNsf::Poke_5000 );
 
 				if (hard)
-					prg.SwapBank<SIZE_4K>(0x7000, 0xFF);
+					prg.SwapBank<SIZE_4K,0x7000>( 0xFF );
 			}
 
 			#ifdef NST_MSVC_OPTIMIZE
@@ -50,7 +50,18 @@ namespace Nes
 			NES_POKE_AD(InlNsf,5000)
 			{
 				int b = address & 7;
-				prg.SwapBank<SIZE_4K>((b<<12), data )
+				switch (b)
+				{
+				default:
+				case 0: prg.SwapBank<SIZE_4K,0x0000>( data ); break;
+				case 1: prg.SwapBank<SIZE_4K,0x1000>( data ); break;
+				case 2: prg.SwapBank<SIZE_4K,0x2000>( data ); break;
+				case 3: prg.SwapBank<SIZE_4K,0x3000>( data ); break;
+				case 4: prg.SwapBank<SIZE_4K,0x4000>( data ); break;
+				case 5: prg.SwapBank<SIZE_4K,0x5000>( data ); break;
+				case 6: prg.SwapBank<SIZE_4K,0x6000>( data ); break;
+				case 7: prg.SwapBank<SIZE_4K,0x7000>( data ); break;
+				}
 			}
 		}
 	}
