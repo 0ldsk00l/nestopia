@@ -46,8 +46,8 @@ namespace Nes
 
 				NES_DECL_POKE( 5000 );
 				NES_DECL_PEEK( 8000 );
+				void Bank(uint slot, Data data);
 
-				void InlNsf::Bank(uint slot, Data data);
 				void SubReset(bool);
 				void SubSave(State::Saver&) const;
 				void SubLoad(State::Loader&,dword);
