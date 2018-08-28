@@ -50,7 +50,7 @@ namespace Nes
 			void InlNsf::SubSave(State::Saver& state) const
 			{
 				state.Begin( AsciiId<'I','N','L'>::V );
-				state.Write( regs );
+				state.Begin( AsciiId<'R','E','G'>::V ).Write( regs ).End();
 				state.End();
 			}
 
@@ -59,9 +59,16 @@ namespace Nes
 				NST_VERIFY( baseChunk == (AsciiId<'I','N','L'>::V) );
 				if (baseChunk == AsciiId<'I','N','L'>::V)
 				{
-					state.Begin();
-					state.Read(regs);
-					state.End();
+					while (const dword chunk = state.Begin())
+					{
+						switch (chunk)
+						{
+							case AsciiId<'R','E','G'>::V:
+								state.Read( regs );
+								break;
+						}
+						state.End();
+					}
 				}
 			}
 
