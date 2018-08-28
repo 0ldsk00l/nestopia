@@ -1,4 +1,18 @@
 ----------------------------------------------------------------
+1.50-WIP
+----------------------------------------------------------------
+Shell:
+
+ Additions:
+  - Added ability to output data from homebrew module (Phil Smith)
+
+Core:
+
+ Additions:
+  - Homebrew module (Phil Smith)
+  - Support for mapper 31 (rainwarrior)
+
+----------------------------------------------------------------
 1.49
 ----------------------------------------------------------------
 Shell:
