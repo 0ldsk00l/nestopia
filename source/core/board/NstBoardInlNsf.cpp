@@ -34,34 +34,59 @@ namespace Nes
 			#ifdef NST_MSVC_OPTIMIZE
 			#pragma optimize("s", on)
 			#endif
-
+			
 			void InlNsf::SubReset(const bool hard)
 			{
 				Map ( 0x5000U, 0x5FFFU, &InlNsf::Poke_5000 );
+				Map ( 0x8000U, 0xFFFFU, &InlNnf::Peek_8000 );
 
 				if (hard)
-					prg.SwapBank<SIZE_4K,0x7000>( 0xFF );
+				{
+					for (int i=0; i<8; ++i) regs[i] = 0;
+					Bank( 7, 0xFF );
+				}
+			}
+
+			void InlNsf::SubSave(State::Saver& state) const
+			{
+				state.Begin( AsciiId<'I','N','L'>::V );
+				state.Write( regs );
+				state.End();
+			}
+
+			void InlNsf::SubLoad(State::Loader& state,const dword baseChunk)
+			{
+				NST_VERIFY( baseChunk == (AsciiId<'I','N','L'>::V) );
+				if (baseChunk == AsciiId<'I','N','L'>::V)
+				{
+					state.Begin();
+					state.Read(regs);
+					state.End();
+				}
 			}
 
 			#ifdef NST_MSVC_OPTIMIZE
 			#pragma optimize("", on)
 			#endif
 
+			void InlNsf::Bank(uint slot, Data data)
+			{
+				slot = slot & 7;
+				regs[slot] = data;
+			}
+
 			NES_POKE_AD(InlNsf,5000)
 			{
-				int b = address & 7;
-				switch (b)
-				{
-				default:
-				case 0: prg.SwapBank<SIZE_4K,0x0000>( data ); break;
-				case 1: prg.SwapBank<SIZE_4K,0x1000>( data ); break;
-				case 2: prg.SwapBank<SIZE_4K,0x2000>( data ); break;
-				case 3: prg.SwapBank<SIZE_4K,0x3000>( data ); break;
-				case 4: prg.SwapBank<SIZE_4K,0x4000>( data ); break;
-				case 5: prg.SwapBank<SIZE_4K,0x5000>( data ); break;
-				case 6: prg.SwapBank<SIZE_4K,0x6000>( data ); break;
-				case 7: prg.SwapBank<SIZE_4K,0x7000>( data ); break;
-				}
+				Bank(address & 7, data);
+			}
+			
+			NES_PEEK_A(InlNsf,8000)
+			{
+				// Not an ideal way to do this, but Nestopia does not seem to support 4K banks directly?
+				uint slot = (address >> 12) & 7;
+				uint b = regs[slot];
+				prg.SwapBanks<SIZE_8K>( address & 0x6000, b >> 1 ); // 2 banks per 8k page.
+				return prg.Peek( ((b & 1) << 12) | (address & 0x6FFF) ); // Read from 1/2 of the banks.
 			}
 		}
 	}
