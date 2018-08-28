@@ -674,6 +674,8 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardCony.cpp \
 	source/core/board/NstBoardNihon.cpp \
 	source/core/board/NstBoardSachenTcu.hpp \
+	source/code/board/NstBoardInlNsf.cpp \
+	source/code/board/NstBoardInlNsf.hpp \
 	source/core/NstPins.hpp \
 	source/core/NstNsf.hpp \
 	source/core/NstTrackerRewinder.hpp \
