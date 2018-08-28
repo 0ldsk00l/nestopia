@@ -85,8 +85,8 @@ namespace Nes
 				// Not an ideal way to do this, but Nestopia does not seem to support 4K banks directly?
 				uint slot = (address >> 12) & 7;
 				byte b = regs[slot];
-				prg.SwapBanks<SIZE_8K>( address & 0x6000, b >> 1 ); // 2 banks per 8k page.
-				return prg.Peek( ((b & 1) << 12) | (address & 0x6FFF) ); // Read from 1/2 of the banks.
+				prg.SwapBanks<SIZE_8K, 0x0000>( b >> 1 ); // 2 banks per 8k page.
+				return prg.Peek( ((b & 1) << 12) | (address & 0x0FFF) ); // Read from 1/2 of the banks.
 			}
 		}
 	}
