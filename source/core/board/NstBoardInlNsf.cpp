@@ -35,9 +35,9 @@ namespace Nes
 			#pragma optimize("s", on)
 			#endif
 
-			void InlRom::SubReset(const bool hard)
+			void InlNsf::SubReset(const bool hard)
 			{
-				Map ( 0x5000U, 0x5FFFU, &InlRom::Poke_5000 );
+				Map ( 0x5000U, 0x5FFFU, &InlNsf::Poke_5000 );
 
 				if (hard)
 					prg.SwapBank<SIZE_4K>(0xF000, 0xFF);
@@ -47,7 +47,7 @@ namespace Nes
 			#pragma optimize("", on)
 			#endif
 
-			NES_POKE_AD(InlRom,5000)
+			NES_POKE_AD(InlNsf,5000)
 			{
 				int b = address & 7;
 				prg.SwapBank<SIZE_4K>( (b<<12)|0x8000, data )
