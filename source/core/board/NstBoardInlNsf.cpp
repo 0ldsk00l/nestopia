@@ -50,7 +50,7 @@ namespace Nes
 			NES_POKE_AD(InlNsf,5000)
 			{
 				int b = address & 7;
-				prg.SwapBank<SIZE_4K>( (b<<12)|0x8000, data )
+				prg.SwapBank<SIZE_4K>( (b<<12)|0x8000, data );
 			}
 		}
 	}
