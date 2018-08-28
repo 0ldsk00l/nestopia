@@ -38,7 +38,7 @@ namespace Nes
 			void InlNsf::SubReset(const bool hard)
 			{
 				Map ( 0x5000U, 0x5FFFU, &InlNsf::Poke_5000 );
-				Map ( 0x8000U, 0xFFFFU, &InlNnf::Peek_8000 );
+				Map ( 0x8000U, 0xFFFFU, &InlNsf::Peek_8000 );
 
 				if (hard)
 				{
@@ -84,7 +84,7 @@ namespace Nes
 			{
 				// Not an ideal way to do this, but Nestopia does not seem to support 4K banks directly?
 				uint slot = (address >> 12) & 7;
-				uint b = regs[slot];
+				byte b = regs[slot];
 				prg.SwapBanks<SIZE_8K>( address & 0x6000, b >> 1 ); // 2 banks per 8k page.
 				return prg.Peek( ((b & 1) << 12) | (address & 0x6FFF) ); // Read from 1/2 of the banks.
 			}
