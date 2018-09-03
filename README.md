@@ -14,14 +14,24 @@ libsdl2, libepoxy, libao, libarchive, zlib
 
 Optionally, it depends on GTK+3 for the GUI, currently only available on Linux and BSD.
 
-## Building with Autotools
-In order to build with Autotools:
+## Installing Dependencies
+Install dependencies required for building on Debian-based Linux distributions:
+```
+apt-get install build-essential autoconf autoconf-archive automake autotools-dev libsdl2-dev libepoxy-dev libarchive-dev zlib1g-dev
+```
+Optional dependencies:
+```
+apt-get install libao-dev libjack-dev libgtk-3-dev
+```
+
+## Building
+To build using Autotools (optional arguments in square brackets):
 ```
 autoreconf -vif
-./configure --prefix=<INSTALLATION PREFIX>
-make -j<NUMBER OF CORES>
+./configure [--enable-gui] [--enable-doc] [--with-ao] [--with-jack]
+make
 ```
-optionally:
+Optionally:
 ```
 make install
 ```
