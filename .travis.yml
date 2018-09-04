@@ -13,11 +13,9 @@ env:
     - CORE=nestopia
     - COMPILER_NAME=gcc CXX=g++-7 CC=gcc-7
   matrix:
-    - PLATFORM=3ds
     - PLATFORM=linux_x64
     - PLATFORM=ngc
     - PLATFORM=wii
-    - PLATFORM=wiiu
 before_script:
   - pwd
   - mkdir -p ~/bin
