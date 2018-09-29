@@ -2109,7 +2109,7 @@ namespace Nes
 				dma.buffer,
 				7 - out.shifter,
 				out.buffer,
-				out.dac,
+				(out.dac & 0x7FU) | (out.active ? 0x80 : 0x00),
 				linSample & 0xFFU,
 				linSample >> 8
 			};
@@ -2146,10 +2146,11 @@ namespace Nes
 						out.shifter        = 7 - (data[9] & 0x7);
 						out.buffer         = data[10];
 						out.dac            = data[11] & 0x7F;
+						out.active         = data[11] >> 7;
 						linSample          = data[12] | (data[13] << 8);
 
 						curSample = out.dac * outputVolume;
-						out.active = dma.buffered && outputVolume;
+						out.active = out.active && outputVolume;
 						break;
 					}
 				}
