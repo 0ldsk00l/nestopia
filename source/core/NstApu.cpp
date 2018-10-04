@@ -539,8 +539,6 @@ namespace Nes
 			noise.SaveState( state, AsciiId<'N','O','I'>::V );
 			dmc.SaveState( state, AsciiId<'D','M','C'>::V, cpu, cycles.dmcClock );
 
-			dcBlocker.SaveState( state, AsciiId<'D','C','B'>::V );
-
 			state.End();
 		}
 
@@ -619,11 +617,6 @@ namespace Nes
 					case AsciiId<'D','M','C'>::V:
 
 						dmc.LoadState( state, cpu, cpu.GetModel(), cycles.dmcClock );
-						break;
-
-					case AsciiId<'D','C','B'>::V:
-
-						dcBlocker.LoadState( state );
 						break;
 				}
 
@@ -1153,55 +1146,6 @@ namespace Nes
 			return next;
 		}
 
-		void Apu::Channel::DcBlocker::SaveState(State::Saver& state,const dword chunk) const
-		{
-			state.Begin( chunk );
-
-			{
-				byte data[12];
-
-				data[0] = acc & 0xFFU;
-				data[1] = acc >> 8;
-				data[2] = acc >> 16;
-				data[3] = acc >> 24;
-
-				data[4] = prev & 0xFFU;
-				data[5] = prev >> 8;
-				data[6] = prev >> 16;
-				data[7] = prev >> 24;
-
-				data[8] = next & 0xFFU;
-				data[9] = next >> 8;
-				data[10] = next >> 16;
-				data[11] = next >> 24;
-
-				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
-			}
-
-			state.End();
-		}
-
-		void Apu::Channel::DcBlocker::LoadState(State::Loader& state)
-		{
-			while (const dword chunk = state.Begin())
-			{
-				switch (chunk)
-				{
-					case AsciiId<'R','E','G'>::V:
-					{
-						State::Loader::Data<12> data( state );
-
-						acc = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
-						prev = data[4] | (data[5] << 8) | (data[6] << 16) | (data[7] << 24);
-						next = data[8] | (data[9] << 8) | (data[10] << 16) | (data[11] << 24);
-						break;
-					}
-				}
-
-				state.End();
-			}
-		}
-
 		#ifdef NST_MSVC_OPTIMIZE
 		#pragma optimize("s", on)
 		#endif
@@ -1357,7 +1301,7 @@ namespace Nes
 			state.Begin( chunk );
 
 			{
-				byte data[9];
+				byte data[4];
 
 				data[0] = waveLength & 0xFFU;
 				data[1] = (waveLength >> 8) | (duty ? duty << (2+3) : 2U << 3); // for version compatibility
@@ -1373,12 +1317,6 @@ namespace Nes
 
 				if (!sweepIncrease)
 					data[3] |= 0x08U;
-
-				data[4] = step;
-				data[5] = timer & 0xFFU;
-				data[6] = timer >> 8;
-				data[7] = timer >> 16;
-				data[8] = timer >> 24;
 
 				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
 			}
@@ -1397,7 +1335,7 @@ namespace Nes
 				{
 					case AsciiId<'R','E','G'>::V:
 					{
-						State::Loader::Data<9> data( state );
+						State::Loader::Data<4> data( state );
 
 						waveLength = data[0] | (data[1] << 8 & 0x0700);
 
@@ -1419,9 +1357,6 @@ namespace Nes
 						sweepReload = data[2] >> 7;
 						sweepShift = data[3] & 0x07;
 						sweepIncrease = (data[3] & 0x08) ? 0U : ~0U;
-
-						step = data[4];
-						timer = data[5] | (data[6] << 8) | (data[7] << 16) | (data[8] << 24);
 						break;
 					}
 
@@ -1439,6 +1374,8 @@ namespace Nes
 				state.End();
 			}
 
+			step = 0;
+			timer = 0;
 			UpdateFrequency();
 		}
 
@@ -1657,17 +1594,12 @@ namespace Nes
 			state.Begin( chunk );
 
 			{
-				const byte data[9] =
+				const byte data[4] =
 				{
 					waveLength & 0xFFU,
 					waveLength >> 8,
 					linearCounter | (uint(status) << 7),
-					linearCtrl,
-					step,
-					timer & 0xFFU,
-					timer >> 8,
-					timer >> 16,
-					timer >> 24
+					linearCtrl
 				};
 
 				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
@@ -1686,14 +1618,12 @@ namespace Nes
 				{
 					case AsciiId<'R','E','G'>::V:
 					{
-						State::Loader::Data<9> data( state );
+						State::Loader::Data<4> data( state );
 
 						waveLength = data[0] | (data[1] << 8 & 0x0700);
 						linearCounter = data[2] & 0x7F;
 						status = static_cast<Status>(data[2] >> 7);
 						linearCtrl = data[3];
-						step = data[4];
-						timer = data[5] | (data[6] << 8) | (data[7] << 16) | (data[8] << 24);
 
 						frequency = (waveLength + 1UL) * fixed;
 						break;
@@ -1708,6 +1638,8 @@ namespace Nes
 				state.End();
 			}
 
+			timer = 0;
+			step = 0;
 			active = CanOutput();
 		}
 
@@ -1873,23 +1805,7 @@ namespace Nes
 		{
 			state.Begin( chunk );
 
-			{
-				const byte data[9] =
-				{
-					(shifter == 8 ? 0x10 : 0x00) | GetFrequencyIndex(),
-					bits & 0xFFU,
-					bits >> 8,
-					bits >> 16,
-					bits >> 24,
-					timer & 0xFFU,
-					timer >> 8,
-					timer >> 16,
-					timer >> 24
-				};
-
-				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
-			}
-
+			state.Begin( AsciiId<'R','E','G'>::V ).Write8( (shifter == 8 ? 0x10 : 0x00) | GetFrequencyIndex() ).End();
 			lengthCounter.SaveState( state, AsciiId<'L','E','N'>::V );
 			envelope.SaveState( state, AsciiId<'E','N','V'>::V );
 
@@ -1904,13 +1820,10 @@ namespace Nes
 				{
 					case AsciiId<'R','E','G'>::V:
 					{
-						State::Loader::Data<9> data( state );
+						const uint data = state.Read8();
 
-						frequency = lut[model][data[0] & 0x0F] * dword(fixed);
-						shifter = (data[0] & 0x10) ? 8 : 13;
-
-						bits = data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
-						timer = data[5] | (data[3] << 6) | (data[7] << 16) | (data[8] << 24);
+						frequency = lut[model][data & 0x0F] * dword(fixed);
+						shifter = (data & 0x10) ? 8 : 13;
 						break;
 					}
 
@@ -1928,6 +1841,8 @@ namespace Nes
 				state.End();
 			}
 
+			timer = 0;
+			bits = 1;
 			active = CanOutput();
 		}
 
@@ -2091,7 +2006,7 @@ namespace Nes
 
 			NST_VERIFY( dmcClock <= 0x1FFF && dmcMcClock == cpu.GetCycles() + dmcClock * cpu.GetClock() );
 
-			byte data[14] =
+			byte data[12] =
 			{
 				dmcClock & 0xFF,
 				dmcClock >> 8,
@@ -2109,9 +2024,7 @@ namespace Nes
 				dma.buffer,
 				7 - out.shifter,
 				out.buffer,
-				out.dac,
-				linSample & 0xFFU,
-				linSample >> 8
+				out.dac
 			};
 
 			state.Begin( chunk ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
@@ -2125,7 +2038,7 @@ namespace Nes
 				{
 					case AsciiId<'R','E','G'>::V:
 					{
-						State::Loader::Data<14> data( state );
+						State::Loader::Data<12> data( state );
 
 						dmcClock = cpu.GetCycles() + ((data[0] | data[1] << 8) * cpu.GetClock());
 
@@ -2146,9 +2059,9 @@ namespace Nes
 						out.shifter        = 7 - (data[9] & 0x7);
 						out.buffer         = data[10];
 						out.dac            = data[11] & 0x7F;
-						linSample          = data[12] | (data[13] << 8);
 
 						curSample = out.dac * outputVolume;
+						linSample = curSample;
 						out.active = dma.buffered && outputVolume;
 						break;
 					}
