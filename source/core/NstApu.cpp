@@ -539,6 +539,20 @@ namespace Nes
 			noise.SaveState( state, AsciiId<'N','O','I'>::V );
 			dmc.SaveState( state, AsciiId<'D','M','C'>::V, cpu, cycles.dmcClock );
 
+			dcBlocker.SaveState( state, AsciiId<'D','C','B'>::V );
+
+			{
+				const byte data[4] =
+				{
+					cycles.rateCounter & 0xFFU,
+					cycles.rateCounter >> 8,
+					cycles.rateCounter >> 16,
+					cycles.rateCounter >> 24,
+				};
+
+				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
+			}
+
 			state.End();
 		}
 
@@ -618,6 +632,19 @@ namespace Nes
 
 						dmc.LoadState( state, cpu, cpu.GetModel(), cycles.dmcClock );
 						break;
+
+					case AsciiId<'D','C','B'>::V:
+
+						dcBlocker.LoadState( state );
+						break;
+
+					case AsciiId<'S','0','0'>::V:
+					{
+						State::Loader::Data<4> data( state );
+
+						cycles.rateCounter = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+						break;
+					}
 				}
 
 				state.End();
@@ -1146,6 +1173,54 @@ namespace Nes
 			return next;
 		}
 
+		void Apu::Channel::DcBlocker::SaveState(State::Saver& state,const dword chunk) const
+		{
+			state.Begin( chunk );
+
+			{
+				const byte data[12] =
+				{
+					acc & 0xFFU,
+					acc >> 8,
+					acc >> 16,
+					acc >> 24,
+					prev & 0xFFU,
+					prev >> 8,
+					prev >> 16,
+					prev >> 24,
+					next & 0xFFU,
+					next >> 8,
+					next >> 16,
+					next >> 24,
+				};
+
+				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
+			}
+
+			state.End();
+		}
+
+		void Apu::Channel::DcBlocker::LoadState(State::Loader& state)
+		{
+			while (const dword chunk = state.Begin())
+			{
+				switch (chunk)
+				{
+					case AsciiId<'S','0','0'>::V:
+					{
+						State::Loader::Data<12> data( state );
+
+						acc = data[0] | (data[1] << 8) | (data[2] << 16) | (data[3] << 24);
+						prev = data[4] | (data[5] << 8) | (data[6] << 16) | (data[7] << 24);
+						next = data[8] | (data[9] << 8) | (data[10] << 16) | (data[11] << 24);
+						break;
+					}
+				}
+
+				state.End();
+			}
+		}
+
 		#ifdef NST_MSVC_OPTIMIZE
 		#pragma optimize("s", on)
 		#endif
@@ -1324,6 +1399,27 @@ namespace Nes
 			lengthCounter.SaveState( state, AsciiId<'L','E','N'>::V );
 			envelope.SaveState( state, AsciiId<'E','N','V'>::V );
 
+			{
+				const byte data[13] = 
+				{
+					step,
+					timer & 0xFFU,
+					timer >> 8,
+					timer >> 16,
+					timer >> 24,
+					frequency & 0xFFU,
+					frequency >> 8,
+					frequency >> 16,
+					frequency >> 24,
+					amp & 0xFFU,
+					amp >> 8,
+					amp >> 16,
+					amp >> 24,
+				};
+
+				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
+			}
+
 			state.End();
 		}
 
@@ -1357,6 +1453,9 @@ namespace Nes
 						sweepReload = data[2] >> 7;
 						sweepShift = data[3] & 0x07;
 						sweepIncrease = (data[3] & 0x08) ? 0U : ~0U;
+
+						step = 0;
+						timer = 0;
 						break;
 					}
 
@@ -1368,15 +1467,24 @@ namespace Nes
 					case AsciiId<'E','N','V'>::V:
 
 						envelope.LoadState( state );
+
+						UpdateFrequency();
 						break;
+
+					case AsciiId<'S','0','0'>::V:
+					{
+						State::Loader::Data<13> data( state );
+
+						step = data[0];
+						timer = data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
+						frequency = data[5] | (data[6] << 8) | (data[7] << 16) | (data[8] << 24);
+						amp = data[9] | (data[10] << 8) | (data[11] << 16) | (data[12] << 24);
+						break;
+					}
 				}
 
 				state.End();
 			}
-
-			step = 0;
-			timer = 0;
-			UpdateFrequency();
 		}
 
 		#ifdef NST_MSVC_OPTIMIZE
@@ -1607,6 +1715,23 @@ namespace Nes
 
 			lengthCounter.SaveState( state, AsciiId<'L','E','N'>::V );
 
+			{
+				const byte data[9] =
+				{
+					step,
+					timer & 0xFFU,
+					timer >> 8,
+					timer >> 16,
+					timer >> 24,
+					amp & 0xFFU,
+					amp >> 8,
+					amp >> 16,
+					amp >> 24,
+				};
+
+				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
+			}
+
 			state.End();
 		}
 
@@ -1626,6 +1751,8 @@ namespace Nes
 						linearCtrl = data[3];
 
 						frequency = (waveLength + 1UL) * fixed;
+						timer = 0;
+						step = 0;
 						break;
 					}
 
@@ -1633,13 +1760,21 @@ namespace Nes
 
 						lengthCounter.LoadState( state );
 						break;
+
+					case AsciiId<'S','0','0'>::V:
+					{
+						State::Loader::Data<9> data( state );
+
+						step = data[0];
+						timer = data[1] | (data[2] << 8) | (data[3] << 16) | (data[4] << 24);
+						amp = data[5] | (data[6] << 8) | (data[7] << 16) | (data[8] << 24);
+						break;
+					}
 				}
 
 				state.End();
 			}
 
-			timer = 0;
-			step = 0;
 			active = CanOutput();
 		}
 
@@ -1809,6 +1944,20 @@ namespace Nes
 			lengthCounter.SaveState( state, AsciiId<'L','E','N'>::V );
 			envelope.SaveState( state, AsciiId<'E','N','V'>::V );
 
+			{
+				const byte data[6] =
+				{
+					bits & 0xFFU,
+					bits >> 8,
+					timer & 0xFFU,
+					timer >> 8,
+					timer >> 16,
+					timer >> 24
+				};
+
+				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
+			}
+
 			state.End();
 		}
 
@@ -1824,6 +1973,9 @@ namespace Nes
 
 						frequency = lut[model][data & 0x0F] * dword(fixed);
 						shifter = (data & 0x10) ? 8 : 13;
+
+						timer = 0;
+						bits = 1;
 						break;
 					}
 
@@ -1836,13 +1988,20 @@ namespace Nes
 
 						envelope.LoadState( state );
 						break;
+
+					case AsciiId<'S','0','0'>::V:
+					{
+						State::Loader::Data<6> data( state );
+
+						bits = data[0] | (data[1] << 8);
+						timer = data[2] | (data[3] << 8) | (data[4] << 16) | (data[5] << 24);
+						break;
+					}
 				}
 
 				state.End();
 			}
 
-			timer = 0;
-			bits = 1;
 			active = CanOutput();
 		}
 
@@ -2006,28 +2165,46 @@ namespace Nes
 
 			NST_VERIFY( dmcClock <= 0x1FFF && dmcMcClock == cpu.GetCycles() + dmcClock * cpu.GetClock() );
 
-			byte data[12] =
-			{
-				dmcClock & 0xFF,
-				dmcClock >> 8,
-				(
-					( ( regs.ctrl & REG0_FREQUENCY  )              ) |
-					( ( regs.ctrl & REG0_LOOP       ) ? 0x10U : 0U ) |
-					( ( regs.ctrl & REG0_IRQ_ENABLE ) ? 0x20U : 0U ) |
-					( ( dma.lengthCounter           ) ? 0x40U : 0U )
-				),
-				(regs.address - 0xC000U) >> 6,
-				(regs.lengthCounter - 1U) >> 4,
-				(dma.address >> 0 & 0xFFU),
-				(dma.address >> 8 & 0x7FU) | (dma.buffered ? 0x80 : 0x00),
-				dma.lengthCounter ? (dma.lengthCounter - 1U) >> 4 : 0,
-				dma.buffer,
-				7 - out.shifter,
-				out.buffer,
-				out.dac
-			};
+			state.Begin( chunk );
 
-			state.Begin( chunk ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
+			{
+				const byte data[12] =
+				{
+					dmcClock & 0xFF,
+					dmcClock >> 8,
+					(
+						( ( regs.ctrl & REG0_FREQUENCY  )              ) |
+						( ( regs.ctrl & REG0_LOOP       ) ? 0x10U : 0U ) |
+						( ( regs.ctrl & REG0_IRQ_ENABLE ) ? 0x20U : 0U ) |
+						( ( dma.lengthCounter           ) ? 0x40U : 0U )
+					),
+					(regs.address - 0xC000U) >> 6,
+					(regs.lengthCounter - 1U) >> 4,
+					(dma.address >> 0 & 0xFFU),
+					(dma.address >> 8 & 0x7FU) | (dma.buffered ? 0x80 : 0x00),
+					dma.lengthCounter ? (dma.lengthCounter - 1U) >> 4 : 0,
+					dma.buffer,
+					7 - out.shifter,
+					out.buffer,
+					out.dac,
+				};
+
+				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
+			}
+
+			{
+				const byte data[4] =
+				{
+					linSample & 0xFFU,
+					linSample >> 8,
+					dma.lengthCounter & 0xFFU,
+					dma.lengthCounter >> 8,
+				};
+
+				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
+			}
+			
+			state.End();
 		}
 
 		void Apu::Dmc::LoadState(State::Loader& state,const Cpu& cpu,const CpuModel model,Cycle& dmcClock)
@@ -2063,6 +2240,15 @@ namespace Nes
 						curSample = out.dac * outputVolume;
 						linSample = curSample;
 						out.active = dma.buffered && outputVolume;
+						break;
+					}
+
+					case AsciiId<'S','0','0'>::V:
+					{
+						State::Loader::Data<4> data( state );
+
+						linSample = data[0] | (data[1] << 8);
+						dma.lengthCounter = data[2] | (data[3] << 8);
 						break;
 					}
 				}

@@ -227,6 +227,8 @@ namespace Nes
 
 					void Reset();
 					Sample Apply(Sample);
+					void LoadState(State::Loader&);
+					void SaveState(State::Saver&,dword) const;
 
 				private:
 
