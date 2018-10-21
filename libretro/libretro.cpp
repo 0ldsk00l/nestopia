@@ -26,6 +26,7 @@
 #define NES_NTSC_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (8.0 / 7.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
 #define NES_PAL_PAR ((Api::Video::Output::WIDTH - (overscan_h ? 16 : 0)) * (2950000.0 / 2128137.0)) / (Api::Video::Output::HEIGHT - (overscan_v ? 16 : 0))
 #define NES_4_3_DAR (4.0 / 3.0);
+#define SAMPLERATE 48000
 
 using namespace Nes;
 
@@ -43,8 +44,8 @@ extern "C" void linearFree(void* mem);
 #endif
 static uint32_t* video_buffer = NULL;
 
-static int16_t audio_buffer[(48000 / 50)];
-static int16_t audio_stereo_buffer[2 * (48000 / 50)];
+static int16_t audio_buffer[(SAMPLERATE / 50)];
+static int16_t audio_stereo_buffer[2 * (SAMPLERATE / 50)];
 static Api::Emulator emulator;
 static Api::Machine *machine;
 static Api::Fds *fds;
@@ -395,7 +396,7 @@ double get_aspect_ratio(void)
 
 void retro_get_system_av_info(struct retro_system_av_info *info)
 {
-   const retro_system_timing timing = { is_pal ? 50.0 : 60.0, 48000.0 };
+   const retro_system_timing timing = { is_pal ? 50.0 : 60.0, SAMPLERATE };
    info->timing = timing;
 
    // It's better if the size is based on NTSC_WIDTH if the filter is on
@@ -653,7 +654,7 @@ static void check_variables(void)
       }
    }
    if (audio) delete audio;
-   audio = new Api::Sound::Output(audio_buffer, is_pal ? 48000 / 50 : 48000 / 60);
+   audio = new Api::Sound::Output(audio_buffer, is_pal ? SAMPLERATE / 50 : SAMPLERATE / 60);
 
    var.key = "nestopia_genie_distortion";
 
@@ -912,7 +913,7 @@ void retro_run(void)
    if (Api::Input(emulator).GetConnectedController(1) == 5)
       draw_crosshair(crossx, crossy);
    
-   unsigned frames = is_pal ? 48000 / 50 : 48000 / 60;
+   unsigned frames = is_pal ? SAMPLERATE / 50 : SAMPLERATE / 60;
    for (unsigned i = 0; i < frames; i++)
       audio_stereo_buffer[(i << 1) + 0] = audio_stereo_buffer[(i << 1) + 1] = audio_buffer[i];
    audio_batch_cb(audio_stereo_buffer, frames);
@@ -1178,7 +1179,7 @@ bool retro_load_game(const struct retro_game_info *info)
 
    Api::Sound isound(emulator);
    isound.SetSampleBits(16);
-   isound.SetSampleRate(48000);
+   isound.SetSampleRate(SAMPLERATE);
    isound.SetSpeaker(Api::Sound::SPEAKER_MONO);
 
    if (dbpresent)
