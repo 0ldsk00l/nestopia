@@ -297,8 +297,10 @@ namespace Nes
 			if (!rate)
 				return RESULT_ERR_INVALID_PARAM;
 
+#ifndef __LIBRETRO__
 			if (rate < 11025 || rate > 96000)
 				return RESULT_ERR_UNSUPPORTED;
+#endif
 
 			settings.rate = rate;
 			UpdateSettings();
