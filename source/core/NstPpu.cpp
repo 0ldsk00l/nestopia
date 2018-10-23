@@ -590,6 +590,7 @@ namespace Nes
 			else
 			{
 				cpu.SetOverclocking(false,0);
+				Apu& audioSafeOverclock = cpu.GetApu();
 				audioSafeOverclock.SetOverclockSafety(false);
 			}
 
