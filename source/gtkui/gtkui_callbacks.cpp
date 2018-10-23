@@ -272,6 +272,7 @@ void gtkui_cb_misc_config_pause(GtkToggleButton *togglebutton, gpointer userdata
 void gtkui_cb_misc_overclock(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Enable or Disable Core Overclocking
 	conf.misc_overclock = gtk_toggle_button_get_active(togglebutton);
+	nst_set_overclock();
 }
 
 void gtkui_drag_data(GtkWidget *widget, GdkDragContext *dragcontext, gint x, gint y, GtkSelectionData *seldata, guint info, guint time, gpointer data) {

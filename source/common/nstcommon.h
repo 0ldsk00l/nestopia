@@ -80,6 +80,7 @@ bool nst_find_patch(char *patchname, unsigned int patchname_length, const char *
 // Setters
 void nst_set_callbacks();
 void nst_set_dirs();
+void nst_set_overclock();
 void nst_set_paths(const char *filename);
 void nst_set_region();
 void nst_set_rewind(int direction);
