@@ -1019,7 +1019,7 @@ GtkWidget *gtkui_config() {
 	// Core Overclocking
 	GtkWidget *check_misc_overclock = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
-				"label", "Core Overclocking (Requires Restart)",
+				"label", "Core Overclocking",
 				"halign", GTK_ALIGN_START,
 				"margin-left", MARGIN_LR,
 				NULL);

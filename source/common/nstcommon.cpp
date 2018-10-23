@@ -738,6 +738,11 @@ void nst_set_paths(const char *filename) {
 	// Construct the cheat path
 	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);
 }
+void nst_set_overclock() {
+	// Set video overclocking
+	Video video(emulator);
+	video.EnableOverclocking(conf.misc_overclock);
+}
 
 void nst_set_region() {
 	// Set the region
@@ -1010,8 +1015,7 @@ int nst_load(const char *filename) {
 	nst_palette_load(nstpaths.palettepath);
 	
 	// Set video overclocking
-	Video video(emulator);
-	video.EnableOverclocking(conf.misc_overclock);
+	nst_set_overclock();
 	
 	// Set the RAM's power state
 	machine.SetRamPowerState(conf.misc_power_state);
