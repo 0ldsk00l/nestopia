@@ -428,6 +428,7 @@ void retro_set_environment(retro_environment_t cb)
       { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
       { "nestopia_favored_system", "Favored System; auto|ntsc|pal|famicom|dendy" },
       { "nestopia_ram_power_state", "RAM Power-on State; 0x00|0xFF|random" },
+      { "nestopia_button_shift", "Shift A/B/X/Y Clockwise; disabled|enabled" },
       { "nestopia_turbo_pulse", "Turbo Pulse Speed; 2|3|4|5|6|7|8|9" },
       { NULL, NULL },
    };
@@ -478,9 +479,11 @@ typedef struct
    unsigned nes;
 } keymap;
 
-static const keymap bindmap[] = {
+static keymap bindmap_default[] = {
    { RETRO_DEVICE_ID_JOYPAD_A, Core::Input::Controllers::Pad::A },
    { RETRO_DEVICE_ID_JOYPAD_B, Core::Input::Controllers::Pad::B },
+   { RETRO_DEVICE_ID_JOYPAD_X, Core::Input::Controllers::Pad::A },
+   { RETRO_DEVICE_ID_JOYPAD_Y, Core::Input::Controllers::Pad::B },
    { RETRO_DEVICE_ID_JOYPAD_SELECT, Core::Input::Controllers::Pad::SELECT },
    { RETRO_DEVICE_ID_JOYPAD_START, Core::Input::Controllers::Pad::START },
    { RETRO_DEVICE_ID_JOYPAD_UP, Core::Input::Controllers::Pad::UP },
@@ -488,6 +491,21 @@ static const keymap bindmap[] = {
    { RETRO_DEVICE_ID_JOYPAD_LEFT, Core::Input::Controllers::Pad::LEFT },
    { RETRO_DEVICE_ID_JOYPAD_RIGHT, Core::Input::Controllers::Pad::RIGHT },
 };
+
+static keymap bindmap_shifted[] = {
+   { RETRO_DEVICE_ID_JOYPAD_B, Core::Input::Controllers::Pad::A },
+   { RETRO_DEVICE_ID_JOYPAD_Y, Core::Input::Controllers::Pad::B },
+   { RETRO_DEVICE_ID_JOYPAD_A, Core::Input::Controllers::Pad::A },
+   { RETRO_DEVICE_ID_JOYPAD_X, Core::Input::Controllers::Pad::B },
+   { RETRO_DEVICE_ID_JOYPAD_SELECT, Core::Input::Controllers::Pad::SELECT },
+   { RETRO_DEVICE_ID_JOYPAD_START, Core::Input::Controllers::Pad::START },
+   { RETRO_DEVICE_ID_JOYPAD_UP, Core::Input::Controllers::Pad::UP },
+   { RETRO_DEVICE_ID_JOYPAD_DOWN, Core::Input::Controllers::Pad::DOWN },
+   { RETRO_DEVICE_ID_JOYPAD_LEFT, Core::Input::Controllers::Pad::LEFT },
+   { RETRO_DEVICE_ID_JOYPAD_RIGHT, Core::Input::Controllers::Pad::RIGHT },
+};
+
+static keymap *bindmap = bindmap_default;
 
 static void update_input()
 {
@@ -544,15 +562,16 @@ static void update_input()
    
    static unsigned tstate = 2;
    
-   for (unsigned p = 0; p < 4; p++)
-      for (unsigned bind = 0; bind < sizeof(bindmap) / sizeof(bindmap[0]); bind++)
+   for (unsigned p = 0; p < 4; p++) {
+      for (unsigned bind = 0; bind < sizeof(bindmap_default) / sizeof(bindmap[0]); bind++)
       {
          input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
-         if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_X))
-            tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::A : input->pad[p].buttons |= Core::Input::Controllers::Pad::A;
-         if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_Y))
-            tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::B : input->pad[p].buttons |= Core::Input::Controllers::Pad::B;
       }
+      if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[2].retro))
+         tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::A : input->pad[p].buttons |= Core::Input::Controllers::Pad::A;
+      if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[3].retro))
+         tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::B : input->pad[p].buttons |= Core::Input::Controllers::Pad::B;
+   }
       
    if (tstate) tstate--; else tstate = tpulse;
    
@@ -602,6 +621,16 @@ static void check_variables(void)
    Api::Machine machine(emulator);
    Api::Video::RenderState::Filter filter;
 
+   var.key = "nestopia_button_shift";
+   
+   if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var))
+   {
+      if (strcmp(var.value, "disabled") == 0)
+         bindmap = bindmap_default;
+      else if (strcmp(var.value, "enabled") == 0)
+         bindmap = bindmap_shifted;
+   }
+   
    var.key = "nestopia_favored_system";
    is_pal = false;
 
