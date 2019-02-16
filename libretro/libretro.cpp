@@ -927,7 +927,7 @@ static void check_variables(void)
    renderState.bits.mask.g = 0x0000ff00;
    renderState.bits.mask.b = 0x000000ff;
    if (NES_FAILED(video.SetRenderState( renderState )) && log_cb)
-      log_cb(RETRO_LOG_INFO, "Nestopia core rejected render state\n");;
+      log_cb(RETRO_LOG_WARN, "Nestopia core rejected render state\n");;
 
    retro_get_system_av_info(&av_info);
    environ_cb(RETRO_ENVIRONMENT_SET_GEOMETRY, &av_info);
@@ -1100,13 +1100,13 @@ bool retro_load_game(const struct retro_game_info *info)
    {
       custompalette->read((char*)custpal, sizeof(custpal));
       if (log_cb)
-         log_cb(RETRO_LOG_WARN, "custom.pal loaded from system directory.\n");
+         log_cb(RETRO_LOG_INFO, "custom.pal loaded from system directory.\n");
    }
    else
    {
       memcpy(custpal, cxa2025as_palette, sizeof(custpal));
       if (log_cb)
-         log_cb(RETRO_LOG_WARN, "custom.pal not found in system directory.\n");
+         log_cb(RETRO_LOG_INFO, "custom.pal not found in system directory.\n");
    }
    delete custompalette;
    
