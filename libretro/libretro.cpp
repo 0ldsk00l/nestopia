@@ -553,8 +553,8 @@ static void update_input()
          input->zapper.y = zapy;
          input->zapper.fire = 1;
       }
-      
-      if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_TURBO)) {
+
+      if (input_state_cb(1, RETRO_DEVICE_LIGHTGUN, 0, RETRO_DEVICE_ID_LIGHTGUN_RELOAD)) {
          input->zapper.x = ~1U;
          input->zapper.fire = 1;
       }
