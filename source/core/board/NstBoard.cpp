@@ -1915,6 +1915,12 @@ namespace Nes
 						id = Type::UNL_WORLDHERO;
 						break;
 
+					case 30:
+
+						name = "UNROM 512";
+						id = Type::STD_UNROM512;
+						break;
+
 					case 31:
 
 						name = "INLNSF";
@@ -3396,6 +3402,7 @@ namespace Nes
 					case Type::STD_UN1ROM                 :
 					case Type::STD_UOROM                  :
 					case Type::STD_UXROM                  :
+					case Type::STD_UNROM512               :
 					case Type::UNL_UXROM                  : return new UxRom(c);
 					case Type::DISCRETE_74_377            : return new Discrete::Ic74x377(c);
 					case Type::DISCRETE_74_139_74         : return new Discrete::Ic74x139x74(c);

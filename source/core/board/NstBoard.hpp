@@ -208,6 +208,7 @@ namespace Nes
 						STD_UN1ROM                 = MakeId<   94,  128,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						STD_UOROM                  = MakeId<    2,  256,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						STD_UXROM                  = MakeId<    2,  256,    0,  0,  0, CRM_8,  NMT_X,  1 >::ID,
+						STD_UNROM512               = MakeId<   30,  512,    0,  0,  0, CRM_32, NMT_X,  0 >::ID,
 						// Discrete Logic
 						DISCRETE_74_377            = MakeId<   11,  128,  128,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						DISCRETE_74_139_74         = MakeId<   87,   32,   32,  0,  0, CRM_0,  NMT_X,  4 >::ID,

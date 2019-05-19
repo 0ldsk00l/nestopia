@@ -50,6 +50,17 @@ namespace Nes
 						Map( 0x8000U, 0xFFFFU, &UxRom::Poke_8000_D2 );
 						break;
 
+					case Type::STD_UNROM512:
+
+						Map( 0x8000U, 0xFFFFU, &UxRom::Poke_8000_0 );
+						hasbattery = board.HasBattery();
+						mirr = board.GetNmt();
+						switch (mirr) {
+						case 0: ppu.SetMirroring( Ppu::NMT_H ); break;
+						case 1: ppu.SetMirroring( Ppu::NMT_V ); break;
+						}
+						break;
+
 					default:
 
 						Map( 0x8000U, 0xFFFFU, PRG_SWAP_16K_0 );
@@ -64,6 +75,16 @@ namespace Nes
 			NES_POKE_AD(UxRom,8000_D2)
 			{
 				prg.SwapBank<SIZE_16K,0x0000>( GetBusData(address,data) >> 2 );
+			}
+
+			NES_POKE_AD(UxRom,8000_0)
+			{
+				if (!hasbattery)
+					data = GetBusData(address,data);
+				chr.SwapBank<SIZE_8K, 0x0000>( ( data >> 5) & 0x3 );
+				prg.SwapBank<SIZE_16K, 0x0000>( ( data ) & 0x1f );
+				if ( mirr == Type::NMT_FOURSCREEN )
+					ppu.SetMirroring( ( data & 0x80 ) ? Ppu::NMT_1 : Ppu::NMT_0 );
 			}
 		}
 	}
