@@ -44,9 +44,12 @@ namespace Nes
 
 			private:
 
+				uint mirr;
+				uint hasbattery;
 				void SubReset(bool);
 
 				NES_DECL_POKE( 8000_D2 );
+				NES_DECL_POKE( 8000_0 );
 			};
 		}
 	}
