@@ -233,6 +233,8 @@ namespace Nes
 						CUSTOM_ZZ                  = MakeId<   37,  256,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						// Acclaim
 						ACCLAIM_MCACC              = MakeId<    4,  512,  256,  0,  0, CRM_0,  NMT_X,  1 >::ID,
+						// Action 53
+						ACTION53                   = MakeId<   28, 1024,    0,  0,  0, CRM_32, NMT_X,  0 >::ID,
 						// Active Enterprises
 						AE_STD                     = MakeId<  228, 2048,  512,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						// AGCI
