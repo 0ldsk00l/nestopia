@@ -29,6 +29,7 @@
 #include "NstBoard.hpp"
 #include "NstBoardNRom.hpp"
 #include "NstBoardAxRom.hpp"
+#include "NstBoardAction53.hpp"
 #include "NstBoardBxRom.hpp"
 #include "NstBoardCxRom.hpp"
 #include "NstBoardDxRom.hpp"
@@ -1915,6 +1916,12 @@ namespace Nes
 						id = Type::UNL_WORLDHERO;
 						break;
 
+					case 28:
+
+						name = "ACTION 53";
+						id = Type::ACTION53;
+						break;
+
 					case 30:
 
 						name = "UNROM 512";
@@ -3425,6 +3432,7 @@ namespace Nes
 					case Type::CUSTOM_X79B                : return new CnRom(c);
 					case Type::CUSTOM_ZZ                  : return new Zz(c);
 					case Type::ACCLAIM_MCACC              : return new Acclaim::McAcc(c);
+					case Type::ACTION53                   : return new Action53(c);
 					case Type::AE_STD                     : return new Ae::Standard(c);
 					case Type::AGCI_50282                 : return new Agci::A50282(c);
 					case Type::AVE_MB_91                  : return new Ave::Mb91(c);

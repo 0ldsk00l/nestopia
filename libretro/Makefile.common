@@ -74,6 +74,7 @@ SOURCES_CXX += $(CORE_DIR)/source/core/api/NstApiVideo.cpp
 
 # Board
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAcclaimMcAcc.cpp
+SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAction53.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAe.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAgci.cpp
 SOURCES_CXX += $(CORE_DIR)/source/core/board/NstBoardAveD1012.cpp
