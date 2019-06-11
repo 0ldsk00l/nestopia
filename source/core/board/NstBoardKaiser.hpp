@@ -88,6 +88,25 @@ namespace Nes
 					Timer::M2<Irq> irq;
 				};
 
+
+				class Ks7031 : public Board
+				{
+				public:
+					explicit Ks7031(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
+					void SubLoad(State::Loader&,dword);
+					void SubSave(State::Saver&) const;
+
+					byte regs[4];
+
+					NES_DECL_POKE( 8000 );
+					NES_DECL_PEEK( 6000 );
+				};
+
 				class Ks7032 : public Ks202
 				{
 				public:

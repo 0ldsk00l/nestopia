@@ -89,6 +89,17 @@ namespace Nes
 					irq.Reset( hard, hard ? false : irq.Connected() );
 				}
 
+				void Ks7031::SubReset(const bool hard)
+				{
+					Map( 0x6000U, 0xFFFEU, &Ks7031::Peek_6000 );
+					Map( 0x8000U, 0xFFFFU, &Ks7031::Poke_8000 );
+
+					regs[0] = 0;
+					regs[1] = 0;
+					regs[2] = 0;
+					regs[3] = 0;
+				}
+
 				void Ks7032::SubReset(const bool hard)
 				{
 					Ks202::SubReset( hard );
@@ -144,6 +155,29 @@ namespace Nes
 					}
 				}
 
+				void Ks7031::SubLoad(State::Loader& state,const dword baseChunk)
+				{
+					NST_VERIFY( (baseChunk == AsciiId<'K','7','1'>::V) );
+
+					if (baseChunk == AsciiId<'K','7','1'>::V)
+					{
+						while (const dword chunk = state.Begin())
+						{
+							if (chunk == AsciiId<'R','E','G'>::V)
+							{
+								State::Loader::Data<4> data( state );
+
+								regs[0] = data[0];
+								regs[1] = data[1];
+								regs[2] = data[2];
+								regs[3] = data[3];
+							}
+
+							state.End();
+						}
+					}
+				}
+
 				void Ks7022::SubSave(State::Saver& state) const
 				{
 					state.Begin( AsciiId<'K','7','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
@@ -164,6 +198,14 @@ namespace Nes
 					};
 
 					state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();
+					state.End();
+				}
+
+				void Ks7031::SubSave(State::Saver& state) const
+				{
+					state.Begin( AsciiId<'K','7','1'>::V );
+
+					state.Begin( AsciiId<'R','E','G'>::V ).Write( regs ).End();
 					state.End();
 				}
 
@@ -282,6 +324,25 @@ namespace Nes
 							chr.SwapBank<SIZE_1K>( (address & 0x7) << 10, data );
 							break;
 					}
+				}
+
+				NES_POKE_AD(Ks7031,8000)
+				{
+					regs[(address >> 11) & 0x03] = data;
+				}
+
+				NES_PEEK_A(Ks7031,6000)
+				{
+					int bank, new_addr;
+
+					if (address < 0x8000)
+						bank = regs[(address >> 11) & 0x03];
+					else
+						bank = 0x0f - ((address >> 11) & 0x0f);
+
+					new_addr = ((bank << 11) % prg.Source(0).Size()) | (address & 0x07ff);
+
+					return prg[0][new_addr];
 				}
 
 				bool Ks202::Irq::Clock()
