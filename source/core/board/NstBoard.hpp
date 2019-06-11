@@ -419,6 +419,7 @@ namespace Nes
 						// Kaiser
 						KAISER_KS202               = MakeId<   56,  256,  128,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						KAISER_KS7022              = MakeId<  175,  256,  128,  0,  0, CRM_0,  NMT_V,  0 >::ID,
+						KAISER_KS7031              = MakeId<  NMPR, 128,    0,  0, 16, CRM_8,  NMT_V,  0 >::ID,
 						KAISER_KS7032              = MakeId<  142,  128,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						KAISER_KS7058              = MakeId<  171,   32,   32,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Kasing
