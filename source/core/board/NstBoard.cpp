@@ -950,6 +950,7 @@ namespace Nes
 					{ "KONAMI-VRC-4",                Type::KONAMI_VRC4_0            },
 					{ "KONAMI-VRC-6",                Type::KONAMI_VRC6_0            },
 					{ "KONAMI-VRC-7",                Type::KONAMI_VRC7_0            },
+					{ "KS7031",                      Type::KAISER_KS7031            },
 					{ "MLT-ACTION52",                Type::AE_STD                   },
 					{ "MLT-CALTRON6IN1",             Type::CALTRON_6IN1             },
 					{ "MLT-MAXI15",                  Type::AVE_D1012                },
@@ -1095,6 +1096,7 @@ namespace Nes
 					{ "UNL-EDU2000",                 Type::UNL_EDU2000              },
 					{ "UNL-H2288",                   Type::KAY_H2288                },
 					{ "UNL-KOF97",                   Type::UNL_KINGOFFIGHTERS97     },
+					{ "UNL-KS7031",                  Type::KAISER_KS7031            },
 					{ "UNL-KS7032",                  Type::KAISER_KS7032            },
 					{ "UNL-N625092",                 Type::UNL_N625092              },
 					{ "UNL-SA-0036",                 Type::SACHEN_SA0036            },
@@ -3593,6 +3595,7 @@ namespace Nes
 					case Type::JYCOMPANY_TYPE_C           : return new JyCompany::Standard(c);
 					case Type::KAISER_KS202               : return new Kaiser::Ks202(c);
 					case Type::KAISER_KS7022              : return new Kaiser::Ks7022(c);
+					case Type::KAISER_KS7031              : return new Kaiser::Ks7031(c);
 					case Type::KAISER_KS7032              : return new Kaiser::Ks7032(c);
 					case Type::KAISER_KS7058              : return new Kaiser::Ks7058(c);
 					case Type::KASING_STD                 : return new Kasing::Standard(c);
