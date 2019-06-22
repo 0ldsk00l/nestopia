@@ -59,6 +59,7 @@ static bool overscan_v;
 static bool overscan_h;
 static unsigned aspect_ratio_mode;
 static unsigned tpulse;
+static bool libretro_supports_bitmasks = false;
 
 int16_t video_width = Api::Video::Output::WIDTH;
 size_t pitch;
@@ -346,12 +347,15 @@ void retro_init(void)
    else
       log_cb = NULL;
 
+   if (environ_cb(RETRO_ENVIRONMENT_GET_INPUT_BITMASKS, NULL))
+      libretro_supports_bitmasks = true;
 
    check_system_specs();
 }
 
 void retro_deinit(void)
 {
+   libretro_supports_bitmasks = false;
 }
 
 unsigned retro_api_version(void)
@@ -507,7 +511,7 @@ static keymap bindmap_shifted[] = {
 
 static keymap *bindmap = bindmap_default;
 
-static void update_input()
+static void update_input(bool supports_bitmasks)
 {
    input_poll_cb();
    input->pad[0].buttons = 0;
@@ -517,8 +521,9 @@ static void update_input()
    input->pad[1].mic = 0;
    input->zapper.fire = 0;
    input->vsSystem.insertCoin = 0;
-   
-   if (Api::Input(emulator).GetConnectedController(1) == 5) {
+
+   if (Api::Input(emulator).GetConnectedController(1) == 5)
+   {
       static int zapx = overscan_h ? 8 : 0; 
       static int zapy = overscan_v ? 8 : 0;
       int min_x = overscan_h ? 8 : 0;
@@ -561,33 +566,71 @@ static void update_input()
    }
    
    static unsigned tstate = 2;
-   
-   for (unsigned p = 0; p < 4; p++) {
-      for (unsigned bind = 0; bind < sizeof(bindmap_default) / sizeof(bindmap[0]); bind++)
+   bool pressed_l3        = false;
+   bool pressed_l2        = false;
+   bool pressed_r2        = false;
+   bool pressed_l         = false;
+   bool pressed_r         = false;
+
+   if (supports_bitmasks)
+   {
+      int16_t ret[4];
+      /* Player 0 needs some extra checks */
+      ret[0]              = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
+      ret[1]              = input_state_cb(1, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
+      ret[2]              = input_state_cb(2, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
+      ret[3]              = input_state_cb(3, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_MASK);
+      pressed_l3          = ret[0] & (1 << RETRO_DEVICE_ID_JOYPAD_L3);
+      pressed_l2          = ret[0] & (1 << RETRO_DEVICE_ID_JOYPAD_L2);
+      pressed_r2          = ret[0] & (1 << RETRO_DEVICE_ID_JOYPAD_R2);
+      pressed_l           = ret[0] & (1 << RETRO_DEVICE_ID_JOYPAD_L );
+      pressed_r           = ret[0] & (1 << RETRO_DEVICE_ID_JOYPAD_R );
+
+      for (unsigned p = 0; p < 4; p++)
       {
-         input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
+         for (unsigned bind = 0; bind < sizeof(bindmap_default) / sizeof(bindmap[0]); bind++)
+            input->pad[p].buttons |= (ret[p] & (1 << bindmap[bind].retro)) ? bindmap[bind].nes : 0;
+         if (ret[p] & (1 << bindmap[2].retro))
+            tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::A : input->pad[p].buttons |= Core::Input::Controllers::Pad::A;
+         if (ret[p] & (1 << bindmap[3].retro))
+            tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::B : input->pad[p].buttons |= Core::Input::Controllers::Pad::B;
       }
-      if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[2].retro))
-         tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::A : input->pad[p].buttons |= Core::Input::Controllers::Pad::A;
-      if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[3].retro))
-         tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::B : input->pad[p].buttons |= Core::Input::Controllers::Pad::B;
+   }
+   else
+   {
+      pressed_l3          = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3);
+      pressed_l2          = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2);
+      pressed_r2          = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2);
+      pressed_l           = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
+      pressed_r           = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
+
+      for (unsigned p = 0; p < 4; p++)
+      {
+         for (unsigned bind = 0; bind < sizeof(bindmap_default) / sizeof(bindmap[0]); bind++)
+            input->pad[p].buttons |= input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[bind].retro) ? bindmap[bind].nes : 0;
+         if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[2].retro))
+            tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::A : input->pad[p].buttons |= Core::Input::Controllers::Pad::A;
+         if (input_state_cb(p, RETRO_DEVICE_JOYPAD, 0, bindmap[3].retro))
+            tstate ? input->pad[p].buttons &= ~Core::Input::Controllers::Pad::B : input->pad[p].buttons |= Core::Input::Controllers::Pad::B;
+      }
    }
       
    if (tstate) tstate--; else tstate = tpulse;
    
-   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L3))
+   if (pressed_l3)
       input->pad[1].mic |= 0x04;
    
-   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L2))
+   if (pressed_l2)
       input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_1;
       
-   if (input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R2))
+   if (pressed_r2)
       input->vsSystem.insertCoin |= Core::Input::Controllers::VsSystem::COIN_2;
       
    if (machine->Is(Nes::Api::Machine::DISK))
    {
-      bool curL = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_L);
+      bool curL         = pressed_l;
       static bool prevL = false;
+
       if (curL && !prevL)
       {
          if (!fds->IsAnyDiskInserted())
@@ -597,8 +640,9 @@ static void update_input()
       }
       prevL = curL;
       
-      bool curR = input_state_cb(0, RETRO_DEVICE_JOYPAD, 0, RETRO_DEVICE_ID_JOYPAD_R);
+      bool curR         = pressed_r;
       static bool prevR = false;
+
       if (curR && !prevR && (fds->GetNumDisks() > 1))
       {
          int currdisk = fds->GetCurrentDisk();
@@ -936,7 +980,7 @@ static void check_variables(void)
 
 void retro_run(void)
 {
-   update_input();
+   update_input(libretro_supports_bitmasks);
    emulator.Execute(video, audio, input);
 
    if (Api::Input(emulator).GetConnectedController(1) == 5)
