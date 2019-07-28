@@ -1,4 +1,5 @@
 #include "libretro.h"
+#include "libretro_core_options.h"
 #include <stdint.h>
 #include <string.h>
 #include <math.h>
@@ -418,26 +419,7 @@ void retro_get_system_av_info(struct retro_system_av_info *info)
 void retro_set_environment(retro_environment_t cb)
 {
    environ_cb = cb;
-
-   static const struct retro_variable vars[] = {
-      { "nestopia_blargg_ntsc_filter", "Blargg NTSC filter; disabled|composite|svideo|rgb|monochrome" },
-      { "nestopia_palette", "Palette; cxa2025as|consumer|canonical|alternative|rgb|pal|composite-direct-fbx|pvm-style-d93-fbx|ntsc-hardware-fbx|nes-classic-fbx-fs|raw|custom" },
-      { "nestopia_nospritelimit", "Remove 8-sprites-per-scanline hardware limit; disabled|enabled" },
-      { "nestopia_overclock", "CPU Speed (Overclock); 1x|2x" },
-	  { "nestopia_select_adapter", "4 Player Adapter; auto|ntsc|famicom" },
-      { "nestopia_fds_auto_insert", "Automatically insert first FDS disk on reset; enabled|disabled" },
-      { "nestopia_overscan_v", "Mask Overscan (Vertical); enabled|disabled" },
-      { "nestopia_overscan_h", "Mask Overscan (Horizontal); disabled|enabled" },
-      { "nestopia_aspect" ,  "Preferred aspect ratio; auto|ntsc|pal|4:3" },
-      { "nestopia_genie_distortion", "Game Genie Sound Distortion; disabled|enabled" },
-      { "nestopia_favored_system", "Favored System; auto|ntsc|pal|famicom|dendy" },
-      { "nestopia_ram_power_state", "RAM Power-on State; 0x00|0xFF|random" },
-      { "nestopia_button_shift", "Shift A/B/X/Y Clockwise; disabled|enabled" },
-      { "nestopia_turbo_pulse", "Turbo Pulse Speed; 2|3|4|5|6|7|8|9" },
-      { NULL, NULL },
-   };
-
-   cb(RETRO_ENVIRONMENT_SET_VARIABLES, (void*)vars);
+   libretro_set_core_options(environ_cb);
 }
 
 void retro_set_audio_sample(retro_audio_sample_t cb)
