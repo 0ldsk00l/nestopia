@@ -11,6 +11,7 @@ Core:
  Additions:
   - Homebrew module (Phil Smith)
   - Support for mapper 31 (rainwarrior)
+  - Support for MMC3 Big CHR-RAM Board
 
 ----------------------------------------------------------------
 1.49

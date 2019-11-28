@@ -276,7 +276,7 @@ namespace Nes
 
 			if (profile.board.type.empty() || !b.DetectBoard( profile.board.type.c_str(), profile.board.GetWram() ))
 			{
-				if (profile.board.mapper == Profile::Board::NO_MAPPER || (!b.DetectBoard( profile.board.mapper, profile.board.GetWram(), profileEx.wramAuto, profile.board.subMapper ) && board))
+				if (profile.board.mapper == Profile::Board::NO_MAPPER || (!b.DetectBoard( profile.board.mapper, profile.board.subMapper, profile.board.chrRam, profile.board.GetWram(), profileEx.wramAuto ) && board))
 					return RESULT_ERR_UNSUPPORTED_MAPPER;
 
 				if (profile.board.type.empty())

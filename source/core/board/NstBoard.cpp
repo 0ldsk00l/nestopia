@@ -1218,7 +1218,7 @@ namespace Nes
 				return true;
 			}
 
-			bool Board::Context::DetectBoard(const byte mapper,const dword wram,bool wramAuto,const byte submapper)
+			bool Board::Context::DetectBoard(const byte mapper,const byte submapper,const dword chrRam,const dword wram,bool wramAuto)
 			{
 				Type::Id id;
 
@@ -1443,6 +1443,13 @@ namespace Nes
 						{
 							name = "ACCLAIM-MC-ACC";
 							id = Type::ACCLAIM_MCACC;
+							break;
+						}
+
+						if (chrRam == 32)
+						{
+							name = "UNL-MMC3BIGCHRRAM";
+							id = Type::UNL_MMC3BIGCHRRAM;
 							break;
 						}
 
@@ -3403,6 +3410,7 @@ namespace Nes
 					case Type::STD_TR1ROM                 :
 					case Type::STD_TSROM                  :
 					case Type::STD_TVROM                  :
+					case Type::UNL_MMC3BIGCHRRAM          :
 					case Type::UNL_TRXROM                 : return new TxRom  (c);
 					case Type::STD_TLSROM                 : return new TlsRom (c);
 					case Type::STD_TKSROM                 : return new TksRom (c);

@@ -233,6 +233,7 @@ namespace Nes
 				{
 					if (setup.chrRam)
 					{
+						profile.board.chrRam = setup.chrRam / SIZE_1K;
 						log << title
 							<< (setup.chrRam % SIZE_1K ? setup.chrRam : setup.chrRam / SIZE_1K)
 							<< (setup.chrRam % SIZE_1K ? " bytes" : "k")
