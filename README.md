@@ -1,6 +1,3 @@
-[![Build Status](https://travis-ci.org/libretro/nestopia.svg?branch=master)](https://travis-ci.org/libretro/nestopia)
-[![Build status](https://ci.appveyor.com/api/projects/status/wcs7u48485ma8mm3/branch/master?svg=true)](https://ci.appveyor.com/project/bparker06/nestopia/branch/master)
-
 ## Maintenance Mode
 This project is now in maintenance mode.
 For any libretro related issues or pull requests, please go to:
