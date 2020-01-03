@@ -1,17 +1,29 @@
 ----------------------------------------------------------------
-1.50-WIP
+1.50
 ----------------------------------------------------------------
 Shell:
 
  Additions:
   - Added ability to output data from homebrew module (Phil Smith)
 
+libretro:
+ Additions:
+  - Button shift option
+  - Input bitmask support (TwinAphex)
+  - Enhanced core options (TwinAphex)
+  - Build in NstDatabase.xml
+
 Core:
 
  Additions:
   - Homebrew module (Phil Smith)
   - Support for mapper 31 (rainwarrior)
+  - Support for mappers 28 and 30 (retro-wertz)
+  - Support for UNL-KS7031 (retro-wertz)
   - Support for MMC3 Big CHR-RAM Board
+
+ Fixes:
+  - Deterministic Save States (creambits)
 
 ----------------------------------------------------------------
 1.49
