@@ -20,6 +20,8 @@
 
 #include "../source/core/NstMachine.hpp"
 
+#include "nstdatabase.hpp"
+
 #define NST_VERSION "1.50-WIP"
 
 #define MIN(a,b)      ((a)<(b)?(a):(b))
@@ -74,7 +76,6 @@ static Api::Machine::FavoredSystem favsystem;
 static void *sram;
 static unsigned long sram_size;
 static bool is_pal;
-static bool dbpresent;
 static byte custpal[64*3];
 static char slash;
 
@@ -664,20 +665,17 @@ static void check_variables(void)
    {
       if (strcmp(var.value, "auto") == 0)
       {
-         if (dbpresent)
+         machine.SetMode(machine.GetDesiredMode());
+         if (machine.GetMode() == Api::Machine::PAL)
          {
-            machine.SetMode(machine.GetDesiredMode());
-            if (machine.GetMode() == Api::Machine::PAL)
-            {
-               is_pal = true;
-               favsystem = Api::Machine::FAVORED_NES_PAL;
-               machine.SetMode(Api::Machine::PAL);
-            }
-            else
-            {
-               favsystem = Api::Machine::FAVORED_NES_NTSC;
-               machine.SetMode(Api::Machine::NTSC);
-            }
+            is_pal = true;
+            favsystem = Api::Machine::FAVORED_NES_PAL;
+            machine.SetMode(Api::Machine::PAL);
+         }
+         else
+         {
+            favsystem = Api::Machine::FAVORED_NES_NTSC;
+            machine.SetMode(Api::Machine::NTSC);
          }
       }
       else if (strcmp(var.value, "ntsc") == 0)
@@ -919,12 +917,9 @@ static void check_variables(void)
    if (environ_cb(RETRO_ENVIRONMENT_GET_VARIABLE, &var) && var.value)
    { 
 	   if (!strcmp(var.value, "auto")) {
-		   if (dbpresent)
-		   {
-			   Api::Input(emulator).AutoSelectController(2);
-			   Api::Input(emulator).AutoSelectController(3);
-			   Api::Input(emulator).AutoSelectAdapter();
-		   }
+		   Api::Input(emulator).AutoSelectController(2);
+		   Api::Input(emulator).AutoSelectController(3);
+		   Api::Input(emulator).AutoSelectAdapter();
 	   }
 	   else if (!strcmp(var.value, "ntsc")) {
 		   Api::Input(emulator).ConnectController(2, Api::Input::PAD3);
@@ -1136,27 +1131,14 @@ bool retro_load_game(const struct retro_game_info *info)
    }
    delete custompalette;
    
-   sprintf(db_path, "%s%cNstDatabase.xml", dir, slash);
-
-   if (log_cb)
-      log_cb(RETRO_LOG_INFO, "NstDatabase.xml path: %s\n", db_path);
-   
    Api::Cartridge::Database database(emulator);
-   std::ifstream *db_file = new std::ifstream(db_path, std::ifstream::in|std::ifstream::binary);
    
-   if (db_file->is_open())
-   {
-      database.Load(*db_file);
-      database.Enable(true);
-      dbpresent = true;
-   }
-   else
-   {
-      if (log_cb)
-         log_cb(RETRO_LOG_WARN, "NstDatabase.xml required to detect region and some mappers.\n");
-      delete db_file;
-      dbpresent = false;
-   }
+   size_t db_size = sizeof(nst_db_xml)/sizeof(unsigned char);
+   std::string db_buf((const char*)nst_db_xml, db_size);
+   std::istringstream *db_file = new std::istringstream(db_buf);
+   
+   database.Load(*db_file);
+   database.Enable(true);
    
    if (info->path != NULL)
    {
@@ -1237,17 +1219,8 @@ bool retro_load_game(const struct retro_game_info *info)
    isound.SetSampleRate(SAMPLERATE);
    isound.SetSpeaker(Api::Sound::SPEAKER_MONO);
 
-   if (dbpresent)
-   {
-      Api::Input(emulator).AutoSelectController(0);
-      Api::Input(emulator).AutoSelectController(1);
-   }
-   else
-   {
-      Api::Input(emulator).ConnectController(0, Api::Input::PAD1);
-      Api::Input(emulator).ConnectController(1, Api::Input::PAD2);
-      //Api::Input(emulator).ConnectController(1, Api::Input::ZAPPER);
-   }
+   Api::Input(emulator).AutoSelectController(0);
+   Api::Input(emulator).AutoSelectController(1);
 
    machine->Power(true);
 

@@ -7,6 +7,28 @@
 #include <libretro.h>
 #include <retro_inline.h>
 
+#ifndef HAVE_NO_LANGEXTRA
+#include "libretro_core_options_intl.h"
+#endif
+
+/*
+ ********************************
+ * VERSION: 1.3
+ ********************************
+ *
+ * - 1.3: Move translations to libretro_core_options_intl.h
+ *        - libretro_core_options_intl.h includes BOM and utf-8
+ *          fix for MSVC 2010-2013
+ *        - Added HAVE_NO_LANGEXTRA flag to disable translations
+ *          on platforms/compilers without BOM support
+ * - 1.2: Use core options v1 interface when
+ *        RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION is >= 1
+ *        (previously required RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION == 1)
+ * - 1.1: Support generation of core options v0 retro_core_option_value
+ *        arrays containing options with a single value
+ * - 1.0: First commit
+*/
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -29,13 +51,13 @@ extern "C" {
 struct retro_core_option_definition option_defs_us[] = {
    {
       "nestopia_blargg_ntsc_filter",
-      "Blargg NTSC filter",
+      "Blargg NTSC Filter",
       "Enable Blargg NTSC filters.",
       {
-         { "disabled", "Disabled" },
-         { "composite", "Composite Video"  },
-         { "svideo", "S-Video" },
-         { "rgb", "RGB SCART" },
+         { "disabled",   NULL },
+         { "composite",  "Composite Video" },
+         { "svideo",     "S-Video" },
+         { "rgb",        "RGB SCART" },
          { "monochrome", "Monochrome" },
          { NULL, NULL },
       },
@@ -46,29 +68,29 @@ struct retro_core_option_definition option_defs_us[] = {
       "Palette",
       "Choose which color palette is going to be used.",
       {
-         { "cxa2025as",   "CXA2025AS"   },
-         { "consumer",    "Consumer"    },
-         { "canonical",   "Canonical"   },
-         { "alternative", "Alternative" },
-         { "rgb",         "RGB"         },
-         { "pal",         "PAL"         },
-         { "composite-direct-fbx", "Composite Direct FBx"},
-         { "pvm-style-d93-fbx",    "PVM-style D93 FBx"},
-         { "ntsc-hardware-fbx",    "NTSC hardware FBx"},
-         { "nes-classic-fbx-fs",   "NES Classic FBx FS"},
-         { "raw",                  "Raw"},
-         { "custom",               "Custom"},
+         { "cxa2025as",            "CXA2025AS" },
+         { "consumer",             "Consumer" },
+         { "canonical",            "Canonical" },
+         { "alternative",          "Alternative" },
+         { "rgb",                  "RGB" },
+         { "pal",                  "PAL" },
+         { "composite-direct-fbx", "Composite Direct FBx" },
+         { "pvm-style-d93-fbx",    "PVM-style D93 FBx" },
+         { "ntsc-hardware-fbx",    "NTSC hardware FBx" },
+         { "nes-classic-fbx-fs",   "NES Classic FBx FS" },
+         { "raw",                  "Raw" },
+         { "custom",               "Custom" },
          { NULL, NULL },
       },
       "cxa2025as" /* TODO/FIXME - is this correct ? */
    },
    {
       "nestopia_nospritelimit",
-      "Remove 8-sprites-per-scanline hardware limit",
-      "Self-explanatory.",
+      "Remove Sprite Limit",
+      "Remove 8-sprites-per-scanline hardware limit.",
       {
-         { "disabled",  "Disabled" },
-         { "enabled",   "Enabled" },
+         { "disabled", NULL },
+         { "enabled",  NULL },
          { NULL, NULL },
       },
       "disabled"
@@ -78,8 +100,9 @@ struct retro_core_option_definition option_defs_us[] = {
       "CPU Speed (Overclock)",
       "Overclock the emulated CPU.",
       {
-         { "1x",  NULL },
+         { "1x", NULL },
          { "2x", NULL },
+         { NULL, NULL },
       },
       "1x"
    },
@@ -88,20 +111,20 @@ struct retro_core_option_definition option_defs_us[] = {
       "4 Player Adapter",
       "Manually select a 4 Player Adapter if needed. Some games will not recognize the adapter correctly through the NstDatabase.xml database, this option should help fix that.",
       {
-         { "auto", NULL },
-         { "ntsc", NULL },
-         { "famicom", NULL },
+         { "auto",    "Auto" },
+         { "ntsc",    "NTSC" },
+         { "famicom", "Famicom" },
          { NULL, NULL },
       },
       "auto"
    },
    {
       "nestopia_fds_auto_insert",
-      "Automatically insert first FDS disk on reset; enabled|disabled",
-      "Self-explanatory",
+      "FDS Auto Instert",
+      "Automatically insert first FDS disk on reset.",
       {
-         { "disabled",           "Disabled" },
-         { "enabled",            "Enabled" },
+         { "disabled", NULL },
+         { "enabled",  NULL },
          { NULL, NULL },
       },
       "enabled"
@@ -130,7 +153,7 @@ struct retro_core_option_definition option_defs_us[] = {
    },
    {
       "nestopia_aspect",
-      "Preferred aspect ratio",
+      "Preferred Aspect Ratio",
       "Choose the preferred aspect ratio. RetroArch's aspect ratio must be set to Core provided in the Video seetings. 'auto' will use the NstDatabase.xml database file for aspect ratio autodetection. If there is no database present it will default to NTSC for 'auto'.",
       {
          { "auto", "Auto" },
@@ -154,14 +177,14 @@ struct retro_core_option_definition option_defs_us[] = {
    },
    {
       "nestopia_favored_system",
-      "Favored System",
-      "Choose which region the system is from. 'auto' will use the NstDatabase.xml database file for region autodetection. If there is no database present it will default to NTSC for 'auto'.",
+      "System Region",
+      "Choose which region the system is from. 'Auto' will use the NstDatabase.xml database file for region autodetection. If there is no database present it will default to NTSC for 'Auto'.",
       {
-         { "auto",  "Auto" },
-         { "ntsc", "NTSC" },
-         { "pal",  "PAL" },
-         { "famicom",  "Famicom" },
-         { "dendy",  "Dendy" },
+         { "auto",    "Auto" },
+         { "ntsc",    "NTSC" },
+         { "pal",     "PAL" },
+         { "famicom", "Famicom" },
+         { "dendy",   "Dendy" },
          { NULL, NULL },
       },
       "auto"
@@ -169,22 +192,22 @@ struct retro_core_option_definition option_defs_us[] = {
    {
       "nestopia_ram_power_state",
       "RAM Power-on State",
-      "Awaiting description.",
+      "",
       {
-         { "0x00", NULL },
-         { "0xFF", NULL },
-         { "random",  "Random" },
+         { "0x00",   NULL },
+         { "0xFF",   NULL },
+         { "random", "Random" },
          { NULL, NULL },
       },
       "0x00"
    },
    {
       "nestopia_button_shift",
-      "Shift A/B/X/Y Clockwise",
-      "Awaiting description.",
+      "Shift Buttons Clockwise",
+      "Rotate A/B/X/Y button clockwise.", /* is this right? @gadsby */
       {
          { "disabled", NULL },
-         { "enabled", NULL },
+         { "enabled",  NULL },
          { NULL, NULL },
       },
       "disabled"
@@ -209,48 +232,13 @@ struct retro_core_option_definition option_defs_us[] = {
    { NULL, NULL, NULL, {{0}}, NULL },
 };
 
-/* RETRO_LANGUAGE_JAPANESE */
-
-/* RETRO_LANGUAGE_FRENCH */
-
-/* RETRO_LANGUAGE_SPANISH */
-
-/* RETRO_LANGUAGE_GERMAN */
-
-/* RETRO_LANGUAGE_ITALIAN */
-
-/* RETRO_LANGUAGE_DUTCH */
-
-/* RETRO_LANGUAGE_PORTUGUESE_BRAZIL */
-
-/* RETRO_LANGUAGE_PORTUGUESE_PORTUGAL */
-
-/* RETRO_LANGUAGE_RUSSIAN */
-
-/* RETRO_LANGUAGE_KOREAN */
-
-/* RETRO_LANGUAGE_CHINESE_TRADITIONAL */
-
-/* RETRO_LANGUAGE_CHINESE_SIMPLIFIED */
-
-/* RETRO_LANGUAGE_ESPERANTO */
-
-/* RETRO_LANGUAGE_POLISH */
-
-/* RETRO_LANGUAGE_VIETNAMESE */
-
-/* RETRO_LANGUAGE_ARABIC */
-
-/* RETRO_LANGUAGE_GREEK */
-
-/* RETRO_LANGUAGE_TURKISH */
-
 /*
  ********************************
  * Language Mapping
  ********************************
 */
 
+#ifndef HAVE_NO_LANGEXTRA
 struct retro_core_option_definition *option_defs_intl[RETRO_LANGUAGE_LAST] = {
    option_defs_us, /* RETRO_LANGUAGE_ENGLISH */
    NULL,           /* RETRO_LANGUAGE_JAPANESE */
@@ -270,8 +258,9 @@ struct retro_core_option_definition *option_defs_intl[RETRO_LANGUAGE_LAST] = {
    NULL,           /* RETRO_LANGUAGE_VIETNAMESE */
    NULL,           /* RETRO_LANGUAGE_ARABIC */
    NULL,           /* RETRO_LANGUAGE_GREEK */
-   NULL,           /* RETRO_LANGUAGE_TURKISH */
+   option_defs_tr, /* RETRO_LANGUAGE_TURKISH */
 };
+#endif
 
 /*
  ********************************
@@ -280,7 +269,8 @@ struct retro_core_option_definition *option_defs_intl[RETRO_LANGUAGE_LAST] = {
 */
 
 /* Handles configuration/setting of core options.
- * Should only be called inside retro_set_environment().
+ * Should be called as early as possible - ideally inside
+ * retro_set_environment(), and no later than retro_load_game()
  * > We place the function body in the header to avoid the
  *   necessity of adding more .c files (i.e. want this to
  *   be as painless as possible for core devs)
@@ -293,8 +283,9 @@ static INLINE void libretro_set_core_options(retro_environment_t environ_cb)
    if (!environ_cb)
       return;
 
-   if (environ_cb(RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION, &version) && (version == 1))
+   if (environ_cb(RETRO_ENVIRONMENT_GET_CORE_OPTIONS_VERSION, &version) && (version >= 1))
    {
+#ifndef HAVE_NO_LANGEXTRA
       struct retro_core_options_intl core_options_intl;
       unsigned language = 0;
 
@@ -306,6 +297,9 @@ static INLINE void libretro_set_core_options(retro_environment_t environ_cb)
          core_options_intl.local = option_defs_intl[language];
 
       environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS_INTL, &core_options_intl);
+#else
+      environ_cb(RETRO_ENVIRONMENT_SET_CORE_OPTIONS, &option_defs_us);
+#endif
    }
    else
    {
@@ -364,7 +358,7 @@ static INLINE void libretro_set_core_options(retro_environment_t environ_cb)
             }
 
             /* Build values string */
-            if (num_values > 1)
+            if (num_values > 0)
             {
                size_t j;
 
@@ -396,7 +390,7 @@ static INLINE void libretro_set_core_options(retro_environment_t environ_cb)
          variables[i].key   = key;
          variables[i].value = values_buf[i];
       }
-      
+
       /* Set variables */
       environ_cb(RETRO_ENVIRONMENT_SET_VARIABLES, variables);
 

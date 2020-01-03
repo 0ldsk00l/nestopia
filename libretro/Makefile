@@ -11,13 +11,17 @@ filter_out2 = $(call filter_out1,$(call filter_out1,$1))
 
 ifeq ($(platform),)
 	platform = unix
-	ifeq ($(shell uname -a),)
+	ifeq ($(shell uname -s),)
 		platform = win
-	else ifneq ($(findstring MINGW,$(shell uname -a)),)
+	else ifneq ($(findstring MINGW,$(shell uname -s)),)
 		platform = win
-	else ifneq ($(findstring Darwin,$(shell uname -a)),)
+	else ifneq ($(findstring Darwin,$(shell uname -s)),)
 		platform = osx
-	else ifneq ($(findstring win,$(shell uname -a)),)
+		arch = intel
+		ifeq ($(shell uname -p),powerpc)
+			arch = ppc
+		endif
+	else ifneq ($(findstring win,$(shell uname -s)),)
 		platform = win
 	endif
 endif
@@ -29,6 +33,10 @@ ifeq ($(shell uname -a),)
 	system_platform = win
 else ifneq ($(findstring Darwin,$(shell uname -a)),)
 	system_platform = osx
+	arch = intel
+	ifeq ($(shell uname -p),powerpc)
+		arch = ppc
+	endif
 else ifneq ($(findstring MINGW,$(shell uname -a)),)
 	system_platform = win
 endif
@@ -73,6 +81,11 @@ else ifeq ($(platform), osx)
 		LDFLAGS += $(ARCHFLAGS)
 	endif
 
+ifeq ($(arch),ppc)
+	CFLAGS += -DHAVE_NO_LANGEXTRA
+	CXXFLAGS += -DHAVE_NO_LANGEXTRA
+endif
+
 # iOS
 else ifneq (,$(findstring ios,$(platform)))
 
@@ -98,6 +111,15 @@ else
 	CXX              += -miphoneos-version-min=5.0
 	PLATFORM_DEFINES += -miphoneos-version-min=5.0
 endif
+
+# tvOS
+else ifeq ($(platform), tvos-arm64)
+	TARGET := $(TARGET_NAME)_libretro_tvos.dylib
+	fpic = -fPIC
+	SHARED := -dynamiclib
+	ifeq ($(IOSSDK),)
+		IOSSDK := $(shell xcodebuild -version -sdk appletvos Path)
+	endif
 
 # Theos
 else ifeq ($(platform), theos_ios)
