@@ -2,7 +2,7 @@
  * Nestopia UE
  * 
  * Copyright (C) 2007-2008 R. Belmont
- * Copyright (C) 2012-2018 R. Danbrook
+ * Copyright (C) 2012-2020 R. Danbrook
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -143,6 +143,8 @@ void nst_ogl_init() {
 	
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, conf.video_linear_filter ? GL_LINEAR : GL_NEAREST);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
 	
 	conf.video_fullscreen ? 
 	glViewport(screensize.w / 2.0f - rendersize.w / 2.0f, 0, rendersize.w, rendersize.h) :
