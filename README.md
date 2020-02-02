@@ -15,7 +15,8 @@ The following platforms are supported:
 This project depends on the following libraries:
 libsdl2, libepoxy, libao, libarchive, zlib
 
-Optionally, it depends on GTK+3 for the GUI, currently only available on Linux and BSD.
+Optionally, it depends on GTK+3 for the GUI, or notcurses for character-based
+graphics. Both are available only on Linux and BSD.
 
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
@@ -24,14 +25,14 @@ apt-get install build-essential autoconf autoconf-archive automake autotools-dev
 ```
 Optional dependencies:
 ```
-apt-get install libao-dev libjack-dev libgtk-3-dev
+apt-get install libao-dev libjack-dev libgtk-3-dev libnotcurses-dev
 ```
 
 ## Building
 To build using Autotools (optional arguments in square brackets):
 ```
 autoreconf -vif
-./configure [--enable-gui] [--enable-doc] [--with-ao] [--with-jack]
+./configure [--enable-tui] [--enable-gui] [--enable-doc] [--with-ao] [--with-jack]
 make
 ```
 Optionally:

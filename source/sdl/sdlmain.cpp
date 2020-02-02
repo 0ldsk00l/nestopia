@@ -34,6 +34,8 @@
 #include "sdlvideo.h"
 #include "sdlinput.h"
 
+#include <clocale>
+
 using namespace Nes::Api;
 
 static int nst_quit = 0;
@@ -50,6 +52,7 @@ void nst_schedule_quit() {
 
 int main(int argc, char *argv[]) {
 	// This is the main function
+	setlocale(LC_ALL, "");
 	
 	// Set up directories
 	nst_set_dirs();
@@ -100,27 +103,44 @@ int main(int argc, char *argv[]) {
 	nst_fds_bios_load();
 	nst_db_load();
 	
+	struct notcurses *nc = nullptr;
 	// Load a rom from the command line
 	if (argc > 1) {
 		if (!nst_load(argv[argc - 1])) { nst_quit = 1; }
 		else {
-			// Create the window
-			nstsdl_video_create();
-			nstsdl_video_set_title(nstpaths.gamename);
-			
-			// Set play in motion
-			nst_play();
-			
-			// Set the cursor if needed
-			nstsdl_video_set_cursor();
+#ifdef _WITH_NOTCURSES
+			if (conf.video_text) {
+				notcurses_options opts{};
+				nc = notcurses_init(&opts, stdout);
+				if (!nc) {
+					exit(EXIT_FAILURE);
+				}
+			}
+#endif
 		}
+		// Create the window
+		nstsdl_video_create();
+		nstsdl_video_set_title(nstpaths.gamename);
+
+		// Set play in motion
+		nst_play();
+
+		// Set the cursor if needed
+		nstsdl_video_set_cursor();
 	}
 	
 	// Start the main loop
 	SDL_Event event;
 	while (!nst_quit) {
-		nst_ogl_render();
-		nstsdl_video_swapbuffers();
+		if (!nc) {
+			nst_ogl_render();
+			nstsdl_video_swapbuffers();
+		}
+#ifdef _WITH_NOTCURSES
+		else if (nst_notcurses_render(nc)) {
+			exit(EXIT_FAILURE);
+		}
+#endif
 		
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {

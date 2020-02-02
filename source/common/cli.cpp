@@ -39,7 +39,10 @@ void cli_show_usage() {
 	//printf("  -d, --disablegui        Disable GTK+ GUI\n");
 	//printf("  -e, --enablegui         Enable GTK+ GUI\n\n");
 	printf("  -f, --fullscreen        Fullscreen mode\n");
-	printf("  -w, --window            Window mode\n\n");
+	printf("  -w, --window            Window mode\n");
+#ifdef _WITH_NOTCURSES
+	printf("  -x, --text              Text mode\n\n");
+#endif
 	printf("  -l, --filter            Video Filter\n");
 	printf("                          (0=None, 1=NTSC, 2=xBR, 3=HqX, 4=2xSaI, 5=ScaleX)\n\n");
 	printf("  -m, --maskoverscan      Mask overscan areas\n");
@@ -70,6 +73,9 @@ void cli_handle_command(int argc, char *argv[]) {
 			{"enablegui", no_argument, 0, 'e'},
 			{"fullscreen", no_argument, 0, 'f'},
 			{"window", no_argument, 0, 'w'},
+#ifdef _WITH_NOTCURSES
+			{"text", no_argument, 0, 'x'},
+#endif
 			{"help", no_argument, 0, 'h'},
 			{"filter", required_argument, 0, 'l'},
 			{"maskoverscan", no_argument, 0, 'm'},
@@ -87,8 +93,11 @@ void cli_handle_command(int argc, char *argv[]) {
 		
 		int option_index = 0;
 		
-		c = getopt_long(argc, argv, "defhl:mnopqrs:tuvw",
-			long_options, &option_index);
+		c = getopt_long(argc, argv, "defhl:mnopqrs:tuvw"
+#ifdef _WITH_NOTCURSES
+	"x"
+#endif
+			, long_options, &option_index);
 		
 		if (c == -1) { break; }
 		
@@ -96,16 +105,23 @@ void cli_handle_command(int argc, char *argv[]) {
 			/*case 'd':
 				conf.misc_disable_gui = true;
 				break;
-			
+
 			case 'e':
 				conf.misc_disable_gui = false;
 				break;*/
-			
+
 			case 'f':
 				conf.video_fullscreen = true;
+				conf.video_text = false;
 				break;
-			
+
 			case 'w':
+				conf.video_fullscreen = false;
+				conf.video_text = false;
+				break;
+
+			case 'x':
+				conf.video_text = true;
 				conf.video_fullscreen = false;
 				break;
 			

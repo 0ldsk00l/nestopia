@@ -163,8 +163,23 @@ void nst_ogl_deinit() {
 	if (vbo) { glDeleteBuffers(1, &vbo); }
 }
 
+#ifdef _WITH_NOTCURSES
+int nst_notcurses_render(struct notcurses *nc) {
+	if (ncblit_bgrx(notcurses_stdplane(nc), 0, 0, 4 * basesize.w,
+		      (const unsigned char*)(videobuf + 8192), 0, 0,
+		      overscan_height, basesize.w)) {
+		return -1;
+	}
+	if (notcurses_render(nc)) {
+		return -1;
+	}
+	return 0;
+}
+#endif
+
 void nst_ogl_render() {
 	// Render the scene
+
 	glTexImage2D(GL_TEXTURE_2D,
 				0,
 				GL_RGBA,
@@ -174,7 +189,6 @@ void nst_ogl_render() {
 				GL_BGRA,
 				GL_UNSIGNED_BYTE,
 		videobuf + overscan_offset);
-	
 	glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT);
 	glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
@@ -190,7 +204,7 @@ void nst_video_refresh() {
 
 void video_init() {
 	// Initialize video
-	
+
 	nst_ogl_deinit();
 	
 	video_set_dimensions();

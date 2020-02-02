@@ -23,6 +23,7 @@ typedef struct {
 	bool video_tv_aspect;
 	bool video_unmask_overscan;
 	bool video_fullscreen;
+	bool video_text;
 	bool video_stretch_aspect;
 	bool video_unlimited_sprites;
 	bool video_xbr_pixel_blending;
