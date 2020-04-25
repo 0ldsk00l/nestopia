@@ -36,7 +36,7 @@ void nst_ogl_init();
 void nst_ogl_deinit();
 void nst_ogl_render();
 #ifdef _WITH_NOTCURSES
-#include <notcurses.h>
+#include <notcurses/notcurses.h>
 int nst_notcurses_render(struct notcurses *nc);
 #endif
 

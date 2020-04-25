@@ -167,7 +167,7 @@ void nst_ogl_deinit() {
 int nst_notcurses_render(struct notcurses *nc) {
 	if (ncblit_bgrx(notcurses_stdplane(nc), 0, 0, 4 * basesize.w,
 		      (const unsigned char*)(videobuf + 8192), 0, 0,
-		      overscan_height, basesize.w)) {
+		      overscan_height, basesize.w) < 0) {
 		return -1;
 	}
 	if (notcurses_render(nc)) {
