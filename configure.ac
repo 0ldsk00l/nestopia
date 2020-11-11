@@ -113,7 +113,7 @@ AS_IF([test "x$enable_tui" = "xyes"], [
 	if test "x$enable_gui" = "xyes"; then
 		AC_MSG_ERROR([--enable-tui cannot be used with --enable-gui])
 	fi
-	PKG_CHECK_MODULES([NOTCURSES], [notcurses >= 1.1.6])
+	PKG_CHECK_MODULES([NOTCURSES], [notcurses >= 2.0.5])
 	NOTCURSES_CFLAGS+=" -D_WITH_NOTCURSES"
 ])
 AM_CONDITIONAL([ENABLE_TUI], [test "x$enable_tui" = "xyes"])

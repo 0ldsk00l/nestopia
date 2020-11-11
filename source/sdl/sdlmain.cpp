@@ -110,8 +110,8 @@ int main(int argc, char *argv[]) {
 		else {
 #ifdef _WITH_NOTCURSES
 			if (conf.video_text) {
-				notcurses_options opts{};
-        opts.inhibit_alternate_screen = true;
+				notcurses_options opts = {0};
+        opts.flags = NCOPTION_NO_ALTERNATE_SCREEN;
 				nc = notcurses_init(&opts, stdout);
 				if (!nc) {
 					exit(EXIT_FAILURE);
