@@ -1,8 +1,3 @@
-## Maintenance Mode
-This project is now in maintenance mode.
-For any libretro related issues or pull requests, please go to:
-https://github.com/libretro/nestopia
-
 ## About
 This project is a fork of the original Nestopia source code, plus the 
 Linux port. The purpose of the project is to enhance the original, and
