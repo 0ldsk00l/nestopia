@@ -7,9 +7,7 @@ The following platforms are supported:
 * Linux, BSD, Windows
 
 This project depends on the following libraries:
-libsdl2, libepoxy, libarchive, zlib
-
-Optionally, it depends on GTK+3 for the GUI, currently only available on Linux and BSD.
+gtk3, libsdl2, libepoxy, libarchive, zlib
 
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
