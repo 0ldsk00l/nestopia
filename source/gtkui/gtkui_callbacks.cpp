@@ -159,16 +159,6 @@ void gtkui_cb_video_hue(GtkRange *range, gpointer userdata) {
 
 // Audio //
 
-void gtkui_cb_audio_api(GtkComboBox *combobox, gpointer userdata) {
-	// Change the Audio API
-	if (nst_playing()) {
-		nst_pause();
-		conf.audio_api = gtk_combo_box_get_active(combobox);
-		nst_play();
-	}
-	else { conf.audio_api = gtk_combo_box_get_active(combobox); }
-}
-
 void gtkui_cb_audio_samplerate(GtkComboBox *combobox, gpointer userdata) {
 	// Change the Sample Rate
 	switch (gtk_combo_box_get_active(combobox)) {

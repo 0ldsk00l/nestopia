@@ -4,39 +4,29 @@ Linux port. The purpose of the project is to enhance the original, and
 ensure it continues to work on modern operating systems.
 
 The following platforms are supported:
-* Linux, FreeBSD, OpenBSD, NetBSD, OS X, Windows
-* Anything supported by libretro
+* Linux, BSD, Windows
 
 This project depends on the following libraries:
-libsdl2, libepoxy, libao, libarchive, zlib
+libsdl2, libepoxy, libarchive, zlib
 
 Optionally, it depends on GTK+3 for the GUI, currently only available on Linux and BSD.
 
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
 ```
-apt-get install build-essential autoconf autoconf-archive automake autotools-dev libsdl2-dev libepoxy-dev libarchive-dev zlib1g-dev
-```
-Optional dependencies:
-```
-apt-get install libao-dev libjack-dev libgtk-3-dev
+apt-get install build-essential autoconf autoconf-archive automake autotools-dev libgtk-3-dev libsdl2-dev libepoxy-dev libarchive-dev zlib1g-dev
 ```
 
 ## Building
 To build using Autotools (optional arguments in square brackets):
 ```
 autoreconf -vif
-./configure [--enable-gui] [--enable-doc] [--with-ao] [--with-jack]
+./configure [--enable-gui] [--enable-doc]
 make
 ```
 Optionally:
 ```
 make install
-```
-Differences on OS X:
-```
-export PKG_CONFIG_PATH=/usr/local/opt/libarchive/lib/pkgconfig/
-./configure --disable-gui
 ```
 In order to bootstrap the Autotools you will need:
 

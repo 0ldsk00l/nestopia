@@ -433,40 +433,6 @@ GtkWidget *gtkui_config() {
 				"margin-bottom", MARGIN_TB,
 				NULL);
 	
-	// Audio API
-	GtkWidget *box_audio_api = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
-	GtkWidget *label_audio_api = gtk_widget_new(
-				GTK_TYPE_LABEL,
-				"label", "API:",
-				"halign", GTK_ALIGN_START,
-				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
-				NULL);
-	GtkWidget *combo_audio_api = gtk_widget_new(
-				GTK_TYPE_COMBO_BOX_TEXT,
-				"halign", GTK_ALIGN_START,
-				"margin-bottom", MARGIN_TB,
-				"margin-left", MARGIN_LR,
-				NULL);
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "SDL");
-	#ifdef _LIBAO
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "libao");
-	#endif
-	#ifdef _JACK
-	gtk_combo_box_text_append_text(GTK_COMBO_BOX_TEXT(combo_audio_api), "jack");
-	#endif
-		
-	gtk_combo_box_set_active(GTK_COMBO_BOX(combo_audio_api), conf.audio_api);
-	
-	gtk_box_pack_start(GTK_BOX(box_audio_api), label_audio_api, FALSE, FALSE, 0);
-	gtk_box_pack_start(GTK_BOX(box_audio_api), combo_audio_api, FALSE, FALSE, 0);
-	#if SDL_VERSION_ATLEAST(2,0,4)
-	gtk_box_pack_start(GTK_BOX(box_audio), box_audio_api, FALSE, FALSE, 0);
-	#endif
-	
-	g_signal_connect(G_OBJECT(combo_audio_api), "changed",
-		G_CALLBACK(gtkui_cb_audio_api), NULL);
-	
 	// Sample Rate
 	GtkWidget *box_audio_samplerate = gtk_box_new(GTK_ORIENTATION_HORIZONTAL, 0);
 	GtkWidget *label_audio_samplerate = gtk_widget_new(

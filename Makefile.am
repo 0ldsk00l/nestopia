@@ -15,7 +15,6 @@ nestopia_CPPFLAGS = \
 	-DNST_PRAGMA_ONCE \
 	$(ZLIB_CFLAGS) \
 	$(LIBARCHIVE_CFLAGS) \
-	$(LIBAO_CFLAGS) \
 	$(SDL2_CFLAGS) \
 	$(LIBEPOXY_CFLAGS)
 nestopia_LDADD = \
@@ -27,16 +26,6 @@ nestopia_LDADD = \
 if ENABLE_GUI
 nestopia_CPPFLAGS += -D_GTK $(GTK3_CFLAGS)
 nestopia_LDADD += $(GTK3_LIBS)
-endif
-
-if ENABLE_LIBAO
-nestopia_CPPFLAGS += -D_LIBAO $(LIBAO_CFLAGS)
-nestopia_LDADD += $(LIBAO_LIBS)
-endif
-
-if ENABLE_JACK
-nestopia_CPPFLAGS += -D_JACK $(JACK_CFLAGS)
-nestopia_LDADD += $(JACK_LIBS)
 endif
 
 ################
