@@ -3,8 +3,17 @@ This project is a fork of the original Nestopia source code, plus the
 Linux port. The purpose of the project is to enhance the original, and
 ensure it continues to work on modern operating systems.
 
+Current Project Goals:
+* Move the GTK+ project focus to a simple UI on top of a community maintained core
+* Merge win32 sources back into main project and set up CI builds for Windows binaries
+
 The following platforms are supported:
 * Linux, BSD, Windows
+
+Libretro notes:
+The libretro port is no longer maintained in this repo, and is now maintained by the
+libretro community. For libretro-specific issues, please use the libretro repository:
+https://github.com/libretro/nestopia
 
 This project depends on the following libraries:
 gtk3, libsdl2, libepoxy, libarchive, zlib
