@@ -1,41 +1,4 @@
-Authors
-=======
-
-Main Contributors
------------------
-Martin Freij    -   Original Author
-R. Belmont      -   Initial Linux port
-R. Danbrook     -   Cross-platform port, current maintainer
-
-Community Contributors
-----------------------
-blargg
-dragon2snow
-emu-russia
-Geestarraw
-joepogo
-Keith Kelly
-lidnariq
-lioncash
-rnjacobs
-shalma
-steelywing
-Squarepusher
-themaister
-W.M. Martinez
-
-Special Thanks
---------------
-Aaron Marsh
-CyberWarriorX
-hunterk
-Kakashi
-MottZilla
-Ryphecha
-Stephen Kitt
-
-Included Sofware
-----------------
+Included Software
 
 blargg's NTSC filter
 Copyright (C) 2006-2007 Shay Green
@@ -62,7 +25,3 @@ Palettes from FirebrandX, with permission
 extras/Unsaturated-V5.pal
 extras/YUV-V3.pal
 http://www.firebrandx.com/nespalette.html
-
-------------------------------------------------------------------------
-If you are not included in this file and should be, please let someone
-know so you can be added to the list of contributors.
