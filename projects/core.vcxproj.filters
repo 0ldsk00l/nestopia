@@ -912,6 +912,16 @@
     <ClInclude Include="..\source\core\board\NstBoardAcclaimMcAcc.hpp">
       <Filter>Board</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\core\NstHomebrew.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAction53.hpp">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardInlNsf.hpp">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardMagicKidGoogoo.hpp">
+      <Filter>Board</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\core\api\NstApiBarcodeReader.cpp">
@@ -1688,6 +1698,16 @@
       <Filter>VideoFilters</Filter>
     </ClCompile>
     <ClCompile Include="..\source\core\board\NstBoardAcclaimMcAcc.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\NstHomebrew.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardAction53.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardInlNsf.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardMagicKidGoogoo.cpp">
       <Filter>Board</Filter>
     </ClCompile>
   </ItemGroup>
