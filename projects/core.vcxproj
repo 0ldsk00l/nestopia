@@ -1,0 +1,743 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{CCC3A09C-0F7A-4E12-8594-11F2C60D71DA}</ProjectGuid>
+    <RootNamespace>Core</RootNamespace>
+    <Keyword>Win32Proj</Keyword>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <CharacterSet>NotSet</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup>
+    <_ProjectFileVersion>10.0.30319.1</_ProjectFileVersion>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">$(SolutionDir)debugout\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">debug\core\</IntDir>
+    <OutDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">$(SolutionDir)releaseout\</OutDir>
+    <IntDir Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">release\core\</IntDir>
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" />
+    <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/vmb /J %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Disabled</Optimization>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>NST_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <MinimalRebuild>true</MinimalRebuild>
+      <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
+      <SmallerTypeCheck>true</SmallerTypeCheck>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <StructMemberAlignment>Default</StructMemberAlignment>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <FloatingPointExceptions>true</FloatingPointExceptions>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <CallingConvention>FastCall</CallingConvention>
+      <ShowIncludes>false</ShowIncludes>
+      <OmitDefaultLibName>true</OmitDefaultLibName>
+    </ClCompile>
+    <Lib>
+      <UseUnicodeResponseFiles>false</UseUnicodeResponseFiles>
+      <OutputFile>$(SolutionDir)..\lib\emucoredebug.lib</OutputFile>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <AdditionalOptions>/vmb /J %(AdditionalOptions)</AdditionalOptions>
+      <Optimization>Full</Optimization>
+      <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <OmitFramePointers>true</OmitFramePointers>
+      <PreprocessorDefinitions>NDEBUG;_SECURE_SCL=0;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <StringPooling>true</StringPooling>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
+      <FloatingPointModel>Precise</FloatingPointModel>
+      <DisableLanguageExtensions>true</DisableLanguageExtensions>
+      <TreatWChar_tAsBuiltInType>true</TreatWChar_tAsBuiltInType>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
+      <PrecompiledHeader>
+      </PrecompiledHeader>
+      <AssemblerOutput>AssemblyAndSourceCode</AssemblerOutput>
+      <AssemblerListingLocation>$(SolutionDir)Release\Core\Asm\</AssemblerListingLocation>
+      <WarningLevel>Level4</WarningLevel>
+      <DebugInformationFormat>
+      </DebugInformationFormat>
+      <CallingConvention>FastCall</CallingConvention>
+      <OmitDefaultLibName>true</OmitDefaultLibName>
+    </ClCompile>
+    <Lib>
+      <UseUnicodeResponseFiles>false</UseUnicodeResponseFiles>
+      <OutputFile>$(SolutionDir)..\lib\emucore.lib</OutputFile>
+      <IgnoreAllDefaultLibraries>true</IgnoreAllDefaultLibraries>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\core\api\NstApi.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiBarcodeReader.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiCartridge.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiCheats.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiConfig.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiDipSwitches.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiEmulator.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiFds.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiInput.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiMachine.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiMovie.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiNsf.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiRewinder.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiSound.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiTapeRecorder.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiUser.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiVideo.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAcclaim.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAcclaimMcAcc.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilterxBR.hpp" />
+    <ClInclude Include="..\source\core\vssystem\NstVsRbiBaseball.hpp" />
+    <ClInclude Include="..\source\core\vssystem\NstVsSuperXevious.hpp" />
+    <ClInclude Include="..\source\core\vssystem\NstVsSystem.hpp" />
+    <ClInclude Include="..\source\core\vssystem\NstVsTkoBoxing.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilter2xSaI.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilterHqX.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilterNone.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilterNtsc.hpp" />
+    <ClInclude Include="..\source\core\NstVideoFilterScaleX.hpp" />
+    <ClInclude Include="..\source\nes_ntsc\nes_ntsc.h" />
+    <ClInclude Include="..\source\nes_ntsc\nes_ntsc_config.h" />
+    <ClInclude Include="..\source\nes_ntsc\nes_ntsc_impl.h" />
+    <ClInclude Include="..\source\core\input\NstInpAdapter.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpBandaiHyperShot.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpBarcodeWorld.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpCrazyClimber.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpDevice.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpDoremikkoKeyboard.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpExcitingBoxing.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpFamilyKeyboard.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpFamilyTrainer.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpHoriTrack.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpKonamiHyperShot.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpMahjong.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpMouse.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpOekaKidsTablet.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpPachinko.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpPad.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpPaddle.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpPartyTap.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpPokkunMoguraa.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpPowerGlove.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpPowerPad.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpRob.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpSuborKeyboard.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpTopRider.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpTurboFile.hpp" />
+    <ClInclude Include="..\source\core\input\NstInpZapper.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoard.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardDiscrete.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardDxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardExRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardFxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardGxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardHxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMmc1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMmc2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMmc3.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMmc4.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMmc5.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMmc6.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardPxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUxRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardEvent.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardFb.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardFfe.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardQj.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardRumbleStation.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardVsSystem.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardZz.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAe.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAgci.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAve.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAveD1012.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardAveNina.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandai.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandai24c0x.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandaiAerobicsStudio.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandaiDatach.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandaiKaraokeStudio.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandaiLz93d50.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandaiLz93d50ex.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBandaiOekaKids.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBenshengBs5.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCaltron.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCamerica.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCne.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCneDecathlon.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCnePsb.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCneShlz.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardCony.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardDreamtech.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardFujiya.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardFukutake.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardFutureMedia.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardGouder.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardHenggedianzi.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardHes.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardHosenkan.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardIrem.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardIremG101.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardIremH3001.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardIremHolyDiver.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardIremKaiketsu.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardIremLrog017.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJaleco.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJalecoJf11.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJalecoJf13.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJalecoJf16.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJalecoJf17.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJalecoJf19.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJalecoSs88006.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardJyCompany.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKaiser.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKasing.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKay.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKayH2288.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKayPandaPrince.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonami.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonamiVrc1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonamiVrc2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonamiVrc3.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonamiVrc4.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonamiVrc6.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonamiVrc7.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardKonamiVsSystem.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardMagicSeries.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNamcot.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNamcot163.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNamcot175.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNamcot34xx.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNanjing.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNihon.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNitra.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNtdec.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardOpenCorp.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardRcm.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardRexSoft.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardRexSoftDb5z.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardRexSoftSl1632.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachen.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachen74x374.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenS8259.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenSa0036.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenSa0037.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenSa72007.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenSa72008.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenStreetHeroes.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenTca01.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenTcu.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSomeriTeam.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSomeriTeamSl12.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSubor.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoft.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoft1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoft2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoft3.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoft4.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoft5b.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoftDcs.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSunsoftFme7.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSuperGame.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSuperGameBoogerman.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSuperGameLionKing.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSuperGamePocahontas2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTaito.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTaitoTc0190fmc.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTaitoTc0190fmcPal16r4.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTaitoX1005.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTaitoX1017.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTengen.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTengenRambo1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTxc.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTxcMxmdhtwo.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTxcPoliceman.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardTxcTw.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixing.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingFfv.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingPs2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingSecurity.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingSgz.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingSgzlz.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingSh2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingZs.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWhirlwind.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc110in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc1200in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc150in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc15in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc20in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc21in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc22Games.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc31in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc35in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc36in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc64in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc72in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc76in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc800in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc8157.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc9999999in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcA65as.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcBallgames11in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcCh001.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcCtc65.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcFamily4646B.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcFk23c.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcGamestarA.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcGamestarB.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcGolden190in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcGoldenCard6in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcGoldenGame260in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcHero.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcMarioParty7in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcNovelDiamond.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcPowerjoy84in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcResetBased4in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuper22Games.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuper24in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuper40in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuper700in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuperBig7in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuperGun20in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuperHiK300in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuperHiK4in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSuperVision16in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcT262.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcVrc4.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcVt5201.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcY2k64in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtl2708.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtl6035052.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlAx5705.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlDragonNinja.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlGeniusMerioBros.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlMarioBaby.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlPikachuY2k.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlShuiGuanPipe.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlSmb2a.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlSmb2b.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlSmb2c.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlSmb3.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlSuperBros11.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlT230.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBtlTobidaseDaisakusen.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlA9746.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlCc21.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlEdu2000.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlKingOfFighters96.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlKingOfFighters97.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlMortalKombat2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlN625092.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlSuperFighter3.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlTf1201.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlWorldHero.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlXzy.hpp" />
+    <ClInclude Include="..\source\core\NstApu.hpp" />
+    <ClInclude Include="..\source\core\NstAssert.hpp" />
+    <ClInclude Include="..\source\core\NstBarcodeReader.hpp" />
+    <ClInclude Include="..\source\core\NstBase.hpp" />
+    <ClInclude Include="..\source\core\NstCartridge.hpp" />
+    <ClInclude Include="..\source\core\NstCartridgeInes.hpp" />
+    <ClInclude Include="..\source\core\NstCartridgeRomset.hpp" />
+    <ClInclude Include="..\source\core\NstCartridgeUnif.hpp" />
+    <ClInclude Include="..\source\core\NstCheats.hpp" />
+    <ClInclude Include="..\source\core\NstChecksum.hpp" />
+    <ClInclude Include="..\source\core\NstChips.hpp" />
+    <ClInclude Include="..\source\core\NstCore.hpp" />
+    <ClInclude Include="..\source\core\NstCpu.hpp" />
+    <ClInclude Include="..\source\core\NstCrc32.hpp" />
+    <ClInclude Include="..\source\core\NstDipSwitches.hpp" />
+    <ClInclude Include="..\source\core\NstFds.hpp" />
+    <ClInclude Include="..\source\core\NstFile.hpp" />
+    <ClInclude Include="..\source\core\NstFpuPrecision.hpp" />
+    <ClInclude Include="..\source\core\NstHook.hpp" />
+    <ClInclude Include="..\source\core\NstImage.hpp" />
+    <ClInclude Include="..\source\core\NstImageDatabase.hpp" />
+    <ClInclude Include="..\source\core\NstIoAccessor.hpp" />
+    <ClInclude Include="..\source\core\NstIoLine.hpp" />
+    <ClInclude Include="..\source\core\NstIoMap.hpp" />
+    <ClInclude Include="..\source\core\NstIoPort.hpp" />
+    <ClInclude Include="..\source\core\NstLog.hpp" />
+    <ClInclude Include="..\source\core\NstMachine.hpp" />
+    <ClInclude Include="..\source\core\NstMemory.hpp" />
+    <ClInclude Include="..\source\core\NstNsf.hpp" />
+    <ClInclude Include="..\source\core\NstPatcher.hpp" />
+    <ClInclude Include="..\source\core\NstPatcherIps.hpp" />
+    <ClInclude Include="..\source\core\NstPatcherUps.hpp" />
+    <ClInclude Include="..\source\core\NstPins.hpp" />
+    <ClInclude Include="..\source\core\NstPpu.hpp" />
+    <ClInclude Include="..\source\core\NstProperties.hpp" />
+    <ClInclude Include="..\source\core\NstRam.hpp" />
+    <ClInclude Include="..\source\core\NstSha1.hpp" />
+    <ClInclude Include="..\source\core\NstSoundPcm.hpp" />
+    <ClInclude Include="..\source\core\NstSoundPlayer.hpp" />
+    <ClInclude Include="..\source\core\NstSoundRenderer.hpp" />
+    <ClInclude Include="..\source\core\NstState.hpp" />
+    <ClInclude Include="..\source\core\NstStream.hpp" />
+    <ClInclude Include="..\source\core\NstTimer.hpp" />
+    <ClInclude Include="..\source\core\NstTracker.hpp" />
+    <ClInclude Include="..\source\core\NstTrackerMovie.hpp" />
+    <ClInclude Include="..\source\core\NstTrackerRewinder.hpp" />
+    <ClInclude Include="..\source\core\NstVector.hpp" />
+    <ClInclude Include="..\source\core\NstVideoRenderer.hpp" />
+    <ClInclude Include="..\source\core\NstVideoScreen.hpp" />
+    <ClInclude Include="..\source\core\NstXml.hpp" />
+    <ClInclude Include="..\source\core\NstZlib.hpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\source\core\api\NstApiBarcodeReader.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiCartridge.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiCheats.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiDipSwitches.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiEmulator.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiFds.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiInput.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiMachine.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiMovie.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiNsf.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiRewinder.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiSound.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiTapeRecorder.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiUser.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiVideo.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardAcclaimMcAcc.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterxBR.cpp" />
+    <ClCompile Include="..\source\core\vssystem\NstVsRbiBaseball.cpp" />
+    <ClCompile Include="..\source\core\vssystem\NstVsSuperXevious.cpp" />
+    <ClCompile Include="..\source\core\vssystem\NstVsSystem.cpp" />
+    <ClCompile Include="..\source\core\vssystem\NstVsTkoBoxing.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilter2xSaI.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterHqX.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterNone.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterNtsc.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterNtscCfg.cpp" />
+    <ClCompile Include="..\source\core\NstVideoFilterScaleX.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpAdapter.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpBandaiHyperShot.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpBarcodeWorld.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpCrazyClimber.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpDoremikkoKeyboard.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpExcitingBoxing.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpFamilyKeyboard.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpFamilyTrainer.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpHoriTrack.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpKonamiHyperShot.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpMahjong.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpMouse.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpOekaKidsTablet.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpPachinko.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpPad.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpPaddle.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpPartyTap.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpPokkunMoguraa.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpPowerGlove.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpPowerPad.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpRob.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpSuborKeyboard.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpTopRider.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpTurboFile.cpp" />
+    <ClCompile Include="..\source\core\input\NstInpZapper.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoard.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardAxRom.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBxRom.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardCxRom.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardDiscrete.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardGxRom.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardMmc1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardMmc2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardMmc3.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardMmc4.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardMmc5.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardMmc6.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTxRom.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUxRom.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardEvent.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardFb.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardFfe.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardQj.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardRumbleStation.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardVsSystem.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardZz.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardAe.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardAgci.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardAveD1012.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardAveNina.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBandai24c0x.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBandaiAerobicsStudio.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBandaiDatach.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBandaiKaraokeStudio.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBandaiLz93d50.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBandaiLz93d50ex.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBandaiOekaKids.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBenshengBs5.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardCaltron.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardCamerica.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardCneDecathlon.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardCnePsb.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardCneShlz.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardCony.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardDreamtech.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardFujiya.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardFukutake.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardFutureMedia.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardGouder.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardHenggedianzi.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardHes.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardHosenkan.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardIremG101.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardIremH3001.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardIremHolyDiver.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardIremKaiketsu.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardIremLrog017.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardJalecoJf11.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardJalecoJf13.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardJalecoJf16.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardJalecoJf17.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardJalecoJf19.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardJalecoSs88006.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardJyCompany.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKaiser.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKasing.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKayH2288.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKayPandaPrince.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKonamiVrc1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKonamiVrc2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKonamiVrc3.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKonamiVrc4.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKonamiVrc6.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKonamiVrc7.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardKonamiVsSystem.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardMagicSeries.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNamcot163.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNamcot175.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNamcot34xx.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNanjing.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNihon.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNitra.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNtdec.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardOpenCorp.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardRcm.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardRexSoftDb5z.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardRexSoftSl1632.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachen74x374.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenS8259.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenSa0036.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenSa0037.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenSa72007.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenSa72008.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenStreetHeroes.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenTca01.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenTcu.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSomeriTeamSl12.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSubor.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSunsoft1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSunsoft2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSunsoft3.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSunsoft4.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSunsoft5b.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSunsoftDcs.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSunsoftFme7.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSuperGameBoogerman.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSuperGameLionKing.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSuperGamePocahontas2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTaitoTc0190fmc.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTaitoTc0190fmcPal16r4.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTaitoX1005.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTaitoX1017.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTengen.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTengenRambo1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTxc.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTxcMxmdhtwo.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTxcPoliceman.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardTxcTw.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixing.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingFfv.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingPs2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingSecurity.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingSgz.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingSgzlz.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingSh2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingZs.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWhirlwind.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc110in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc1200in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc150in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc15in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc20in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc21in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc22Games.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc31in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc35in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc36in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc64in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc72in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc76in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc800in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc8157.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc9999999in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcA65as.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcBallgames11in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcCh001.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcCtc65.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcFamily4646B.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcFk23c.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcGamestarA.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcGamestarB.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcGolden190in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcGoldenCard6in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcGoldenGame260in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcHero.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcMarioParty7in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcNovelDiamond.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcPowerjoy84in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcResetBased4in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuper22Games.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuper24in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuper40in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuper700in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuperBig7in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuperGun20in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuperHiK300in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuperHiK4in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSuperVision16in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcT262.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcVrc4.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcVt5201.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcY2k64in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtl2708.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtl6035052.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlAx5705.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlDragonNinja.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlGeniusMerioBros.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlMarioBaby.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlPikachuY2k.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlShuiGuanPipe.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlSmb2a.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlSmb2b.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlSmb2c.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlSmb3.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlSuperBros11.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlT230.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBtlTobidaseDaisakusen.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlA9746.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlCc21.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlEdu2000.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlKingOfFighters96.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlKingOfFighters97.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlMortalKombat2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlN625092.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlSuperFighter3.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlTf1201.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlWorldHero.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlXzy.cpp" />
+    <ClCompile Include="..\source\core\NstApu.cpp" />
+    <ClCompile Include="..\source\core\NstAssert.cpp" />
+    <ClCompile Include="..\source\core\NstCartridge.cpp" />
+    <ClCompile Include="..\source\core\NstCartridgeInes.cpp" />
+    <ClCompile Include="..\source\core\NstCartridgeRomset.cpp" />
+    <ClCompile Include="..\source\core\NstCartridgeUnif.cpp" />
+    <ClCompile Include="..\source\core\NstCheats.cpp" />
+    <ClCompile Include="..\source\core\NstChecksum.cpp" />
+    <ClCompile Include="..\source\core\NstChips.cpp" />
+    <ClCompile Include="..\source\core\NstCore.cpp" />
+    <ClCompile Include="..\source\core\NstCpu.cpp" />
+    <ClCompile Include="..\source\core\NstCrc32.cpp" />
+    <ClCompile Include="..\source\core\NstFds.cpp" />
+    <ClCompile Include="..\source\core\NstFile.cpp" />
+    <ClCompile Include="..\source\core\NstImage.cpp" />
+    <ClCompile Include="..\source\core\NstImageDatabase.cpp" />
+    <ClCompile Include="..\source\core\NstLog.cpp" />
+    <ClCompile Include="..\source\core\NstMachine.cpp" />
+    <ClCompile Include="..\source\core\NstMemory.cpp" />
+    <ClCompile Include="..\source\core\NstNsf.cpp" />
+    <ClCompile Include="..\source\core\NstPatcher.cpp" />
+    <ClCompile Include="..\source\core\NstPatcherIps.cpp" />
+    <ClCompile Include="..\source\core\NstPatcherUps.cpp" />
+    <ClCompile Include="..\source\core\NstPins.cpp" />
+    <ClCompile Include="..\source\core\NstPpu.cpp" />
+    <ClCompile Include="..\source\core\NstProperties.cpp" />
+    <ClCompile Include="..\source\core\NstRam.cpp" />
+    <ClCompile Include="..\source\core\NstSha1.cpp" />
+    <ClCompile Include="..\source\core\NstSoundPcm.cpp" />
+    <ClCompile Include="..\source\core\NstSoundPlayer.cpp" />
+    <ClCompile Include="..\source\core\NstSoundRenderer.cpp" />
+    <ClCompile Include="..\source\core\NstState.cpp" />
+    <ClCompile Include="..\source\core\NstStream.cpp" />
+    <ClCompile Include="..\source\core\NstTracker.cpp" />
+    <ClCompile Include="..\source\core\NstTrackerMovie.cpp" />
+    <ClCompile Include="..\source\core\NstTrackerRewinder.cpp" />
+    <ClCompile Include="..\source\core\NstVector.cpp" />
+    <ClCompile Include="..\source\core\NstVideoRenderer.cpp" />
+    <ClCompile Include="..\source\core\NstVideoScreen.cpp" />
+    <ClCompile Include="..\source\core\NstXml.cpp" />
+    <ClCompile Include="..\source\core\NstZlib.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\source\core\NstVideoFilterHq2x.inl" />
+    <None Include="..\source\core\NstVideoFilterHq3x.inl" />
+    <None Include="..\source\core\NstVideoFilterHq4x.inl" />
+    <None Include="..\source\nes_ntsc\nes_ntsc.inl" />
+    <None Include="..\source\core\NstSoundRenderer.inl" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>
