@@ -137,7 +137,6 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "last_folder=%s\n", conf.misc_last_folder);
 		fprintf(fp, "; 0=0x00, 1=0xFF, 2=Random\n");
 		fprintf(fp, "power_state=%d\n", conf.misc_power_state);
-		fprintf(fp, "overclock=%d\n\n", conf.misc_overclock);
 		fprintf(fp, "; Valid values are -1 (disabled) or 0 to 65535.\n");
 		fprintf(fp, "homebrew_exit=%d\n", conf.misc_homebrew_exit);
 		fprintf(fp, "homebrew_stdout=%d\n", conf.misc_homebrew_stdout);
@@ -211,7 +210,6 @@ void config_set_default() {
 	conf.misc_config_pause = false;
 	conf.misc_last_folder = NULL;
 	conf.misc_power_state = 0;
-	conf.misc_overclock = false;
 	conf.misc_homebrew_exit = -1;
 	conf.misc_homebrew_stdout = -1;
 	conf.misc_homebrew_stderr = -1;
@@ -280,7 +278,6 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("misc", "disable_cursor_special")) { pconfig->misc_disable_cursor_special = atoi(value); }
 	else if (MATCH("misc", "last_folder")) { pconfig->misc_last_folder = strdup(value); }
 	else if (MATCH("misc", "power_state")) { pconfig->misc_power_state = atoi(value); }
-	else if (MATCH("misc", "overclock")) { pconfig->misc_overclock = atoi(value); }
 	else if (MATCH("misc", "homebrew_exit")) { pconfig->misc_homebrew_exit = atoi(value); }
 	else if (MATCH("misc", "homebrew_stdout")) { pconfig->misc_homebrew_stdout = atoi(value); }
 	else if (MATCH("misc", "homebrew_stderr")) { pconfig->misc_homebrew_stderr = atoi(value); }

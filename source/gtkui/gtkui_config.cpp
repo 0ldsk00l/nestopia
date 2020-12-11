@@ -982,20 +982,6 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(scale_timing_ffspeed), "value-changed",
 		G_CALLBACK(gtkui_cb_timing_ffspeed), NULL);
 	
-	// Core Overclocking
-	GtkWidget *check_misc_overclock = gtk_widget_new(
-				GTK_TYPE_CHECK_BUTTON,
-				"label", "Core Overclocking",
-				"halign", GTK_ALIGN_START,
-				"margin-left", MARGIN_LR,
-				NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_misc_overclock), conf.misc_overclock);
-	
-	gtk_box_pack_start(GTK_BOX(box_misc), check_misc_overclock, FALSE, FALSE, 0);
-	
-	g_signal_connect(G_OBJECT(check_misc_overclock), "toggled",
-		G_CALLBACK(gtkui_cb_misc_overclock), NULL);
-	
 	// Vsync
 	GtkWidget *check_timing_vsync = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,

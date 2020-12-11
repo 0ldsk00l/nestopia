@@ -35,13 +35,8 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 
-#ifdef _MINGW
-#include <io.h>
-#endif
-#ifndef _MINGW
 #include <archive.h>
 #include <archive_entry.h>
-#endif
 
 // Nst Common
 #include "nstcommon.h"
@@ -232,7 +227,6 @@ bool nst_archive_checkext(const char *filename) {
 
 bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize) {
 	// Select a filename to pull out of the archive
-#ifndef _MINGW
 	struct archive *a;
 	struct archive_entry *entry;
 	int r, numarchives = 0;
@@ -266,13 +260,11 @@ bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize
 		if (numarchives == 0) {	return false; }
 		else { return true; }
 	}
-#endif
 	return false;
 }
 
 bool nst_archive_open(const char *filename, char **rom, int *romsize, const char *reqfile) {
 	// Opens archives
-#ifndef _MINGW
 	struct archive *a;
 	struct archive_entry *entry;
 	int r;
@@ -321,7 +313,6 @@ bool nst_archive_open(const char *filename, char **rom, int *romsize, const char
 			}
 		}
 	}
-#endif
 	return false;
 }
 
@@ -340,7 +331,7 @@ void nst_db_load() {
 		database.Enable(true);
 		return;
 	}
-#ifndef _MINGW
+	
 	// If it fails, try looking in the data directory
 	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", DATADIR);
 	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
@@ -361,7 +352,6 @@ void nst_db_load() {
 		database.Enable(true);
 		return;
 	}
-#endif
 	else {
 		fprintf(stderr, "NstDatabase.xml not found!\n");
 		delete nstdb;
@@ -641,52 +631,34 @@ void nst_set_callbacks() {
 
 void nst_set_dirs() {
 	// Set up system directories
-#ifdef _MINGW
-	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "");
-#else
 	// create system directory if it doesn't exist
 	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/.nestopia/", getenv("HOME"));
-	if (mkdir(nstpaths.nstdir, 0755) && errno != EEXIST) {	
+	if (mkdir(nstpaths.nstdir, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.nstdir, errno);
 	}
-#endif
+	
 	// create save and state directories if they don't exist
 	char dirstr[256];
 	snprintf(dirstr, sizeof(dirstr), "%ssave", nstpaths.nstdir);
-#ifdef _MINGW	
-	if (mkdir(dirstr) && errno != EEXIST) {
-#else
+	
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
-#endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 
 	snprintf(dirstr, sizeof(dirstr), "%sstate", nstpaths.nstdir);
-#ifdef _MINGW	
-	if (mkdir(dirstr) && errno != EEXIST) {
-#else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
-#endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 	
 	// create cheats directory if it doesn't exist
 	snprintf(dirstr, sizeof(dirstr), "%scheats", nstpaths.nstdir);
-#ifdef _MINGW	
-	if (mkdir(dirstr) && errno != EEXIST) {
-#else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
-#endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 	
 	// create screenshots directory if it doesn't exist
 	snprintf(dirstr, sizeof(dirstr), "%sscreenshots", nstpaths.nstdir);
-#ifdef _MINGW	
-	if (mkdir(dirstr) && errno != EEXIST) {
-#else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
-#endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 	
@@ -695,11 +667,7 @@ void nst_set_dirs() {
 	
 	// Construct samples directory if it doesn't exist
 	snprintf(dirstr, sizeof(dirstr), "%ssamples", nstpaths.nstdir);
-#ifdef _MINGW	
-	if (mkdir(dirstr) && errno != EEXIST) {
-#else
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
-#endif
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
 }
@@ -737,11 +705,6 @@ void nst_set_paths(const char *filename) {
 	
 	// Construct the cheat path
 	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);
-}
-void nst_set_overclock() {
-	// Set video overclocking
-	Video video(emulator);
-	video.EnableOverclocking(conf.misc_overclock);
 }
 
 void nst_set_region() {
@@ -1013,9 +976,6 @@ int nst_load(const char *filename) {
 	
 	// Load the custom palette
 	nst_palette_load(nstpaths.palettepath);
-	
-	// Set video overclocking
-	nst_set_overclock();
 	
 	// Set the RAM's power state
 	machine.SetRamPowerState(conf.misc_power_state);
