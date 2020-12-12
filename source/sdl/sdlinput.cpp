@@ -23,9 +23,7 @@
 #include <stdio.h>
 
 #include <SDL.h>
-#ifdef _GTK
 #include "gtkui/gtkui.h"
-#endif
 
 #include "nstcommon.h"
 #include "video.h"
@@ -201,11 +199,6 @@ void nstsdl_input_match_keyboard(Input::Controllers *controllers, SDL_Event even
 	if (keys[SDL_SCANCODE_LCTRL] && keys[SDL_SCANCODE_2]) { nstsdl_input_conf(0, 1); } // Keyboard Player 2
 	if (keys[SDL_SCANCODE_LSHIFT] && keys[SDL_SCANCODE_1]) { nstsdl_input_conf(1, 0); } // Joystick Player 1
 	if (keys[SDL_SCANCODE_LSHIFT] && keys[SDL_SCANCODE_2]) { nstsdl_input_conf(1, 1); } // Joystick Player 2
-	
-	// Escape exits
-#ifndef _GTK	
-	if (keys[SDL_SCANCODE_ESCAPE]) { nst_schedule_quit(); }
-#endif
 }
 
 void nstsdl_input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
@@ -893,9 +886,8 @@ void nstsdl_input_conf_button(int pnum, int bnum) {
 	int axis = 0, axisnoise = 0, confrunning = 1;
 	
 	while (confrunning) {
-		#ifdef _GTK
 		while (gtk_events_pending()) { gtk_main_iteration(); }
-		#endif
+		
 		while (SDL_PollEvent(&event)) {
 			if (event.type == SDL_JOYAXISMOTION) {
 				if (abs(event.jaxis.value) >= DEADZONE) {

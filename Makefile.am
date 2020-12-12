@@ -16,17 +16,14 @@ nestopia_CPPFLAGS = \
 	$(ZLIB_CFLAGS) \
 	$(LIBARCHIVE_CFLAGS) \
 	$(SDL2_CFLAGS) \
-	$(LIBEPOXY_CFLAGS)
+	$(LIBEPOXY_CFLAGS) \
+	$(GTK3_CFLAGS)
 nestopia_LDADD = \
 	$(ZLIB_LIBS) \
 	$(LIBARCHIVE_LIBS) \
 	$(SDL2_LIBS) \
-	$(LIBEPOXY_LIBS)
-
-if ENABLE_GUI
-nestopia_CPPFLAGS += -D_GTK $(GTK3_CFLAGS)
-nestopia_LDADD += $(GTK3_LIBS)
-endif
+	$(LIBEPOXY_LIBS) \
+	$(GTK3_LIBS)
 
 ################
 # Installation #
@@ -726,10 +723,7 @@ nestopia_SOURCES += \
 	source/sdl/cursor.cpp \
 	source/sdl/cursor.h \
 	source/sdl/sdlvideo.cpp \
-	source/sdl/sdlvideo.h
-
-if ENABLE_GUI
-nestopia_SOURCES += \
+	source/sdl/sdlvideo.h \
 	source/gtkui/gtkui_config.h \
 	source/gtkui/gtkui_archive.h \
 	source/gtkui/gtkui_cheats.cpp \
@@ -744,11 +738,6 @@ nestopia_SOURCES += \
 	source/gtkui/gtkui_input.cpp \
 	source/gtkui/gtkui_input.h \
 	source/gtkui/gtkui_config.cpp
-else
-nestopia_SOURCES += \
-	source/sdl/sdlmain.cpp \
-	source/sdl/sdlmain.h
-endif
 
 # install full HTML suite
 if ENABLE_FULL_HTML

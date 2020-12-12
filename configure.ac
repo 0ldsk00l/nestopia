@@ -80,14 +80,7 @@ dnl LibEpoxy
 PKG_CHECK_MODULES([LIBEPOXY], [epoxy])
 
 dnl GTK3
-AC_ARG_ENABLE([gui],
-	AS_HELP_STRING([--enable-gui], [Enable building GUI with GTK+3]))
-
-AS_IF([test "x$enable_gui" = "xyes"], [
-	dnl GUI with GTK+3 requested
-	PKG_CHECK_MODULES([GTK3], [gtk+-3.0])
-])
-AM_CONDITIONAL([ENABLE_GUI], [test "x$enable_gui" = "xyes"])
+PKG_CHECK_MODULES([GTK3], [gtk+-3.0])
 
 dnl full HTML suite
 AC_ARG_ENABLE([doc],

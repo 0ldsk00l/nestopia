@@ -10,6 +10,7 @@
 *.js
 *.bc
 .npmignore
+source/core/database/
 
 # Autotools cruft
 Makefile
