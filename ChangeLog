@@ -1,4 +1,25 @@
 ----------------------------------------------------------------
+WIP
+----------------------------------------------------------------
+Shell:
+
+ Changes:
+  - Merged the win32 sources back into the main codebase
+  - Change versioning scheme
+
+Core:
+
+ Changes:
+  - Use Nestopia core from jgemu
+
+ Fixes:
+  - Timing and other accuracy fixes
+  - Revert changes that caused regressions
+  - Fix Camerica mapper for Dooly Bravo Land
+  - Improve MMC5 emulation for Sim City
+  - Fix 8K PRG NROM games such as Galaxian
+
+----------------------------------------------------------------
 1.50
 ----------------------------------------------------------------
 Shell:
@@ -7,6 +28,7 @@ Shell:
   - Added ability to output data from homebrew module (Phil Smith)
 
 libretro:
+
  Additions:
   - Button shift option
   - Input bitmask support (TwinAphex)
@@ -39,7 +61,6 @@ Shell:
   - Famicom Mic support
   - Optional JACK Audio support (McKayJT)
   - Added .wav sample loading
-
 
  Changes:
   - Separated GTK+ and SDL input settings

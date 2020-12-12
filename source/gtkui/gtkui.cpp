@@ -149,7 +149,7 @@ void gtkui_create() {
 	GdkPixbuf *icon = gdk_pixbuf_new_from_file(iconpath, NULL);
 	
 	char title[24];
-	snprintf(title, sizeof(title), "Nestopia UE %s", VERSION);
+	snprintf(title, sizeof(title), "Nestopia UE");
 	
 	gtkwindow = gtk_window_new(GTK_WINDOW_TOPLEVEL);
 	gtk_window_set_icon(GTK_WINDOW(gtkwindow), icon);
@@ -541,7 +541,7 @@ GtkWidget *gtkui_about() {
 	
 	gtk_about_dialog_set_logo(GTK_ABOUT_DIALOG(aboutdialog), pixbuf);
 	gtk_about_dialog_set_program_name(GTK_ABOUT_DIALOG(aboutdialog), "Nestopia UE");
-	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), VERSION);
+	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "vx.xx");
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "Cycle-Accurate Nintendo Entertainment System Emulator");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/nestopia/");
 	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2020, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
