@@ -139,7 +139,6 @@ namespace Nes
 
 			enum
 			{
-				HCLOCK_POSTRENDER = 340,
 				HCLOCK_DUMMY    = 341,
 				HCLOCK_VBLANK_0 = 681,
 				HCLOCK_VBLANK_1 = 682,
@@ -176,6 +175,7 @@ namespace Nes
 			NST_FORCE_INLINE uint Emphasis() const;
 
 			NST_FORCE_INLINE void UpdateAddressLine(uint);
+			NST_FORCE_INLINE void UpdateScrollAddressLine();
 			NST_FORCE_INLINE void UpdateVramAddress();
 
 			NST_FORCE_INLINE void OpenName();
@@ -345,9 +345,6 @@ namespace Nes
 
 				typedef void (Ppu::*Phase)();
 
-				byte ram[0x100];
-				byte buffer[MAX_LINE_SPRITES * 4];
-
 				const byte* limit;
 				Output* visible;
 				Phase phase;
@@ -360,6 +357,9 @@ namespace Nes
 				byte show[2];
 				bool spriteZeroInLine;
 				bool spriteLimit;
+
+				byte ram[0x100];
+				byte buffer[MAX_LINE_SPRITES*4];
 
 				Output output[MAX_LINE_SPRITES];
 			};
@@ -414,10 +414,9 @@ namespace Nes
 			Chr chr;
 			Nmt nmt;
 			int scanline;
-			int scanline_sleep;
-			int ssleep;
-			bool overclocked;
-
+		public:
+			Output output;
+		private:
 			PpuModel model;
 			Hook hActiveHook;
 			Hook hBlankHook;
@@ -432,7 +431,6 @@ namespace Nes
 			static const byte yuvMaps[4][0x40];
 
 		public:
-			Output output;
 
 			void Update()
 			{
@@ -542,16 +540,6 @@ namespace Nes
 			bool HasSpriteLimit() const
 			{
 				return oam.spriteLimit;
-			}
-
-			bool GetOverclockState() const
-			{
-				return overclocked;
-			}
-
-			void SetOverclockState(bool overclock2x)
-			{
-				overclocked = overclock2x;
 			}
 		};
 	}

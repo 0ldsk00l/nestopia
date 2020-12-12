@@ -655,10 +655,9 @@ namespace Nes
 
 			NES_HOOK(Mmc5,HActive)
 			{
-				banks.fetchMode = Banks::FETCH_MODE_BG;
-
 				if (ppu.IsEnabled())
 				{
+					banks.fetchMode = Banks::FETCH_MODE_BG;
 					spliter.x = 0x1F;
 
 					if (ppu.GetPixelCycles() != ~0U)

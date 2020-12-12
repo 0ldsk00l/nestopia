@@ -361,6 +361,11 @@ namespace Nes
 			return 0;
 		}
 
+		uint Apu::GetCtrl()
+		{
+			return ctrl;
+		}
+
 		Result Apu::SetSpeed(const uint speed)
 		{
 			if (settings.speed == speed)
@@ -1670,7 +1675,7 @@ namespace Nes
 			step = 0x7;
 			status = STATUS_COUNTING;
 			waveLength = 0;
-			linearCtrl = 0;
+			//linearCtrl = 0;
 			linearCounter = 0;
 
 			lengthCounter.Reset();
@@ -1870,7 +1875,7 @@ namespace Nes
 					amp = (sum * outputVolume + rate/2) / rate * 3;
 				}
 			}
-			else if (amp < Channel::OUTPUT_DECAY)
+			/*else if (amp < Channel::OUTPUT_DECAY)
 			{
 				return 0;
 			}
@@ -1878,7 +1883,7 @@ namespace Nes
 			{
 				amp -= Channel::OUTPUT_DECAY;
 				step &= STEP_CHECK;
-			}
+			}*/
 
 			return amp;
 		}
@@ -2120,7 +2125,6 @@ namespace Nes
 			dma.buffered       = false;
 			dma.address        = 0xC000;
 			dma.buffer         = 0x00;
-			overclockingIsSafe = true;
 		}
 
 		Cycle Apu::Dmc::GetResetFrequency(CpuModel model)
@@ -2361,31 +2365,16 @@ namespace Nes
 		{
 			out.dac = data & 0x7F;
 			curSample = out.dac * outputVolume;
-
-			if (out.dac != 0)
-			{
-				overclockingIsSafe = false;
-			}
 		}
 
 		NST_SINGLE_CALL void Apu::Dmc::WriteReg2(const uint data)
 		{
 			regs.address = 0xC000 | (data << 6);
-
-			if (regs.address != 0)
-			{
-				overclockingIsSafe = true;
-			}
 		}
 
 		NST_SINGLE_CALL void Apu::Dmc::WriteReg3(const uint data)
 		{
 			regs.lengthCounter = (data << 4) + 1;
-
-			if (regs.lengthCounter != 0)
-			{
-				overclockingIsSafe = true;
-			}
 		}
 
 		NST_SINGLE_CALL bool Apu::Dmc::ClockDAC()

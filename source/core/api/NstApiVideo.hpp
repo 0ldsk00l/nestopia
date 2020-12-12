@@ -223,11 +223,6 @@ namespace Nes
 			* @return result code
 			*/
 			Result EnableUnlimSprites(bool state) throw();
-         
-			/**
-			* Adds extra scanlines to fix lag
-			*/
-			Result EnableOverclocking(bool state) throw();
 
 			/**
 			* Checks if the PPU sprite software extension is enabled.

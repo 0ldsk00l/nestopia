@@ -40,6 +40,7 @@ namespace Nes
 				void Bf9093::SubReset(bool)
 				{
 					Map( 0xC000U, 0xFFFFU, PRG_SWAP_16K_0 );
+					Map( 0x8000U, 0xBFFFU, &Bf9093::Poke_C000 );
 				}
 
 				void Bf9096::SubReset(bool)
@@ -67,6 +68,11 @@ namespace Nes
 				#ifdef NST_MSVC_OPTIMIZE
 				#pragma optimize("", on)
 				#endif
+
+				NES_POKE_D(Bf9093,C000)
+				{
+					prg.SwapBank<SIZE_16K,0x0000>( data );
+				}
 
 				void Bf9096::SwapBasePrg(uint base)
 				{

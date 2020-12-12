@@ -58,20 +58,6 @@ namespace Nes
 			return RESULT_NOP;
 		}
 
-		Result Video::EnableOverclocking(bool state) throw()
-		{
-			if (emulator.tracker.IsLocked( true ))
-				return RESULT_ERR_NOT_READY;
-
-			if (emulator.ppu.GetOverclockState() != state)
-			{
-				emulator.ppu.SetOverclockState( state );
-				return RESULT_OK;
-			}
-
-			return RESULT_NOP;
-		}
-
 		bool Video::AreUnlimSpritesEnabled() const throw()
 		{
 			return !emulator.ppu.HasSpriteLimit();

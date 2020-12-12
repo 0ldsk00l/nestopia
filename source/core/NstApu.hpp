@@ -50,7 +50,6 @@ namespace Nes
 		public:
 
 			explicit Apu(Cpu&);
-
 			void  Reset(bool);
 			void  PowerOff();
 			void  ClearBuffers();
@@ -65,6 +64,7 @@ namespace Nes
 			Result SetSpeed(uint);
 			Result SetVolume(uint,uint);
 			uint   GetVolume(uint) const;
+			uint   GetCtrl();
 			void   Mute(bool);
 			void   SetAutoTranspose(bool);
 			void   SetGenie(bool);
@@ -461,7 +461,7 @@ namespace Nes
 				enum
 				{
 					MIN_FRQ                   = 2 + 1,
-					STEP_CHECK                = 0x00, // >= 0x1F is technically correct but will produce clicks/pops
+					STEP_CHECK                = 0x1F,
 					REG0_LINEAR_COUNTER_LOAD  = 0x7F,
 					REG0_LINEAR_COUNTER_START = 0x80,
 					REG2_WAVE_LENGTH_LOW      = 0x00FF,
@@ -528,8 +528,6 @@ namespace Nes
 			public:
 
 				Dmc();
-
-				bool overclockingIsSafe;
 
 				void Reset(CpuModel);
 				void UpdateSettings(uint);
@@ -627,16 +625,6 @@ namespace Nes
 			Settings settings;
 
 		public:
-
-			void SetOverclockSafety(bool safe)
-			{
-				dmc.overclockingIsSafe = safe;
-			}
-
-			bool GetOverclockSafety()
-			{
-				return dmc.overclockingIsSafe;
-			}
 
 			dword GetSampleRate() const
 			{

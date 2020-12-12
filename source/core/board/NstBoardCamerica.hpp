@@ -47,6 +47,10 @@ namespace Nes
 				protected:
 
 					void SubReset(bool);
+
+				private:
+
+					NES_DECL_POKE( C000 );
 				};
 
 				class Bf9096 : public Board

@@ -1241,7 +1241,12 @@ namespace Nes
 				{
 					case 0:
 
-						if ((prg < SIZE_32K && prg != SIZE_16K) || !chr || wram >= SIZE_8K || (nmt != Type::NMT_HORIZONTAL && nmt != Type::NMT_VERTICAL))
+						if (prg == SIZE_8K && chr == SIZE_8K)
+						{
+							name = "NAMCOT-3301";
+							id = Type::STD_NROM;
+						}
+						else if ((prg < SIZE_32K && prg != SIZE_16K) || !chr || wram >= SIZE_8K || (nmt != Type::NMT_HORIZONTAL && nmt != Type::NMT_VERTICAL))
 						{
 							name = "NROM (non-standard)";
 							id = Type::UNL_NROM;

@@ -22,13 +22,6 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
-#ifdef __LIBRETRO__
-#define NST_NO_SCALEX 1
-#define NST_NO_HQ2X 1
-#define NST_NO_2XSAI 1
-#define NST_NO_XBR 1
-#endif
-
 #include <cstring>
 #include <cmath>
 #include <new>
