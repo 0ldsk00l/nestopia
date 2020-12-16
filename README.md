@@ -1,11 +1,17 @@
 ## About
 This project is a fork of the original Nestopia source code, plus the 
-Linux port. The purpose of the project is to enhance the original, and
-ensure it continues to work on modern operating systems.
+Linux port. The purpose of the project is to make sure people who want
+a standalone GUI for the Nestopia emulator have this option available.
 
 Current Project Goals:
 * Move the GTK+ project focus to a simple UI on top of a community maintained core
 * Merge win32 sources back into main project and set up CI builds for Windows binaries
+* Allow loading different forks/revisions of the emulator core (Maybe)
+
+Contributing/Issues:
+* Contributions will be reviewed for anything related to the standalone GUI builds
+* Issues related to core emulation will be closed. This project no longer maintains the core emulator.
+* When not using a tagged release, please understand that the code is volatile and nothing is set in stone.
 
 The following platforms are supported:
 * Linux, BSD, Windows
