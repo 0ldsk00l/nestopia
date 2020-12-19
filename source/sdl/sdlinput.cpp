@@ -31,13 +31,10 @@
 
 #include "ini.h"
 
-#include "sdlmain.h"
-#include "sdlvideo.h"
 #include "sdlinput.h"
 
 static SDL_Joystick *joystick;
 gamepad_t player[NUMGAMEPADS];
-static uiinput_t ui;
 static inputsettings_t inputconf;
 static char inputconfpath[256];
 extern int drawtext;
@@ -87,125 +84,6 @@ void nstsdl_input_joysticks_detect() {
 void nstsdl_input_joysticks_close() {
 	// Deinitialize any joysticks
 	SDL_JoystickClose(joystick);
-}
-
-void nstsdl_input_match_keyboard(Input::Controllers *controllers, SDL_Event event) {
-	// Match NES buttons to keyboard buttons
-	
-	nesinput_t input;
-
-	input.nescode = 0x00;
-	input.player = 0;
-	input.pressed = 0;
-	input.turboa = 0;
-	input.turbob = 0;
-
-	if (event.type == SDL_KEYDOWN) { input.pressed = 1; }
-
-	for (int i = 0; i < NUMGAMEPADS; i++) {
-		if (player[i].u == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::UP;
-			input.player = i;
-		}
-		else if (player[i].d == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::DOWN;
-			input.player = i;
-		}
-		else if (player[i].l == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::LEFT;
-			input.player = i;
-		}
-		else if (player[i].r == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::RIGHT;
-			input.player = i;
-		}
-		else if (player[i].select == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::SELECT;
-			input.player = i;
-		}
-		else if (player[i].start == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::START;
-			input.player = i;
-		}
-		else if (player[i].a == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::A;
-			input.player = i;
-		}
-		else if (player[i].b == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::B;
-			input.player = i;
-		}
-		else if (player[i].ta == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::A;
-			input.player = i;
-			input.turboa = 1;
-		}
-		else if (player[i].tb == event.key.keysym.scancode) {
-			input.nescode = Input::Controllers::Pad::B;
-			input.player = i;
-			input.turbob = 1;
-		}
-	}
-
-	nst_input_inject(controllers, input);
-	
-	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYDOWN) { nst_timing_set_ffspeed(); }
-	if (event.key.keysym.scancode == ui.ffspeed && event.type == SDL_KEYUP) { nst_timing_set_default(); }
-	
-	const Uint8 *keys = SDL_GetKeyboardState(NULL);
-	
-	// Mic emulation
-	if (keys[SDL_SCANCODE_SPACE]) { controllers->pad[1].mic = 0x04; }
-	else { controllers->pad[1].mic = 0x00; }
-	
-	// Insert Coins
-	controllers->vsSystem.insertCoin = 0;
-	if (keys[ui.insertcoin1]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
-	if (keys[ui.insertcoin2]) { controllers->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
-	
-	// Process non-game events
-	if (keys[ui.fdsflip]) { nst_fds_flip(); }
-	if (keys[ui.fdsswitch]) { nst_fds_switch(); }
-	if (keys[ui.qsave1]) { nst_state_quicksave(0); }
-	if (keys[ui.qsave2]) { nst_state_quicksave(1); }
-	if (keys[ui.qload1]) { nst_state_quickload(0); }
-	if (keys[ui.qload2]) { nst_state_quickload(1); }
-	
-	// Screenshot
-	if (keys[ui.screenshot]) { video_screenshot(NULL); }
-	
-	// Reset
-	if (keys[ui.reset]) { nst_reset(0); }
-	
-	// Rewinder
-	if (keys[ui.rwstart]) { nst_set_rewind(0); }
-	if (keys[ui.rwstop]) { nst_set_rewind(1); }
-	
-	// Video
-	if (event.key.keysym.scancode == ui.fullscreen && event.type == SDL_KEYUP) { nstsdl_video_toggle_fullscreen(); }
-	if (keys[ui.filter]) { nstsdl_video_toggle_filter(); }
-	if (keys[ui.scalefactor]) { nstsdl_video_toggle_scale(); }
-	
-	// NSF
-	if (nst_nsf()) {
-		if (keys[SDL_SCANCODE_UP]) { nst_nsf_play(); }
-		if (keys[SDL_SCANCODE_DOWN]) { nst_nsf_stop(); }
-		if (keys[SDL_SCANCODE_LEFT]) { nst_nsf_prev(); }
-		if (keys[SDL_SCANCODE_RIGHT]) { nst_nsf_next(); }
-	}
-	
-	// Input Config
-	if (keys[SDL_SCANCODE_LCTRL] && keys[SDL_SCANCODE_1]) { nstsdl_input_conf(0, 0); } // Keyboard Player 1
-	if (keys[SDL_SCANCODE_LCTRL] && keys[SDL_SCANCODE_2]) { nstsdl_input_conf(0, 1); } // Keyboard Player 2
-	if (keys[SDL_SCANCODE_LSHIFT] && keys[SDL_SCANCODE_1]) { nstsdl_input_conf(1, 0); } // Joystick Player 1
-	if (keys[SDL_SCANCODE_LSHIFT] && keys[SDL_SCANCODE_2]) { nstsdl_input_conf(1, 1); } // Joystick Player 2
-}
-
-void nstsdl_input_match_mouse(Input::Controllers *controllers, SDL_Event event) {
-	// Match mouse input to NES input
-	int x, y;
-	SDL_GetMouseState(&x, &y);
-	nst_input_inject_mouse(controllers, event.button.button, event.type == SDL_MOUSEBUTTONDOWN ? 1 : 0, x, y);
 }
 
 int nstsdl_input_checksign(int axisvalue) {
@@ -365,40 +243,6 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 
 void nstsdl_input_conf_defaults() {
 	// Set default input config
-	ui.qsave1 = SDL_GetScancodeFromName("F5");
-	ui.qsave2 = SDL_GetScancodeFromName("F6");
-	ui.qload1 = SDL_GetScancodeFromName("F7");
-	ui.qload2 = SDL_GetScancodeFromName("F8");
-	
-	ui.screenshot = SDL_GetScancodeFromName("F9");
-	
-	ui.fdsflip = SDL_GetScancodeFromName("F3");
-	ui.fdsswitch = SDL_GetScancodeFromName("F4");
-	
-	ui.insertcoin1 = SDL_GetScancodeFromName("F1");
-	ui.insertcoin2 = SDL_GetScancodeFromName("F2");
-	
-	ui.reset = SDL_GetScancodeFromName("F12");
-	
-	ui.ffspeed = SDL_GetScancodeFromName("`");
-	ui.rwstart = SDL_GetScancodeFromName("Backspace");
-	ui.rwstop = SDL_GetScancodeFromName("\\");
-	
-	ui.fullscreen = SDL_GetScancodeFromName("F");
-	ui.filter = SDL_GetScancodeFromName("T");
-	ui.scalefactor = SDL_GetScancodeFromName("G");
-	
-	player[0].u = SDL_GetScancodeFromName("Up");
-	player[0].d = SDL_GetScancodeFromName("Down");
-	player[0].l = SDL_GetScancodeFromName("Left");
-	player[0].r = SDL_GetScancodeFromName("Right");
-	player[0].select = SDL_GetScancodeFromName("Right Shift");
-	player[0].start = SDL_GetScancodeFromName("Return");
-	player[0].a = SDL_GetScancodeFromName("Z");
-	player[0].b = SDL_GetScancodeFromName("A");
-	player[0].ta = SDL_GetScancodeFromName("X");
-	player[0].tb = SDL_GetScancodeFromName("S");
-
 	player[0].ju = nstsdl_input_translate_string("j0h01");
 	player[0].jd = nstsdl_input_translate_string("j0h04");
 	player[0].jl = nstsdl_input_translate_string("j0h08");
@@ -412,17 +256,6 @@ void nstsdl_input_conf_defaults() {
 	
 	player[0].rwstart = nstsdl_input_translate_string("j0b4");
 	player[0].rwstop = nstsdl_input_translate_string("j0b5");
-	
-	player[1].u = SDL_GetScancodeFromName("I");
-	player[1].d = SDL_GetScancodeFromName("K");
-	player[1].l = SDL_GetScancodeFromName("J");
-	player[1].r = SDL_GetScancodeFromName("L");
-	player[1].select = SDL_GetScancodeFromName("Left Shift");
-	player[1].start = SDL_GetScancodeFromName("Left Ctrl");
-	player[1].a = SDL_GetScancodeFromName("M");
-	player[1].b = SDL_GetScancodeFromName("N");
-	player[1].ta = SDL_GetScancodeFromName("B");
-	player[1].tb = SDL_GetScancodeFromName("V");
 	
 	player[1].ju = nstsdl_input_translate_string("j1h01");
 	player[1].jd = nstsdl_input_translate_string("j1h04");
@@ -559,42 +392,6 @@ void nstsdl_input_conf_read() {
 		fprintf(stderr, "Failed to load input config file %s: Using defaults.\n", inputconfpath);
 	}
 	else { // Map the input settings from the config file
-		// User Interface
-		ui.qsave1 = SDL_GetScancodeFromName(inputconf.qsave1);
-		ui.qsave2 = SDL_GetScancodeFromName(inputconf.qsave2);
-		ui.qload1 = SDL_GetScancodeFromName(inputconf.qload1);
-		ui.qload2 = SDL_GetScancodeFromName(inputconf.qload2);
-		
-		ui.screenshot = SDL_GetScancodeFromName(inputconf.screenshot);
-		
-		ui.fdsflip = SDL_GetScancodeFromName(inputconf.fdsflip);
-		ui.fdsswitch = SDL_GetScancodeFromName(inputconf.fdsswitch);
-		
-		ui.insertcoin1 = SDL_GetScancodeFromName(inputconf.insertcoin1);
-		ui.insertcoin2 = SDL_GetScancodeFromName(inputconf.insertcoin2);
-		
-		ui.reset = SDL_GetScancodeFromName(inputconf.reset);
-		
-		ui.ffspeed = SDL_GetScancodeFromName(inputconf.ffspeed);
-		ui.rwstart = SDL_GetScancodeFromName(inputconf.rwstart);
-		ui.rwstop = SDL_GetScancodeFromName(inputconf.rwstop);
-		
-		ui.fullscreen = SDL_GetScancodeFromName(inputconf.fullscreen);
-		ui.filter = SDL_GetScancodeFromName(inputconf.filter);
-		ui.scalefactor = SDL_GetScancodeFromName(inputconf.scalefactor);
-		
-		// Player 1
-		player[0].u = SDL_GetScancodeFromName(inputconf.kb_p1u);
-		player[0].d = SDL_GetScancodeFromName(inputconf.kb_p1d);
-		player[0].l = SDL_GetScancodeFromName(inputconf.kb_p1l);
-		player[0].r = SDL_GetScancodeFromName(inputconf.kb_p1r);
-		player[0].select = SDL_GetScancodeFromName(inputconf.kb_p1select);
-		player[0].start = SDL_GetScancodeFromName(inputconf.kb_p1start);
-		player[0].a = SDL_GetScancodeFromName(inputconf.kb_p1a);
-		player[0].b = SDL_GetScancodeFromName(inputconf.kb_p1b);
-		player[0].ta = SDL_GetScancodeFromName(inputconf.kb_p1ta);
-		player[0].tb = SDL_GetScancodeFromName(inputconf.kb_p1tb);
-		
 		player[0].ju = nstsdl_input_translate_string(inputconf.js_p1u);
 		player[0].jd = nstsdl_input_translate_string(inputconf.js_p1d);
 		player[0].jl = nstsdl_input_translate_string(inputconf.js_p1l);
@@ -610,17 +407,6 @@ void nstsdl_input_conf_read() {
 		if (inputconf.js_rwstop) { player[0].rwstop = nstsdl_input_translate_string(inputconf.js_rwstop); }
 		
 		// Player 2
-		player[1].u = SDL_GetScancodeFromName(inputconf.kb_p2u);
-		player[1].d = SDL_GetScancodeFromName(inputconf.kb_p2d);
-		player[1].l = SDL_GetScancodeFromName(inputconf.kb_p2l);
-		player[1].r = SDL_GetScancodeFromName(inputconf.kb_p2r);
-		player[1].select = SDL_GetScancodeFromName(inputconf.kb_p2select);
-		player[1].start = SDL_GetScancodeFromName(inputconf.kb_p2start);
-		player[1].a = SDL_GetScancodeFromName(inputconf.kb_p2a);
-		player[1].b = SDL_GetScancodeFromName(inputconf.kb_p2b);
-		player[1].ta = SDL_GetScancodeFromName(inputconf.kb_p2ta);
-		player[1].tb = SDL_GetScancodeFromName(inputconf.kb_p2tb);
-		
 		player[1].ju = nstsdl_input_translate_string(inputconf.js_p2u);
 		player[1].jd = nstsdl_input_translate_string(inputconf.js_p2d);
 		player[1].jl = nstsdl_input_translate_string(inputconf.js_p2l);
@@ -639,49 +425,12 @@ void nstsdl_input_conf_write() {
 	FILE *fp = fopen(inputconfpath, "w");
 	if (fp != NULL)	{
 		fprintf(fp, "; Nestopia UE SDL Input Configuration File\n\n");
-		fprintf(fp, "; Possible values for keyboard input are in the Key Name column:\n; https://wiki.libsdl.org/SDL_Scancode\n\n");
 		fprintf(fp, "; Possible values for joystick input:\n; j[joystick number][a|b|h][button/hat/axis number][1/0 = +/- (axes only)]\n");
 		fprintf(fp, "; Example: j0b3 = joystick 0, button 3. j1a11 = joystick 1, axis 1 +\n\n");
 		fprintf(fp, "; Press Ctrl or Shift + [player number] to configure input in-game.\n; Ctrl for Keyboard, Shift for Joystick.\n");
 		fprintf(fp, "; Example: Shift + 1 for Joystick input for Player 1\n\n");
 		
-		fprintf(fp, "[ui]\n");
-		fprintf(fp, "qsave1=%s\n", SDL_GetScancodeName(ui.qsave1));
-		fprintf(fp, "qsave2=%s\n", SDL_GetScancodeName(ui.qsave2));
-		fprintf(fp, "qload1=%s\n", SDL_GetScancodeName(ui.qload1));
-		fprintf(fp, "qload2=%s\n", SDL_GetScancodeName(ui.qload2));
-		
-		fprintf(fp, "screenshot=%s\n", SDL_GetScancodeName(ui.screenshot));
-		
-		fprintf(fp, "fdsflip=%s\n", SDL_GetScancodeName(ui.fdsflip));
-		fprintf(fp, "fdsswitch=%s\n", SDL_GetScancodeName(ui.fdsswitch));
-		
-		fprintf(fp, "insertcoin1=%s\n", SDL_GetScancodeName(ui.insertcoin1));
-		fprintf(fp, "insertcoin2=%s\n", SDL_GetScancodeName(ui.insertcoin2));
-		
-		fprintf(fp, "reset=%s\n", SDL_GetScancodeName(ui.reset));
-		
-		fprintf(fp, "ffspeed=%s\n", SDL_GetScancodeName(ui.ffspeed));
-		fprintf(fp, "rwstart=%s\n", SDL_GetScancodeName(ui.rwstart));
-		fprintf(fp, "rwstop=%s\n", SDL_GetScancodeName(ui.rwstop));
-		
-		fprintf(fp, "fullscreen=%s\n", SDL_GetScancodeName(ui.fullscreen));
-		fprintf(fp, "filter=%s\n", SDL_GetScancodeName(ui.filter));
-		fprintf(fp, "scalefactor=%s\n", SDL_GetScancodeName(ui.scalefactor));
-		fprintf(fp, "\n"); // End of Section
-		
 		fprintf(fp, "[gamepad1]\n");
-		fprintf(fp, "kb_u=%s\n", SDL_GetScancodeName(player[0].u));
-		fprintf(fp, "kb_d=%s\n", SDL_GetScancodeName(player[0].d));
-		fprintf(fp, "kb_l=%s\n", SDL_GetScancodeName(player[0].l));
-		fprintf(fp, "kb_r=%s\n", SDL_GetScancodeName(player[0].r));
-		fprintf(fp, "kb_select=%s\n", SDL_GetScancodeName(player[0].select));
-		fprintf(fp, "kb_start=%s\n", SDL_GetScancodeName(player[0].start));
-		fprintf(fp, "kb_a=%s\n", SDL_GetScancodeName(player[0].a));
-		fprintf(fp, "kb_b=%s\n", SDL_GetScancodeName(player[0].b));
-		fprintf(fp, "kb_ta=%s\n", SDL_GetScancodeName(player[0].ta));
-		fprintf(fp, "kb_tb=%s\n", SDL_GetScancodeName(player[0].tb));
-		
 		fprintf(fp, "js_u=%s\n", nstsdl_input_translate_event(player[0].ju));
 		fprintf(fp, "js_d=%s\n", nstsdl_input_translate_event(player[0].jd));
 		fprintf(fp, "js_l=%s\n", nstsdl_input_translate_event(player[0].jl));
@@ -698,17 +447,6 @@ void nstsdl_input_conf_write() {
 		fprintf(fp, "\n"); // End of Section
 		
 		fprintf(fp, "[gamepad2]\n");
-		fprintf(fp, "kb_u=%s\n", SDL_GetScancodeName(player[1].u));
-		fprintf(fp, "kb_d=%s\n", SDL_GetScancodeName(player[1].d));
-		fprintf(fp, "kb_l=%s\n", SDL_GetScancodeName(player[1].l));
-		fprintf(fp, "kb_r=%s\n", SDL_GetScancodeName(player[1].r));
-		fprintf(fp, "kb_select=%s\n", SDL_GetScancodeName(player[1].select));
-		fprintf(fp, "kb_start=%s\n", SDL_GetScancodeName(player[1].start));
-		fprintf(fp, "kb_a=%s\n", SDL_GetScancodeName(player[1].a));
-		fprintf(fp, "kb_b=%s\n", SDL_GetScancodeName(player[1].b));
-		fprintf(fp, "kb_ta=%s\n", SDL_GetScancodeName(player[1].ta));
-		fprintf(fp, "kb_tb=%s\n", SDL_GetScancodeName(player[1].tb));
-		
 		fprintf(fp, "js_u=%s\n", nstsdl_input_translate_event(player[1].ju));
 		fprintf(fp, "js_d=%s\n", nstsdl_input_translate_event(player[1].jd));
 		fprintf(fp, "js_l=%s\n", nstsdl_input_translate_event(player[1].jl));
@@ -728,23 +466,12 @@ void nstsdl_input_conf_write() {
 void nstsdl_input_process(Input::Controllers *controllers, SDL_Event event) {
 	// Process input events
 	switch(event.type) {
-		case SDL_KEYUP:
-		case SDL_KEYDOWN:
-			nstsdl_input_match_keyboard(controllers, event);
-			break;
-			
 		case SDL_JOYBUTTONUP:
 		case SDL_JOYBUTTONDOWN:
 		case SDL_JOYAXISMOTION:
 		case SDL_JOYHATMOTION:
 			nstsdl_input_match_joystick(controllers, event);
 			break;
-
-		case SDL_MOUSEBUTTONUP:
-		case SDL_MOUSEBUTTONDOWN:
-			nstsdl_input_match_mouse(controllers, event);
-			break;
-			
 		default: break;
 	}
 }
@@ -762,7 +489,7 @@ char* nstsdl_input_translate_event(SDL_Event event) {
 			sprintf(inputcode, "j%dh%d%d", event.jhat.which, event.jhat.hat, event.jhat.value);
 			break;
 		
-		case SDL_JOYBUTTONUP:	
+		case SDL_JOYBUTTONUP:
 		case SDL_JOYBUTTONDOWN:
 			sprintf(inputcode, "j%db%d", event.jbutton.which, event.jbutton.button);
 			break;
@@ -822,62 +549,6 @@ SDL_Event nstsdl_input_translate_string(const char *string) {
 	}
 	
 	return event;
-}
-
-void nstsdl_input_conf(int type, int pnum) {
-	// Configure Inputs
-	nst_pause();
-	
-	SDL_Event event, eventbuf;
-	int axis = 0, axisnoise = 0, print = 0;
-	if (type == 0) { // Keyboard
-		for (int i = 0; i < 10;) {
-			if (print == i) {
-				nst_video_disp_inputconf(type, pnum, i);
-				nstsdl_video_swapbuffers();
-				print++;
-			}
-			while (SDL_PollEvent(&event)) {
-				if (event.type == SDL_KEYDOWN) { nstsdl_input_conf_set(event, type, pnum, i); i++; }
-			}
-		}
-	}
-	else if (type == 1) { // Joystick
-		for (int i = 0; i < 10;) {
-			if (print == i) {
-				nst_video_disp_inputconf(type, pnum, i);
-				nstsdl_video_swapbuffers();
-				print++;
-			}
-			
-			while (SDL_PollEvent(&event)) {
-				if (event.type == SDL_JOYAXISMOTION) {
-					if (abs(event.jaxis.value) >= DEADZONE) {
-						eventbuf = event;
-						axisnoise = 1;
-						axis = event.jaxis.axis;
-					}
-					else if (abs(event.jaxis.value) < DEADZONE && axisnoise && event.jaxis.axis == axis) {
-						nstsdl_input_conf_set(eventbuf, type, pnum, i);
-						axisnoise = 0;
-						i++;
-					}
-				}
-				else if (event.type == SDL_JOYHATMOTION) {
-					if (event.jhat.value != SDL_HAT_CENTERED) {
-						nstsdl_input_conf_set(event, type, pnum, i);
-						i++;
-					}
-				}
-				else if (event.type == SDL_JOYBUTTONDOWN) {
-					nstsdl_input_conf_set(event, type, pnum, i);
-					i++;
-				}
-			}
-		}
-	}
-	
-	nst_play();
 }
 
 void nstsdl_input_conf_button(int pnum, int bnum) {

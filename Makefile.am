@@ -720,10 +720,6 @@ nestopia_SOURCES += \
 	source/sdl/audio.h \
 	source/sdl/sdlinput.cpp \
 	source/sdl/sdlinput.h \
-	source/sdl/cursor.cpp \
-	source/sdl/cursor.h \
-	source/sdl/sdlvideo.cpp \
-	source/sdl/sdlvideo.h \
 	source/gtkui/gtkui_config.h \
 	source/gtkui/gtkui_archive.h \
 	source/gtkui/gtkui_cheats.cpp \

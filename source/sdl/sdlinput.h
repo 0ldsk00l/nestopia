@@ -33,31 +33,6 @@ typedef struct {
 } gamepad_t;
 
 typedef struct {
-	SDL_Scancode qsave1;
-	SDL_Scancode qsave2;
-	SDL_Scancode qload1;
-	SDL_Scancode qload2;
-	
-	SDL_Scancode screenshot;
-	
-	SDL_Scancode fdsflip;
-	SDL_Scancode fdsswitch;
-	
-	SDL_Scancode insertcoin1;
-	SDL_Scancode insertcoin2;
-	
-	SDL_Scancode reset;
-	
-	SDL_Scancode ffspeed;
-	SDL_Scancode rwstart;
-	SDL_Scancode rwstop;
-	
-	SDL_Scancode fullscreen;
-	SDL_Scancode filter;
-	SDL_Scancode scalefactor;
-} uiinput_t;
-
-typedef struct {
 	// User Interface
 	char *qsave1;
 	char *qsave2;
@@ -143,8 +118,6 @@ void nstsdl_input_conf_write();
 void nstsdl_input_joysticks_detect();
 void nstsdl_input_joysticks_close();
 
-void nstsdl_input_match_keyboard(Input::Controllers *controllers, SDL_Event event);
-void nstsdl_input_match_mouse(Input::Controllers *controllers, SDL_Event event);
 void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event event);
 int nstsdl_input_checksign(int axisvalue);
 
