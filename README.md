@@ -4,7 +4,7 @@ Linux port. The purpose of the project is to make sure people who want
 a standalone GUI for the Nestopia emulator have this option available.
 
 Current Project Goals:
-* Move the GTK+ project focus to a simple UI on top of a community maintained core
+* Move the GTK build to a simple UI on top of a community maintained core
 * Merge win32 sources back into main project and set up CI builds for Windows binaries
 * Allow loading different forks/revisions of the emulator core (Maybe)
 

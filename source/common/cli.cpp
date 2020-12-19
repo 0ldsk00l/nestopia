@@ -36,8 +36,6 @@ void cli_error(const char *message) {
 void cli_show_usage() {
 	printf("Usage: nestopia [options] [FILE]\n");
 	printf("\nOptions:\n");
-	//printf("  -d, --disablegui        Disable GTK+ GUI\n");
-	//printf("  -e, --enablegui         Enable GTK+ GUI\n\n");
 	printf("  -f, --fullscreen        Fullscreen mode\n");
 	printf("  -w, --window            Window mode\n\n");
 	printf("  -l, --filter            Video Filter\n");

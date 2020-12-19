@@ -79,7 +79,7 @@ void gtkui_quit() {
 }
 
 void gtkui_init(int argc, char *argv[]) {
-	// Initialize the GTK+ GUI
+	// Initialize the GTK GUI
 	gtk_init(&argc, &argv);
 	gtkui_create();
 }
@@ -92,7 +92,7 @@ static void gtkui_glarea_realize(GtkGLArea *glarea) {
 
 static void gtkui_swapbuffers() {
 	gtk_widget_queue_draw(drawingarea);
-	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK+3
+	gtk_widget_queue_draw(menubar); // Needed on some builds of GTK3
 	nst_ogl_render();
 	nst_emuloop();
 	
@@ -143,7 +143,7 @@ dimensions_t gtkui_video_get_dimensions() {
 }
 
 void gtkui_create() {
-	// Create the GTK+ Window
+	// Create the GTK Window
 	
 	gtkui_image_paths();
 	GdkPixbuf *icon = gdk_pixbuf_new_from_file(iconpath, NULL);
@@ -484,7 +484,7 @@ void gtkui_signals_deinit() {
 }
 
 void gtkui_resize() {
-	// Resize the GTK+ window
+	// Resize the GTK window
 	if (gtkwindow) {
 		video_set_dimensions();
 		dimensions_t rendersize = nst_video_get_dimensions_render();
@@ -669,7 +669,7 @@ int main(int argc, char *argv[]) {
 		gtkui_set_title(nstpaths.gamename);
 	}
 	
-	// Start GTK+ main loop
+	// Start GTK main loop
 	gtk_main();
 	
 	// Remove the cartridge and shut down the NES

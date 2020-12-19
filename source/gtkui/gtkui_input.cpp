@@ -94,7 +94,7 @@ static int gtkui_input_config_match(void* user, const char* section, const char*
 }
 
 void gtkui_input_set_default() {
-	// Set the default input for GTK+
+	// Set the default input for GTK
 	
 	// Gamepads
 	pad[0].u = GDK_KEY_Up;
@@ -196,7 +196,7 @@ void gtkui_input_config_write() {
 	
 	FILE *fp = fopen(inputconfpath, "w");
 	if (fp != NULL)	{
-		fprintf(fp, "; Nestopia UE GTK+ Input Configuration File\n\n");
+		fprintf(fp, "; Nestopia UE GTK Input Configuration File\n\n");
 		fprintf(fp, "; Values for keyboard input are these values with the GDK_KEY_ prefix removed:\n; https://git.gnome.org/browse/gtk+/plain/gdk/gdkkeysyms.h\n\n");
 		
 		fprintf(fp, "[ui]\n");
