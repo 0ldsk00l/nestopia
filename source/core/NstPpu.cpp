@@ -659,27 +659,8 @@ namespace Nes
 		{
 			if ((scanline != SCANLINE_VBLANK ) && (regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED))
 			{
-				if ( regs.ctrl[0] & Regs::CTRL0_INC32 )
-				{
-					if((scroll.address & 0x7000) == 0x7000)
-					{
-						scroll.address &= 0x0FFF;
-						switch(scroll.address & 0x03E0)
-						{
-							case 0x03A0: scroll.address ^= 0x0800; break;
-							case 0x03E0: scroll.address &= 0x7C1F; break;
-							default: scroll.address += 0x20;
-						}
-					}
-					else
-					{
-						scroll.address += 0x1000;
-					}
-				}
-				else
-				{
-					scroll.address++;
-				}
+				scroll.ClockX();
+				scroll.ClockY();
 			}
 			else
 			{
@@ -956,7 +937,11 @@ namespace Nes
 			uint address = scroll.address;
 
 			UpdateVramAddress();
-			UpdateScrollAddressLine();
+
+			if (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || (scanline == SCANLINE_VBLANK))
+				UpdateAddressLine(scroll.address & 0x3fff);
+			else
+				return;
 
 			io.latch = data;
 
@@ -994,7 +979,9 @@ namespace Nes
 
 			address = scroll.address & 0x3FFF;
 			UpdateVramAddress();
-			UpdateScrollAddressLine();
+
+			if (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || (scanline == SCANLINE_VBLANK))
+				UpdateAddressLine(scroll.address & 0x3fff);
 
 			io.latch = (address & 0x3F00) != 0x3F00 ? io.buffer : palette.ram[address & 0x1F] & Coloring();
 			io.buffer = (address >= 0x2000 ? nmt.FetchName( address ) : chr.FetchPattern( address ));
