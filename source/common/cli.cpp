@@ -91,14 +91,6 @@ void cli_handle_command(int argc, char *argv[]) {
 		if (c == -1) { break; }
 		
 		switch(c) {
-			/*case 'd':
-				conf.misc_disable_gui = true;
-				break;
-			
-			case 'e':
-				conf.misc_disable_gui = false;
-				break;*/
-			
 			case 'f':
 				conf.video_fullscreen = true;
 				break;

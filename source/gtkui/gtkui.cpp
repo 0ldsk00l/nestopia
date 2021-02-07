@@ -56,7 +56,7 @@ extern bool (*nst_archive_select)(const char*, char*, size_t);
 
 extern Input::Controllers *cNstPads;
 extern nstpaths_t nstpaths;
-int nst_quit = 0;
+int nst_quit = 1;
 
 gpointer gtkui_emuloop(gpointer data) {
 	while(!nst_quit) { nst_emuloop(); }
@@ -76,12 +76,6 @@ void gtkui_emuloop_stop() {
 void gtkui_quit() {
 	gtkui_emuloop_stop();
 	gtk_main_quit();
-}
-
-void gtkui_init(int argc, char *argv[]) {
-	// Initialize the GTK GUI
-	gtk_init(&argc, &argv);
-	gtkui_create();
 }
 
 static void gtkui_glarea_realize(GtkGLArea *glarea) {
@@ -439,8 +433,6 @@ void gtkui_create() {
 	gtk_widget_show_all(gtkwindow);
 	
 	nst_video_set_dimensions_screen(gtkui_video_get_dimensions());
-	
-	if (conf.video_fullscreen) { gtkui_video_toggle_fullscreen(); }
 }
 
 void gtkui_signals_init() {
@@ -598,7 +590,7 @@ void gtkui_cursor_set(int curtype) {
 void gtkui_play() {
 	gtkui_signals_init();
 	nst_play();
-	//gtkui_emuloop_start();
+	
 	if (nst_input_zapper_present()) {
 		gtkui_cursor_set(conf.misc_disable_cursor_special ? 0 : 2);
 	}
@@ -609,7 +601,6 @@ void gtkui_play() {
 
 void gtkui_pause() {
 	gtkui_signals_deinit();
-	//gtkui_emuloop_stop();
 	nst_pause();
 }
 
@@ -660,14 +651,18 @@ int main(int argc, char *argv[]) {
 	nst_fds_bios_load();
 	nst_db_load();
 	
-	gtkui_init(argc, argv);
+	// Initialize the GTK GUI
+	gtk_init(&argc, &argv);
+	gtkui_create();
 	
 	// Load a rom from the command line
-	if (argc > 1) {
+	if (argc > 1 && argv[argc - 1][0] != '-') {
 		nst_load(argv[argc - 1]);
+		if (conf.video_fullscreen) { gtkui_video_toggle_fullscreen(); }
 		gtkui_play();
 		gtkui_set_title(nstpaths.gamename);
 	}
+	else if (conf.video_fullscreen) { conf.video_fullscreen = 0; }
 	
 	// Start GTK main loop
 	gtk_main();

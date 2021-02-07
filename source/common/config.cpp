@@ -29,6 +29,7 @@
 #include "ini.h"
 
 settings_t conf;
+static int fs = 0;
 
 void config_file_read(const char *nstdir) {
 	// Read the config file
@@ -39,6 +40,7 @@ void config_file_read(const char *nstdir) {
 	if (ini_parse(confpath, config_match, &conf) < 0) {
 		fprintf(stderr, "Failed to read config file %s: Using defaults.\n", confpath);
 	}
+	fs = conf.video_fullscreen;
 }
 
 void config_file_write(const char *nstdir) {
@@ -80,7 +82,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "linear_filter=%d\n", conf.video_linear_filter);
 		fprintf(fp, "tv_aspect=%d\n", conf.video_tv_aspect);
 		fprintf(fp, "unmask_overscan=%d\n", conf.video_unmask_overscan);
-		fprintf(fp, "fullscreen=%d\n", conf.video_fullscreen);
+		fprintf(fp, "fullscreen=%d\n", fs);
 		fprintf(fp, "stretch_aspect=%d\n", conf.video_stretch_aspect);
 		fprintf(fp, "unlimited_sprites=%d\n", conf.video_unlimited_sprites);
 		fprintf(fp, "xbr_pixel_blending=%d\n", conf.video_xbr_pixel_blending);

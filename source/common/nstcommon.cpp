@@ -68,6 +68,8 @@ static std::fstream *movierecfile;
 void *custompalette = NULL;
 static size_t custpalsize;
 
+static int loaded = 0;
+
 bool (*nst_archive_select)(const char*, char*, size_t);
 
 static bool NST_CALLBACK nst_cb_videolock(void* userData, Video::Output& video) {
@@ -849,7 +851,6 @@ void nst_pause() {
 	}
 	
 	playing = false;
-	//nstsdl_video_set_cursor();
 }
 
 void nst_play() {
@@ -892,7 +893,6 @@ int nst_load(const char *filename) {
 	if (playing) { nst_pause(); }
 	
 	// Pull out any inserted cartridges
-	static int loaded = 0;
 	if (loaded) { nst_unload(); }
 	nst_video_print_time("", false);
 	

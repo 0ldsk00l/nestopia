@@ -210,8 +210,8 @@ void video_toggle_fullscreen() {
 void video_toggle_filter() {
 	conf.video_filter++;
 	if (conf.video_filter > 5) { conf.video_filter = 0; }
-	//video_init();
-	//nst_video_refresh();
+	video_init();
+	nst_video_refresh();
 }
 
 void video_toggle_filterupdate() {
@@ -470,7 +470,7 @@ void video_set_dimensions() {
 		case 5: // ScaleX
 			basesize.w = Video::Output::WIDTH * scalefactor;
 			basesize.h = Video::Output::HEIGHT * scalefactor;
-			conf.video_tv_aspect == true ? rendersize.w = tvwidth * wscalefactor : rendersize.w = Video::Output::WIDTH * wscalefactor;;
+			conf.video_tv_aspect == true ? rendersize.w = tvwidth * wscalefactor : rendersize.w = Video::Output::WIDTH * wscalefactor;
 			rendersize.h = Video::Output::HEIGHT * wscalefactor;
 			overscan_offset = basesize.w * OVERSCAN_TOP * scalefactor;
 			overscan_height = basesize.h - (OVERSCAN_TOP + OVERSCAN_BOTTOM) * scalefactor;
@@ -493,15 +493,6 @@ void video_set_dimensions() {
 	
 	// Calculate the aspect from the height because it's smaller
 	float aspect = (float)screensize.h / (float)rendersize.h;
-	
-	if (!conf.video_stretch_aspect && conf.video_fullscreen) {
-		rendersize.h *= aspect;
-		rendersize.w *= aspect;
-	}
-	else if (conf.video_fullscreen) {
-		rendersize.h = screensize.h;
-		rendersize.w = screensize.w;
-	}
 }
 
 long video_lock_screen(void*& ptr) {
