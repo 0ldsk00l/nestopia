@@ -397,7 +397,16 @@ namespace Nes
 				{
 					wrk.Source().SetSecurity( true, board.GetWram() > 0 );
 
-					for (uint i=board.GetSavableWram(), n=board.GetWram(); i < n; ++i)
+					uint i = board.GetSavableWram();
+					uint n = board.GetWram();
+
+					if (board.GetMapper() == 1 && board.GetWram() == SIZE_16K)
+					{
+						i = 0;
+						n = SIZE_8K;
+					}
+
+					for (; i < n; ++i)
 						*wrk.Source().Mem(i) = (board.IsAutoWram() && i < SIZE_8K) ? (0x6000 + i) >> 8 : 0x00;
 
 					vram.Fill( 0x00 );

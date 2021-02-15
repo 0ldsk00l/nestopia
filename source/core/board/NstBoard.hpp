@@ -468,7 +468,7 @@ namespace Nes
 						// Nihon Bussan
 						NIHON_UNROM_M5             = MakeId<  180,  128,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						// Open Corp
-						OPENCORP_DAOU306           = MakeId<  156,  256,  256,  8,  0, CRM_0,  NMT_1,  0 >::ID,
+						OPENCORP_DAOU306           = MakeId<  156,  256,  512,  8,  0, CRM_0,  NMT_1,  0 >::ID,
 						// RCM
 						RCM_GS2004                 = MakeId< NMPR,  512,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						RCM_GS2013                 = MakeId< NMPR,  512,    0,  0,  0, CRM_8,  NMT_X,  1 >::ID,

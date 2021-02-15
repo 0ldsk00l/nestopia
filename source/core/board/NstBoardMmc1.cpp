@@ -25,6 +25,7 @@
 #include "../NstLog.hpp"
 #include "NstBoard.hpp"
 #include "NstBoardMmc1.hpp"
+#include "../NstFile.hpp"
 
 namespace Nes
 {
@@ -118,6 +119,20 @@ namespace Nes
 			#ifdef NST_MSVC_OPTIMIZE
 			#pragma optimize("", on)
 			#endif
+
+			void Mmc1::Save(File& file) const
+			{
+				uint offset = (board.GetWram() == SIZE_16K) ? SIZE_8K : 0; // SOROM
+				if (board.HasBattery() && board.GetSavableWram())
+					file.Save( File::BATTERY, wrk.Source().Mem(offset), board.GetSavableWram() );
+			}
+
+			void Mmc1::Load(File& file)
+			{
+				uint offset = (board.GetWram() == SIZE_16K) ? SIZE_8K : 0; // SOROM
+				if (board.HasBattery() && board.GetSavableWram())
+					file.Load( File::BATTERY, wrk.Source().Mem(offset), board.GetSavableWram() );
+			}
 
 			void Mmc1::UpdatePrg()
 			{

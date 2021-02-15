@@ -153,7 +153,12 @@ namespace Nes
 				void Vrc2::SwapChr(uint address,uint subBank) const
 				{
 					ppu.Update();
-					chr.SwapBank<SIZE_1K>( address, (chr.GetBank<SIZE_1K>(address) & 0xF0U >> OFFSET) | ((subBank >> chrShift & 0xF) << OFFSET) );
+
+					chr.SwapBank<SIZE_1K>( address, chrShift ? OFFSET ?
+						(chr.GetBank<SIZE_1K>(address) & 0x07U) | ((subBank & 0xFU) << 3) :
+						(chr.GetBank<SIZE_1K>(address) & 0xF8U) | ((subBank >> 1) & 0x7U) :
+						(chr.GetBank<SIZE_1K>(address) & 0xF0U >> OFFSET) | ((subBank & 0xFU) << OFFSET)
+					);
 				}
 
 				NES_POKE_D(Vrc2,B000) { SwapChr<0>( 0x0000, data ); }

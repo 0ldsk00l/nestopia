@@ -322,7 +322,7 @@ namespace Nes
 							ctrl = data[0] >> 1 & 0x1F;
 							length = data[1] | (data[2] << 8 & 0xF00);
 							volume = levels[(ctrl & 0xF) ? (ctrl & 0xF) * 2 + 1 : 0];
-							dc = (status & 0x1) ? ~0UL : 0UL;
+							dc = (status & 0x1) ? ~dword(0) : dword(0);
 
 							UpdateSettings( fixed );
 						}

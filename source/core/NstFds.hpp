@@ -340,7 +340,6 @@ namespace Nes
 					Timer();
 
 					void Reset();
-					void Advance(uint&);
 
 					NST_SINGLE_CALL bool Clock();
 
@@ -435,6 +434,7 @@ namespace Nes
 
 				Adapter(Cpu&,const Disks::Sides&);
 
+				void DisableIRQ();
 				void Reset(Cpu&,byte*,bool=false);
 				void LoadState(State::Loader&,dword,Ppu&);
 				void SaveState(State::Saver&) const;
@@ -447,6 +447,8 @@ namespace Nes
 				NST_SINGLE_CALL uint Activity() const;
 
 				using Timer::M2<Unit>::VSync;
+
+				byte ctrl;
 			};
 
 			struct Io

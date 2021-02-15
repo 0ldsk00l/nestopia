@@ -46,7 +46,18 @@ namespace Nes
 
 				private:
 
+					byte chrLow[8];
+					byte chrHigh[8];
+					byte mirror;
+					byte mirrorUsed;
+
+					void RemapChr();
 					void SubReset(bool);
+					void SubSave(State::Saver&) const;
+					void SubLoad(State::Loader&,dword);
+
+					NES_DECL_POKE( C000 );
+					NES_DECL_POKE( C014 );
 				};
 			}
 		}

@@ -95,9 +95,11 @@ namespace Nes
 							bool Clock();
 
 							uint count;
+							uint cycles;
 							uint latch;
 							ibool reload;
 							ibool enabled;
+							ibool mode;
 						};
 
 						typedef Timer::A12<Unit&,A12_FILTER,IRQ_DELAY> A12;

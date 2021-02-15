@@ -82,6 +82,9 @@ namespace Nes
 
 			private:
 
+				void Save(File&) const;
+				void Load(File&);
+
 				void ResetRegisters();
 				virtual void NST_FASTCALL UpdateRegisters(uint);
 

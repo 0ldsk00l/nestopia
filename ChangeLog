@@ -13,11 +13,15 @@ Core:
   - Use Nestopia core from jgemu
 
  Fixes:
-  - Timing and other accuracy fixes
+  - Timing and other accuracy fixes for CPU/APU
   - Revert changes that caused regressions
   - Fix Camerica mapper for Dooly Bravo Land
   - Improve MMC5 emulation for Sim City
   - Fix 8K PRG NROM games such as Galaxian
+  - Full implementation of mapper 156
+  - Fix SOROM saving/loading
+  - Fix FDS IRQ behaviour
+  - Improve RAMBO-1 timing
 
 ----------------------------------------------------------------
 1.50

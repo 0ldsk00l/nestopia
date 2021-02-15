@@ -54,6 +54,7 @@ namespace Nes
 					if (hard)
 					{
 						count = 0;
+						cycles = 0;
 						reload = false;
 						latch = 0;
 						enabled = false;
@@ -121,14 +122,16 @@ namespace Nes
 
 								case AsciiId<'I','R','Q'>::V:
 								{
-									State::Loader::Data<3> data( state );
+									State::Loader::Data<4> data( state );
 
 									irq.unit.enabled = data[0] & 0x1;
+									irq.unit.mode = data[0] & 0x2 ? 1 : 0;
 									irq.a12.Connect( data[0] & 0x2 );
 									irq.m2.Connect( data[0] & 0x2 );
 									irq.unit.reload = data[0] & 0x4;
 									irq.unit.latch = data[1];
 									irq.unit.count = data[2];
+									irq.unit.cycles = data[3];
 
 									break;
 								}
@@ -164,13 +167,14 @@ namespace Nes
 					}
 
 					{
-						const byte data[3] =
+						const byte data[4] =
 						{
 							(irq.unit.enabled   ? 0x1U : 0x0U) |
 							(irq.m2.Connected() ? 0x2U : 0x0U) |
 							(irq.unit.reload    ? 0x4U : 0x0U),
 							irq.unit.latch,
-							irq.unit.count & 0xFF
+							irq.unit.count & 0xFF,
+							irq.unit.cycles,
 						};
 
 						state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();
@@ -185,47 +189,33 @@ namespace Nes
 
 				bool Rambo1::Irq::Unit::Clock()
 				{
-					/*if (!reload)
+					cycles++;
+
+					if (reload)
 					{
-						if (count)
-						{
-							return !--count && enabled;
-						}
-						else
-						{
-							count = latch;
-							return false;
-						}
+						reload = false;
+						count = latch | (latch ? 1 : 0);
+
+						if (mode)
+							count |= 2;
+
+						if (!latch && cycles > A12_FILTER)
+							count = 1;
+
+						cycles = 0;
+					}
+					else if (!count)
+					{
+						count = latch;
+						if (cycles > A12_FILTER)
+							cycles = 0;
 					}
 					else
 					{
-						reload = false;
-						count = latch + 1;
-						return false;
-					}*/
-					
-					// From dragon2snow
-					if (reload)  {
-						if (latch < 1) {
-							count = latch + 1;
-						}
-						else {
-							count = latch + 2;
-						}
-						reload = false;
+						count--;
 					}
-					else if (!count) {
-						count = latch + 1;
-					}
-					
-					count--;
-					
-					if (!count && enabled) {
-						/* wait one M2 cycle, then trigger IRQ */
-						return true;
-					}
-					
-					return false;
+
+					return (!count && enabled);
 				}
 
 				void Rambo1::Irq::Update()
@@ -320,6 +310,7 @@ namespace Nes
 				{
 					irq.Update();
 					irq.unit.latch = data;
+					irq.unit.mode = irq.m2.Connected();
 				}
 
 				NES_POKE_D(Rambo1,C001)
