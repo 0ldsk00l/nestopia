@@ -30,6 +30,8 @@ typedef struct {
 	SDL_Event jtb;
 	SDL_Event rwstart;
 	SDL_Event rwstop;
+	SDL_Event softreset;
+	SDL_Event hardreset;
 } gamepad_t;
 
 typedef struct {
@@ -82,7 +84,10 @@ typedef struct {
 	
 	char *js_rwstart;
 	char *js_rwstop;
-	
+
+	char *js_softreset;
+	char *js_hardreset;
+
 	// Player 2
 	char *kb_p2u;
 	char *kb_p2d;

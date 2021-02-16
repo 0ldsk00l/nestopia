@@ -117,9 +117,10 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 		player[1].jselect, player[1].jstart, player[1].ja, player[1].jb,
 		player[1].jta, player[1].jtb
 	};
-	
+
 	SDL_Event rw[2] = { player[0].rwstart, player[0].rwstop };
-	
+	SDL_Event reset[2] = { player[0].softreset, player[0].hardreset };
+
 	switch(event.type) {
 		// Handle button input
 		case SDL_JOYBUTTONUP:
@@ -140,8 +141,10 @@ void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event even
 			// Rewind
 			if (event.jbutton.button == rw[0].jbutton.button && event.jbutton.which == rw[0].jbutton.which) { nst_set_rewind(0); }
 			if (event.jbutton.button == rw[1].jbutton.button && event.jbutton.which == rw[1].jbutton.which) { nst_set_rewind(1); }
+			if (event.jbutton.button == reset[0].jbutton.button && event.jbutton.which == reset[0].jbutton.which) { nst_reset(0); }
+			if (event.jbutton.button == reset[1].jbutton.button && event.jbutton.which == reset[1].jbutton.which) { nst_reset(1); }
 			break;
-		
+
 		// Handling hat input can be a lot of fun if you like pain
 		case SDL_JOYHATMOTION:
 			unsigned char hu, hd, hl, hr;
@@ -356,7 +359,10 @@ static int nstsdl_input_config_match(void* user, const char* section, const char
 	
 	else if (MATCH("gamepad1", "js_rwstart")) { pconfig->js_rwstart = strdup(value); }
 	else if (MATCH("gamepad1", "js_rwstop")) { pconfig->js_rwstop = strdup(value); }
-	
+
+	else if (MATCH("gamepad1", "js_softreset")) { pconfig->js_softreset = strdup(value); }
+	else if (MATCH("gamepad1", "js_hardreset")) { pconfig->js_hardreset = strdup(value); }
+
 	// Player 2
 	else if (MATCH("gamepad2", "kb_u")) { pconfig->kb_p2u = strdup(value); }
 	else if (MATCH("gamepad2", "kb_d")) { pconfig->kb_p2d = strdup(value); }
@@ -405,7 +411,10 @@ void nstsdl_input_conf_read() {
 		
 		if (inputconf.js_rwstart) { player[0].rwstart = nstsdl_input_translate_string(inputconf.js_rwstart); }
 		if (inputconf.js_rwstop) { player[0].rwstop = nstsdl_input_translate_string(inputconf.js_rwstop); }
-		
+
+		if (inputconf.js_softreset) { player[0].softreset = nstsdl_input_translate_string(inputconf.js_softreset); }
+		if (inputconf.js_hardreset) { player[0].hardreset = nstsdl_input_translate_string(inputconf.js_hardreset); }
+
 		// Player 2
 		player[1].ju = nstsdl_input_translate_string(inputconf.js_p2u);
 		player[1].jd = nstsdl_input_translate_string(inputconf.js_p2d);
