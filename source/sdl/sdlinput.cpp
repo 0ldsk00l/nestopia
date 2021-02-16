@@ -259,6 +259,8 @@ void nstsdl_input_conf_defaults() {
 	
 	player[0].rwstart = nstsdl_input_translate_string("j0b4");
 	player[0].rwstop = nstsdl_input_translate_string("j0b5");
+	player[0].softreset = nstsdl_input_translate_string("j0b99");
+	player[0].hardreset = nstsdl_input_translate_string("j0b99");
 	
 	player[1].ju = nstsdl_input_translate_string("j1h01");
 	player[1].jd = nstsdl_input_translate_string("j1h04");
@@ -453,6 +455,8 @@ void nstsdl_input_conf_write() {
 		
 		fprintf(fp, "js_rwstart=%s\n", nstsdl_input_translate_event(player[0].rwstart));
 		fprintf(fp, "js_rwstop=%s\n", nstsdl_input_translate_event(player[0].rwstop));
+		fprintf(fp, "js_softreset=%s\n", nstsdl_input_translate_event(player[0].softreset));
+		fprintf(fp, "js_hardreset=%s\n", nstsdl_input_translate_event(player[0].hardreset));
 		fprintf(fp, "\n"); // End of Section
 		
 		fprintf(fp, "[gamepad2]\n");
