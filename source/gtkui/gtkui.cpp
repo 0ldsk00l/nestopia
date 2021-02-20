@@ -639,9 +639,6 @@ int main(int argc, char *argv[]) {
 	// Set archive handler function pointer
 	nst_archive_select = &gtkui_archive_select;
 	
-	// Set audio function pointers
-	audio_set_funcs();
-	
 	// Detect and set up Joysticks
 	nstsdl_input_joysticks_detect();
 	nstsdl_input_conf_defaults();

@@ -20,53 +20,60 @@
  * 
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 
 #include "nstcommon.h"
 #include "config.h"
 #include "audio.h"
+
+#define IBUFSIZE 3200
+#define EBUFSIZE 6400
 
 extern Emulator emulator;
 
 static SDL_AudioSpec spec, obtained;
 static SDL_AudioDeviceID dev;
 
-static int16_t audiobuf[6400];
+static int16_t intbuf[IBUFSIZE];
+
+static int16_t extbuf[EBUFSIZE];
+static uint16_t bufstart = 0;
+static uint16_t bufend = 0;
+static uint16_t bufsamples = 0;
 
 static int framerate, channels, bufsize;
 
 static bool paused = false;
 
-void (*audio_output)();
-void (*audio_deinit)();
-
-void audio_output_sdl() {
-	while (SDL_GetQueuedAudioSize(dev) > (Uint32)bufsize) {
-		if (conf.timing_limiter) { SDL_Delay(1); }
+void audio_queue() {
+	SDL_LockAudioDevice(dev);
+	for (int i = 0; i < bufsize; i++) {
+		extbuf[bufend] = intbuf[i];
+		bufend = (bufend + 1) % EBUFSIZE;
+		bufsamples++;
+		if (bufsamples >= EBUFSIZE - 1) { break; }
 	}
-	SDL_QueueAudio(dev, (const void*)audiobuf, bufsize);
-	// Clear the audio queue arbitrarily to avoid it backing up too far
-	if (SDL_GetQueuedAudioSize(dev) > (Uint32)(bufsize * 3)) { SDL_ClearQueuedAudio(dev); }
+	SDL_UnlockAudioDevice(dev);
 }
 
-void audio_deinit_sdl() {
+static int16_t audio_dequeue() {
+	if (bufsamples == 0) { return 0; }
+	int16_t sample = extbuf[bufstart];
+	bufstart = (bufstart + 1) % EBUFSIZE;
+	bufsamples--;
+	return sample;
+}
+
+void audio_cb(void *data, uint8_t *stream, int len) {
+	int16_t *out = (int16_t*)stream;
+	for (int i = 0; i < len / 2; i++) {
+		out[i] = audio_dequeue();
+	}
+}
+
+void audio_deinit() {
 	if (dev) { SDL_CloseAudioDevice(dev); }
-}
-
-void audio_play() {
-	if (paused) { return; }
-	bufsize = 2 * channels * (conf.audio_sample_rate / framerate);
-	audio_output();
-}
-
-void audio_cb_sdl(void *data, uint8_t *stream, int len) {
-	uint8_t *soundbuf = (uint8_t*)audiobuf;
-	
-	for (int i = 0; i < len; i++) {
-		stream[i] = soundbuf[i];
-	}
 }
 
 void audio_init_sdl() {
@@ -74,10 +81,11 @@ void audio_init_sdl() {
 	spec.format = AUDIO_S16SYS;
 	spec.channels = channels;
 	spec.silence = 0;
-	spec.samples = (conf.audio_sample_rate / framerate);
+	spec.samples = 512;
 	spec.userdata = 0;
-	spec.callback = NULL; // Use SDL_QueueAudio instead
-	//spec.callback = audio_cb_sdl;
+	spec.callback = audio_cb;
+	
+	bufsize = channels * (conf.audio_sample_rate / framerate);
 	
 	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 	if (!dev) {
@@ -90,19 +98,12 @@ void audio_init_sdl() {
 	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
 }
 
-void audio_set_funcs() {
-	// SDL
-	audio_output = &audio_output_sdl;
-	audio_deinit = &audio_deinit_sdl;
-}
-
 void audio_init() {
 	// Initialize audio device
 	// Set the framerate based on the region. For PAL: (60 / 6) * 5 = 50
 	framerate = nst_pal() ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
 	channels = conf.audio_stereo ? 2 : 1;
-	memset(audiobuf, 0, sizeof(audiobuf));
-	audio_set_funcs();
+	memset(intbuf, 0, sizeof(intbuf));
 	audio_init_sdl();
 	paused = false;
 }
@@ -115,7 +116,7 @@ void audio_pause() {
 
 void audio_unpause() {
 	// Unpause the SDL audio device
-    SDL_PauseAudioDevice(dev, 0);
+	SDL_PauseAudioDevice(dev, 0);
 	paused = false;
 }
 
@@ -131,7 +132,7 @@ void audio_set_params(Sound::Output *soundoutput) {
 	
 	audio_adj_volume();
 	
-	soundoutput->samples[0] = audiobuf;
+	soundoutput->samples[0] = intbuf;
 	soundoutput->length[0] = conf.audio_sample_rate / framerate;
 	soundoutput->samples[1] = NULL;
 	soundoutput->length[1] = 0;
@@ -153,5 +154,5 @@ void audio_adj_volume() {
 	sound.SetVolume(Sound::CHANNEL_N163, conf.audio_vol_n163);
 	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);
 	
-	if (conf.audio_volume == 0) { memset(audiobuf, 0, sizeof(audiobuf)); }
+	if (conf.audio_volume == 0) { memset(intbuf, 0, sizeof(intbuf)); }
 }

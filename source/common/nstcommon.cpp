@@ -26,9 +26,8 @@
 #include <fstream>
 #include <sstream>
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
+#include <cstdio>
+#include <cstring>
 #include <libgen.h>
 
 #include <errno.h>
@@ -82,6 +81,7 @@ static void NST_CALLBACK nst_cb_videounlock(void* userData, Video::Output& video
 }
 
 static bool NST_CALLBACK nst_cb_soundlock(void* userData, Sound::Output& sound) {
+	audio_queue();
 	return true;
 }
 
@@ -820,8 +820,6 @@ void nst_emuloop() {
 	}
 	
 	if (playing) {
-		audio_play();
-		
 		// Pulse the turbo buttons
 		nst_input_turbo_pulse(cNstPads);
 		
