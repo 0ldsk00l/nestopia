@@ -10,6 +10,10 @@ Shell:
 
 Core:
 
+ Additions:
+  - Mappers 306, 307, 312
+  - Convert UNIF to NES 2.0 mappers (262, 286, 298, 301)
+
  Changes:
   - Use Nestopia core from jgemu
 
@@ -23,6 +27,8 @@ Core:
   - Fix SOROM saving/loading
   - Fix FDS IRQ behaviour
   - Improve RAMBO-1 timing
+  - Fix support for Korean Igo (Korea) (Unl)
+  - Implement mirroring for UNL-KOF97
 
 ----------------------------------------------------------------
 1.50
