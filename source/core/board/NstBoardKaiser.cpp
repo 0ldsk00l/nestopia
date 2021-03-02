@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2021 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -38,27 +39,6 @@ namespace Nes
 				#pragma optimize("s", on)
 				#endif
 
-				void Ks7058::SubReset(bool)
-				{
-					for (uint i=0x000; i < 0x1000; i += 0x100)
-					{
-						Map( 0xF000+i, 0xF07F+i, CHR_SWAP_4K_0 );
-						Map( 0xF080+i, 0xF0FF+i, CHR_SWAP_4K_1 );
-					}
-				}
-
-				void Ks7022::SubReset(const bool hard)
-				{
-					reg = 0;
-
-					if (hard)
-						prg.SwapBanks<SIZE_16K,0x0000>( 0, 0 );
-
-					Map( 0x8000, &Ks7022::Poke_8000 );
-					Map( 0xA000, &Ks7022::Poke_A000 );
-					Map( 0xFFFC, &Ks7022::Peek_FFFC );
-				}
-
 				Ks202::Ks202(const Context& c)
 				: Board(c), irq(*c.cpu) {}
 
@@ -89,6 +69,36 @@ namespace Nes
 					irq.Reset( hard, hard ? false : irq.Connected() );
 				}
 
+				void Ks7013b::SubReset(const bool hard)
+				{
+					prg.SwapBank<SIZE_16K>( 0x4000, 0x7 );
+
+					Map( 0x6000U, 0x7FFFU, &Ks7013b::Poke_6000 );
+					Map( 0x8000U, 0xFFFFU, &Ks7013b::Poke_8000 );
+				}
+
+				void Ks7016::SubReset(const bool hard)
+				{
+					reg = 8;
+
+					prg.SwapBank<SIZE_32K>( 0x0000, 0x3 );
+
+					Map( 0x6000U, 0x7FFFU, &Ks7016::Peek_6000 );
+					Map( 0x8000U, 0xFFFFU, &Ks7016::Poke_8000 );
+				}
+
+				void Ks7022::SubReset(const bool hard)
+				{
+					reg = 0;
+
+					if (hard)
+						prg.SwapBanks<SIZE_16K,0x0000>( 0, 0 );
+
+					Map( 0x8000, &Ks7022::Poke_8000 );
+					Map( 0xA000, &Ks7022::Poke_A000 );
+					Map( 0xFFFC, &Ks7022::Peek_FFFC );
+				}
+
 				void Ks7031::SubReset(const bool hard)
 				{
 					Map( 0x6000U, 0xFFFEU, &Ks7031::Peek_6000 );
@@ -104,6 +114,62 @@ namespace Nes
 				{
 					Ks202::SubReset( hard );
 					Map( 0x6000U, 0x7FFFU, &Ks7032::Peek_6000 );
+				}
+
+				void Ks7037::SubReset(const bool hard)
+				{
+					if (hard)
+					{
+						regNum = 0;
+
+						for (uint i = 0; i < 8; ++i)
+							regs[i] = 0;
+					}
+
+					Map( 0x6000U, 0x6FFFU, &Ks7037::Peek_6000 );
+					Map( 0x6000U, 0x6FFFU, &Ks7037::Poke_6000 );
+
+					Map( 0x7000U, 0x7FFFU, &Ks7037::Peek_7000 );
+					Map( 0x8000U, 0x9FFFU, &Ks7037::Peek_8000 );
+
+					for (uint i = 0x0000; i < 0x2000; i += 0x2)
+					{
+						Map( 0x8000 + i, &Ks7037::Poke_8000 );
+						Map( 0x8001 + i, &Ks7037::Poke_8001 );
+					}
+
+					Map( 0xA000U, 0xAFFFU, &Ks7037::Peek_A000 );
+
+					Map( 0xB000U, 0xBFFFU, &Ks7037::Peek_B000 );
+					Map( 0xB000U, 0xBFFFU, &Ks7037::Poke_B000 );
+
+					Map( 0xC000U, 0xDFFFU, &Ks7037::Peek_C000 );
+					Map( 0xE000U, 0xEFFFU, &Ks7037::Peek_E000 );
+				}
+
+				void Ks7058::SubReset(bool)
+				{
+					for (uint i=0x000; i < 0x1000; i += 0x100)
+					{
+						Map( 0xF000+i, 0xF07F+i, CHR_SWAP_4K_0 );
+						Map( 0xF080+i, 0xF0FF+i, CHR_SWAP_4K_1 );
+					}
+				}
+
+				void Ks7016::SubLoad(State::Loader& state,const dword baseChunk)
+				{
+					NST_VERIFY( (baseChunk == AsciiId<'K','7','6'>::V) );
+
+					if (baseChunk == AsciiId<'K','7','6'>::V)
+					{
+						while (const dword chunk = state.Begin())
+						{
+							if (chunk == AsciiId<'R','E','G'>::V)
+								reg = state.Read8();
+
+							state.End();
+						}
+					}
 				}
 
 				void Ks7022::SubLoad(State::Loader& state,const dword baseChunk)
@@ -178,9 +244,32 @@ namespace Nes
 					}
 				}
 
-				void Ks7022::SubSave(State::Saver& state) const
+				void Ks7037::SubLoad(State::Loader& state,const dword baseChunk)
 				{
-					state.Begin( AsciiId<'K','7','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
+					NST_VERIFY( (baseChunk == AsciiId<'K','7','7'>::V) );
+
+					if (baseChunk == AsciiId<'K','7','7'>::V)
+					{
+						while (const dword chunk = state.Begin())
+						{
+							if (chunk == AsciiId<'R','E','G'>::V)
+							{
+								State::Loader::Data<9> data( state );
+
+								regs[0] = data[0];
+								regs[1] = data[1];
+								regs[2] = data[2];
+								regs[3] = data[3];
+								regs[4] = data[4];
+								regs[5] = data[5];
+								regs[6] = data[6];
+								regs[7] = data[7];
+								regNum = data[8];
+							}
+
+							state.End();
+						}
+					}
 				}
 
 				void Ks202::SubSave(State::Saver& state) const
@@ -201,6 +290,16 @@ namespace Nes
 					state.End();
 				}
 
+				void Ks7016::SubSave(State::Saver& state) const
+				{
+					state.Begin( AsciiId<'K','7','6'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
+				}
+
+				void Ks7022::SubSave(State::Saver& state) const
+				{
+					state.Begin( AsciiId<'K','7','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
+				}
+
 				void Ks7031::SubSave(State::Saver& state) const
 				{
 					state.Begin( AsciiId<'K','7','1'>::V );
@@ -209,33 +308,24 @@ namespace Nes
 					state.End();
 				}
 
+				void Ks7037::SubSave(State::Saver& state) const
+				{
+					state.Begin( AsciiId<'K','7','7'>::V );
+
+					const byte data[9] =
+					{
+						regs[0], regs[1], regs[2], regs[3],
+						regs[4], regs[5], regs[6], regs[7],
+						regNum
+					};
+
+					state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
+					state.End();
+				}
+
 				#ifdef NST_MSVC_OPTIMIZE
 				#pragma optimize("", on)
 				#endif
-
-				NES_PEEK_A(Ks7032,6000)
-				{
-					return wrk[0][address - 0x6000];
-				}
-
-				NES_POKE_D(Ks7022,8000)
-				{
-					ppu.SetMirroring( (data & 0x4) ? Ppu::NMT_H : Ppu::NMT_V );
-				}
-
-				NES_POKE_D(Ks7022,A000)
-				{
-					reg = data & 0xF;
-				}
-
-				NES_PEEK(Ks7022,FFFC)
-				{
-					ppu.Update();
-					chr.SwapBank<SIZE_8K,0x0000>( reg );
-					prg.SwapBanks<SIZE_16K,0x0000>( reg, reg );
-
-					return prg.Peek(0x7FFC);
-				}
 
 				NES_POKE_D(Ks202,8000)
 				{
@@ -326,6 +416,68 @@ namespace Nes
 					}
 				}
 
+				bool Ks202::Irq::Clock()
+				{
+					return (count++ == 0xFFFF) ? (count=latch, true) : false;
+				}
+
+				void Ks202::Sync(Event event,Input::Controllers* controllers)
+				{
+					if (event == EVENT_END_FRAME)
+						irq.VSync();
+
+					Board::Sync( event, controllers );
+				}
+
+				NES_POKE_D(Ks7013b,6000)
+				{
+					prg.SwapBank<SIZE_16K>( 0x0000, data & 0x7 );
+				}
+
+				NES_POKE_D(Ks7013b,8000)
+				{
+					ppu.SetMirroring( (data & 0x1) ? Ppu::NMT_H : Ppu::NMT_V );
+				}
+
+				NES_PEEK_A(Ks7016,6000)
+				{
+					return *(prg.Source().Mem(reg * SIZE_8K) + (address & 0x1FFF));
+				}
+
+				NES_POKE_A(Ks7016,8000)
+				{
+					bool mode = (address & 0x30) == 0x30;
+
+					switch(address & 0xD943) {
+						case 0xD943:
+							reg = mode ? 0xB : (address >> 2) & 0xF;
+							break;
+
+						case 0xD903:
+							reg = mode ? 0x8 | ((address >> 2) & 0x3) : reg = 0xB;
+							break;
+					}
+				}
+
+				NES_POKE_D(Ks7022,8000)
+				{
+					ppu.SetMirroring( (data & 0x4) ? Ppu::NMT_H : Ppu::NMT_V );
+				}
+
+				NES_POKE_D(Ks7022,A000)
+				{
+					reg = data & 0xF;
+				}
+
+				NES_PEEK(Ks7022,FFFC)
+				{
+					ppu.Update();
+					chr.SwapBank<SIZE_8K,0x0000>( reg );
+					prg.SwapBanks<SIZE_16K,0x0000>( reg, reg );
+
+					return prg.Peek(0x7FFC);
+				}
+
 				NES_POKE_AD(Ks7031,8000)
 				{
 					regs[(address >> 11) & 0x03] = data;
@@ -345,17 +497,74 @@ namespace Nes
 					return prg[0][new_addr];
 				}
 
-				bool Ks202::Irq::Clock()
+				NES_PEEK_A(Ks7032,6000)
 				{
-					return (count++ == 0xFFFF) ? (count=latch, true) : false;
+					return wrk[0][address - 0x6000];
 				}
 
-				void Ks202::Sync(Event event,Input::Controllers* controllers)
+				NES_PEEK_A(Ks7037,6000)
 				{
-					if (event == EVENT_END_FRAME)
-						irq.VSync();
+					NST_VERIFY( wrk.Readable(0) );
+					return wrk.Readable(0) ? wrk[0][address - 0x6000] : (address >> 8);
+				}
 
-					Board::Sync( event, controllers );
+				NES_POKE_AD(Ks7037,6000)
+				{
+					NST_VERIFY( wrk.Writable(0) );
+
+					if (wrk.Writable(0))
+						wrk[0][address- 0x6000] = data;
+				}
+
+				NES_PEEK_A(Ks7037,7000)
+				{
+					return *(prg.Source().Mem(SIZE_4K * 15) + (address & 0xFFF));
+				}
+
+				NES_PEEK_A(Ks7037,8000)
+				{
+					return *(prg.Source().Mem(regs[6] * SIZE_8K) + (address & 0x1FFF));
+				}
+
+				NES_POKE_D(Ks7037,8000)
+				{
+					regNum = data & 0x7U;
+					byte mirror[4] = { regs[2], regs[4], regs[3], regs[5] };
+					ppu.SetMirroring(mirror);
+				}
+
+				NES_POKE_D(Ks7037,8001)
+				{
+					regs[regNum] = data;
+				}
+
+				NES_PEEK_A(Ks7037,A000)
+				{
+					return *(prg.Source().Mem(SIZE_4K * 28) + (address & 0xFFF));
+				}
+
+				NES_PEEK_A(Ks7037,B000)
+				{
+					NST_VERIFY( wrk.Readable(0) );
+					return wrk.Readable(0) ? wrk[0][address - 0xA000] : (address >> 8);
+				}
+
+				NES_POKE_AD(Ks7037,B000)
+				{
+					NST_VERIFY( wrk.Writable(0) );
+
+					if (wrk.Writable(0))
+						wrk[0][address- 0xA000] = data;
+				}
+
+				NES_PEEK_A(Ks7037,C000)
+				{
+					return *(prg.Source().Mem(regs[7] * SIZE_8K) + (address & 0x1FFF));
+				}
+
+				NES_PEEK_A(Ks7037,E000)
+				{
+					return *(prg.Source().Mem(SIZE_8K * 15) + (address & 0x1FFF));
 				}
 			}
 		}

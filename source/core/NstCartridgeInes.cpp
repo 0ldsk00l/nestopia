@@ -674,7 +674,7 @@ namespace Nes
 
 			if (setup.version)
 			{
-				setup.mapper |= uint(header[8]) << 8 & 0x100;
+				setup.mapper |= uint(header[8]) << 8 & 0x300;
 				setup.subMapper = header[8] >> 4;
 			}
 

@@ -6,6 +6,7 @@ Shell:
  Changes:
   - Merged the win32 sources back into the main codebase
   - Change versioning scheme
+  - Remove trademark from controller image in GTK port
 
 Core:
 

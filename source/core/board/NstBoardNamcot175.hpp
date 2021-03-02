@@ -3,7 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
-// Copyright (C) 2014 R. Danbrook
+// Copyright (C) 2021 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -47,35 +47,10 @@ namespace Nes
 				private:
 
 					void SubReset(bool);
-					void SubSave(State::Saver&) const;
-					void SubLoad(State::Loader&,dword);
-					void Load(File&);
-					void Save(File&) const;
-					void Sync(Event,Input::Controllers*);
-					void SwapChr(uint,uint,uint) const;
-					void SwapNmt(uint,uint) const;
 
-					struct Irq
-					{
-						void Reset(bool);
-						bool Clock();
-
-						uint count;
-					};
-
-					NES_DECL_PEEK( 4800 );
-					NES_DECL_POKE( 4800 );
-					NES_DECL_PEEK( 5000 );
-					NES_DECL_POKE( 5000 );
-					NES_DECL_PEEK( 5800 );
-					NES_DECL_POKE( 5800 );
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_POKE( 6000 );
 					NES_DECL_POKE( C000 );
-					NES_DECL_POKE( C800 );
-					NES_DECL_POKE( D000 );
-					NES_DECL_POKE( D800 );
-					NES_DECL_POKE( F800 );
-
-					Timer::M2<Irq> irq;
 				};
 			}
 		}

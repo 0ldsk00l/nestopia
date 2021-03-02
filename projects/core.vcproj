@@ -1294,12 +1294,18 @@
 				<File
 					RelativePath="..\source\core\board\NstBoardNamcot175.cpp"
 					>
+				<File
+					RelativePath="..\source\core\board\NstBoardNamcot340.cpp"
+					>
 				</File>
 				<File
 					RelativePath="..\source\core\board\NstBoardNamcot163.hpp"
 					>
 				<File
 					RelativePath="..\source\core\board\NstBoardNamcot175.hpp"
+					>
+				<File
+					RelativePath="..\source\core\board\NstBoardNamcot340.hpp"
 					>
 				</File>
 				<File

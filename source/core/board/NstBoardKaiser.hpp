@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2021 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -37,18 +38,6 @@ namespace Nes
 		{
 			namespace Kaiser
 			{
-				class Ks7058 : public Board
-				{
-				public:
-
-					explicit Ks7058(const Context& c)
-					: Board(c) {}
-
-				private:
-
-					void SubReset(bool);
-				};
-
 				class Ks202 : public Board
 				{
 				public:
@@ -88,6 +77,59 @@ namespace Nes
 					Timer::M2<Irq> irq;
 				};
 
+				class Ks7013b : public Board
+				{
+				public:
+
+					explicit Ks7013b(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
+
+					NES_DECL_POKE( 6000 );
+					NES_DECL_POKE( 8000 );
+				};
+
+				class Ks7016 : public Board
+				{
+				public:
+
+					explicit Ks7016(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
+					void SubLoad(State::Loader&,dword);
+					void SubSave(State::Saver&) const;
+
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_POKE( 8000 );
+
+					uint reg;
+				};
+
+				class Ks7022 : public Board
+				{
+				public:
+
+					explicit Ks7022(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
+					void SubLoad(State::Loader&,dword);
+					void SubSave(State::Saver&) const;
+
+					NES_DECL_POKE( 8000 );
+					NES_DECL_POKE( A000 );
+					NES_DECL_PEEK( FFFC );
+
+					uint reg;
+				};
 
 				class Ks7031 : public Board
 				{
@@ -121,11 +163,10 @@ namespace Nes
 					NES_DECL_PEEK( 6000 );
 				};
 
-				class Ks7022 : public Board
+				class Ks7037 : public Board
 				{
 				public:
-
-					explicit Ks7022(const Context& c)
+					explicit Ks7037(const Context& c)
 					: Board(c) {}
 
 				private:
@@ -134,11 +175,32 @@ namespace Nes
 					void SubLoad(State::Loader&,dword);
 					void SubSave(State::Saver&) const;
 
-					NES_DECL_POKE( 8000 );
-					NES_DECL_POKE( A000 );
-					NES_DECL_PEEK( FFFC );
+					byte regNum;
+					byte regs[8];
 
-					uint reg;
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_POKE( 6000 );
+					NES_DECL_PEEK( 7000 );
+					NES_DECL_PEEK( 8000 );
+					NES_DECL_POKE( 8000 );
+					NES_DECL_POKE( 8001 );
+					NES_DECL_PEEK( A000 );
+					NES_DECL_PEEK( B000 );
+					NES_DECL_POKE( B000 );
+					NES_DECL_PEEK( C000 );
+					NES_DECL_PEEK( E000 );
+				};
+
+				class Ks7058 : public Board
+				{
+				public:
+
+					explicit Ks7058(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
 				};
 			}
 		}

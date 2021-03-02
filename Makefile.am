@@ -273,6 +273,7 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardNtdec.hpp \
 	source/core/board/NstBoardJalecoJf17.hpp \
 	source/core/board/NstBoardNamcot175.cpp \
+	source/core/board/NstBoardNamcot340.cpp \
 	source/core/board/NstBoardCamerica.cpp \
 	source/core/board/NstBoardGouder.hpp \
 	source/core/board/NstBoardJalecoJf16.cpp \
@@ -334,6 +335,7 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardHenggedianzi.hpp \
 	source/core/board/NstBoardRexSoftSl1632.hpp \
 	source/core/board/NstBoardNamcot175.hpp \
+	source/core/board/NstBoardNamcot340.hpp \
 	source/core/board/NstBoardBmcSuper700in1.hpp \
 	source/core/board/NstBoardBmc21in1.cpp \
 	source/core/board/NstBoardBmc8157.cpp \

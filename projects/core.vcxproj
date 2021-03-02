@@ -268,6 +268,7 @@
     <ClInclude Include="..\source\core\board\NstBoardNamcot.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardNamcot163.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardNamcot175.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardNamcot340.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardNamcot34xx.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardNanjing.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardNihon.hpp" />
@@ -576,6 +577,7 @@
     <ClCompile Include="..\source\core\board\NstBoardMagicSeries.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardNamcot163.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardNamcot175.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardNamcot340.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardNamcot34xx.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardNanjing.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardNihon.cpp" />

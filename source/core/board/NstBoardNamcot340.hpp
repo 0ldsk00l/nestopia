@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2021 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -22,17 +23,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
-#ifndef NST_BOARD_NAMCOT_H
-#define NST_BOARD_NAMCOT_H
+#ifndef NST_BOARD_NAMCOT_340_H
+#define NST_BOARD_NAMCOT_340_H
 
 #ifdef NST_PRAGMA_ONCE
 #pragma once
 #endif
-
-#include "NstBoardNamcot163.hpp"
-#include "NstBoardNamcot175.hpp"
-#include "NstBoardNamcot340.hpp"
-#include "NstBoardNamcot34xx.hpp"
 
 namespace Nes
 {
@@ -42,8 +38,18 @@ namespace Nes
 		{
 			namespace Namcot
 			{
-				typedef N34x3 N3433;
-				typedef N34x3 N3443;
+				class N340 : public Board
+				{
+				public:
+
+					explicit N340(const Context&);
+
+				private:
+
+					void SubReset(bool);
+
+					NES_DECL_POKE( E000 );
+				};
 			}
 		}
 	}

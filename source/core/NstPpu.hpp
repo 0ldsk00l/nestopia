@@ -414,6 +414,7 @@ namespace Nes
 			Chr chr;
 			Nmt nmt;
 			int scanline;
+			int scanline_sleep;
 		public:
 			Output output;
 		private:

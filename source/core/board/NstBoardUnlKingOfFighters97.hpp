@@ -52,6 +52,8 @@ namespace Nes
 
 					NES_DECL_POKE( 8000 );
 					NES_DECL_POKE( 8001 );
+					NES_DECL_POKE( A000 );
+					NES_DECL_POKE( A001 );
 					NES_DECL_POKE( C000 );
 					NES_DECL_POKE( C001 );
 					NES_DECL_POKE( E000 );

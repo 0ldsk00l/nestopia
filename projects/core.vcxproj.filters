@@ -474,6 +474,9 @@
     <ClInclude Include="..\source\core\board\NstBoardNamcot175.hpp">
       <Filter>Board\3rdparty</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardNamcot340.hpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClInclude>
     <ClInclude Include="..\source\core\board\NstBoardNamcot34xx.hpp">
       <Filter>Board\3rdparty</Filter>
     </ClInclude>
@@ -1291,6 +1294,9 @@
       <Filter>Board\3rdparty</Filter>
     </ClCompile>
     <ClCompile Include="..\source\core\board\NstBoardNamcot175.cpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardNamcot340.cpp">
       <Filter>Board\3rdparty</Filter>
     </ClCompile>
     <ClCompile Include="..\source\core\board\NstBoardNamcot34xx.cpp">

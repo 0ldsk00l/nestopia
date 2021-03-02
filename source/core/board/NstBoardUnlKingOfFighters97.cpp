@@ -51,7 +51,8 @@ namespace Nes
 					}
 
 					Map( 0x9000U, &KingOfFighters97::Poke_8001 );
-					Map( 0xA000U, &KingOfFighters97::Poke_8000 );
+					Map( 0xA000U, &KingOfFighters97::Poke_A000 );
+					Map( 0xB000U, &KingOfFighters97::Poke_A001 );
 					Map( 0xD000U, &KingOfFighters97::Poke_C001 );
 
 					for (uint i=0x0000; i < 0x1000; i += 0x2)
@@ -87,6 +88,16 @@ namespace Nes
 				NES_POKE_D(KingOfFighters97,8001)
 				{
 					Mmc3::NES_DO_POKE(8001,0x8001,Unscramble(data));
+				}
+
+				NES_POKE_D(KingOfFighters97,A000)
+				{
+					ppu.SetMirroring( (data & 0x02) ? Ppu::NMT_H : Ppu::NMT_V );
+				}
+
+				NES_POKE_D(KingOfFighters97,A001)
+				{
+					Mmc3::NES_DO_POKE(A001,0xA001,Unscramble(data));
 				}
 
 				NES_POKE_D(KingOfFighters97,C000)
