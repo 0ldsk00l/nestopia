@@ -27,8 +27,8 @@
 #include "config.h"
 #include "audio.h"
 
-#define IBUFSIZE 3200
-#define EBUFSIZE 6400
+#define IBUFSIZE 4800
+#define EBUFSIZE 9600
 
 extern Emulator emulator;
 
@@ -47,6 +47,8 @@ static int framerate, channels, bufsize;
 static bool paused = false;
 
 void audio_queue() {
+	while ((bufsamples + bufsize) >= EBUFSIZE) { SDL_Delay(1); }
+	
 	SDL_LockAudioDevice(dev);
 	for (int i = 0; i < bufsize; i++) {
 		extbuf[bufend] = intbuf[i];
@@ -79,13 +81,13 @@ void audio_deinit() {
 void audio_init_sdl() {
 	spec.freq = conf.audio_sample_rate;
 	spec.format = AUDIO_S16SYS;
-	spec.channels = channels;
+	spec.channels = 1;
 	spec.silence = 0;
 	spec.samples = 512;
 	spec.userdata = 0;
 	spec.callback = audio_cb;
 	
-	bufsize = channels * (conf.audio_sample_rate / framerate);
+	bufsize = 1 * (conf.audio_sample_rate / framerate);
 	
 	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 	if (!dev) {
@@ -125,7 +127,8 @@ void audio_set_params(Sound::Output *soundoutput) {
 	Sound sound(emulator);
 	
 	sound.SetSampleBits(16);
-	sound.SetSampleRate(conf.audio_sample_rate);
+	//sound.SetSampleRate(conf.audio_sample_rate);
+	sound.SetSampleRate(48000);
 	
 	sound.SetSpeaker(conf.audio_stereo ? Sound::SPEAKER_STEREO : Sound::SPEAKER_MONO);
 	sound.SetSpeed(Sound::DEFAULT_SPEED);
