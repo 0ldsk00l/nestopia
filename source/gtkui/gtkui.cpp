@@ -314,7 +314,7 @@ void gtkui_create() {
 	
 	// Make it dark if there's a dark theme
 	GtkSettings *gtksettings = gtk_settings_get_default();
-	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, NULL);
+	g_object_set(G_OBJECT(gtksettings), "gtk-application-prefer-dark-theme", TRUE, nullptr);
 	
 	// Set up the Drag and Drop target
 	GtkTargetEntry target_entry[1];

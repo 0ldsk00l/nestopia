@@ -110,7 +110,7 @@ bool gtkui_archive_select(const char *filename, char *reqfile, size_t reqsize) {
 				"NES file",
 				renderer,
 				"text", 0,
-				NULL);
+				nullptr);
 		
 		gtk_tree_view_append_column(GTK_TREE_VIEW (treeview), column);
 		

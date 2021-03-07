@@ -222,11 +222,11 @@ GtkWidget *gtkui_cheats() {
 	
 	GtkTreeViewColumn *column[5];
 	// create the display columns
-	column[0] = gtk_tree_view_column_new_with_attributes("Enable", checkbox, "active", 0, NULL);
-	column[1] = gtk_tree_view_column_new_with_attributes("Game Genie", renderer, "text",  1, NULL);
-	column[2] = gtk_tree_view_column_new_with_attributes("PAR", renderer, "text",  2, NULL);
-	column[3] = gtk_tree_view_column_new_with_attributes("Raw", renderer, "text",  3, NULL);
-	column[4] = gtk_tree_view_column_new_with_attributes("Description", renderer, "text",  4, NULL);
+	column[0] = gtk_tree_view_column_new_with_attributes("Enable", checkbox, "active", 0, nullptr);
+	column[1] = gtk_tree_view_column_new_with_attributes("Game Genie", renderer, "text",  1, nullptr);
+	column[2] = gtk_tree_view_column_new_with_attributes("PAR", renderer, "text",  2, nullptr);
+	column[3] = gtk_tree_view_column_new_with_attributes("Raw", renderer, "text",  3, nullptr);
+	column[4] = gtk_tree_view_column_new_with_attributes("Description", renderer, "text",  4, nullptr);
 
 	// add the display column and renderer to the tree view
 	gtk_tree_view_append_column(GTK_TREE_VIEW(treeview), column[0]);

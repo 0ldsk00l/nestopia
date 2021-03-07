@@ -40,7 +40,7 @@ void gtkui_file_open() {
 				GTK_FILE_CHOOSER_ACTION_OPEN,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Open", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 	
 	if(conf.misc_last_folder != NULL)
 		gtk_file_chooser_set_current_folder(GTK_FILE_CHOOSER(dialog), conf.misc_last_folder);
@@ -91,7 +91,7 @@ void gtkui_state_save() {
 				GTK_FILE_CHOOSER_ACTION_SAVE,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Save", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 	
 	char statepath[512];
 	snprintf(statepath, sizeof(statepath), "%s.nst", nstpaths.statepath);
@@ -114,7 +114,7 @@ void gtkui_state_load() {
 				GTK_FILE_CHOOSER_ACTION_OPEN,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Open", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 
 	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, "Nestopia Save States");
@@ -138,7 +138,7 @@ void gtkui_screenshot_save() {
 				GTK_FILE_CHOOSER_ACTION_SAVE,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Save", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 	
 	char sshotpath[512];
 	char sshotfile[768];
@@ -163,7 +163,7 @@ void gtkui_movie_save() {
 				GTK_FILE_CHOOSER_ACTION_SAVE,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Save", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 	
 	char moviepath[512];
 	snprintf(moviepath, sizeof(moviepath), "%s%s.nsv", nstpaths.nstdir, nstpaths.gamename);
@@ -186,7 +186,7 @@ void gtkui_movie_load() {
 				GTK_FILE_CHOOSER_ACTION_OPEN,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Open", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 
 	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, "Nestopia movies");
@@ -214,7 +214,7 @@ void gtkui_cheats_load() {
 				GTK_FILE_CHOOSER_ACTION_OPEN,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Open", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 
 	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, "Nestopia cheats");
@@ -238,7 +238,7 @@ void gtkui_palette_load() {
 				GTK_FILE_CHOOSER_ACTION_OPEN,
 				"Cancel", GTK_RESPONSE_CANCEL,
 				"Open", GTK_RESPONSE_ACCEPT,
-				NULL);
+				nullptr);
 
 	GtkFileFilter *filter = gtk_file_filter_new();
 	gtk_file_filter_set_name(filter, "NES Palettes");

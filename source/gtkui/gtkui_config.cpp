@@ -829,10 +829,10 @@ GtkWidget *gtkui_config() {
 	
 	GtkTreeViewColumn *columns[2];
 	columns[0] = gtk_tree_view_column_new_with_attributes(
-			"Button", renderer, "text", 0, NULL);
+			"Button", renderer, "text", 0, nullptr);
 	
 	columns[1] = gtk_tree_view_column_new_with_attributes(
-			"Mapping", renderer, "text", 1, NULL);
+			"Mapping", renderer, "text", 1, nullptr);
 	gtk_tree_view_column_set_expand(columns[1], TRUE);
 	
 	gtk_tree_view_append_column(GTK_TREE_VIEW (treeview), columns[0]);
