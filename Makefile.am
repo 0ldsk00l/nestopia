@@ -715,13 +715,13 @@ nestopia_SOURCES += \
 	source/common/ini.cpp \
 	source/common/ini.h \
 	source/common/png.cpp \
-	source/common/png.h
+	source/common/png.h \
+	source/common/audio.cpp \
+	source/common/audio.h \
+	source/common/sdlinput.cpp \
+	source/common/sdlinput.h
 
 nestopia_SOURCES += \
-	source/sdl/audio.cpp \
-	source/sdl/audio.h \
-	source/sdl/sdlinput.cpp \
-	source/sdl/sdlinput.h \
 	source/gtkui/gtkui_config.h \
 	source/gtkui/gtkui_archive.h \
 	source/gtkui/gtkui_cheats.cpp \
