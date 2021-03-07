@@ -48,14 +48,10 @@ typedef struct {
 	int timing_speed;
 	int timing_ffspeed;
 	int timing_turbopulse;
-	bool timing_vsync;
-	bool timing_limiter;
 	
 	// Misc
-	//int misc_video_region;
 	int misc_default_system;
 	bool misc_soft_patching;
-	//bool misc_suppress_screensaver;
 	bool misc_genie_distortion;
 	bool misc_disable_cursor;
 	bool misc_disable_cursor_special;

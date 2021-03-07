@@ -119,9 +119,6 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "ffspeed=%d\n\n", conf.timing_ffspeed);
 		fprintf(fp, "; Pulse turbo buttons every n frames. Minimum value is 2.\n");
 		fprintf(fp, "turbopulse=%d\n\n", conf.timing_turbopulse);
-		fprintf(fp, "; Valid values are 1 and 0.\n");
-		fprintf(fp, "vsync=%d\n", conf.timing_vsync);
-		fprintf(fp, "limiter=%d\n", conf.timing_limiter);
 		fprintf(fp, "\n"); // End of Section
 		
 		// Misc
@@ -130,9 +127,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "default_system=%d\n\n", conf.misc_default_system);
 		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "soft_patching=%d\n", conf.misc_soft_patching);
-		//fprintf(fp, "suppress_screensaver=%d\n", conf.misc_suppress_screensaver);
 		fprintf(fp, "genie_distortion=%d\n", conf.misc_genie_distortion);
-		//fprintf(fp, "disable_gui=%d\n", conf.misc_disable_gui);
 		fprintf(fp, "disable_cursor=%d\n", conf.misc_disable_cursor);
 		fprintf(fp, "disable_cursor_special=%d\n", conf.misc_disable_cursor_special);
 		fprintf(fp, "config_pause=%d\n", conf.misc_config_pause);
@@ -198,15 +193,11 @@ void config_set_default() {
 	conf.timing_speed = 60;
 	conf.timing_ffspeed = 3;
 	conf.timing_turbopulse = 3;
-	conf.timing_vsync = true;
-	conf.timing_limiter = true;
 	
 	// Misc
 	conf.misc_default_system = 0;
 	conf.misc_soft_patching = true;
-	//conf.misc_suppress_screensaver = true;
 	conf.misc_genie_distortion = false;
-	//conf.misc_disable_gui = false;
 	conf.misc_disable_cursor = false;
 	conf.misc_disable_cursor_special = false;
 	conf.misc_config_pause = false;
@@ -266,15 +257,11 @@ static int config_match(void* user, const char* section, const char* name, const
 	else if (MATCH("timing", "speed")) { pconfig->timing_speed = atoi(value); }
 	else if (MATCH("timing", "ffspeed")) { pconfig->timing_ffspeed = atoi(value); }
 	else if (MATCH("timing", "turbopulse")) { pconfig->timing_turbopulse = atoi(value); }
-	else if (MATCH("timing", "vsync")) { pconfig->timing_vsync = atoi(value); }
-	else if (MATCH("timing", "limiter")) { pconfig->timing_limiter = atoi(value); }
-    
+	
 	// Misc
 	else if (MATCH("misc", "default_system")) { pconfig->misc_default_system = atoi(value); }
 	else if (MATCH("misc", "soft_patching")) { pconfig->misc_soft_patching = atoi(value); }
-	//else if (MATCH("misc", "suppress_screensaver")) { pconfig->misc_suppress_screensaver = atoi(value); }
 	else if (MATCH("misc", "genie_distortion")) { pconfig->misc_genie_distortion = atoi(value); }
-	//else if (MATCH("misc", "disable_gui")) { pconfig->misc_disable_gui = atoi(value); }
 	else if (MATCH("misc", "config_pause")) { pconfig->misc_config_pause = atoi(value); }
 	else if (MATCH("misc", "disable_cursor")) { pconfig->misc_disable_cursor = atoi(value); }
 	else if (MATCH("misc", "disable_cursor_special")) { pconfig->misc_disable_cursor_special = atoi(value); }
