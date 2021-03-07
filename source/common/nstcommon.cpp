@@ -633,8 +633,26 @@ void nst_set_callbacks() {
 
 void nst_set_dirs() {
 	// Set up system directories
-	// create system directory if it doesn't exist
-	snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/.nestopia/", getenv("HOME"));
+	// create config directory if it doesn't exist
+	if (getenv("XDG_CONFIG_HOME")) {
+		snprintf(nstpaths.nstconfdir, sizeof(nstpaths.nstconfdir), "%s/nestopia/", getenv("XDG_CONFIG_HOME"));
+	}
+	else {
+		snprintf(nstpaths.nstconfdir, sizeof(nstpaths.nstconfdir), "%s/.config/nestopia/", getenv("HOME"));
+	}
+	
+	if (mkdir(nstpaths.nstconfdir, 0755) && errno != EEXIST) {
+		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.nstconfdir, errno);
+	}
+	
+	// create data directory if it doesn't exist
+	if (getenv("XDG_DATA_HOME")) {
+		snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/nestopia/", getenv("XDG_DATA_HOME"));
+	}
+	else {
+		snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/.local/share/nestopia/", getenv("HOME"));
+	}
+	
 	if (mkdir(nstpaths.nstdir, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.nstdir, errno);
 	}

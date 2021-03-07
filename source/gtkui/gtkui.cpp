@@ -613,7 +613,7 @@ int main(int argc, char *argv[]) {
 	config_set_default();
 	
 	// Read the config file and override defaults
-	config_file_read(nstpaths.nstdir);
+	config_file_read(nstpaths.nstconfdir);
 	
 	// Handle command line arguments
 	cli_handle_command(argc, argv);
@@ -685,7 +685,7 @@ int main(int argc, char *argv[]) {
 	gtkui_input_config_write();
 	
 	// Write the config file
-	config_file_write(nstpaths.nstdir);
+	config_file_write(nstpaths.nstconfdir);
 
 	return 0;
 }
