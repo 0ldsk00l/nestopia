@@ -118,7 +118,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 	
 	switch (file.GetAction()) {
 		case User::File::LOAD_ROM:
-			// Nothing here for now			
+			// Nothing here for now
 			break;
 
 		case User::File::LOAD_SAMPLE: break;
@@ -812,11 +812,13 @@ int nst_timing_runframes() {
 void nst_timing_set_ffspeed() {
 	// Set the framerate to the fast-forward speed
 	ffspeed = true;
+	audio_set_speed(conf.timing_ffspeed);
 }
 
 void nst_timing_set_default() {
 	// Set the framerate to the default
 	ffspeed = false;
+	audio_set_speed(1);
 }
 
 void nst_reset(bool hardreset) {

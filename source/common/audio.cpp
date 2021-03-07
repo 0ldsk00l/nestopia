@@ -46,6 +46,10 @@ static int framerate, channels, bufsize;
 
 static bool paused = false;
 
+void audio_set_speed(int speed) {
+	bufsize = (channels * (conf.audio_sample_rate / framerate)) / speed;
+}
+
 void audio_queue() {
 	while ((bufsamples + bufsize) >= EBUFSIZE) { SDL_Delay(1); }
 	
@@ -81,13 +85,13 @@ void audio_deinit() {
 void audio_init_sdl() {
 	spec.freq = conf.audio_sample_rate;
 	spec.format = AUDIO_S16SYS;
-	spec.channels = 1;
+	spec.channels = channels;
 	spec.silence = 0;
 	spec.samples = 512;
 	spec.userdata = 0;
 	spec.callback = audio_cb;
 	
-	bufsize = 1 * (conf.audio_sample_rate / framerate);
+	bufsize = channels * (conf.audio_sample_rate / framerate);
 	
 	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 	if (!dev) {
@@ -127,8 +131,7 @@ void audio_set_params(Sound::Output *soundoutput) {
 	Sound sound(emulator);
 	
 	sound.SetSampleBits(16);
-	//sound.SetSampleRate(conf.audio_sample_rate);
-	sound.SetSampleRate(48000);
+	sound.SetSampleRate(conf.audio_sample_rate);
 	
 	sound.SetSpeaker(conf.audio_stereo ? Sound::SPEAKER_STEREO : Sound::SPEAKER_MONO);
 	sound.SetSpeed(Sound::DEFAULT_SPEED);

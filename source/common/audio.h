@@ -14,6 +14,7 @@ void audio_queue();
 void audio_pause();
 void audio_unpause();
 void audio_set_params(Sound::Output *soundoutput);
+void audio_set_speed(int speed);
 void audio_adj_volume();
 
 #endif
