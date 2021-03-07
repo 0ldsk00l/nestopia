@@ -222,16 +222,6 @@ void gtkui_cb_timing_ffspeed(GtkRange *range, gpointer userdata) {
 	conf.timing_ffspeed = (int)gtk_range_get_value(range);
 }
 
-void gtkui_cb_timing_vsync(GtkToggleButton *togglebutton, gpointer userdata) {
-	// Toggle vsync
-	conf.timing_vsync = gtk_toggle_button_get_active(togglebutton);
-}
-
-void gtkui_cb_timing_limiter(GtkToggleButton *togglebutton, gpointer userdata) {
-	// Set the limiter on or off
-	conf.timing_limiter = gtk_toggle_button_get_active(togglebutton);
-}
-
 void gtkui_cb_misc_soft_patching(GtkToggleButton *togglebutton, gpointer userdata) {
 	// Enable or Disable automatic soft patching
 	conf.misc_soft_patching = gtk_toggle_button_get_active(togglebutton);

@@ -30,8 +30,6 @@ void gtkui_cb_input_turbopulse(GtkRange *range, gpointer userdata);
 void gtkui_cb_misc_default_system(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_misc_power_state(GtkComboBox *combobox, gpointer userdata);
 void gtkui_cb_timing_ffspeed(GtkRange *range, gpointer userdata);
-void gtkui_cb_timing_vsync(GtkToggleButton *togglebutton, gpointer userdata);
-void gtkui_cb_timing_limiter(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_soft_patching(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_genie_distortion(GtkToggleButton *togglebutton, gpointer userdata);
 void gtkui_cb_misc_disable_cursor(GtkToggleButton *togglebutton, gpointer userdata);

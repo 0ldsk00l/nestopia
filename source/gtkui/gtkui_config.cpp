@@ -982,34 +982,6 @@ GtkWidget *gtkui_config() {
 	g_signal_connect(G_OBJECT(scale_timing_ffspeed), "value-changed",
 		G_CALLBACK(gtkui_cb_timing_ffspeed), NULL);
 	
-	// Vsync
-	GtkWidget *check_timing_vsync = gtk_widget_new(
-				GTK_TYPE_CHECK_BUTTON,
-				"label", "Vsync",
-				"halign", GTK_ALIGN_START,
-				"margin-left", MARGIN_LR,
-				NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_timing_vsync), conf.timing_vsync);
-	
-	gtk_box_pack_start(GTK_BOX(box_misc), check_timing_vsync, FALSE, FALSE, 0);
-	
-	g_signal_connect(G_OBJECT(check_timing_vsync), "toggled",
-		G_CALLBACK(gtkui_cb_timing_vsync), NULL);
-	
-	// Limiter
-	GtkWidget *check_timing_limiter = gtk_widget_new(
-				GTK_TYPE_CHECK_BUTTON,
-				"label", "Speed Limiter",
-				"halign", GTK_ALIGN_START,
-				"margin-left", MARGIN_LR,
-				NULL);
-	gtk_toggle_button_set_active(GTK_TOGGLE_BUTTON(check_timing_limiter), conf.timing_limiter);
-	
-	gtk_box_pack_start(GTK_BOX(box_misc), check_timing_limiter, FALSE, FALSE, 0);
-	
-	g_signal_connect(G_OBJECT(check_timing_limiter), "toggled",
-		G_CALLBACK(gtkui_cb_timing_limiter), NULL);
-	
 	// Soft Patching
 	GtkWidget *check_misc_soft_patching = gtk_widget_new(
 				GTK_TYPE_CHECK_BUTTON,
