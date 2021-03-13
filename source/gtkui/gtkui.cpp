@@ -126,6 +126,7 @@ void gtkui_open_recent(GtkWidget *widget, gpointer userdata) {
 dimensions_t gtkui_video_get_dimensions() {
 	// Return the dimensions of the current screen
 	dimensions_t scrsize;
+	dimensions_t rendsize = nst_video_get_dimensions_render();
 	GdkDisplay *display = gdk_display_get_default();
 	GdkWindow *gdkwindow = gtk_widget_get_window(GTK_WIDGET(gtkwindow));
 	GdkMonitor *monitor = gdk_display_get_monitor_at_window(display, gdkwindow);
@@ -133,6 +134,8 @@ dimensions_t gtkui_video_get_dimensions() {
 	gdk_monitor_get_geometry(monitor, &geom);
 	scrsize.w = geom.width;
 	scrsize.h = geom.height;
+	float ratio = (float)scrsize.h / (float)rendsize.h;
+	scrsize.w = (int)(rendsize.w * ratio);
 	return scrsize;
 }
 
@@ -296,11 +299,9 @@ void gtkui_create() {
 	gtk_menu_shell_append(GTK_MENU_SHELL(menubar), help);
 	
 	// Create the DrawingArea/OpenGL context
-	///drawingarea = gtk_drawing_area_new();
 	drawingarea = gtk_gl_area_new();
 	g_signal_connect(G_OBJECT(drawingarea), "realize", G_CALLBACK(gtkui_glarea_realize), NULL);
 	g_signal_connect(G_OBJECT(drawingarea), "render", gtkui_swapbuffers, NULL);
-	//gtk_widget_add_tick_callback(drawingarea, gtkui_tick, drawingarea, NULL);
 	
 	g_object_set_data(G_OBJECT(gtkwindow), "area", drawingarea);
 	
@@ -478,8 +479,9 @@ void gtkui_signals_deinit() {
 void gtkui_resize() {
 	// Resize the GTK window
 	if (gtkwindow) {
-		video_set_dimensions();
-		dimensions_t rendersize = nst_video_get_dimensions_render();
+		dimensions_t rendersize;
+		if (conf.video_fullscreen) { rendersize = gtkui_video_get_dimensions(); }
+		else { rendersize = nst_video_get_dimensions_render(); }
 		gtk_widget_set_size_request(drawingarea, rendersize.w, rendersize.h);
 	}
 }
@@ -489,8 +491,7 @@ void gtkui_set_title(const char *title) {
 }
 
 void gtkui_video_toggle_fullscreen() {
-	
-	video_toggle_fullscreen();
+	conf.video_fullscreen ^= 1;
 	
 	if (conf.video_fullscreen) {
 		gtk_widget_hide(menubar);
@@ -509,8 +510,9 @@ void gtkui_video_toggle_fullscreen() {
 		else {gtkui_cursor_set(1); }
 	}
 	nst_video_set_dimensions_screen(gtkui_video_get_dimensions());
-	video_init();
+	
 	gtkui_resize();
+	video_init();
 }
 
 void gtkui_video_toggle_filter() {
@@ -655,7 +657,10 @@ int main(int argc, char *argv[]) {
 	// Load a rom from the command line
 	if (argc > 1 && argv[argc - 1][0] != '-') {
 		nst_load(argv[argc - 1]);
-		if (conf.video_fullscreen) { gtkui_video_toggle_fullscreen(); }
+		if (conf.video_fullscreen) {
+			conf.video_fullscreen = 0;
+			gtkui_video_toggle_fullscreen();
+		}
 		gtkui_play();
 		gtkui_set_title(nstpaths.gamename);
 	}

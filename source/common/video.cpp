@@ -182,7 +182,6 @@ void nst_ogl_render() {
 
 void nst_video_refresh() {
 	// Refresh the video settings
-	
 	nst_ogl_deinit();
 	
 	nst_ogl_init();
@@ -190,7 +189,6 @@ void nst_video_refresh() {
 
 void video_init() {
 	// Initialize video
-	
 	nst_ogl_deinit();
 	
 	video_set_dimensions();
@@ -199,12 +197,6 @@ void video_init() {
 	nst_ogl_init();
 	
 	if (nst_nsf()) { video_clear_buffer(); video_disp_nsf(); }
-}
-
-void video_toggle_fullscreen() {
-	// Toggle between fullscreen and window mode
-	if (!nst_playing()) { return; }
-	conf.video_fullscreen ^= 1;
 }
 
 void video_toggle_filter() {

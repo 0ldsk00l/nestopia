@@ -35,7 +35,6 @@ void nst_ogl_deinit();
 void nst_ogl_render();
 
 void video_init();
-void video_toggle_fullscreen();
 void video_toggle_filter();
 void video_toggle_filterupdate();
 void video_toggle_scalefactor();
