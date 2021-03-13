@@ -538,7 +538,7 @@ GtkWidget *gtkui_about() {
 	gtk_about_dialog_set_version(GTK_ABOUT_DIALOG(aboutdialog), "vx.xx");
 	gtk_about_dialog_set_comments(GTK_ABOUT_DIALOG(aboutdialog), "Cycle-Accurate Nintendo Entertainment System Emulator");
 	gtk_about_dialog_set_website(GTK_ABOUT_DIALOG(aboutdialog), "http://0ldsk00l.ca/nestopia/");
-	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "(c) 2012-2020, R. Danbrook\n(c) 2007-2008, R. Belmont\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
+	gtk_about_dialog_set_copyright(GTK_ABOUT_DIALOG(aboutdialog), "GTK Frontend\n(c) 2012-2021, R. Danbrook\n(c) 2007-2008, R. Belmont\n\nNestopia Emulator\n(c) 2020-2021, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij\n\nIcon based on art from Trollekop");
 	gtk_dialog_run(GTK_DIALOG(aboutdialog));
 	gtk_widget_destroy(aboutdialog);
 	
