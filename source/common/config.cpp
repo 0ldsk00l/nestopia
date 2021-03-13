@@ -118,7 +118,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "; Fast-Forward Speed\n");
 		fprintf(fp, "ffspeed=%d\n\n", conf.timing_ffspeed);
 		fprintf(fp, "; Pulse turbo buttons every n frames. Minimum value is 2.\n");
-		fprintf(fp, "turbopulse=%d\n\n", conf.timing_turbopulse);
+		fprintf(fp, "turbopulse=%d\n", conf.timing_turbopulse);
 		fprintf(fp, "\n"); // End of Section
 		
 		// Misc
