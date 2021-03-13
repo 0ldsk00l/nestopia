@@ -191,7 +191,11 @@ namespace Nes
 				{
 					cycles++;
 
-					if (reload)
+					if (latch == 1)
+					{
+						count = 0;
+					}
+					else if (reload)
 					{
 						reload = false;
 						count = latch | (latch ? 1 : 0);
@@ -201,6 +205,8 @@ namespace Nes
 
 						if (!latch && cycles > A12_FILTER)
 							count = 1;
+						else if (latch && (cycles > (A12_FILTER * 3)))
+							count++;
 
 						cycles = 0;
 					}

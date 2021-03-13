@@ -49,7 +49,8 @@ namespace Nes
 				NES_POKE_A(Cc21,8000)
 				{
 					ppu.SetMirroring( (address & 0x2) ? Ppu::NMT_1 : Ppu::NMT_0 );
-					chr.SwapBank<SIZE_8K,0x0000>( address );
+					chr.SwapBank<SIZE_4K,0x0000>( address );
+					chr.SwapBank<SIZE_4K,0x1000>( address );
 				}
 			}
 		}

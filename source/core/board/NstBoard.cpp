@@ -1938,8 +1938,16 @@ namespace Nes
 
 					case 27:
 
-						name = "UNL WORLDHERO";
-						id = Type::UNL_WORLDHERO;
+						if (prg >= SIZE_128K)
+						{
+							name = "UNL WORLDHERO";
+							id = Type::UNL_WORLDHERO;
+						}
+						else
+						{
+							name = "UNL-CC-21";
+							id = Type::UNL_CC21;
+						}
 						break;
 
 					case 28:
@@ -2850,8 +2858,21 @@ namespace Nes
 
 					case 176:
 
-						name = "XIAO ZHUAN YUAN";
-						id = Type::UNL_XZY;
+						if (prg >= SIZE_2048K)
+						{
+							name = "BMC-SUPER24IN1SC03";
+							id = Type::BMC_SUPER_24IN1;
+						}
+						else if (prg > SIZE_128K)
+						{
+							name = "BMC-FK23C";
+							id = Type::BMC_FKC23C;
+						}
+						else
+						{
+							name = "XIAO ZHUAN YUAN";
+							id = Type::UNL_XZY;
+						}
 						break;
 
 					case 177:
@@ -3187,10 +3208,15 @@ namespace Nes
 							name = "BMC SUPER 42-IN-1";
 							id = Type::BMC_SUPER_42IN1;
 						}
-						else
+						else if (prg == SIZE_2048K)
 						{
 							name = "BMC 76-IN-1";
 							id = Type::BMC_76IN1;
+						}
+						else
+						{
+							name = "BMC-GHOSTBUSTERS63IN1";
+							id = Type::BMC_CTC65;
 						}
 						break;
 
@@ -3363,6 +3389,31 @@ namespace Nes
 						id = Type::UNL_KINGOFFIGHTERS97;
 						break;
 
+					case 265:
+
+						name = "BMC-T-262";
+						id = Type::BMC_T262;
+						break;
+
+					case 283:
+						if (prg > SIZE_256K)
+						{
+							name = "BMC-GS-2013";
+							id = Type::RCM_GS2013;
+						}
+						else
+						{
+							name = "BMC-GS-2004";
+							id = Type::RCM_GS2004;
+						}
+						break;
+
+					case 285:
+
+						name = "BMC-A65AS";
+						id = Type::BMC_A65AS;
+						break;
+
 					case 286:
 
 						name = "BMC-BS-5";
@@ -3373,6 +3424,12 @@ namespace Nes
 
 						name = "UNL-TF1201";
 						id = Type::UNL_TF1201;
+						break;
+
+					case 300:
+
+						name = "BMC-190IN1";
+						id = Type::BMC_GOLDEN_190IN1;
 						break;
 
 					case 301:
@@ -3405,10 +3462,40 @@ namespace Nes
 						id = Type::KAISER_KS7013B;
 						break;
 
+					case 314:
+
+						name = "BMC-64IN1NOREPEAT";
+						id = Type::BMC_Y2K_64IN1;
+						break;
+
+					case 329:
+
+						name = "UNL-EDU2000";
+						id = Type::UNL_EDU2000;
+						break;
+
+					case 332:
+
+						name = "BMC-WS";
+						id = Type::BMC_SUPER_40IN1;
+						break;
+
 					case 521:
 
 						name = "DREAMTECH01";
 						id = Type::DREAMTECH01;
+						break;
+
+					case 529:
+
+						name = "UNL-T-230";
+						id = Type::BTL_T230;
+						break;
+
+					case 530:
+
+						name = "UNL-AX5705";
+						id = Type::BTL_AX5705;
 						break;
 
 					default:
