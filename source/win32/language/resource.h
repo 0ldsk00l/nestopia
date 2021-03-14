@@ -552,7 +552,6 @@
 #define IDC_LICENSE_EDIT                        3304
 #define IDC_ABOUT_ICON                          3400
 #define IDC_ABOUT_URL                           3401
-#define IDC_ABOUT_MAIL                          3402
 #define IDC_ABOUT_NAMEVERSION                   3404
 #define IDC_USER_INPUT_EDIT                     3502
 #define IDC_USER_INPUT_TEXT                     3503

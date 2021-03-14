@@ -47,8 +47,7 @@ namespace Nestopia
 
 		const MsgHandler::Entry<About> About::Handlers::commands[] =
 		{
-			{ IDC_ABOUT_URL,  &About::OnCmdClick },
-			{ IDC_ABOUT_MAIL, &About::OnCmdClick }
+			{ IDC_ABOUT_URL,  &About::OnCmdClick }
 		};
 
 		About::About()
@@ -57,8 +56,7 @@ namespace Nestopia
 		ibool About::OnInitDialog(Param&)
 		{
 			dialog.SetItemIcon( IDC_ABOUT_ICON, Application::Instance::GetIconStyle() == Application::Instance::ICONSTYLE_NES ? IDI_APP : IDI_APP_J );
-			//dialog.Control( IDC_ABOUT_NAMEVERSION ).Text() << (String::Heap<char>() << "Nestopia UE v" << Application::Instance::GetVersion()).Ptr();
-			dialog.Control( IDC_ABOUT_NAMEVERSION ).Text() << "Nestopia UE vx.xx";
+			dialog.Control( IDC_ABOUT_NAMEVERSION ).Text() << "Nestopia UE 1.51.0";
 			return true;
 		}
 
@@ -66,10 +64,7 @@ namespace Nestopia
 		{
 			HCURSOR hCursor;
 
-			if (param.Cursor().Inside( IDC_ABOUT_URL ) || param.Cursor().Inside( IDC_ABOUT_MAIL ))
-				hCursor = Resource::Cursor::GetHand();
-			else
-				hCursor = Resource::Cursor::GetArrow();
+			hCursor = Resource::Cursor::GetArrow();
 
 			::SetCursor( hCursor );
 			::SetWindowLongPtr( dialog, DWLP_MSGRESULT, true );
@@ -85,7 +80,7 @@ namespace Nestopia
 
 				if (dialog.Control( param.Button().GetId() ).Text() >> cmd)
 				{
-					cmd.Insert( 0, param.Button().GetId() == IDC_ABOUT_MAIL ? L"mailto:" : L"http://" );
+					cmd.Insert( 0, L"http://" );
 					::ShellExecute( NULL, L"open", cmd.Ptr(), NULL, NULL, SW_SHOWNORMAL );
 				}
 			}
