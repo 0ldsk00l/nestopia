@@ -4,9 +4,7 @@ Linux port. The purpose of the project is to make sure people who want
 a standalone GUI for the Nestopia emulator have this option available.
 
 Current Project Goals:
-* Move the GTK build to a simple UI on top of a community maintained core
-* Merge win32 sources back into main project and set up CI builds for Windows binaries
-* Allow loading different forks/revisions of the emulator core (Maybe)
+* Maintain a functional GUI for the Nestopia emulator on Linux, BSD, and Windows platforms
 
 Contributing/Issues:
 * Contributions will be reviewed for anything related to the standalone GUI builds
@@ -22,15 +20,15 @@ libretro community. For libretro-specific issues, please use the libretro reposi
 https://github.com/libretro/nestopia
 
 This project depends on the following libraries:
-gtk3, libsdl2, libepoxy, libarchive, zlib
+FLTK 1.3, SDL2, libarchive, zlib
 
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
 ```
-apt-get install build-essential autoconf autoconf-archive automake autotools-dev libgtk-3-dev libsdl2-dev libepoxy-dev libarchive-dev zlib1g-dev
+apt-get install build-essential autoconf autoconf-archive automake autotools-dev libfltk1.3-dev libsdl2-dev libarchive-dev zlib1g-dev
 ```
 
-## GTK Build
+## FLTK Build
 To build using Autotools (optional arguments in square brackets):
 ```
 autoreconf -vif

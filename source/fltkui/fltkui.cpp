@@ -21,6 +21,7 @@
  */
 
 #include <cstdio>
+#include <sys/stat.h>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -301,7 +302,16 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 	Fl_Box text5(0, 360, 460, 24, "Icon based on drawing by Trollekop");
 	text5.labelsize(10);
 
-	Fl_PNG_Image nsticon("nestopia.png");
+	// Set up the icon
+	char iconpath[512];
+	snprintf(iconpath, sizeof(iconpath), "%s/icons/hicolor/128x128/apps/nestopia.png", DATAROOTDIR);
+	// Load the SVG from local source dir if make install hasn't been done
+	struct stat svgstat;
+	if (stat(iconpath, &svgstat) == -1) {
+		snprintf(iconpath, sizeof(iconpath), "icons/128/nestopia.png");
+	}
+
+	Fl_PNG_Image nsticon(iconpath);
 	iconbox.image(nsticon);
 
 	Fl_Button close(360, 400, 80, 24, "&Close");
