@@ -2,7 +2,7 @@
 #define _CONFIG_H_
 
 typedef struct {
-	
+
 	// Video
 	int video_filter;
 	int video_scale_factor;
@@ -26,9 +26,8 @@ typedef struct {
 	bool video_stretch_aspect;
 	bool video_unlimited_sprites;
 	bool video_xbr_pixel_blending;
-	
+
 	// Audio
-	int audio_api;
 	bool audio_stereo;
 	int audio_sample_rate;
 	int audio_volume;
@@ -43,12 +42,12 @@ typedef struct {
 	int audio_vol_vrc7;
 	int audio_vol_n163;
 	int audio_vol_s5b;
-	
+
 	// Timing
 	int timing_speed;
 	int timing_ffspeed;
 	int timing_turbopulse;
-	
+
 	// Misc
 	int misc_default_system;
 	bool misc_soft_patching;

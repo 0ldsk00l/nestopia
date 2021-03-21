@@ -1,25 +1,25 @@
 /*
  * Nestopia UE
- * 
+ *
  * Copyright (C) 2007-2008 R. Belmont
- * Copyright (C) 2012-2018 R. Danbrook
+ * Copyright (C) 2012-2021 R. Danbrook
  * Copyright (C) 2018-2018 Phil Smith
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
- * 
+ *
  */
 
 #include <iostream>
@@ -36,6 +36,8 @@
 
 #include <archive.h>
 #include <archive_entry.h>
+
+#include <SDL.h>
 
 // Nst Common
 #include "nstcommon.h"
@@ -73,7 +75,7 @@ bool (*nst_archive_select)(const char*, char*, size_t);
 
 static bool NST_CALLBACK nst_cb_videolock(void* userData, Video::Output& video) {
 	video.pitch = video_lock_screen(video.pixels);
-	return true; // true=lock success, false=lock failed (Nestopia will carry on but skip video)
+	return true;
 }
 
 static void NST_CALLBACK nst_cb_videounlock(void* userData, Video::Output& video) {
@@ -115,7 +117,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 	unsigned char *compbuffer;
 	int compsize, compoffset;
 	char *filename;
-	
+
 	switch (file.GetAction()) {
 		case User::File::LOAD_ROM:
 			// Nothing here for now
@@ -132,13 +134,13 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 		case User::File::LOAD_EEPROM: // used by some Bandai games, can be treated the same as battery files
 		case User::File::LOAD_TAPE: // for loading Famicom cassette tapes
 		case User::File::LOAD_TURBOFILE: // for loading turbofile data
-		{		
+		{
 			std::ifstream batteryFile(nstpaths.savename, std::ifstream::in|std::ifstream::binary);
-			
+
 			if (batteryFile.is_open()) { file.SetContent(batteryFile); }
 			break;
 		}
-		
+
 		case User::File::SAVE_BATTERY: // save battery data to a file
 		case User::File::SAVE_EEPROM: // can be treated the same as battery files
 		case User::File::SAVE_TAPE: // for saving Famicom cassette tapes
@@ -160,7 +162,7 @@ static void NST_CALLBACK nst_cb_file(void *userData, User::File& file) {
 			char fdsname[512];
 
 			snprintf(fdsname, sizeof(fdsname), "%s.ups", nstpaths.fdssave);
-			
+
 			std::ifstream batteryFile( fdsname, std::ifstream::in|std::ifstream::binary );
 
 			// no ups, look for ips
@@ -232,12 +234,12 @@ bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize
 	struct archive *a;
 	struct archive_entry *entry;
 	int r, numarchives = 0;
-	
+
 	a = archive_read_new();
 	archive_read_support_filter_all(a);
 	archive_read_support_format_all(a);
 	r = archive_read_open_filename(a, filename, 10240);
-	
+
 	// Test if it's actually an archive
 	if (r != ARCHIVE_OK) {
 		r = archive_read_free(a);
@@ -257,7 +259,7 @@ bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize
 		}
 		// Free the archive
 		r = archive_read_free(a);
-		
+
 		// If there are no valid files in the archive, return
 		if (numarchives == 0) {	return false; }
 		else { return true; }
@@ -271,18 +273,18 @@ bool nst_archive_open(const char *filename, char **rom, int *romsize, const char
 	struct archive_entry *entry;
 	int r;
 	int64_t entrysize;
-	
+
 	a = archive_read_new();
 	archive_read_support_filter_all(a);
 	archive_read_support_format_all(a);
 	r = archive_read_open_filename(a, filename, 10240);
-	
+
 	// Test if it's actually an archive
 	if (r != ARCHIVE_OK) {
 		r = archive_read_free(a);
 		return false;
 	}
-	
+
 	// Scan through the archive for files
 	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 		char *rombuf;
@@ -327,28 +329,28 @@ void nst_db_load() {
 	// Try to open the database file
 	snprintf(dbpath, sizeof(dbpath), "%sNstDatabase.xml", nstpaths.nstdir);
 	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
-	
+
 	if (nstdb->is_open()) {
 		database.Load(*nstdb);
 		database.Enable(true);
 		return;
 	}
-	
+
 	// If it fails, try looking in the data directory
-	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", DATADIR);
+	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", ".");
 	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
-	
+
 	if (nstdb->is_open()) {
 		database.Load(*nstdb);
 		database.Enable(true);
 		return;
 	}
-	
+
 	// If that fails, try looking in the working directory
 	char *pwd = getenv("PWD");
 	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", pwd);
 	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
-	
+
 	if (nstdb->is_open()) {
 		database.Load(*nstdb);
 		database.Enable(true);
@@ -368,19 +370,19 @@ void nst_db_unload() {
 void nst_dipswitch() {
 	// Print DIP switch information and call handler
 	DipSwitches dipswitches(emulator);
-		
+
 	int numdips = dipswitches.NumDips();
-	
+
 	if (numdips > 0) {
 		for (int i = 0; i < numdips; i++) {
 			fprintf(stderr, "%d: %s\n", i, dipswitches.GetDipName(i));
 			int numvalues = dipswitches.NumValues(i);
-			
+
 			for (int j = 0; j < numvalues; j++) {
 				fprintf(stderr, " %d: %s\n", j, dipswitches.GetValueName(i, j));
 			}
 		}
-		
+
 		char dippath[512];
 		snprintf(dippath, sizeof(dippath), "%s%s.dip", nstpaths.savedir, nstpaths.gamename);
 		nst_dip_handle(dippath);
@@ -391,7 +393,7 @@ void nst_fds_bios_load() {
 	// Load the Famicom Disk System BIOS
 	Nes::Api::Fds fds(emulator);
 	char biospath[512];
-	
+
 	if (fdsbios) { return; }
 
 	snprintf(biospath, sizeof(biospath), "%sdisksys.rom", nstpaths.nstdir);
@@ -418,7 +420,7 @@ void nst_fds_info() {
 	const char* disk;
 	const char* side;
 	char textbuf[24];
-	
+
 	fds.GetCurrentDisk() == 0 ? disk = "1" : disk = "2";
 	fds.GetCurrentDiskSide() == 0 ? side = "A" : side = "B";
 
@@ -440,9 +442,9 @@ void nst_fds_flip() {
 void nst_fds_switch() {
 	// Switches the FDS disk in multi-disk games
 	Fds fds(emulator);
-	
+
 	int currentdisk = fds.GetCurrentDisk();
-	
+
 	// If it's a multi-disk game, eject and insert the other disk
 	if (fds.GetNumDisks() > 1) {
 		fds.EjectDisk();
@@ -451,11 +453,11 @@ void nst_fds_switch() {
 	}
 }
 
-void nst_movie_save(char *filename) {
+void nst_movie_save(const char *filename) {
 	// Save/Record a movie
 	Movie movie(emulator);
-	
-	movierecfile = new std::fstream(filename, std::ifstream::out|std::ifstream::binary); 
+
+	movierecfile = new std::fstream(filename, std::ifstream::out|std::ifstream::binary);
 
 	if (movierecfile->is_open()) {
 		movie.Record((std::iostream&)*movierecfile, Nes::Api::Movie::CLEAN);
@@ -466,11 +468,11 @@ void nst_movie_save(char *filename) {
 	}
 }
 
-void nst_movie_load(char *filename) {
+void nst_movie_load(const char *filename) {
 	// Load and play a movie
 	Movie movie(emulator);
-	
-	moviefile = new std::ifstream(filename, std::ifstream::in|std::ifstream::binary); 
+
+	moviefile = new std::ifstream(filename, std::ifstream::in|std::ifstream::binary);
 
 	if (moviefile->is_open()) {
 		movie.Play(*moviefile);
@@ -484,7 +486,7 @@ void nst_movie_load(char *filename) {
 void nst_movie_stop() {
 	// Stop any movie that is playing or recording
 	Movie movie(emulator);
-	
+
 	if (movie.IsPlaying() || movie.IsRecording()) {
 		movie.Stop();
 		movierecfile = NULL;
@@ -534,18 +536,18 @@ bool nst_playing() { return playing; }
 
 void nst_palette_load(const char *filename) {
 	// Load a custom palette
-	
+
 	FILE *file;
 	long filesize; // File size in bytes
 	size_t result;
-	
+
 	char custgamepalpath[512];
 	snprintf(custgamepalpath, sizeof(custgamepalpath), "%s%s%s", nstpaths.nstdir, nstpaths.gamename, ".pal");
-	
+
 	// Try the game-specific palette first
 	file = fopen(custgamepalpath, "rb");
 	if (!file) { file = fopen(filename, "rb"); }
-	
+
 	// Then try the global custom palette
 	if (!file) {
 		if (conf.video_palette_mode == 2) {
@@ -554,17 +556,17 @@ void nst_palette_load(const char *filename) {
 		}
 		return;
 	}
-	
+
 	fseek(file, 0, SEEK_END);
 	filesize = ftell(file);
 	fseek(file, 0, SEEK_SET);
-	
+
 	if (custompalette) { free(custompalette); }
 	custompalette = malloc(filesize * sizeof(uint8_t));
 	custpalsize = filesize * sizeof(uint8_t);
-	
+
 	result = fread(custompalette, sizeof(uint8_t), filesize, file);
-	
+
 	fclose(file);
 }
 
@@ -572,14 +574,14 @@ void nst_palette_save() {
 	// Save a custom palette
 	FILE *file;
 	void *custpalout;
-	
+
 	file = fopen(nstpaths.palettepath, "wb");
 	if (!file) { return; }
-	
+
 	custpalout = malloc(custpalsize);
-	
+
 	memcpy(custpalout, custompalette, custpalsize);
-	
+
 	fwrite(custpalout, custpalsize, sizeof(uint8_t), file);
 	fclose(file);
 	free(custpalout);
@@ -602,30 +604,30 @@ bool nst_find_patch(char *patchname, unsigned int patchname_length, const char *
 	// since copying into same string as the argument we don't want any overlap
 	memmove(filedir, dirname(filedir), sizeof(filedir));
 	filedir[sizeof(filedir) - 1] = '\0';
-	
+
 	if (!conf.misc_soft_patching) { return 0; }
-	
+
 	snprintf(patchname, patchname_length, "%s/%s.ips", filedir, nstpaths.gamename);
-	
+
 	if ((file = fopen(patchname, "rb")) != NULL) { fclose(file); return 1; }
 	else {
 		snprintf(patchname, patchname_length, "%s/%s.ups", filedir, nstpaths.gamename);
 		if ((file = fopen(patchname, "rb")) != NULL) { fclose(file); return 1; }
 	}
-	
+
 	return 0;
 }
 
 void nst_set_callbacks() {
 	// Set up the callbacks
 	void *userData = (void*)0xDEADC0DE;
-	
+
 	Video::Output::lockCallback.Set(nst_cb_videolock, userData);
 	Video::Output::unlockCallback.Set(nst_cb_videounlock, userData);
-	
+
 	Sound::Output::lockCallback.Set(nst_cb_soundlock, userData);
 	Sound::Output::unlockCallback.Set(nst_cb_soundunlock, userData);
-	
+
 	User::fileIoCallback.Set(nst_cb_file, userData);
 	User::logCallback.Set(nst_cb_log, userData);
 	User::eventCallback.Set(nst_cb_event, userData);
@@ -640,11 +642,11 @@ void nst_set_dirs() {
 	else {
 		snprintf(nstpaths.nstconfdir, sizeof(nstpaths.nstconfdir), "%s/.config/nestopia/", getenv("HOME"));
 	}
-	
+
 	if (mkdir(nstpaths.nstconfdir, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.nstconfdir, errno);
 	}
-	
+
 	// create data directory if it doesn't exist
 	if (getenv("XDG_DATA_HOME")) {
 		snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/nestopia/", getenv("XDG_DATA_HOME"));
@@ -652,15 +654,15 @@ void nst_set_dirs() {
 	else {
 		snprintf(nstpaths.nstdir, sizeof(nstpaths.nstdir), "%s/.local/share/nestopia/", getenv("HOME"));
 	}
-	
+
 	if (mkdir(nstpaths.nstdir, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", nstpaths.nstdir, errno);
 	}
-	
+
 	// create save and state directories if they don't exist
 	char dirstr[256];
 	snprintf(dirstr, sizeof(dirstr), "%ssave", nstpaths.nstdir);
-	
+
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
@@ -669,22 +671,22 @@ void nst_set_dirs() {
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
-	
+
 	// create cheats directory if it doesn't exist
 	snprintf(dirstr, sizeof(dirstr), "%scheats", nstpaths.nstdir);
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
-	
+
 	// create screenshots directory if it doesn't exist
 	snprintf(dirstr, sizeof(dirstr), "%sscreenshots", nstpaths.nstdir);
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
 		fprintf(stderr, "Failed to create %s: %d\n", dirstr, errno);
 	}
-	
+
 	// Construct the custom palette path
 	snprintf(nstpaths.palettepath, sizeof(nstpaths.palettepath), "%s%s", nstpaths.nstdir, "custom.pal");
-	
+
 	// Construct samples directory if it doesn't exist
 	snprintf(dirstr, sizeof(dirstr), "%ssamples", nstpaths.nstdir);
 	if (mkdir(dirstr, 0755) && errno != EEXIST) {
@@ -693,13 +695,13 @@ void nst_set_dirs() {
 }
 
 void nst_set_paths(const char *filename) {
-	
+
 	// Set up the save directory
 	snprintf(nstpaths.savedir, sizeof(nstpaths.savedir), "%ssave/", nstpaths.nstdir);
-	
+
 	// Copy the full file path to the savename variable
 	snprintf(nstpaths.savename, sizeof(nstpaths.savename), "%s", filename);
-	
+
 	// strip the . and extention off the filename for saving
 	for (int i = strlen(nstpaths.savename)-1; i > 0; i--) {
 		if (nstpaths.savename[i] == '.') {
@@ -707,22 +709,22 @@ void nst_set_paths(const char *filename) {
 			break;
 		}
 	}
-	
+
 	// Set up the sample directory
 	snprintf(nstpaths.sampdir, sizeof(nstpaths.sampdir), "%ssamples/", nstpaths.nstdir);
-	
+
 	// Get the name of the game minus file path and extension
 	snprintf(nstpaths.gamename, sizeof(nstpaths.gamename), "%s", basename(nstpaths.savename));
-	
+
 	// Construct save path
 	snprintf(nstpaths.savename, sizeof(nstpaths.savename), "%s%s%s", nstpaths.savedir, nstpaths.gamename, ".sav");
 
 	// Construct path for FDS save patches
 	snprintf(nstpaths.fdssave, sizeof(nstpaths.fdssave), "%s%s", nstpaths.savedir, nstpaths.gamename);
-	
+
 	// Construct the save state path
 	snprintf(nstpaths.statepath, sizeof(nstpaths.statepath), "%sstate/%s", nstpaths.nstdir, nstpaths.gamename);
-	
+
 	// Construct the cheat path
 	snprintf(nstpaths.cheatpath, sizeof(nstpaths.cheatpath), "%scheats/%s.xml", nstpaths.nstdir, nstpaths.gamename);
 }
@@ -731,7 +733,7 @@ void nst_set_region() {
 	// Set the region
 	Machine machine(emulator);
 	Cartridge::Database database(emulator);
-	
+
 	/*if (database.IsLoaded()) {
 		std::ifstream dbfile(filename, std::ios::in|std::ios::binary);
 		Cartridge::Profile profile;
@@ -739,7 +741,7 @@ void nst_set_region() {
 		dbentry = database.FindEntry(profile.hash, nst_default_system());
 		printf("Mapper: %d\n", dbentry.GetMapper());
 	}*/
-	
+
 	switch (conf.misc_default_system) {
 		case 0: machine.SetMode(machine.GetDesiredMode()); break; // Auto
 		case 1: machine.SetMode(Machine::NTSC); break; // NTSC
@@ -758,23 +760,23 @@ void nst_set_rewind(int direction) {
 	}
 }
 
-void nst_state_save(char *filename) {
+void nst_state_save(const char *filename) {
 	// Save a state by filename
 	Machine machine(emulator);
-	
+
 	std::ofstream statefile(filename, std::ifstream::out|std::ifstream::binary);
-	
+
 	if (statefile.is_open()) { machine.SaveState(statefile, Nes::Api::Machine::NO_COMPRESSION); }
 	fprintf(stderr, "State Saved: %s\n", filename);
 	nst_video_print("State Saved", 8, 212, 2, true);
 }
 
-void nst_state_load(char *filename) {
+void nst_state_load(const char *filename) {
 	// Load a state by filename
 	Machine machine(emulator);
-	
+
 	std::ifstream statefile(filename, std::ifstream::in|std::ifstream::binary);
-	
+
 	if (statefile.is_open()) { machine.LoadState(statefile); }
 	fprintf(stderr, "State Loaded: %s\n", filename);
 	nst_video_print("State Loaded", 8, 212, 2, true);
@@ -782,6 +784,7 @@ void nst_state_load(char *filename) {
 
 void nst_state_quicksave(int slot) {
 	// Quick Save State
+	if (!loaded) { return; }
 	char slotpath[520];
 	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
 	nst_state_save(slotpath);
@@ -790,16 +793,17 @@ void nst_state_quicksave(int slot) {
 
 void nst_state_quickload(int slot) {
 	// Quick Load State
+	if (!loaded) { return; }
 	char slotpath[520];
 	snprintf(slotpath, sizeof(slotpath), "%s_%d.nst", nstpaths.statepath, slot);
-		
+
 	struct stat qloadstat;
 	if (stat(slotpath, &qloadstat) == -1) {
 		fprintf(stderr, "No State to Load\n");
 		nst_video_print("No State to Load", 8, 212, 2, true);
 		return;
 	}
-	
+
 	nst_state_load(slotpath);
 }
 
@@ -827,7 +831,7 @@ void nst_reset(bool hardreset) {
 	Fds fds(emulator);
 	machine.SetRamPowerState(conf.misc_power_state);
 	machine.Reset(hardreset);
-	
+
 	// Set the FDS disk to defaults
 	fds.EjectDisk();
 	fds.InsertDisk(0, 0);
@@ -838,11 +842,11 @@ void nst_emuloop() {
 	if (NES_SUCCEEDED(Rewinder(emulator).Enable(true))) {
 		Rewinder(emulator).EnableSound(true);
 	}
-	
+
 	if (playing) {
 		// Pulse the turbo buttons
 		nst_input_turbo_pulse(cNstPads);
-		
+
 		// Execute frames
 		for (int i = 0; i < nst_timing_runframes(); i++) {
 			emulator.Execute(cNstVideo, cNstSound, cNstPads);
@@ -853,7 +857,7 @@ void nst_emuloop() {
 void nst_unload() {
 	// Remove the cartridge and shut down the NES
 	Machine machine(emulator);
-	
+
 	// Power down the NES
 	machine.Power(false);
 
@@ -867,14 +871,14 @@ void nst_pause() {
 		audio_pause();
 		audio_deinit();
 	}
-	
+
 	playing = false;
 }
 
 void nst_play() {
 	// Play the game
 	if (playing) { return; }
-	
+
 	video_init();
 	audio_init();
 	nst_input_init();
@@ -884,16 +888,16 @@ void nst_play() {
 	cNstVideo = new Video::Output;
 	cNstSound = new Sound::Output;
 	cNstPads  = new Input::Controllers;
-	
+
 	audio_set_params(cNstSound);
 	audio_unpause();
-	
+
 	if (nst_nsf()) {
 		Nsf nsf(emulator);
 		nsf.PlaySong();
 		video_disp_nsf();
 	}
-	
+
 	playing = true;
 }
 
@@ -906,33 +910,33 @@ int nst_load(const char *filename) {
 	char *rom;
 	int romsize;
 	char patchname[512];
-	
+
 	// Pause play before pulling out a cartridge
 	if (playing) { nst_pause(); }
-	
+
 	// Pull out any inserted cartridges
 	if (loaded) { nst_unload(); }
 	nst_video_print_time("", false);
-	
+
 	// Check if the file is an archive and select the file within
 	char reqfile[256]; // Requested file inside the archive
 	if (nst_archive_select(filename, reqfile, sizeof(reqfile))) {
 		// Extract the contents
 		nst_archive_open(filename, &rom, &romsize, reqfile);
-		
+
 		// Convert the malloc'd char* to an istream
 		std::string rombuf(rom, romsize);
 		std::istringstream file(rombuf);
 		free(rom);
-		
+
 		result = machine.Load(file, nst_default_system());
 	}
 	else { // Otherwise just load the file
 		std::ifstream file(filename, std::ios::in|std::ios::binary);
-		
+
 		// Set the file paths
 		nst_set_paths(filename);
-		
+
 		if (nst_find_patch(patchname, sizeof(patchname), filename)) { // Load with a patch if there is one
 			std::ifstream pfile(patchname, std::ios::in|std::ios::binary);
 			Machine::Patch patch(pfile, false);
@@ -940,7 +944,7 @@ int nst_load(const char *filename) {
 		}
 		else { result = machine.Load(file, nst_default_system()); }
 	}
-	
+
 	if (NES_FAILED(result)) {
 		char errorstring[32];
 		switch (result) {
@@ -968,39 +972,39 @@ int nst_load(const char *filename) {
 				snprintf(errorstring, sizeof(errorstring), "Error: %d", result);
 				break;
 		}
-		
+
 		fprintf(stderr, "%s\n", errorstring);
-		
+
 		return 0;
 	}
-	
+
 	// Deal with any DIP Switches
 	nst_dipswitch();
-	
+
 	// Set the region
 	nst_set_region();
-	
+
 	if (machine.Is(Machine::DISK)) {
 		Fds fds(emulator);
 		fds.InsertDisk(0, 0);
 		nst_fds_info();
 	}
-	
+
 	// Check if this is an NSF
 	if (nst_nsf()) { nsf.StopSong(); }
-	
+
 	// Check if sound distortion should be enabled
 	sound.SetGenie(conf.misc_genie_distortion);
-	
+
 	// Load the custom palette
 	nst_palette_load(nstpaths.palettepath);
-	
+
 	// Set the RAM's power state
 	machine.SetRamPowerState(conf.misc_power_state);
-	
+
 	// Power on
 	machine.Power(true);
-	
+
 	loaded = 1;
 	return loaded;
 }

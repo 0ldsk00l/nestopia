@@ -2,7 +2,7 @@ dnl Initialise Autoconf
 AC_PREREQ([2.69])
 AC_INIT(
 	[nestopia],
-	[1.50])
+	[1.51.0])
 AC_CONFIG_SRCDIR([source])
 AC_LANG([C++])
 
@@ -76,11 +76,11 @@ PKG_CHECK_MODULES([LIBARCHIVE], [libarchive])
 dnl SDL2
 PKG_CHECK_MODULES([SDL2], [sdl2])
 
-dnl LibEpoxy
-PKG_CHECK_MODULES([LIBEPOXY], [epoxy])
+AC_CHECK_PROG(FLTKCONFIG,fltk-config,[fltk-config],[no])
+test "$FLTKCONFIG" == "no" && AC_MSG_ERROR([Cannot find the fltk-config executable. Is FLTK installed?])
 
-dnl GTK3
-PKG_CHECK_MODULES([GTK3], [gtk+-3.0])
+AC_SUBST(FLTK_CFLAGS,"$(fltk-config --use-gl --use-images --cxxflags)")
+AC_SUBST(FLTK_LIBS,"-lGL $(fltk-config --use-gl --use-images --ldflags)")
 
 dnl full HTML suite
 AC_ARG_ENABLE([doc],

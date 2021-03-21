@@ -53,8 +53,8 @@ void nst_fds_flip();
 void nst_fds_switch();
 
 // Movies
-void nst_movie_save(char *filename);
-void nst_movie_load(char *filename);
+void nst_movie_save(const char *filename);
+void nst_movie_load(const char *filename);
 void nst_movie_stop();
 
 // NSF
@@ -87,8 +87,8 @@ void nst_set_region();
 void nst_set_rewind(int direction);
 
 // States
-void nst_state_save(char *filename);
-void nst_state_load(char *filename);
+void nst_state_save(const char *filename);
+void nst_state_load(const char *filename);
 void nst_state_quicksave(int isvst);
 void nst_state_quickload(int isvst);
 

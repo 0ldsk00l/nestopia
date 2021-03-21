@@ -10,11 +10,6 @@
 
 #define VIDBUF_MAXSIZE 31457280
 
-#include <epoxy/gl.h>
-#ifdef _APPLE
-#include <OpenGL/gl.h>
-#endif
-
 typedef struct {
 	int w;
 	int h;
@@ -35,9 +30,7 @@ void nst_ogl_deinit();
 void nst_ogl_render();
 
 void video_init();
-void video_toggle_filter();
 void video_toggle_filterupdate();
-void video_toggle_scalefactor();
 void video_set_filter();
 
 dimensions_t nst_video_get_dimensions_render();
@@ -50,7 +43,6 @@ void video_unlock_screen(void*);
 void video_screenshot(const char* filename);
 void video_clear_buffer();
 void video_disp_nsf();
-void nst_video_disp_inputconf(int type, int pnum, int bnum);
 void nst_video_print(const char *text, int xpos, int ypos, int seconds, bool bg);
 void nst_video_print_time(const char *timebuf, bool drawtime);
 void nst_video_text_draw(const char *text, int xpos, int ypos, bool bg);

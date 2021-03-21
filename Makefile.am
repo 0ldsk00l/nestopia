@@ -7,23 +7,19 @@ EXTRA_DIST = doc
 
 nestopia_CPPFLAGS = \
 	-I$(top_srcdir)/source \
-	-I$(top_srcdir)/source/common \
-	-I$(top_srcdir)/source/gtkui \
-	-I$(top_srcdir)/source/sdl \
+	-I$(top_srcdir)/source/fltkui \
 	-DDATADIR=\"$(datadir)/nestopia\" \
 	-DDATAROOTDIR=\"$(datarootdir)\" \
 	-DNST_PRAGMA_ONCE \
 	$(ZLIB_CFLAGS) \
 	$(LIBARCHIVE_CFLAGS) \
 	$(SDL2_CFLAGS) \
-	$(LIBEPOXY_CFLAGS) \
-	$(GTK3_CFLAGS)
+	$(FLTK_CFLAGS)
 nestopia_LDADD = \
 	$(ZLIB_LIBS) \
 	$(LIBARCHIVE_LIBS) \
 	$(SDL2_LIBS) \
-	$(LIBEPOXY_LIBS) \
-	$(GTK3_LIBS)
+	$(FLTK_LIBS)
 
 ################
 # Installation #
@@ -695,47 +691,37 @@ nestopia_SOURCES = \
 	source/nes_ntsc/demo_impl.h
 
 nestopia_SOURCES += \
-	source/common/nstcommon.cpp \
-	source/common/nstcommon.h \
-	source/common/cheats.cpp \
-	source/common/cheats.h \
-	source/common/homebrew.cpp \
-	source/common/homebrew.h \
-	source/common/cli.cpp \
-	source/common/cli.h \
-	source/common/config.cpp \
-	source/common/config.h \
-	source/common/video.cpp \
-	source/common/video.h \
-	source/common/input.cpp \
-	source/common/input.h \
-	source/common/samples.cpp \
-	source/common/samples.h \
-	source/common/font.h \
-	source/common/ini.cpp \
-	source/common/ini.h \
-	source/common/png.cpp \
-	source/common/png.h \
-	source/common/audio.cpp \
-	source/common/audio.h \
-	source/common/sdlinput.cpp \
-	source/common/sdlinput.h
+	source/fltkui/nstcommon.cpp \
+	source/fltkui/nstcommon.h \
+	source/fltkui/cheats.cpp \
+	source/fltkui/cheats.h \
+	source/fltkui/homebrew.cpp \
+	source/fltkui/homebrew.h \
+	source/fltkui/cli.cpp \
+	source/fltkui/cli.h \
+	source/fltkui/config.cpp \
+	source/fltkui/config.h \
+	source/fltkui/video.cpp \
+	source/fltkui/video.h \
+	source/fltkui/input.cpp \
+	source/fltkui/input.h \
+	source/fltkui/samples.cpp \
+	source/fltkui/samples.h \
+	source/fltkui/font.h \
+	source/fltkui/ini.cpp \
+	source/fltkui/ini.h \
+	source/fltkui/png.cpp \
+	source/fltkui/png.h \
+	source/fltkui/audio.cpp \
+	source/fltkui/audio.h
 
 nestopia_SOURCES += \
-	source/gtkui/gtkui_config.h \
-	source/gtkui/gtkui_archive.h \
-	source/gtkui/gtkui_cheats.cpp \
-	source/gtkui/gtkui_callbacks.h \
-	source/gtkui/gtkui_callbacks.cpp \
-	source/gtkui/gtkui_dialogs.cpp \
-	source/gtkui/gtkui_cheats.h \
-	source/gtkui/gtkui_dialogs.h \
-	source/gtkui/gtkui_archive.cpp \
-	source/gtkui/gtkui.cpp \
-	source/gtkui/gtkui.h \
-	source/gtkui/gtkui_input.cpp \
-	source/gtkui/gtkui_input.h \
-	source/gtkui/gtkui_config.cpp
+	source/fltkui/fltkui_config.h \
+	source/fltkui/fltkui_archive.h \
+	source/fltkui/fltkui_archive.cpp \
+	source/fltkui/fltkui.cpp \
+	source/fltkui/fltkui.h \
+	source/fltkui/fltkui_config.cpp
 
 # install full HTML suite
 if ENABLE_FULL_HTML
