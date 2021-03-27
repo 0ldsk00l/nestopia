@@ -27000,4 +27000,27 @@
             </board>
         </cartridge>
     </game>
+    <!--game>
+        <peripherals>
+            <device type="zapper" />
+        </peripherals>
+        <cartridge system="Famicom" dump="ok" crc="A0FBF02E" sha1="38236FBD5B70F651674D52EE519AB4DBB11F7955">
+            <board type="UNL-TF1201" mapper="298">
+                <prg size="128k" />
+                <chr size="128k" />
+            </board>
+        </cartridge>
+    </game>-->
+    <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="4E6B9078" sha1="93FF8CEC778771C7200F785798E0D1599EE8FEB5">
+            <board type="NES-NROM-256" mapper="0">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
 </database>
