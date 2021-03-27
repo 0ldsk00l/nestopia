@@ -6,13 +6,15 @@ Shell:
  Changes:
   - Merged the win32 sources back into the main codebase
   - Change versioning scheme
-  - Remove trademark from controller image in GTK port
+  - Avoid possible trademark infringement in controller image
+  - Switch from GTK to FLTK for Linux/BSD port
+    - Use Legacy OpenGL (Compatibility Profile)
 
 Core:
 
  Additions:
   - Mappers 306, 307, 312
-  - Convert UNIF to NES 2.0 mappers (262, 286, 298, 301)
+  - Convert many UNIF boards to NES 2.0 mappers
 
  Changes:
   - Use Nestopia core from jgemu
@@ -29,6 +31,8 @@ Core:
   - Improve RAMBO-1 timing
   - Fix support for Korean Igo (Korea) (Unl)
   - Implement mirroring for UNL-KOF97
+  - Rewrite NAMCOT-175 and NAMCOT-340
+  - Assign UNL-CC-21 to mapper 27 and fix CHR bank swapping
 
 ----------------------------------------------------------------
 1.50
