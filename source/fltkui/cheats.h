@@ -25,6 +25,7 @@ typedef struct NstCheat {
 } NstCheat;
 
 void nst_cheats_init(const char *cheatpath);
+void nst_cheats_save(const char *cheatpath);
 void nst_cheats_refresh();
 void nst_cheats_code_gg_add(const std::wstring data);
 void nst_cheats_code_par_add(const std::wstring data);

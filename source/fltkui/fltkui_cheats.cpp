@@ -152,6 +152,22 @@ void cb_load(Fl_Widget* w, long) {
 	}
 }
 
+void cb_save(Fl_Widget* w, long) {
+	Fl_Native_File_Chooser fc;
+	fc.title("Save Cheat List");
+	fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+	fc.directory((const char*)nstpaths.cheatpath);
+	std::string preset = std::string(nstpaths.cheatpath) + "/" + std::string(nstpaths.gamename) + ".xml";
+	fc.preset_file(preset.c_str());
+	fc.filter("Nestopia Cheats\t*.xml");
+	fc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+
+	// Show file chooser
+	if (fc.show()) { return; }
+
+	nst_cheats_save(fc.filename());
+}
+
 // Handle drawing all cells in table
 void ChtTable::draw_cell(TableContext context, int r, int c, int X, int Y, int W, int H) {
 	static char s[128];
@@ -246,8 +262,11 @@ void NstChtWindow::populate() {
 	Fl_Button *btnclr = new Fl_Button(200, 300, 80, 25, "Clear");
 	btnclr->callback(cb_clr, 0);
 
-	Fl_Button *btnload = new Fl_Button(20, 360, 80, 25, "Load...");
+	Fl_Button *btnload = new Fl_Button(20, 350, 80, 25, "Load...");
 	btnload->callback(cb_load, 0);
+
+	Fl_Button *btnsave = new Fl_Button(20, 380, 80, 25, "Save...");
+	btnsave->callback(cb_save, 0);
 
 	Fl_Button *btnok = new Fl_Button(560, 460, 80, 25, "&OK");
 	btnok->callback(cb_ok, 0);

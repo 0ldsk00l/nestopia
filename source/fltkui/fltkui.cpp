@@ -55,6 +55,8 @@ static NstGlArea *glarea;
 static NstChtWindow *chtwin;
 static NstConfWindow *confwin;
 
+extern int loaded;
+
 Fl_Color NstGreen = 0x255f6500;
 Fl_Color NstPurple = 0x5f578700;
 Fl_Color NstRed = 0xb51e2c00;
@@ -67,6 +69,7 @@ extern nstpaths_t nstpaths;
 extern bool (*nst_archive_select)(const char*, char*, size_t);
 
 static void fltkui_cheats(Fl_Widget* w, void* userdata) {
+	if (!loaded) { return; }
 	chtwin->refresh();
 	chtwin->show();
 }
@@ -88,7 +91,7 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
 		case 1: break; // Cancel
 		default:
 			if (fc.filename()) {
-				int loaded = nst_load(fc.filename());
+				loaded = nst_load(fc.filename());
 				nstwin->label(nstpaths.gamename);
 				if (loaded) { nst_play(); }
 			}
@@ -98,7 +101,7 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
 
 static void fltkui_movie_load(Fl_Widget* w, void* userdata) {
 	// Create native chooser
-	if (!nst_playing()) { return; }
+	if (!loaded) { return; }
 
 	Fl_Native_File_Chooser fc;
 	fc.title("Select a Movie");
@@ -120,7 +123,7 @@ static void fltkui_movie_load(Fl_Widget* w, void* userdata) {
 
 static void fltkui_movie_save(Fl_Widget* w, void* userdata) {
 	// Create native chooser
-	if (!nst_playing()) { return; }
+	if (!loaded) { return; }
 
 	Fl_Native_File_Chooser fc;
 	fc.title("Save Movie");
@@ -141,7 +144,7 @@ static void fltkui_movie_stop(Fl_Widget* w, void* userdata) {
 
 static void fltkui_state_load(Fl_Widget* w, void* userdata) {
 	// Create native chooser
-	if (!nst_playing()) { return; }
+	if (!loaded) { return; }
 
 	Fl_Native_File_Chooser fc;
 	fc.title("Load State");
@@ -163,7 +166,7 @@ static void fltkui_state_load(Fl_Widget* w, void* userdata) {
 
 static void fltkui_state_save(Fl_Widget* w, void* userdata) {
 	// Create native chooser
-	if (!nst_playing()) { return; }
+	if (!loaded) { return; }
 
 	Fl_Native_File_Chooser fc;
 	fc.title("Save State");
@@ -180,7 +183,7 @@ static void fltkui_state_save(Fl_Widget* w, void* userdata) {
 
 static void fltkui_screenshot(Fl_Widget* w, void* userdata) {
 	// Create native chooser
-	if (!nst_playing()) { return; }
+	if (!loaded) { return; }
 
 	Fl_Native_File_Chooser fc;
 	fc.title("Save Screenshot");

@@ -69,7 +69,7 @@ static std::fstream *movierecfile;
 void *custompalette = NULL;
 static size_t custpalsize;
 
-static int loaded = 0;
+int loaded = 0;
 
 bool (*nst_archive_select)(const char*, char*, size_t);
 

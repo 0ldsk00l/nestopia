@@ -26,6 +26,9 @@
 
 #include "cheats.h"
 
+static Xml savexml;
+static Xml::Node saveroot;
+
 std::vector<NstCheat> chtlist;
 
 extern Emulator emulator;
@@ -93,6 +96,55 @@ void nst_cheats_init(const char *cheatpath) {
 	}
 }
 
+void nst_cheats_save(const char *cheatpath) {
+	// Save the cheat list
+	std::ofstream cheatfile(cheatpath, std::ifstream::out|std::ifstream::binary);
+
+	if (cheatfile.is_open()) {
+		saveroot = (savexml.GetRoot());
+
+		saveroot = savexml.Create( L"cheats" );
+		saveroot.AddAttribute( L"version", L"1.0" );
+
+		char buf[9];
+		wchar_t wbuf[9];
+
+		for (int i = 0; i < chtlist.size(); i++) {
+			Xml::Node node(saveroot.AddChild(L"cheat"));
+			node.AddAttribute(L"enabled", chtlist[i].enabled ? L"1" : L"0");
+
+			if (chtlist[i].gg.size() > 0) {
+				node.AddChild(L"genie", chtlist[i].gg.c_str());
+			}
+
+			if (chtlist[i].par.size() > 0) {
+				node.AddChild(L"rocky", chtlist[i].par.c_str());
+			}
+
+			if (chtlist[i].address != 0) {
+				snprintf(buf, sizeof(buf), "0x%04X", chtlist[i].address);
+				mbstowcs(wbuf, buf, 9);
+				node.AddChild(L"address", wbuf);
+
+				snprintf(buf, sizeof(buf), "0x%02x", chtlist[i].value);
+				mbstowcs(wbuf, buf, 9);
+				node.AddChild(L"value", wbuf);
+
+				snprintf(buf, sizeof(buf), "0x%02x", chtlist[i].compare);
+				mbstowcs(wbuf, buf, 9);
+				node.AddChild(L"compare", wbuf);
+			}
+
+			if (chtlist[i].description.size() > 0) {
+				node.AddChild(L"description", chtlist[i].description.c_str());
+			}
+		}
+
+		savexml.Write(saveroot, cheatfile);
+		cheatfile.close();
+	}
+}
+
 void nst_cheats_code_gg_add(const std::wstring data) {
 	// Add a Game Genie code
 	Cheats cheats(emulator);
@@ -120,7 +172,7 @@ void nst_cheats_code_par_add(const std::wstring data) {
 void nst_cheats_refresh() {
 	Cheats cheats(emulator);
 	cheats.ClearCodes();
-	
+
 	for (int i = 0; i < chtlist.size(); i++) {
 		if (chtlist[i].enabled) {
 			if (chtlist[i].gg.size()) {
