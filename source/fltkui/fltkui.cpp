@@ -40,9 +40,11 @@
 #include "audio.h"
 #include "video.h"
 #include "input.h"
+#include "cheats.h"
 
 #include "fltkui.h"
 #include "fltkui_archive.h"
+#include "fltkui_cheats.h"
 #include "fltkui_config.h"
 
 #define MBARHEIGHT 24
@@ -50,6 +52,7 @@
 static NstWindow *nstwin;
 static Fl_Menu_Bar *menubar;
 static NstGlArea *glarea;
+static NstChtWindow *chtwin;
 static NstConfWindow *confwin;
 
 Fl_Color NstGreen = 0x255f6500;
@@ -62,6 +65,11 @@ extern Input::Controllers *cNstPads;
 extern nstpaths_t nstpaths;
 
 extern bool (*nst_archive_select)(const char*, char*, size_t);
+
+static void fltkui_cheats(Fl_Widget* w, void* userdata) {
+	chtwin->refresh();
+	chtwin->show();
+}
 
 static void fltkui_config(Fl_Widget* w, void* userdata) {
 	confwin->show();
@@ -392,7 +400,7 @@ static Fl_Menu_Item menutable[] = {
 		{"Fullscreen", 0, fltkui_fullscreen, 0, FL_MENU_DIVIDER},
 		{"Flip Disk", 0, fltkui_fds_flip, 0, 0},
 		{"Switch Disk", 0, fltkui_fds_switch, 0, FL_MENU_DIVIDER},
-		//{"Cheats...", 0, 0, 0, FL_MENU_DIVIDER},
+		{"Cheats...", 0, fltkui_cheats, 0, FL_MENU_DIVIDER},
 		{"Configuration...", 0, fltkui_config, 0},
 		{0}, // End Emulator
 	{"&Help", 0, 0, 0, FL_SUBMENU},
@@ -405,8 +413,13 @@ void makenstwin(const char *name) {
 	video_set_dimensions();
 	dimensions_t rendersize = nst_video_get_dimensions_render();
 
-	// Configuration Window
 	Fl::add_handler(handle);
+
+	// Cheats Window
+	chtwin = new NstChtWindow(660, 500, "Cheat Manager");
+	chtwin->populate();
+
+	// Configuration Window
 	confwin = new NstConfWindow(400, 400, "Configuration");
 	confwin->populate();
 
@@ -498,7 +511,7 @@ int main(int argc, char *argv[]) {
 		if (nstwin->visible() && !Fl::check()) {
 			break;
 		}
-		else if (!nstwin->shown() && confwin->shown()) {
+		else if (!nstwin->shown() && (confwin->shown() || chtwin->shown())) {
 			break;
 		}
 		else if (!Fl::wait()) {

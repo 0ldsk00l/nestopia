@@ -719,6 +719,8 @@ nestopia_SOURCES += \
 	source/fltkui/fltkui_config.h \
 	source/fltkui/fltkui_archive.h \
 	source/fltkui/fltkui_archive.cpp \
+	source/fltkui/fltkui_cheats.h \
+	source/fltkui/fltkui_cheats.cpp \
 	source/fltkui/fltkui.cpp \
 	source/fltkui/fltkui.h \
 	source/fltkui/fltkui_config.cpp

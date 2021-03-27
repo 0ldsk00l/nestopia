@@ -26,6 +26,8 @@
 
 #include "cheats.h"
 
+std::vector<NstCheat> chtlist;
+
 extern Emulator emulator;
 
 void nst_cheats_init(const char *cheatpath) {
@@ -58,11 +60,32 @@ void nst_cheats_init(const char *cheatpath) {
 					}
 
 					else if (node.GetChild(L"address")) { // Raw
-						nst_cheats_code_raw_add(node);
+							Cheats::Code code;
+							code.useCompare = false;
+
+							code.address = node.GetChild(L"address").GetUnsignedValue();
+							if (node.GetChild(L"value")) {
+								code.value = node.GetChild(L"value").GetUnsignedValue();
+							}
+							if (node.GetChild(L"compare")) {
+								code.compare = node.GetChild(L"compare").GetUnsignedValue();
+								code.useCompare = true;
+							}
+							cheats.SetCode(code);
 					}
 
 					//fprintf(stderr, "Cheat: %ls\n", node.GetChild(L"description").GetValue());
 				}
+				NstCheat cht = {
+					node.GetAttribute(L"enabled").IsValue(L"1"),
+					node.GetChild(L"genie").GetValue(),
+					node.GetChild(L"rocky").GetValue(),
+					node.GetChild(L"address").GetUnsignedValue(),
+					node.GetChild(L"value").GetUnsignedValue(),
+					node.GetChild(L"compare").GetUnsignedValue(),
+					node.GetChild(L"description").GetValue()
+				};
+				chtlist.push_back(cht);
 				node = node.GetNextSibling();
 			}
 		}
@@ -70,61 +93,53 @@ void nst_cheats_init(const char *cheatpath) {
 	}
 }
 
-/*void nst_cheats_list() {
-	// List the active cheats
-	Cheats cheats(emulator);
-	Cheats::Code code;
-
-	char gg[9];
-
-	for (int i = 0; i < cheats.NumCodes(); i++) {
-		cheats.GetCode(i, code);
-		cheats.GameGenieEncode(code, gg);
-
-		fprintf(stderr, "Cheat: %s\n", gg);
-	}
-}*/
-
-void nst_cheats_code_gg_add(const wchar_t *data) {
+void nst_cheats_code_gg_add(const std::wstring data) {
 	// Add a Game Genie code
 	Cheats cheats(emulator);
 	Cheats::Code code;
 
 	char gg[9];
-	wcstombs(gg, data, sizeof(gg));
+	snprintf(gg, sizeof(gg), "%ls", data.c_str());
 
 	cheats.GameGenieDecode(gg, code);
 	cheats.SetCode(code);
 }
 
-void nst_cheats_code_par_add(const wchar_t *data) {
+void nst_cheats_code_par_add(const std::wstring data) {
 	// Add a Pro Action Rocky code
 	Cheats cheats(emulator);
 	Cheats::Code code;
 
 	char par[9];
-	wcstombs(par, data, sizeof(par));
+	snprintf(par, sizeof(par), "%ls", data.c_str());
 
 	cheats.ProActionRockyDecode(par, code);
 	cheats.SetCode(code);
 }
 
-void nst_cheats_code_raw_add(Xml::Node node) {
-	// Add a Raw code
+void nst_cheats_refresh() {
 	Cheats cheats(emulator);
-	Cheats::Code code;
-
-	code.useCompare = false;
-
-	code.address = node.GetChild(L"address").GetUnsignedValue();
-	if (node.GetChild(L"value")) {
-		code.value = node.GetChild(L"value").GetUnsignedValue();
+	cheats.ClearCodes();
+	
+	for (int i = 0; i < chtlist.size(); i++) {
+		if (chtlist[i].enabled) {
+			if (chtlist[i].gg.size()) {
+				nst_cheats_code_gg_add(chtlist[i].gg);
+			}
+			else if (chtlist[i].par.size()) {
+				nst_cheats_code_par_add(chtlist[i].par);
+			}
+			else if (chtlist[i].address) {
+				Cheats::Code code;
+				code.useCompare = false;
+				code.address = chtlist[i].address;
+				code.value = chtlist[i].value;
+				code.compare = chtlist[i].compare;
+				code.useCompare = code.compare != 0;
+				cheats.SetCode(code);
+			}
+		}
 	}
-	if (node.GetChild(L"compare")) {
-		code.compare = node.GetChild(L"compare").GetUnsignedValue();
-		code.useCompare = true;
-	}
-	cheats.SetCode(code);
 }
 
 // DIP Switches
