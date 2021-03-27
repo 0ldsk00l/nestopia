@@ -893,7 +893,7 @@ SDL_Event nstsdl_input_translate_string(const char *string) {
 void nstsdl_input_conf_button(int pnum, int bnum) {
 	// Configure Inputs for single Joystick Buttons
 	SDL_Event event, eventbuf;
-	int axis = 0, axisnoise = 0, confrunning = 1;
+	int axis = 0, axisnoise = 0, iterations = 0, confrunning = 1;
 
 	if (SDL_NumJoysticks() == 0) { return; }
 
@@ -922,6 +922,7 @@ void nstsdl_input_conf_button(int pnum, int bnum) {
 				confrunning = 0;
 			}
 		}
+		if (++iterations > 3000) { break; } // Roughly 3 second timeout
 		SDL_Delay(1);
 	}
 }
