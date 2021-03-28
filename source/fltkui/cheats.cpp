@@ -226,7 +226,7 @@ void nst_dip_handle(const char *dippath) {
 		root.AddAttribute(L"version", L"1.0");
 
 		wchar_t wbuf[32];
-		char buf[2];
+		char buf[32];
 
 		int numdips = dipswitches.NumDips();
 
@@ -234,7 +234,8 @@ void nst_dip_handle(const char *dippath) {
 			for (int i = 0; i < numdips; i++) {
 				Xml::Node node(root.AddChild(L"dip"));
 
-				mbstowcs(wbuf, dipswitches.GetDipName(i), sizeof(wbuf));
+				snprintf(buf, sizeof(buf), "%s", dipswitches.GetDipName(i));
+				mbstowcs(wbuf, buf, sizeof(buf));
 				node.AddChild(L"description", wbuf);
 
 				snprintf(buf, sizeof(buf), "%d", dipswitches.GetValue(i));

@@ -101,7 +101,6 @@ static void NST_CALLBACK nst_cb_event(void *userData, User::Event event, const v
 			fprintf(stderr, "Cpu: Unofficial Opcode %s\n", (const char*)data);
 			break;
 		case User::EVENT_DISPLAY_TIMER:
-			fprintf(stderr, "\r%s", (const char*)data);
 			nst_video_print_time((const char*)data + strlen((char*)data) - 5, true);
 			break;
 		default: break;
