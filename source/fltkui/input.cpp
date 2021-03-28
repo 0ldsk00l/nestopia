@@ -172,17 +172,15 @@ void nst_input_init() {
 
 void nst_input_inject(Input::Controllers *controllers, nesinput_t input) {
 	// Insert the input signal into the NES
-	if(controllers == NULL) { return; }
+	if (controllers == NULL) { return; }
 
 	if (input.pressed) {
 		controllers->pad[input.player].buttons |= input.nescode;
-
 		if (input.turboa) { input.player == 0 ? turbostate.p1a = true : turbostate.p2a = true; }
 		if (input.turbob) { input.player == 0 ? turbostate.p1b = true : turbostate.p2b = true; }
 	}
 	else {
 		controllers->pad[input.player].buttons &= ~input.nescode;
-
 		if (input.turboa) { input.player == 0 ? turbostate.p1a = false : turbostate.p2a = false; }
 		if (input.turbob) { input.player == 0 ? turbostate.p1b = false : turbostate.p2b = false; }
 	}
@@ -969,4 +967,11 @@ void fltkui_input_process_key(int e) {
 	}
 
 	nst_input_inject(cNstPads, input);
+
+	if (nst_nsf() && input.player == 0 && input.pressed == 0) {
+		if (input.nescode & Input::Controllers::Pad::UP) { nst_nsf_play(); }
+		if (input.nescode & Input::Controllers::Pad::DOWN) { nst_nsf_stop(); }
+		if (input.nescode & Input::Controllers::Pad::LEFT) { nst_nsf_prev(); }
+		if (input.nescode & Input::Controllers::Pad::RIGHT) { nst_nsf_next(); }
+	}
 }
