@@ -55,7 +55,6 @@ typedef struct {
 	bool misc_disable_cursor;
 	bool misc_disable_cursor_special;
 	bool misc_config_pause;
-	char* misc_last_folder;
 	int misc_power_state;
 	int misc_homebrew_exit;
 	int misc_homebrew_stdout;
