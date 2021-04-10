@@ -439,8 +439,6 @@ void makenstwin(const char *name) {
 	glarea = new NstGlArea(0, MBARHEIGHT, nstwin->w(), nstwin->h() - MBARHEIGHT);
 	glarea->color(FL_BLACK);
 
-	nstwin->resizable(glarea);
-	nstwin->resizable(nstwin);
 	nstwin->end();
 }
 
