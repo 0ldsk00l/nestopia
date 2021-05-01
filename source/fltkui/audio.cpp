@@ -1,7 +1,7 @@
 /*
  * Nestopia UE
  *
- * Copyright (C) 2012-2017 R. Danbrook
+ * Copyright (C) 2012-2021 R. Danbrook
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,26 +23,34 @@
 #include <cstdio>
 #include <cstring>
 
+#include <samplerate.h>
+
 #include "nstcommon.h"
 #include "config.h"
 #include "audio.h"
 
 #define IBUFSIZE 4800
-#define EBUFSIZE 9600
+#define EBUFSIZE 12800
 
 extern Emulator emulator;
 
 static SDL_AudioSpec spec, obtained;
 static SDL_AudioDeviceID dev;
 
+static SRC_STATE *srcstate = nullptr;
+static SRC_DATA srcdata;
+
 static int16_t intbuf[IBUFSIZE];
 
-static int16_t extbuf[EBUFSIZE];
+static float fltbuf_in[IBUFSIZE];
+static float fltbuf_out[IBUFSIZE];
+
+static float extbuf[EBUFSIZE];
 static uint16_t bufstart = 0;
 static uint16_t bufend = 0;
 static uint16_t bufsamples = 0;
 
-static int framerate, channels, bufsize;
+static uint16_t framerate, channels, bufsize;
 
 static bool paused = false;
 
@@ -54,37 +62,56 @@ void audio_queue() {
 	while ((bufsamples + bufsize) >= EBUFSIZE) { SDL_Delay(1); }
 
 	SDL_LockAudioDevice(dev);
-	for (int i = 0; i < bufsize; i++) {
-		extbuf[bufend] = intbuf[i];
+
+	src_short_to_float_array(intbuf, fltbuf_in, bufsize);
+
+	srcdata.input_frames = bufsize / channels;
+	srcdata.end_of_input = 0;
+
+	if (bufsamples < bufsize * 2) {
+		srcdata.output_frames = bufsize / channels + 1;
+		srcdata.src_ratio = (conf.audio_sample_rate + 60) / (conf.audio_sample_rate * 1.0);
+	}
+	else if (bufsamples > bufsize * 3) {
+		srcdata.output_frames = bufsize / channels;
+		srcdata.src_ratio = 1.0;
+	}
+
+	src_process(srcstate, &srcdata);
+
+	for (int i = 0; i < srcdata.output_frames_gen * channels; i++) {
+		extbuf[bufend] = fltbuf_out[i];
 		bufend = (bufend + 1) % EBUFSIZE;
 		bufsamples++;
 		if (bufsamples >= EBUFSIZE - 1) { break; }
 	}
+
 	SDL_UnlockAudioDevice(dev);
 }
 
-static int16_t audio_dequeue() {
+static inline float audio_dequeue() {
 	if (bufsamples == 0) { return 0; }
-	int16_t sample = extbuf[bufstart];
+	float sample = extbuf[bufstart];
 	bufstart = (bufstart + 1) % EBUFSIZE;
 	bufsamples--;
 	return sample;
 }
 
 void audio_cb(void *data, uint8_t *stream, int len) {
-	int16_t *out = (int16_t*)stream;
-	for (int i = 0; i < len / 2; i++) {
+	float *out = (float*)stream;
+	for (int i = 0; i < len / sizeof(float); i++) {
 		out[i] = audio_dequeue();
 	}
 }
 
 void audio_deinit() {
 	if (dev) { SDL_CloseAudioDevice(dev); }
+	if (srcstate) { src_delete(srcstate); }
 }
 
 void audio_init_sdl() {
 	spec.freq = conf.audio_sample_rate;
-	spec.format = AUDIO_S16SYS;
+	spec.format = AUDIO_F32SYS;
 	spec.channels = channels;
 	spec.silence = 0;
 	spec.samples = 512;
@@ -93,12 +120,19 @@ void audio_init_sdl() {
 
 	bufsize = channels * (conf.audio_sample_rate / framerate);
 
+	int err;
+	srcstate = src_new(SRC_SINC_FASTEST, channels, &err);
+	srcdata.data_in = fltbuf_in;
+	srcdata.data_out = fltbuf_out;
+	srcdata.output_frames = bufsize / channels;
+	srcdata.src_ratio = 1.0;
+
 	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 	if (!dev) {
 		fprintf(stderr, "Error opening audio device.\n");
 	}
 	else {
-		fprintf(stderr, "Audio: SDL - %dHz %d-bit, %d channel(s)\n", spec.freq, 16, spec.channels);
+		fprintf(stderr, "Audio: SDL - %dHz, %d channel(s)\n", spec.freq, spec.channels);
 	}
 
 	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
@@ -109,7 +143,9 @@ void audio_init() {
 	// Set the framerate based on the region. For PAL: (60 / 6) * 5 = 50
 	framerate = nst_pal() ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
 	channels = conf.audio_stereo ? 2 : 1;
-	memset(intbuf, 0, sizeof(intbuf));
+	memset(intbuf, 0, sizeof(int16_t) * IBUFSIZE);
+	memset(fltbuf_in, 0, sizeof(float) * IBUFSIZE);
+	memset(fltbuf_out, 0, sizeof(float) * IBUFSIZE);
 	audio_init_sdl();
 	paused = false;
 }

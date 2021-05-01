@@ -76,6 +76,9 @@ PKG_CHECK_MODULES([LIBARCHIVE], [libarchive])
 dnl SDL2
 PKG_CHECK_MODULES([SDL2], [sdl2])
 
+dnl SAMPLERATE
+PKG_CHECK_MODULES([SAMPLERATE], [samplerate])
+
 AC_CHECK_PROG(FLTKCONFIG,fltk-config,[fltk-config],[no])
 test "$FLTKCONFIG" == "no" && AC_MSG_ERROR([Cannot find the fltk-config executable. Is FLTK installed?])
 
