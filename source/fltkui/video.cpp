@@ -334,9 +334,9 @@ void video_set_filter() {
 		renderstate.bits.mask.b = 0x000000ff;
 	}
 	else { // Big Endian
-		renderstate.bits.mask.r = 0x000000ff;
-		renderstate.bits.mask.g = 0xff000000;
-		renderstate.bits.mask.b = 0x00ff0000;
+		renderstate.bits.mask.r = 0x0000ff00;
+		renderstate.bits.mask.g = 0x00ff0000;
+		renderstate.bits.mask.b = 0xff000000;
 	}
 
 	if (NES_FAILED(video.SetRenderState(renderstate))) {
