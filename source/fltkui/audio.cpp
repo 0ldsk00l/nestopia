@@ -23,29 +23,20 @@
 #include <cstdio>
 #include <cstring>
 
-#include <samplerate.h>
-
 #include "nstcommon.h"
 #include "config.h"
 #include "audio.h"
 
-#define IBUFSIZE 4800
-#define EBUFSIZE 12800
+#define BUFSIZE 16000
 
 extern Emulator emulator;
 
 static SDL_AudioSpec spec, obtained;
 static SDL_AudioDeviceID dev;
+static SDL_AudioCVT cvt;
 
-static SRC_STATE *srcstate = nullptr;
-static SRC_DATA srcdata;
-
-static int16_t intbuf[IBUFSIZE];
-
-static float fltbuf_in[IBUFSIZE];
-static float fltbuf_out[IBUFSIZE];
-
-static float extbuf[EBUFSIZE];
+static int16_t intbuf[BUFSIZE];
+static int16_t extbuf[BUFSIZE];
 static uint16_t bufstart = 0;
 static uint16_t bufend = 0;
 static uint16_t bufsamples = 0;
@@ -59,31 +50,21 @@ void audio_set_speed(int speed) {
 }
 
 void audio_queue() {
-	while ((bufsamples + bufsize) >= EBUFSIZE) { SDL_Delay(1); }
+	while ((bufsamples + bufsize) >= BUFSIZE) { SDL_Delay(1); }
 
 	SDL_LockAudioDevice(dev);
+	int numsamples = bufsize;
 
-	src_short_to_float_array(intbuf, fltbuf_in, bufsize);
-
-	srcdata.input_frames = bufsize / channels;
-	srcdata.end_of_input = 0;
-
-	if (bufsamples < bufsize * 2) {
-		srcdata.output_frames = bufsize / channels + 1;
-		srcdata.src_ratio = (conf.audio_sample_rate + 60) / (conf.audio_sample_rate * 1.0);
-	}
-	else if (bufsamples > bufsize * 3) {
-		srcdata.output_frames = bufsize / channels;
-		srcdata.src_ratio = 1.0;
+	if (bufsamples < bufsize * 3) {
+		SDL_ConvertAudio(&cvt);
+		numsamples += channels;
 	}
 
-	src_process(srcstate, &srcdata);
-
-	for (int i = 0; i < srcdata.output_frames_gen * channels; i++) {
-		extbuf[bufend] = fltbuf_out[i];
-		bufend = (bufend + 1) % EBUFSIZE;
+	for (int i = 0; i < numsamples; i++) {
+		extbuf[bufend] = intbuf[i];
+		bufend = (bufend + 1) % BUFSIZE;
 		bufsamples++;
-		if (bufsamples >= EBUFSIZE - 1) { break; }
+		if (bufsamples >= BUFSIZE - 1) { break; }
 	}
 
 	SDL_UnlockAudioDevice(dev);
@@ -91,27 +72,29 @@ void audio_queue() {
 
 static inline float audio_dequeue() {
 	if (bufsamples == 0) { return 0; }
-	float sample = extbuf[bufstart];
-	bufstart = (bufstart + 1) % EBUFSIZE;
+	int16_t sample = extbuf[bufstart];
+	bufstart = (bufstart + 1) % BUFSIZE;
 	bufsamples--;
 	return sample;
 }
 
 void audio_cb(void *data, uint8_t *stream, int len) {
-	float *out = (float*)stream;
-	for (int i = 0; i < len / sizeof(float); i++) {
+	int16_t *out = (int16_t*)stream;
+	for (int i = 0; i < len / sizeof(int16_t); i++) {
 		out[i] = audio_dequeue();
 	}
 }
 
 void audio_deinit() {
 	if (dev) { SDL_CloseAudioDevice(dev); }
-	if (srcstate) { src_delete(srcstate); }
 }
 
 void audio_init_sdl() {
+	int e = 1; // Check Endianness
+	SDL_AudioFormat fmt = ((int)*((unsigned char *)&e) == 1) ? AUDIO_S16LSB : AUDIO_S16MSB;
+
 	spec.freq = conf.audio_sample_rate;
-	spec.format = AUDIO_F32SYS;
+	spec.format = fmt;
 	spec.channels = channels;
 	spec.silence = 0;
 	spec.samples = 512;
@@ -119,13 +102,7 @@ void audio_init_sdl() {
 	spec.callback = audio_cb;
 
 	bufsize = channels * (conf.audio_sample_rate / framerate);
-
-	int err;
-	srcstate = src_new(SRC_SINC_FASTEST, channels, &err);
-	srcdata.data_in = fltbuf_in;
-	srcdata.data_out = fltbuf_out;
-	srcdata.output_frames = bufsize / channels;
-	srcdata.src_ratio = 1.0;
+	bufend = bufstart = bufsamples = 0;
 
 	dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
 	if (!dev) {
@@ -135,6 +112,11 @@ void audio_init_sdl() {
 		fprintf(stderr, "Audio: SDL - %dHz, %d channel(s)\n", spec.freq, spec.channels);
 	}
 
+	SDL_BuildAudioCVT(&cvt, fmt, channels, conf.audio_sample_rate, fmt, channels, conf.audio_sample_rate + ((nst_pal() ? 50 : 60) * channels));
+	SDL_assert(cvt.needed);
+	cvt.len = (bufsize + channels) * sizeof(int16_t);
+	cvt.buf = (Uint8*)intbuf;
+
 	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
 }
 
@@ -143,9 +125,7 @@ void audio_init() {
 	// Set the framerate based on the region. For PAL: (60 / 6) * 5 = 50
 	framerate = nst_pal() ? (conf.timing_speed / 6) * 5 : conf.timing_speed;
 	channels = conf.audio_stereo ? 2 : 1;
-	memset(intbuf, 0, sizeof(int16_t) * IBUFSIZE);
-	memset(fltbuf_in, 0, sizeof(float) * IBUFSIZE);
-	memset(fltbuf_out, 0, sizeof(float) * IBUFSIZE);
+	memset(intbuf, 0, sizeof(int16_t) * BUFSIZE);
 	audio_init_sdl();
 	paused = false;
 }
@@ -196,5 +176,5 @@ void audio_adj_volume() {
 	sound.SetVolume(Sound::CHANNEL_N163, conf.audio_vol_n163);
 	sound.SetVolume(Sound::CHANNEL_S5B, conf.audio_vol_s5b);
 
-	if (conf.audio_volume == 0) { memset(intbuf, 0, sizeof(intbuf)); }
+	if (conf.audio_volume == 0) { memset(intbuf, 0, sizeof(int16_t) * BUFSIZE); }
 }
