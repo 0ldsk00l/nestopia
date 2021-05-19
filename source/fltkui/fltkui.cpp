@@ -507,8 +507,6 @@ int main(int argc, char *argv[]) {
 	video_init();
 
 	while (true) {
-		glarea->redraw();
-
 		Fl::check();
 		if (!nstwin->shown()) {
 			break;
@@ -528,6 +526,7 @@ int main(int argc, char *argv[]) {
 				default: break;
 			}
 		}
+
 		nst_emuloop();
 		glarea->redraw();
 	}
