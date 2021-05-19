@@ -509,16 +509,13 @@ int main(int argc, char *argv[]) {
 	while (true) {
 		glarea->redraw();
 
-		if (nstwin->visible() && !Fl::check()) {
+		Fl::check();
+		if (!nstwin->shown()) {
 			break;
 		}
 		else if (!nstwin->shown() && (confwin->shown() || chtwin->shown())) {
 			break;
 		}
-		else if (!Fl::wait()) {
-			break;
-		}
-
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
 			switch (event.type) {
@@ -531,7 +528,6 @@ int main(int argc, char *argv[]) {
 				default: break;
 			}
 		}
-
 		nst_emuloop();
 		glarea->redraw();
 	}
