@@ -78,7 +78,6 @@ void nst_ogl_init() {
 	glDisable(GL_ALPHA_TEST);
 	glDisable(GL_BLEND);
 	glDisable(GL_LIGHTING);
-	glDisable(GL_TEXTURE_3D_EXT);
 	glMatrixMode(GL_PROJECTION);
 	glLoadIdentity();
 	glOrtho(0.0, rendersize.w * conf.video_scale_factor, rendersize.h * conf.video_scale_factor, 0.0, -1.0, 1.0);
