@@ -57,7 +57,7 @@ void audio_queue() {
 
 	if (bufsamples < bufsize * 3) {
 		SDL_ConvertAudio(&cvt);
-		numsamples += channels;
+		numsamples += channels * 2;
 	}
 
 	for (int i = 0; i < numsamples; i++) {
@@ -112,9 +112,9 @@ void audio_init_sdl() {
 		fprintf(stderr, "Audio: SDL - %dHz, %d channel(s)\n", spec.freq, spec.channels);
 	}
 
-	SDL_BuildAudioCVT(&cvt, fmt, channels, conf.audio_sample_rate, fmt, channels, conf.audio_sample_rate + ((nst_pal() ? 50 : 60) * channels));
+	SDL_BuildAudioCVT(&cvt, fmt, channels, conf.audio_sample_rate, fmt, channels, conf.audio_sample_rate + ((nst_pal() ? 50 : 60) * channels * 2));
 	SDL_assert(cvt.needed);
-	cvt.len = (bufsize + channels) * sizeof(int16_t);
+	cvt.len = (bufsize + channels * 2) * sizeof(int16_t);
 	cvt.buf = (Uint8*)intbuf;
 
 	SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
