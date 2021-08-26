@@ -317,6 +317,7 @@
     <ClInclude Include="..\source\core\board\NstBoardTxcTw.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardWaixing.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardWaixingFfv.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardWaixingFs304.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardWaixingPs2.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardWaixingSecurity.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardWaixingSgz.hpp" />
@@ -620,6 +621,7 @@
     <ClCompile Include="..\source\core\board\NstBoardTxcTw.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardWaixing.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardWaixingFfv.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardWaixingFs304.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardWaixingPs2.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardWaixingSecurity.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardWaixingSgz.cpp" />

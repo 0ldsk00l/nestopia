@@ -662,6 +662,8 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardInlNsf.hpp \
 	source/core/board/NstBoardAction53.cpp \
 	source/core/board/NstBoardAction53.hpp \
+	source/core/board/NstBoardWaixingFs304.cpp \
+	source/core/board/NstBoardWaixingFs304.hpp \
 	source/core/NstPins.hpp \
 	source/core/NstNsf.hpp \
 	source/core/NstTrackerRewinder.hpp \

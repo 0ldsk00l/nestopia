@@ -77,6 +77,25 @@ namespace Nes
 					Timer::M2<Irq> irq;
 				};
 
+				class Ks7010 : public Board
+				{
+				public:
+
+					explicit Ks7010(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
+					void SubLoad(State::Loader&,dword);
+					void SubSave(State::Saver&) const;
+
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_PEEK( FFFC );
+
+					uint reg;
+				};
+
 				class Ks7013b : public Board
 				{
 				public:
@@ -189,6 +208,25 @@ namespace Nes
 					NES_DECL_POKE( B000 );
 					NES_DECL_PEEK( C000 );
 					NES_DECL_PEEK( E000 );
+				};
+
+				class Ks7057 : public Board
+				{
+				public:
+					explicit Ks7057(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
+					void SubLoad(State::Loader&,dword);
+					void SubSave(State::Saver&) const;
+
+					byte regs[8];
+
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_POKE( 8000 );
+					NES_DECL_POKE( B000 );
 				};
 
 				class Ks7058 : public Board

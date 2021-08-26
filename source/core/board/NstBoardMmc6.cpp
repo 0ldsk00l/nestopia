@@ -37,7 +37,7 @@ namespace Nes
 			#endif
 
 			Mmc6::Mmc6(const Context& c)
-			: Mmc3(c,REV_B) {}
+			: Mmc3(c,REV_A) {}
 
 			void Mmc6::SubReset(const bool hard)
 			{

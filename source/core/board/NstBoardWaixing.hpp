@@ -32,6 +32,7 @@
 #include "NstBoardMmc3.hpp"
 #include "NstBoardWaixingPs2.hpp"
 #include "NstBoardWaixingFfv.hpp"
+#include "NstBoardWaixingFs304.hpp"
 #include "NstBoardWaixingSh2.hpp"
 #include "NstBoardWaixingZs.hpp"
 #include "NstBoardWaixingSecurity.hpp"

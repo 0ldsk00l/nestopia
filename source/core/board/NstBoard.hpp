@@ -418,12 +418,14 @@ namespace Nes
 						JYCOMPANY_TYPE_C           = MakeId<  211, 2048, 2048,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Kaiser
 						KAISER_KS202               = MakeId<   56,  256,  128,  8,  0, CRM_0,  NMT_V,  0 >::ID,
+						KAISER_KS7010              = MakeId<  554,  128,  128,  0,  0, CRM_0,  NMT_V,  1 >::ID,
 						KAISER_KS7013B             = MakeId<  312,  128,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						KAISER_KS7016              = MakeId<  306,  128,    0,  0,  0, CRM_8,  NMT_V,  0 >::ID,
 						KAISER_KS7022              = MakeId<  175,  256,  128,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						KAISER_KS7031              = MakeId<  305,  128,    0,  0,  0, CRM_8,  NMT_V,  0 >::ID,
 						KAISER_KS7032              = MakeId<  142,  128,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						KAISER_KS7037              = MakeId<  307,  128,    0,  0,  8, CRM_8,  NMT_X,  0 >::ID,
+						KAISER_KS7057              = MakeId<  302,  128,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						KAISER_KS7058              = MakeId<  171,   32,   32,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Kasing
 						KASING_STD                 = MakeId<  115,  512,  512,  0,  0, CRM_0,  NMT_V,  0 >::ID,
@@ -541,6 +543,7 @@ namespace Nes
 						UNL_A9746                  = MakeId<  219,  128,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						UNL_CC21                   = MakeId<   27,   32,    8,  0,  0, CRM_0,  NMT_Z,  0 >::ID,
 						UNL_EDU2000                = MakeId<  329, 1024,    0,  0, 32, CRM_8,  NMT_Z,  0 >::ID,
+						UNL_FS304                  = MakeId<  162, 2048,    0,  8,  0, CRM_8,  NMT_X,  0 >::ID,
 						UNL_KINGOFFIGHTERS96       = MakeId<  187,  512,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						UNL_KINGOFFIGHTERS97       = MakeId<  263,  256,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						UNL_MORTALKOMBAT2          = MakeId<   91,  256,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,

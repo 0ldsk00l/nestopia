@@ -27023,4 +27023,41 @@
             </board>
         </cartridge>
     </game>
+    <game>
+        <cartridge system="Famicom" dump="ok" crc="8589652D" sha1="0CC7ED7F5D7EE0959EE3724C3AF06EF8DF397C59">
+            <board type="NANJING" mapper="163">
+                <prg size="2048k" />
+                <wram size="8k" battery="1" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="NES-NTSC" dump="ok" crc="F312D1DE" sha1="35C157A921156E47FD3F6573D150F54108D0EDFC">
+            <board type="NES-TXROM" mapper="4">
+                <prg size="16k" />
+                <chip type="MMC3A" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="NES-NTSC" dump="ok" crc="A512BDF6" sha1="F794FDA12D34E611D58E652319ED583AE61B81E0">
+            <board type="NES-HKROM" mapper="4">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
+                <chip type="MMC6B" battery="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="NES-NTSC" dump="ok" crc="633AFE6F" sha1="2F29F3DC724027FAD926BC9D4470A481884E42A5">
+            <board type="NES-HKROM" mapper="4">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
+                <chip type="MMC6B" battery="0" />
+            </board>
+        </cartridge>
+    </game>
 </database>

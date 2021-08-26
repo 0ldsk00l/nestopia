@@ -69,6 +69,21 @@ namespace Nes
 					irq.Reset( hard, hard ? false : irq.Connected() );
 				}
 
+				void Ks7010::SubReset(const bool hard)
+				{
+					prg.SwapBank<SIZE_16K>( 0x0000, 0x5 );
+					prg.SwapBank<SIZE_16K>( 0x4000, 0x3 );
+
+					// At the time of writing, the true mask for bankswitching is unknown
+					Map( 0x6000U, 0x7FFFU, &Ks7010::Peek_6000 );
+					Map( 0xCAB6U, 0xCAD6U, &Ks7010::Peek_FFFC );
+					Map( 0xEBE2U, 0xEBE3U, &Ks7010::Peek_FFFC );
+					Map( 0xEE32U, &Ks7010::Peek_FFFC );
+					Map( 0xFFFCU, &Ks7010::Peek_FFFC );
+
+					reg = 0;
+				}
+
 				void Ks7013b::SubReset(const bool hard)
 				{
 					prg.SwapBank<SIZE_16K>( 0x4000, 0x7 );
@@ -147,44 +162,28 @@ namespace Nes
 					Map( 0xE000U, 0xEFFFU, &Ks7037::Peek_E000 );
 				}
 
+				void Ks7057::SubReset(const bool hard)
+				{
+					prg.SwapBank<SIZE_8K>( 0x2000, 0xD );
+					prg.SwapBank<SIZE_16K>( 0x4000, 0x7 );
+
+					Map( 0x6000U, 0x9FFFU, &Ks7057::Peek_6000 );
+					Map( 0x8000U, 0x9FFFU, &Ks7057::Poke_8000 );
+					Map( 0xB000U, 0xE003U, &Ks7057::Poke_B000 );
+
+					if (hard)
+					{
+						for (uint i = 0; i < 8; ++i)
+							regs[i] = 0;
+					}
+				}
+
 				void Ks7058::SubReset(bool)
 				{
 					for (uint i=0x000; i < 0x1000; i += 0x100)
 					{
 						Map( 0xF000+i, 0xF07F+i, CHR_SWAP_4K_0 );
 						Map( 0xF080+i, 0xF0FF+i, CHR_SWAP_4K_1 );
-					}
-				}
-
-				void Ks7016::SubLoad(State::Loader& state,const dword baseChunk)
-				{
-					NST_VERIFY( (baseChunk == AsciiId<'K','7','6'>::V) );
-
-					if (baseChunk == AsciiId<'K','7','6'>::V)
-					{
-						while (const dword chunk = state.Begin())
-						{
-							if (chunk == AsciiId<'R','E','G'>::V)
-								reg = state.Read8();
-
-							state.End();
-						}
-					}
-				}
-
-				void Ks7022::SubLoad(State::Loader& state,const dword baseChunk)
-				{
-					NST_VERIFY( (baseChunk == AsciiId<'K','7','2'>::V) );
-
-					if (baseChunk == AsciiId<'K','7','2'>::V)
-					{
-						while (const dword chunk = state.Begin())
-						{
-							if (chunk == AsciiId<'R','E','G'>::V)
-								reg = state.Read8();
-
-							state.End();
-						}
 					}
 				}
 
@@ -215,6 +214,54 @@ namespace Nes
 									break;
 								}
 							}
+
+							state.End();
+						}
+					}
+				}
+
+				void Ks7010::SubLoad(State::Loader& state,const dword baseChunk)
+				{
+					NST_VERIFY( (baseChunk == AsciiId<'K','7','0'>::V) );
+
+					if (baseChunk == AsciiId<'K','7','0'>::V)
+					{
+						while (const dword chunk = state.Begin())
+						{
+							if (chunk == AsciiId<'R','E','G'>::V)
+								reg = state.Read8();
+
+							state.End();
+						}
+					}
+				}
+
+				void Ks7016::SubLoad(State::Loader& state,const dword baseChunk)
+				{
+					NST_VERIFY( (baseChunk == AsciiId<'K','7','6'>::V) );
+
+					if (baseChunk == AsciiId<'K','7','6'>::V)
+					{
+						while (const dword chunk = state.Begin())
+						{
+							if (chunk == AsciiId<'R','E','G'>::V)
+								reg = state.Read8();
+
+							state.End();
+						}
+					}
+				}
+
+				void Ks7022::SubLoad(State::Loader& state,const dword baseChunk)
+				{
+					NST_VERIFY( (baseChunk == AsciiId<'K','7','2'>::V) );
+
+					if (baseChunk == AsciiId<'K','7','2'>::V)
+					{
+						while (const dword chunk = state.Begin())
+						{
+							if (chunk == AsciiId<'R','E','G'>::V)
+								reg = state.Read8();
 
 							state.End();
 						}
@@ -272,6 +319,33 @@ namespace Nes
 					}
 				}
 
+				void Ks7057::SubLoad(State::Loader& state,const dword baseChunk)
+				{
+					NST_VERIFY( (baseChunk == AsciiId<'K','5','7'>::V) );
+
+					if (baseChunk == AsciiId<'K','5','7'>::V)
+					{
+						while (const dword chunk = state.Begin())
+						{
+							if (chunk == AsciiId<'R','E','G'>::V)
+							{
+								State::Loader::Data<8> data( state );
+
+								regs[0] = data[0];
+								regs[1] = data[1];
+								regs[2] = data[2];
+								regs[3] = data[3];
+								regs[4] = data[4];
+								regs[5] = data[5];
+								regs[6] = data[6];
+								regs[7] = data[7];
+							}
+
+							state.End();
+						}
+					}
+				}
+
 				void Ks202::SubSave(State::Saver& state) const
 				{
 					state.Begin( AsciiId<'K','0','2'>::V );
@@ -288,6 +362,11 @@ namespace Nes
 
 					state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();
 					state.End();
+				}
+
+				void Ks7010::SubSave(State::Saver& state) const
+				{
+					state.Begin( AsciiId<'K','7','0'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
 				}
 
 				void Ks7016::SubSave(State::Saver& state) const
@@ -317,6 +396,20 @@ namespace Nes
 						regs[0], regs[1], regs[2], regs[3],
 						regs[4], regs[5], regs[6], regs[7],
 						regNum
+					};
+
+					state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
+					state.End();
+				}
+
+				void Ks7057::SubSave(State::Saver& state) const
+				{
+					state.Begin( AsciiId<'K','5','7'>::V );
+
+					const byte data[8] =
+					{
+						regs[0], regs[1], regs[2], regs[3],
+						regs[4], regs[5], regs[6], regs[7]
 					};
 
 					state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
@@ -427,6 +520,20 @@ namespace Nes
 						irq.VSync();
 
 					Board::Sync( event, controllers );
+				}
+
+				NES_PEEK_A(Ks7010,6000)
+				{
+					return *(prg.Source().Mem(reg * SIZE_8K) + (address & 0x1FFF));
+				}
+
+				NES_PEEK_A(Ks7010,FFFC)
+				{
+					reg = (address >> 2) & 0xF;
+					chr.SwapBank<SIZE_8K,0x0000>( reg );
+					ppu.Update();
+
+					return prg.Peek(address & 0x7FFF);
 				}
 
 				NES_POKE_D(Ks7013b,6000)
@@ -565,6 +672,39 @@ namespace Nes
 				NES_PEEK_A(Ks7037,E000)
 				{
 					return *(prg.Source().Mem(SIZE_8K * 15) + (address & 0x1FFF));
+				}
+
+				NES_PEEK_A(Ks7057,6000)
+				{
+					return *(prg.Source().Mem(regs[(address >> 11) - 0xC] * SIZE_2K) + (address & 0x7FF));
+				}
+
+				NES_POKE_D(Ks7057,8000)
+				{
+					ppu.SetMirroring( (data & 0x1) ? Ppu::NMT_V : Ppu::NMT_H );
+				}
+
+				NES_POKE_AD(Ks7057,B000)
+				{
+					switch(address & 0xF003)
+					{
+						case 0xB000: regs[4] = (regs[4] & 0xF0) | (data & 0xF); break;
+						case 0xB001: regs[4] = (regs[4] & 0xF) | (data << 4); break;
+						case 0xB002: regs[5] = (regs[5] & 0xF0) | (data & 0xF); break;
+						case 0xB003: regs[5] = (regs[5] & 0xF) | (data << 4); break;
+						case 0xC000: regs[6] = (regs[6] & 0xF0) | (data & 0xF); break;
+						case 0xC001: regs[6] = (regs[6] & 0xF) | (data << 4); break;
+						case 0xC002: regs[7] = (regs[7] & 0xF0) | (data & 0xF); break;
+						case 0xC003: regs[7] = (regs[7] & 0xF) | (data << 4); break;
+						case 0xD000: regs[0] = (regs[0] & 0xF0) | (data & 0xF); break;
+						case 0xD001: regs[0] = (regs[0] & 0xF) | (data << 4); break;
+						case 0xD002: regs[1] = (regs[1] & 0xF0) | (data & 0xF); break;
+						case 0xD003: regs[1] = (regs[1] & 0xF) | (data << 4); break;
+						case 0xE000: regs[2] = (regs[2] & 0xF0) | (data & 0xF); break;
+						case 0xE001: regs[2] = (regs[2] & 0xF) | (data << 4); break;
+						case 0xE002: regs[3] = (regs[3] & 0xF0) | (data & 0xF); break;
+						case 0xE003: regs[3] = (regs[3] & 0xF) | (data << 4); break;
+					}
 				}
 			}
 		}

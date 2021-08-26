@@ -2324,9 +2324,15 @@ namespace Nes
 
 				cpu.StealCycles( cpu.GetClock(1) );
 
-				// This is disabled until a real solution is discovered
-				//if ((readAddress & 0xF000) != 0x4000)
-				//	cpu.Peek( readAddress );
+				/* According to dmc_dma_during_read4/dma_2007_read, DMC DMA during read causes
+				 * 2-3 extra $2007 reads before the real read. The nesdev wiki states that this
+				 * also happens when polling $2002 for vblank.
+				*/
+				if ((readAddress & 0xF000) != 0x4000)
+				{
+					cpu.Peek( readAddress );
+					cpu.Peek( readAddress );
+				}
 
 				cpu.StealCycles( cpu.GetClock(1) );
 				cpu.Peek( readAddress );

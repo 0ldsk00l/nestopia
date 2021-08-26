@@ -58,32 +58,28 @@ namespace Nes
 					uint latch;
 					ibool reload;
 					ibool enabled;
-					const ibool persistant;
+					const ibool persistent;
 
 				public:
 
 					explicit BaseIrq(bool p)
-					: persistant(p) {}
+					: persistent(p) {}
 
 					NST_FORCE_INLINE bool Clock()
 					{
-						const uint tmp = count;
+						const bool tmp = count || reload;
 
-						if (reload)
-						{
-							reload = false;
-							count = latch;
-						}
-						else if (!count)
+						if (!count || reload)
 						{
 							count = latch;
 						}
 						else
 						{
-							count--;
+							--count;
 						}
 
-						return (tmp | persistant) && !count && enabled;
+						reload = false;
+						return (tmp | persistent) && !count && enabled;
 					}
 
 					void SetLatch(uint data)
@@ -120,8 +116,8 @@ namespace Nes
 				template<uint Delay=0, uint ClockFilter=BaseIrq::CLOCK_FILTER>
 				struct Irq : Timer::A12<BaseIrq,ClockFilter,Delay>
 				{
-					Irq(Cpu& c,Ppu& p,bool persistant)
-					: Timer::A12<BaseIrq,ClockFilter,Delay>(c,p,persistant) {}
+					Irq(Cpu& c,Ppu& p,bool persistent)
+					: Timer::A12<BaseIrq,ClockFilter,Delay>(c,p,persistent) {}
 				};
 
 			protected:

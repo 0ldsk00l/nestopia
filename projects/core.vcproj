@@ -1667,6 +1667,13 @@
 				<File
 					RelativePath="..\source\core\board\NstBoardWaixingFfv.hpp"
 					>
+				<File
+					RelativePath="..\source\core\board\NstBoardWaixingFs304.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\core\board\NstBoardWaixingFs304.hpp"
+					>
 				</File>
 				<File
 					RelativePath="..\source\core\board\NstBoardWaixingPs2.cpp"

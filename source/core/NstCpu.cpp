@@ -1280,6 +1280,7 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::Rts()
 		{
+			opcode = map.Peek8( pc );
 			pc = Pull16() + 1;
 			cycles.count += cycles.clock[RTS_CYCLES-1];
 		}
@@ -1290,6 +1291,7 @@ namespace Nes
 
 			{
 				const uint packed = Pull8();
+				opcode = map.Peek8( pc );
 				pc = Pull16();
 				flags.Unpack( packed );
 			}
@@ -1802,6 +1804,7 @@ namespace Nes
 		{
 			NST_DEBUG_MSG("6502 BRK");
 
+			opcode = map.Peek8( pc );
 			Push16( pc + 1 );
 			Push8( flags.Pack() | Flags::B );
 			flags.i = Flags::I;

@@ -1103,6 +1103,7 @@ namespace Nes
 					{ "UNL-AX5705",                  Type::BTL_AX5705               },
 					{ "UNL-CC-21",                   Type::UNL_CC21                 },
 					{ "UNL-EDU2000",                 Type::UNL_EDU2000              },
+					{ "UNL-FS304",                   Type::UNL_FS304                },
 					{ "UNL-H2288",                   Type::KAY_H2288                },
 					{ "UNL-KOF97",                   Type::UNL_KINGOFFIGHTERS97     },
 					{ "UNL-KS7013B",                 Type::KAISER_KS7013B           },
@@ -1110,6 +1111,7 @@ namespace Nes
 					{ "UNL-KS7031",                  Type::KAISER_KS7031            },
 					{ "UNL-KS7032",                  Type::KAISER_KS7032            },
 					{ "UNL-KS7037",                  Type::KAISER_KS7037            },
+					{ "UNL-KS7057",                  Type::KAISER_KS7057            },
 					{ "UNL-N625092",                 Type::UNL_N625092              },
 					{ "UNL-SA-0036",                 Type::SACHEN_SA0036            },
 					{ "UNL-SA-0037",                 Type::SACHEN_SA0037            },
@@ -1449,7 +1451,7 @@ namespace Nes
 					case 4:
 
 						if (submapper == 1)
-						{ // StarTropics/Zoda's Revenge - might not be correct
+						{ // StarTropics/Zoda's Revenge
 							chips.Add(L"MMC6B");
 							name = "NES-HKROM";
 							id = Type::STD_HKROM;
@@ -2778,6 +2780,12 @@ namespace Nes
 						id = Type::BANDAI_LZ93D50_24C01;
 						break;
 
+					case 162:
+
+						name = "UNL-FS304";
+						id = Type::UNL_FS304;
+						break;
+
 					case 163:
 
 						name = "NANJING";
@@ -3438,6 +3446,12 @@ namespace Nes
 						id = Type::BMC_8157;
 						break;
 
+					case 302:
+
+						name = "UNL-KS7057";
+						id = Type::KAISER_KS7057;
+						break;
+
 					case 305:
 
 						name = "UNL-KS7031";
@@ -3496,6 +3510,12 @@ namespace Nes
 
 						name = "UNL-AX5705";
 						id = Type::BTL_AX5705;
+						break;
+
+					case 554:
+
+						name = "UNL-KS7010";
+						id = Type::KAISER_KS7010;
 						break;
 
 					default:
@@ -3766,12 +3786,14 @@ namespace Nes
 					case Type::JYCOMPANY_TYPE_B           :
 					case Type::JYCOMPANY_TYPE_C           : return new JyCompany::Standard(c);
 					case Type::KAISER_KS202               : return new Kaiser::Ks202(c);
+					case Type::KAISER_KS7010              : return new Kaiser::Ks7010(c);
 					case Type::KAISER_KS7013B             : return new Kaiser::Ks7013b(c);
 					case Type::KAISER_KS7016              : return new Kaiser::Ks7016(c);
 					case Type::KAISER_KS7022              : return new Kaiser::Ks7022(c);
 					case Type::KAISER_KS7031              : return new Kaiser::Ks7031(c);
 					case Type::KAISER_KS7032              : return new Kaiser::Ks7032(c);
 					case Type::KAISER_KS7037              : return new Kaiser::Ks7037(c);
+					case Type::KAISER_KS7057              : return new Kaiser::Ks7057(c);
 					case Type::KAISER_KS7058              : return new Kaiser::Ks7058(c);
 					case Type::KASING_STD                 : return new Kasing::Standard(c);
 					case Type::KAY_H2288                  : return new Kay::H2288(c);
@@ -3868,6 +3890,7 @@ namespace Nes
 					case Type::UNL_A9746                  : return new Unlicensed::A9746(c);
 					case Type::UNL_CC21                   : return new Unlicensed::Cc21(c);
 					case Type::UNL_EDU2000                : return new Unlicensed::Edu2000(c);
+					case Type::UNL_FS304                  : return new Waixing::Fs304(c);
 					case Type::UNL_KINGOFFIGHTERS96       : return new Unlicensed::KingOfFighters96(c);
 					case Type::UNL_KINGOFFIGHTERS97       : return new Unlicensed::KingOfFighters97(c);
 					case Type::UNL_MORTALKOMBAT2          : return new Unlicensed::MortalKombat2(c);
