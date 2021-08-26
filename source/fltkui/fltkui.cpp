@@ -301,7 +301,7 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 	Fl_Box text0(0, 144, 460, 24, "Nestopia UE");
 	text0.labelfont(FL_BOLD);
 
-	Fl_Box text1(0, 166, 460, 24, "1.51.0");
+	Fl_Box text1(0, 166, 460, 24, "1.51.1");
 
 	Fl_Box text2(0, 208, 460, 24, "Cycle-Accurate Nintendo Entertainment System Emulator");
 

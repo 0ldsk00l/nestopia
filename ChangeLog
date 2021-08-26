@@ -1,4 +1,27 @@
 ----------------------------------------------------------------
+1.51.1
+----------------------------------------------------------------
+Shell:
+
+ Changes:
+  - Unofficial support for macOS via homebrew
+
+ Fixes:
+  - FLTK: Better audio buffer management
+  - FLTK: Fix bug related to system-wide NstDatabase.xml loading
+
+Core:
+
+ Additions:
+  - Mappers 162, 302, 554 (UNL-FS304, UNL-KS7057, UNL-KS7010)
+  - Add database entries for Micro Mages, Nong Chang Xiao Jing Ling
+
+ Fixes:
+  - Accuracy fix for MMC3 and MMC6 IRQ timing
+  - Accuracy fix for DMC DMA read conflicts
+  - Accuracy fix for CPU Exec Space PPUIO
+
+----------------------------------------------------------------
 1.51.0
 ----------------------------------------------------------------
 Shell:
