@@ -27060,4 +27060,13 @@
             </board>
         </cartridge>
     </game>
+    <game>
+        <cartridge system="NES-NTSC" dump="unknown" crc="BD75ED79" sha1="2E2B42DA4E0F41F411C778B5A9B66AA9FBD1167E">
+            <board type="CAMERICA-BF9093" mapper="71">
+                <prg size="64k" />
+                <vram size="8k" />
+                <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
 </database>
