@@ -735,6 +735,17 @@ namespace Nes
 			return (regs.ctrl[1] & Regs::CTRL1_EMPHASIS) << 1;
 		}
 
+		NST_FORCE_INLINE void Ppu::UpdateDecay(byte mask)
+		{
+			Cycle curCyc = cpu.GetCycles();
+
+			for (uint i = 0; i < 8; ++i)
+			{
+				if (mask & (1 << i))
+					decay.timestamp[i] = curCyc;
+			}
+		}
+
 		NES_POKE_D(Ppu,2000)
 		{
 			Update( cycles.one );
@@ -747,6 +758,8 @@ namespace Nes
 				oam.height = (data >> 2 & 8) + 8;
 
 				io.latch = data;
+				UpdateDecay(0xFF);
+
 				data = regs.ctrl[0] ;
 				regs.ctrl[0] = io.latch;
 
@@ -786,6 +799,8 @@ namespace Nes
 				}
 
 				io.latch = data;
+				UpdateDecay(0xFF);
+
 				data = (regs.ctrl[1] ^ data) & (Regs::CTRL1_EMPHASIS|Regs::CTRL1_MONOCHROME);
 				regs.ctrl[1] = io.latch;
 
@@ -813,13 +828,22 @@ namespace Nes
 		{
 			Update( cycles.one, address );
 
+			byte mask = 0xE0;
 			uint status = regs.status & 0xFF;
 
 			regs.status &= (Regs::STATUS_VBLANK^0xFFU);
 			scroll.toggle = 0;
 			io.latch = (io.latch & Regs::STATUS_LATCH) | status;
+			UpdateDecay(mask);
 
-			return io.latch;
+			Cycle curCyc = cpu.GetCycles();
+			for (uint i = 0; i < 5; ++i)
+			{
+				if ((curCyc - decay.timestamp[i]) < 24576)
+					mask |= (1 << i);
+			}
+
+			return io.latch & mask;
 		}
 
 		NES_PEEK_A(Ppu,2002_RC2C05_01_04)
@@ -843,6 +867,7 @@ namespace Nes
 
 			regs.oam = data;
 			io.latch = data;
+			UpdateDecay(0xFF);
 		}
 
 		NES_POKE_D(Ppu,2004)
@@ -851,6 +876,9 @@ namespace Nes
 
 			NST_ASSERT( regs.oam < Oam::SIZE );
 			NST_VERIFY( IsDead() );
+
+			io.latch = data;
+			UpdateDecay(0xFF);
 
 			if (IsDead())
 			{
@@ -864,7 +892,6 @@ namespace Nes
 
 			byte* const NST_RESTRICT value = oam.ram + regs.oam;
 			regs.oam = (regs.oam + 1) & 0xFF;
-			io.latch = data;
 			*value = data;
 		}
 
@@ -875,12 +902,14 @@ namespace Nes
 			if (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || cpu.GetCycles() - (cpu.GetFrameCycles() - (341 * 241) * cycles.one) >= (341 * 240) * cycles.one)
 			{
 				io.latch = oam.ram[regs.oam];
+				UpdateDecay(0xFF);
 			}
 			else
 			{
 				Update( cycles.one );
 
 				io.latch = oam.latch;
+				UpdateDecay(0xFF);
 			}
 
 			return io.latch;
@@ -895,6 +924,7 @@ namespace Nes
 			if (cpu.GetCycles() >= cycles.reset)
 			{
 				io.latch = data;
+				UpdateDecay(0xFF);
 
 				if (scroll.toggle ^= 1)
 				{
@@ -917,6 +947,7 @@ namespace Nes
 			if (cpu.GetCycles() >= cycles.reset)
 			{
 				io.latch = data;
+				UpdateDecay(0xFF);
 
 				if (scroll.toggle ^= 1)
 				{
@@ -945,6 +976,7 @@ namespace Nes
 				return;
 
 			io.latch = data;
+			UpdateDecay(0xFF);
 
 			if ((address & 0x3F00) == 0x3F00)
 			{
@@ -976,7 +1008,16 @@ namespace Nes
 
 		NES_PEEK_A(Ppu,2007)
 		{
+			byte mask = 0xFF;
+			byte cache = io.latch;
+
 			Update( cycles.one, address );
+
+			Cycle curCyc = cpu.GetCycles();
+			Cycle delta = curCyc - decay.rd2007;
+			decay.rd2007 = curCyc;
+
+			bool fastread = (delta <= 12);
 
 			address = scroll.address & 0x3FFF;
 			UpdateVramAddress();
@@ -984,8 +1025,22 @@ namespace Nes
 			if (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || (scanline == SCANLINE_VBLANK))
 				UpdateAddressLine(scroll.address & 0x3fff);
 
-			io.latch = (address & 0x3F00) != 0x3F00 ? io.buffer : palette.ram[address & 0x1F] & Coloring();
+			if ((address & 0x3F00) == 0x3F00) // Palette
+			{
+				io.latch = (io.latch & 0xC0) | palette.ram[address & 0x1F] & Coloring();
+				mask = 0x3F;
+			}
+			else // Non-Palette
+			{
+				io.latch = io.buffer;
+			}
+
+			UpdateDecay(mask);
+
 			io.buffer = (address >= 0x2000 ? nmt.FetchName( address ) : chr.FetchPattern( address ));
+
+			if (fastread)
+				io.latch = cache;
 
 			return io.latch;
 		}
@@ -993,10 +1048,14 @@ namespace Nes
 		NES_POKE_D(Ppu,2xxx)
 		{
 			io.latch = data;
+			UpdateDecay(0xFF);
 		}
 
 		NES_PEEK(Ppu,2xxx)
 		{
+			if ((cpu.GetCycles() - decay.timestamp[0]) > 24576)
+				return 0;
+
 			return io.latch;
 		}
 
@@ -1035,10 +1094,13 @@ namespace Nes
 				}
 
 				io.latch = oamRam[0xFF];
+				UpdateDecay(0xFF);
 			}
 			else do
 			{
 				io.latch = cpu.Peek( data++ );
+				UpdateDecay(0xFF);
+
 				cpu.StealCycles( cpu.GetClock() );
 
 				Update( cycles.one );

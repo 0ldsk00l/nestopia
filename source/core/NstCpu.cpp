@@ -124,7 +124,7 @@ namespace Nes
 			0x00, 0x20, 0x00, 0x20, 0x04, 0x04, 0x04, 0x04,
 			0x00, 0x00, 0x00, 0x00, 0x08, 0x08, 0x08, 0x08,
 			0x00, 0x20, 0x00, 0x00, 0x08, 0x08, 0x08, 0x08,
-			0x00, 0x10, 0x00, 0x00, 0x00, 0x10, 0x00, 0x00,
+			0x00, 0x10, 0x00, 0x00, 0x10, 0x10, 0x10, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -2114,11 +2114,12 @@ namespace Nes
 		}
 
 		// Unofficial Opcodes SHX/SHY are edge cases
-		#define NES_I_W_U(instr_,addr_,hex_)          \
+		#define NES_I_W_U(instr_,hex_)                \
                                                       \
 		void Cpu::op##hex_()                          \
 		{                                             \
-			const uint dst = addr_##_W();             \
+			const uint dst = FetchPc16();             \
+			cycles.count += cycles.clock[3];          \
 			instr_(dst);                              \
 		}
 
@@ -2379,8 +2380,8 @@ namespace Nes
 		NES_I_W_A( Sha, AbsY,     0x9F )
 		NES_I_W_A( Sha, IndY,     0x93 )
 		NES_I_W_A( Shs, AbsY,     0x9B )
-		NES_I_W_U( Shx, Abs,      0x9E ) // Edge case: AbsY done internally
-		NES_I_W_U( Shy, Abs,      0x9C ) // Edge case: AbsX done internally
+		NES_I_W_U( Shx,           0x9E ) // Edge case: AbsY done internally
+		NES_I_W_U( Shy,           0x9C ) // Edge case: AbsX done internally
 		NES_IRW__( Slo, Zpg,      0x07 )
 		NES_IRW__( Slo, ZpgX,     0x17 )
 		NES_IRW__( Slo, Abs,      0x0F )

@@ -186,6 +186,7 @@ namespace Nes
 			NST_FORCE_INLINE uint FetchSpPattern() const;
 			NST_FORCE_INLINE void FetchBgPattern0();
 			NST_FORCE_INLINE void FetchBgPattern1();
+			NST_FORCE_INLINE void UpdateDecay(byte);
 
 			NST_FORCE_INLINE void EvaluateSpritesEven();
 			NST_FORCE_INLINE void EvaluateSpritesOdd();
@@ -406,6 +407,12 @@ namespace Nes
 				uint  one;
 				Cycle reset;
 			}   cycles;
+
+			struct
+			{
+				Cycle timestamp[8];
+				Cycle rd2007;
+			}   decay;
 
 			Io io;
 			Regs regs;
