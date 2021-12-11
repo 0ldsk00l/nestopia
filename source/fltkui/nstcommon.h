@@ -93,7 +93,6 @@ void nst_state_quicksave(int isvst);
 void nst_state_quickload(int isvst);
 
 // Timing
-int nst_timing_runframes();
 void nst_timing_set_ffspeed();
 void nst_timing_set_default();
 

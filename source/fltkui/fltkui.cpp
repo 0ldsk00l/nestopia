@@ -55,6 +55,7 @@ static Fl_Menu_Bar *menubar;
 static NstGlArea *glarea;
 static NstChtWindow *chtwin;
 static NstConfWindow *confwin;
+static int fps = 60;
 
 extern int loaded;
 
@@ -68,6 +69,22 @@ extern Input::Controllers *cNstPads;
 extern nstpaths_t nstpaths;
 
 extern bool (*nst_archive_select)(const char*, char*, size_t);
+
+static int fltkui_refreshrate(void) {
+	// Get the screen refresh rate using an SDL window
+	int refresh = 60;
+	SDL_Window *sdlwin;
+	sdlwin = SDL_CreateWindow(
+		"refreshrate",
+		SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED,
+		1, 1, SDL_WINDOW_HIDDEN
+	);
+	SDL_DisplayMode dm;
+	SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(sdlwin), &dm);
+	refresh = dm.refresh_rate;
+	SDL_DestroyWindow(sdlwin);
+	return refresh;
+}
 
 static void fltkui_cheats(Fl_Widget* w, void* userdata) {
 	if (!loaded) { return; }
@@ -94,7 +111,10 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
 			if (fc.filename()) {
 				loaded = nst_load(fc.filename());
 				nstwin->label(nstpaths.gamename);
-				if (loaded) { nst_play(); }
+				if (loaded) {
+					nst_play();
+					fps = nst_pal() ? 50 : 60;
+				}
 			}
 			break;
 	}
@@ -463,10 +483,12 @@ int main(int argc, char *argv[]) {
 	nst_set_callbacks();
 
 	// Initialize SDL Audio and Joystick
-	if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
+	if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
 		fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
 		return 1;
 	}
+
+	int refreshrate = fltkui_refreshrate();
 
 	// Set archive handler function pointer
 	nst_archive_select = &fltkui_archive_select;
@@ -507,6 +529,10 @@ int main(int argc, char *argv[]) {
 
 	video_init();
 
+	int frames = 0;
+	int framefrags = 0;
+	fps = nst_pal() ? 50 : 60;
+
 	while (true) {
 		Fl::check();
 		if (!nstwin->shown()) {
@@ -528,7 +554,15 @@ int main(int argc, char *argv[]) {
 			}
 		}
 
-		nst_emuloop();
+		frames = (fps / refreshrate);
+		framefrags += fps % refreshrate;
+
+		if (framefrags >= refreshrate) {
+			frames++;
+			framefrags -= refreshrate;
+		}
+
+		for (int i = 0; i < frames; i++) { nst_emuloop(); }
 		glarea->redraw();
 	}
 

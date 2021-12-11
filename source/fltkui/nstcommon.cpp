@@ -806,12 +806,6 @@ void nst_state_quickload(int slot) {
 	nst_state_load(slotpath);
 }
 
-int nst_timing_runframes() {
-	// Calculate how many emulation frames to run
-	if (ffspeed) { return conf.timing_ffspeed; }
-	return 1;
-}
-
 void nst_timing_set_ffspeed() {
 	// Set the framerate to the fast-forward speed
 	ffspeed = true;
@@ -847,7 +841,7 @@ void nst_emuloop() {
 		nst_input_turbo_pulse(cNstPads);
 
 		// Execute frames
-		for (int i = 0; i < nst_timing_runframes(); i++) {
+		for (int i = 0; i < (ffspeed ? conf.timing_ffspeed : 1); i++) {
 			emulator.Execute(cNstVideo, cNstSound, cNstPads);
 		}
 	}
