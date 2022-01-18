@@ -449,6 +449,7 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardHes.cpp \
 	source/core/board/NstBoardSachenStreetHeroes.cpp \
 	source/core/board/NstBoardUnlMortalKombat2.cpp \
+	source/core/board/NstBoardUnlMmc3BigPrgRom.cpp \
 	source/core/board/NstBoardKonamiVsSystem.cpp \
 	source/core/board/NstBoardBandaiKaraokeStudio.cpp \
 	source/core/board/NstBoardBtlAx5705.cpp \
@@ -512,6 +513,7 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardBmcSuperVision16in1.cpp \
 	source/core/board/NstBoardAveD1012.hpp \
 	source/core/board/NstBoardUnlMortalKombat2.hpp \
+	source/core/board/NstBoardUnlMmc3BigPrgRom.hpp \
 	source/core/board/NstBoardSunsoft4.cpp \
 	source/core/board/NstBoardBmcCh001.cpp \
 	source/core/board/NstBoardBmcSuper40in1.cpp \

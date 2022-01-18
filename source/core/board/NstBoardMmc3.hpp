@@ -162,8 +162,6 @@ namespace Nes
 					byte chr[8];
 				}   banks;
 
-			private:
-
 				Irq<> irq;
 			};
 		}

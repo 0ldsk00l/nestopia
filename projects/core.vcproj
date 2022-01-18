@@ -2264,6 +2264,14 @@
 					>
 				</File>
 				<File
+					RelativePath="..\source\core\board\NstBoardUnlMmc3BigPrgRom.cpp"
+					>
+				</File>
+				<File
+					RelativePath="..\source\core\board\NstBoardUnlMmc3BigPrgRom.hpp"
+					>
+				</File>
+				<File
 					RelativePath="..\source\core\board\NstBoardUnlMortalKombat2.cpp"
 					>
 				</File>

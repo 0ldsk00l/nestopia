@@ -390,6 +390,7 @@
     <ClInclude Include="..\source\core\board\NstBoardUnlEdu2000.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnlKingOfFighters96.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnlKingOfFighters97.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlMmc3BigPrgRom.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnlMortalKombat2.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnlN625092.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnlSuperFighter3.hpp" />
@@ -694,6 +695,7 @@
     <ClCompile Include="..\source\core\board\NstBoardUnlEdu2000.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnlKingOfFighters96.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnlKingOfFighters97.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlMmc3BigPrgRom.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnlMortalKombat2.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnlN625092.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnlSuperFighter3.cpp" />
