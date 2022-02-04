@@ -39,6 +39,19 @@ Optionally:
 ```
 make install
 ```
+
+## macOS Build
+```
+# Install dependencies
+brew install autoconf automake autoconf-archive pkg-config libarchive libepoxy fltk
+
+# Build
+autoreconf -vif
+export PKG_CONFIG_PATH=/usr/local/opt/libarchive/lib/pkgconfig/
+./configure [--enable-doc]
+make [install]
+```
+
 ## Win32 Build
 To build the win32 solution with Visual Studio 2010:
 1. Ensure you have the DirectX 9 SDK

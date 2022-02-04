@@ -80,7 +80,12 @@ AC_CHECK_PROG(FLTKCONFIG,fltk-config,[fltk-config],[no])
 test "$FLTKCONFIG" == "no" && AC_MSG_ERROR([Cannot find the fltk-config executable. Is FLTK installed?])
 
 AC_SUBST(FLTK_CFLAGS,"$(fltk-config --use-gl --use-images --cxxflags)")
-AC_SUBST(FLTK_LIBS,"-lGL $(fltk-config --use-gl --use-images --ldflags)")
+AS_CASE([${host_os}],
+	[darwin*],
+	[AC_SUBST(FLTK_LIBS,"$(fltk-config --use-gl --use-images --ldflags)")],
+	[linux*],
+	[AC_SUBST(FLTK_LIBS,"-lGL $(fltk-config --use-gl --use-images --ldflags)")]
+)
 
 dnl full HTML suite
 AC_ARG_ENABLE([doc],
