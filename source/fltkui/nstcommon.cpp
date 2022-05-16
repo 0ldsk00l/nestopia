@@ -336,7 +336,7 @@ void nst_db_load() {
 	}
 
 	// If it fails, try looking in the data directory
-	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", DATADIR);
+	snprintf(dbpath, sizeof(dbpath), "%s/NstDatabase.xml", NST_DATADIR);
 	nstdb = new std::ifstream(dbpath, std::ifstream::in|std::ifstream::binary);
 
 	if (nstdb->is_open()) {

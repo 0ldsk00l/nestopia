@@ -336,7 +336,7 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 
 	// Set up the icon
 	char iconpath[512];
-	snprintf(iconpath, sizeof(iconpath), "%s/icons/hicolor/128x128/apps/nestopia.png", DATAROOTDIR);
+	snprintf(iconpath, sizeof(iconpath), "%s/icons/hicolor/128x128/apps/nestopia.png", NST_DATAROOTDIR);
 	// Load the SVG from local source dir if make install hasn't been done
 	struct stat svgstat;
 	if (stat(iconpath, &svgstat) == -1) {
