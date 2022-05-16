@@ -8,8 +8,8 @@ EXTRA_DIST = doc
 nestopia_CPPFLAGS = \
 	-I$(top_srcdir)/source \
 	-I$(top_srcdir)/source/fltkui \
-	-DDATADIR=\"$(datadir)/nestopia\" \
-	-DDATAROOTDIR=\"$(datarootdir)\" \
+	-DNST_DATADIR=\"$(datadir)/nestopia\" \
+	-DNST_DATAROOTDIR=\"$(datarootdir)\" \
 	-DNST_PRAGMA_ONCE \
 	$(ZLIB_CFLAGS) \
 	$(LIBARCHIVE_CFLAGS) \
