@@ -8,7 +8,7 @@ Current Project Goals:
 
 Contributing/Issues:
 * Contributions will be reviewed for anything related to the standalone GUI builds
-* Issues related to core emulation will be closed. This project no longer maintains the core emulator.
+* Issues related to core emulation will be closed. This project no longer maintains the core emulator. Please submit issues about core emulation upstream at https://gitlab.com/jgemu/nestopia
 * When not using a tagged release, please understand that the code is volatile and nothing is set in stone.
 
 The following platforms are supported:
