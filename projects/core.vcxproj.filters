@@ -925,6 +925,14 @@
     <ClInclude Include="..\source\core\board\NstBoardMagicKidGoogoo.hpp">
       <Filter>Board</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardWaixingFs304.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlMmc3BigPrgRom.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnl158b.hpp">
+      <Filter>Board</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardUnlRetX7Gbl.hpp">
+      <Filter>Board</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\core\api\NstApiBarcodeReader.cpp">
@@ -1714,6 +1722,14 @@
       <Filter>Board</Filter>
     </ClCompile>
     <ClCompile Include="..\source\core\board\NstBoardMagicKidGoogoo.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardWaixingFs304.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlMmc3BigPrgRom.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnl158b.cpp">
+      <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardUnlRetX7Gbl.cpp">
       <Filter>Board</Filter>
     </ClCompile>
   </ItemGroup>
