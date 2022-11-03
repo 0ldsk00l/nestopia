@@ -51,7 +51,7 @@ namespace Nes
 					void SubLoad(State::Loader&,dword);
 					void SubSave(State::Saver&) const;
 
-					void UpdatePrg(uint, uint);
+					void NST_FASTCALL UpdatePrg(uint, uint);
 
 					NES_DECL_PEEK( 5000 );
 					NES_DECL_POKE( 5000 );
