@@ -42,7 +42,7 @@ namespace Nes
 			void Renderer::FilterNtsc::BlitType(const Input& input,const Output& output,uint phase) const
 			{
 				NST_ASSERT( phase < 3 );
-				
+
 				const uint bgcolor = this->bgColor;
 				const Input::Pixel* NST_RESTRICT src = input.pixels;
 				Pixel* NST_RESTRICT dst = static_cast<Pixel*>(output.pixels);

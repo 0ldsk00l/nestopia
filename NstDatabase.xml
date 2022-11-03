@@ -7062,6 +7062,9 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="pachinko" />
+        </peripherals>
         <cartridge system="Famicom" dump="unknown" crc="44F92026" sha1="9266BE2FD5D0C712FE7BF873D32AE50506A9B277">
             <board mapper="1">
                 <prg size="128k" />
@@ -15981,6 +15984,9 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="pachinko" />
+        </peripherals>
         <cartridge system="Famicom" dump="unknown" crc="9B3C5124" sha1="A96BFC7B51E2F7FF69F42B024CC9FB85CA9A943D">
             <board mapper="4">
                 <prg size="256k" />
@@ -20371,6 +20377,9 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="pachinko" />
+        </peripherals>
         <cartridge system="Famicom" dump="unknown" crc="C22C23AB" sha1="4CEA0ECDF0A22E678B827C9BFD8D80B5DEBB4094">
             <board mapper="1">
                 <prg size="128k" />
@@ -23635,6 +23644,9 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="pachinko" />
+        </peripherals>
         <cartridge system="Famicom" dump="unknown" crc="E08C8A60" sha1="BAF3A4E0423A86E53234E806843149EF7D0974A9">
             <board mapper="4">
                 <prg size="512k" />
@@ -27167,6 +27179,29 @@
                 <prg size="64k" />
                 <vram size="8k" />
                 <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+        <game>
+        <peripherals>
+            <device type="zapper" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="unknown" crc="1CA9C322" sha1="17869C4F55461D50E134CC3A4D15B89E7CAF8DE3">
+            <board mapper="258">
+                <prg size="128k" />
+                <chr size="128k" />
+            </board>
+        </cartridge>
+    </game>
+        <game>
+        <peripherals>
+            <device type="pokkunmoguraa" />
+        </peripherals>
+        <cartridge system="Famicom" dump="unknown" crc="C7BCC981" sha1="8A0DEADD84A0967B1D2DB0634262C7BDBBB732B7">
+            <board mapper="3">
+                <prg size="32k" />
+                <chr size="32k" />
+                <pad h="0" v="1" />
             </board>
         </cartridge>
     </game>

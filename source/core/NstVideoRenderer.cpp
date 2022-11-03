@@ -823,7 +823,7 @@ namespace Nes
 					if (Output::lockCallback( output ))
 					{
 						NST_VERIFY( std::labs(output.pitch) >= dword(state.width) << (filter->format.bpp / 16) );
-						
+
 						filter->bgColor = bgColor;
 
 						if (std::labs(output.pitch) >= dword(state.width) << (filter->format.bpp / 16))

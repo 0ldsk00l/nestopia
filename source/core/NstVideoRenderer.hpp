@@ -67,7 +67,7 @@ namespace Nes
 					HEIGHT = Input::HEIGHT,
 					PIXELS = Input::PIXELS,
 					PALETTE = Input::PALETTE,
-					DEFAULT_PALETTE = PALETTE_YUV
+					NST_DEFAULT_PALETTE = PALETTE_YUV
 				};
 
 				Result SetState(const RenderState&);

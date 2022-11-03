@@ -221,17 +221,36 @@ namespace Nes
 				{
 					NST_ASSERT( it->length );
 
+					bool underflow = false;
+					dword uflow_length = 0;
+
 					if (it->offset < offset)
-						continue;
+					{
+						if (it->offset + it->length > offset)
+						{
+							underflow = true;
+							uflow_length = offset - it->offset;
+						}
+						else
+						{
+							continue;
+						}
+					}
 
 					if (it->offset >= offset + length)
 						break;
 
-					const dword pos = it->offset - offset;
-					const dword part = NST_MIN(it->length,length-pos);
+					dword pos = it->offset - offset;
+					dword part = NST_MIN(it->length,length-pos);
+
+					if (underflow)
+					{
+						part -= uflow_length;
+						pos += uflow_length;
+					}
 
 					if (it->fill == NO_FILL)
-						std::memcpy( dst + pos, it->data, part );
+						std::memcpy( dst + pos, it->data + uflow_length, part );
 					else
 						std::memset( dst + pos, it->fill, part );
 

@@ -400,6 +400,8 @@ namespace Nes
 				state.End();
 			}
 
+			output.bgColor = palette.ram[0] & uint(Palette::COLOR);
+
 			UpdateStates();
 		}
 
@@ -992,7 +994,7 @@ namespace Nes
 					palette.ram[address ^ 0x10] = data;
 					output.palette[address ^ 0x10] = final;
 				}
-				
+
 				output.bgColor = palette.ram[0] & uint(Palette::COLOR);
 			}
 			else

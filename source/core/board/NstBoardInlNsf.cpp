@@ -34,7 +34,7 @@ namespace Nes
 			#ifdef NST_MSVC_OPTIMIZE
 			#pragma optimize("s", on)
 			#endif
-			
+
 			void InlNsf::SubReset(const bool hard)
 			{
 				Map ( 0x5000U, 0x5FFFU, &InlNsf::Poke_5000 );
@@ -86,7 +86,7 @@ namespace Nes
 			{
 				Bank(address & 7, data);
 			}
-			
+
 			NES_PEEK_A(InlNsf,8000)
 			{
 				// Not an ideal way to do this, but Nestopia does not seem to support 4K banks directly?

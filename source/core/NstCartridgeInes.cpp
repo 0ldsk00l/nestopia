@@ -147,7 +147,7 @@ namespace Nes
 					Log::Flush( "Ines: PRG-ROM was patched" NST_LINEBREAK );
 
 				if (Load( chr, 16 + prg.Size() ))
-					Log::Flush( "Ines: PRG-ROM was patched" NST_LINEBREAK );
+					Log::Flush( "Ines: CHR-ROM was patched" NST_LINEBREAK );
 			}
 
 		private:

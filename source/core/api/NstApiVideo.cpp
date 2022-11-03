@@ -320,7 +320,7 @@ namespace Nes
 
 		Video::Palette::Mode Video::Palette::GetDefaultMode() const throw()
 		{
-			NST_COMPILE_ASSERT( Core::Video::Renderer::DEFAULT_PALETTE - Core::Video::Renderer::PALETTE_YUV == 0 );
+			NST_COMPILE_ASSERT( Core::Video::Renderer::NST_DEFAULT_PALETTE - Core::Video::Renderer::PALETTE_YUV == 0 );
 
 			return MODE_YUV;
 		}
