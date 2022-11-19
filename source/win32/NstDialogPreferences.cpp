@@ -471,7 +471,7 @@ namespace Nestopia
 		{
 			const uint style = (dialog.RadioButton(IDC_PREFERENCES_STYLE_NES).Checked() ? 1 : 2);
 
-			for (uint i=0; i < 5; ++i)
+			for (uint i=0; i < Preferences::Association::NUM_EXTENSIONS; ++i)
 				dialog.SetItemIcon( icons[i][0], icons[i][style] );
 		}
 
