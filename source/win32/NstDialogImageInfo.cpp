@@ -138,7 +138,7 @@ namespace Nestopia
 				if (!profile.game.title.empty())
 					types[0] << profile.game.title.c_str();
 
-				if (!profile.game.title.empty())
+				if (!profile.game.altTitle.empty())
 					types[1] << profile.game.altTitle.c_str();
 
 				if (!profile.game.publisher.empty())
