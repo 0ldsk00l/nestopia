@@ -70,6 +70,18 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="00D2CB22" sha1="CCD60DBC65EC004956E972E116BDD114E8818E3E">
+            <board type="NES-NROM-256" mapper="0">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="00E95D86" sha1="8957393A397DB102BCE5A64B4D85384D1F2E5D20">
             <board type="NES-UNROM" mapper="2">
                 <prg size="128k" />
@@ -764,6 +776,15 @@
                 <chr size="128k" />
                 <wram size="8k" />
                 <chip type="MMC3C" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="Famicom" dump="unknown" crc="084F61CD" sha1="44BC6C4E8B3F6C635281B4C05382E8F316D8269E">
+            <board type="NAMCOT-3301" mapper="0">
+                <prg size="8k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
             </board>
         </cartridge>
     </game>
@@ -2019,6 +2040,16 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="1394DED0" sha1="B1C6A700A9F3B73666018E46515D376F06B8E9C2">
+            <board type="NES-UNROM" mapper="2">
+                <prg size="64k" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="1394F57E" sha1="FD9079CB5E8479EB06D93C2AE5175BFCE871746A">
             <board type="NES-SEROM" mapper="1">
                 <prg size="32k" />
@@ -2834,6 +2865,17 @@
                 <vram size="4k" />
             </board>
         </arcade>
+    </game>
+    <game>
+        <peripherals>
+            <device type="zapper" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="unknown" crc="1CA9C322" sha1="17869C4F55461D50E134CC3A4D15B89E7CAF8DE3">
+            <board mapper="258">
+                <prg size="128k" />
+                <chr size="128k" />
+            </board>
+        </cartridge>
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="1CED086F" sha1="46C0B521B3C595409C05972388909CCB0D5F6369">
@@ -4804,6 +4846,17 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="2DA5ECE0" sha1="F3554E45D3261157653643C23A378C0295A5F893">
+            <board type="NES-NROM-256" mapper="0">
+                <prg size="32k" />
+                <chr size="8k" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="2DB7C31E" sha1="9BF95EEB404F103422E06214566C7D918ED4DC79">
             <board mapper="1">
                 <prg size="128k" />
@@ -4940,6 +4993,18 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="Famicom" dump="ok" crc="2EA914FA" sha1="54F6E9C7F59D7A1B961F694716F5D4967BB55AA8">
+            <board type="KONAMI-VRC-4" mapper="25">
+                <prg size="128k" />
+                <chr size="128k" />
+                <chip type="Konami VRC IV">
+                    <pin number="3" function="PRG A2" />
+                    <pin number="4" function="PRG A3" />
+                </chip>
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="2EBF2E0D" sha1="0E37A2766280D73F2921567348A8D360707A5924">
             <board mapper="1">
                 <prg size="128k" />
@@ -5061,6 +5126,20 @@
                 <prg size="128k" />
                 <vram size="8k" />
                 <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
+            <device type="turbofile" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="3046C4D5" sha1="1AF51255F2837484974DA44650B186333472C7B2">
+            <board type="NES-SXROM" mapper="1">
+                <prg size="512k" />
+                <vram size="8k" />
+                <wram size="32k" battery="1" />
+                <pad h="1" v="0" />
+                <chip type="MMC1" />
             </board>
         </cartridge>
     </game>
@@ -6707,6 +6786,19 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="40E1F09E" sha1="2B44E45C621D52C882C50BEF7A2F9B4C93DDF908">
+            <board mapper="2">
+                <prg size="64k" />
+                <vram size="8k" />
+                <wram size="8k" />
+                <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="40ED2A9D" sha1="D4E9126D02C9923C3871FD352248F41298498D4E">
             <board type="NES-SEROM" mapper="1">
                 <prg size="32k" />
@@ -7967,6 +8059,18 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="4E6B9078" sha1="93FF8CEC778771C7200F785798E0D1599EE8FEB5">
+            <board type="NES-NROM-256" mapper="0">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="4E7729FF" sha1="5FA23F88432006DCF6874EA36E9E7DA8934427BE">
             <board mapper="182">
                 <prg size="128k" />
@@ -8144,6 +8248,18 @@
             <board mapper="75">
                 <prg size="128k" />
                 <chr size="128k" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="Famicom" dump="ok" crc="4FF17864" sha1="5119F1D6B67C5E44D63BA1E7080A6FE17623415C">
+            <board type="NES-SLROM" mapper="1">
+                <prg size="128k" />
+                <chr size="128k" />
+                <chip type="MMC1B2" />
             </board>
         </cartridge>
     </game>
@@ -8962,6 +9078,19 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="58094016" sha1="8354E33F44156C42C7013EBBEACF378BFA6FD6B2">
+            <board mapper="4">
+                <prg size="64k" />
+                <chr size="128k" />
+                <wram size="8k" battery="1" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="unknown" crc="58152B42" sha1="1E49BDA9CEF18F6F5C2DA34910487713D364AA68">
             <board mapper="79">
                 <prg size="64k" />
@@ -9318,6 +9447,18 @@
             <board mapper="1">
                 <prg size="128k" />
                 <chr size="128k" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="5B8D4378" sha1="7194D3DB031C9342BB473A4ADE364DB1631B5EC9">
+            <board mapper="34">
+                <prg size="32k" />
+                <vram size="12k" />
+                <wram size="8k" battery="1" />
             </board>
         </cartridge>
     </game>
@@ -10083,6 +10224,16 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="NES-NTSC" dump="ok" crc="633AFE6F" sha1="2F29F3DC724027FAD926BC9D4470A481884E42A5">
+            <board type="NES-HKROM" mapper="4">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
+                <chip type="MMC6B" battery="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="63469396" sha1="C6FEF52264372FAB620D1E5EE6A3E60E46262775">
             <board mapper="1">
                 <prg size="256k" />
@@ -10833,6 +10984,18 @@
                 <prg size="128k" />
                 <chr size="128k" />
                 <chip type="MMC1B2" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="Famicom" dump="unknown" crc="69977C9E" sha1="C43D5F049F4F7862E6DECCA7500C0C23E349AF9F">
+            <board mapper="0">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
             </board>
         </cartridge>
     </game>
@@ -11748,6 +11911,17 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-PAL" dump="ok" crc="73298C87" sha1="16151504C01A3E89C7893A87567B0F31DC651D96">
+            <board type="PAL-ZZ" mapper="37">
+                <prg size="256k" />
+                <chr size="256k" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <arcade system="Playchoice-10" dump="unknown" crc="732B0675" sha1="B50E2DCF63E724F3FE8E5ADED50F32AA95775676">
             <board mapper="1">
                 <prg size="128k" />
@@ -12063,6 +12237,15 @@
             <board mapper="4">
                 <prg size="128k" />
                 <chr size="128k" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="Famicom" dump="unknown" crc="76A6A813" sha1="0FE9120FD5ADC2790B0B9E8FADD136F9C66A709F">
+            <board type="NAMCOT-3301" mapper="0">
+                <prg size="8k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
             </board>
         </cartridge>
     </game>
@@ -13584,6 +13767,15 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="Famicom" dump="ok" crc="8589652D" sha1="0CC7ED7F5D7EE0959EE3724C3AF06EF8DF397C59">
+            <board type="NANJING" mapper="163">
+                <prg size="2048k" />
+                <wram size="8k" battery="1" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="8593E5AD" sha1="84D2B96C2821FDC246DD876932F4E1752DF1CA73">
             <board type="NES-TLROM" mapper="4">
                 <prg size="128k" />
@@ -14370,6 +14562,18 @@
     </game>
     <game>
         <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="8C29D397" sha1="69612DDE41A2C52A802D9768D7C2942572939867">
+            <board type="NES-NROM-256" mapper="0">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
             <device type="turbofile" />
         </peripherals>
         <cartridge system="Famicom" dump="ok" crc="8C4D59D6" sha1="A3689327B36092F7DAC1F4FBFA99B704960AD2C3">
@@ -14829,6 +15033,17 @@
                 <prg size="128k" />
                 <chr size="128k" />
                 <chip type="MMC3C" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="90D2E9F0" sha1="2801AADD9D0308CF2C9069A2BB76242ECA5B1501">
+            <board type="NES-NROM-256" mapper="0">
+                <prg size="32k" />
+                <chr size="8k" />
             </board>
         </cartridge>
     </game>
@@ -15739,6 +15954,18 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="9908C6C9" sha1="0A98AB1B7D069A00ACA5D1EB5975C181B2F79E5A">
+            <board type="NES-CNROM" mapper="3">
+                <prg size="32k" />
+                <chr size="32k" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="990985C0" sha1="AA08F65D6333448F088D8DCE32F3895662B577DE">
             <board type="NES-SLROM" mapper="1">
                 <prg size="128k" />
@@ -16640,6 +16867,19 @@
         </cartridge>
     </game>
     <game>
+        <peripherals>
+            <device type="fourplayer" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="9FC43DD8" sha1="A4A44A54BA682223503BEABE55D5031B5C62B2A7">
+            <board mapper="34">
+                <prg size="32k" />
+                <vram size="8k" />
+                <wram size="8k" />
+                <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="ok" crc="9FD35802" sha1="C38AF729C2BE2940FCA620F86415FAE304F1D8C9">
             <board type="HVC-CNROM" mapper="3">
                 <prg size="32k" />
@@ -17113,6 +17353,16 @@
                 <prg size="256k" />
                 <chr size="256k" />
                 <wram size="8k" battery="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="NES-NTSC" dump="ok" crc="A512BDF6" sha1="F794FDA12D34E611D58E652319ED583AE61B81E0">
+            <board type="NES-HKROM" mapper="4">
+                <prg size="32k" />
+                <chr size="8k" />
+                <pad h="0" v="1" />
+                <chip type="MMC6B" battery="0" />
             </board>
         </cartridge>
     </game>
@@ -19835,6 +20085,15 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="NES-NTSC" dump="unknown" crc="BD75ED79" sha1="2E2B42DA4E0F41F411C778B5A9B66AA9FBD1167E">
+            <board type="CAMERICA-BF9093" mapper="71">
+                <prg size="64k" />
+                <vram size="8k" />
+                <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="ok" crc="BD9D0E85" sha1="F82654BE44E4B01B3F9627D81232A086B1CF7599">
             <board type="HVC-UNROM" mapper="2">
                 <prg size="128k" />
@@ -20953,6 +21212,18 @@
                 <prg size="128k" />
                 <vram size="8k" />
                 <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
+            <device type="pokkunmoguraa" />
+        </peripherals>
+        <cartridge system="Famicom" dump="unknown" crc="C7BCC981" sha1="8A0DEADD84A0967B1D2DB0634262C7BDBBB732B7">
+            <board mapper="3">
+                <prg size="32k" />
+                <chr size="32k" />
+                <pad h="0" v="1" />
             </board>
         </cartridge>
     </game>
@@ -25505,6 +25776,14 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="NES-NTSC" dump="ok" crc="F312D1DE" sha1="35C157A921156E47FD3F6573D150F54108D0EDFC">
+            <board type="NES-TXROM" mapper="4">
+                <prg size="16k" />
+                <chip type="MMC3A" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="F31D36A3" sha1="00147962462C44354735861D0258D72314635458">
             <board type="NES-TSROM" mapper="4">
                 <prg size="128k" />
@@ -25615,17 +25894,6 @@
                 <prg size="128k" />
                 <chr size="128k" />
                 <chip type="MMC1B2" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-PAL" dump="ok" crc="73298C87" sha1="16151504C01A3E89C7893A87567B0F31DC651D96">
-            <board type="PAL-ZZ" mapper="37">
-                <prg size="256k" />
-                <chr size="256k" />
             </board>
         </cartridge>
     </game>
@@ -26699,6 +26967,16 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="NES-NTSC" dump="ok" crc="FDC7C50B" sha1="5E8F67BEFB2B1BCBD0384E3144ACB2766FC3E443">
+            <board type="NES-ETROM" mapper="5">
+                <prg size="128k" />
+                <chr size="128k" />
+                <wram size="8k" />
+                <wram size="8k" battery="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="FDD89C45" sha1="D25327E0F0D8539AE761DF861254BDE3A60FDD96">
             <board mapper="0">
                 <prg size="16k" />
@@ -26928,191 +27206,6 @@
             </board>
         </cartridge>
     </game>
-    <game>
-        <cartridge system="NES-NTSC" dump="ok" crc="FDC7C50B" sha1="5E8F67BEFB2B1BCBD0384E3144ACB2766FC3E443">
-            <board type="NES-ETROM" mapper="5">
-                <prg size="128k" />
-                <chr size="128k" />
-                <wram size="8k" />
-                <wram size="8k" battery="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <cartridge system="Famicom" dump="unknown" crc="084F61CD" sha1="44BC6C4E8B3F6C635281B4C05382E8F316D8269E">
-            <board type="NAMCOT-3301" mapper="0">
-                <prg size="8k" />
-                <chr size="8k" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <cartridge system="Famicom" dump="unknown" crc="76A6A813" sha1="0FE9120FD5ADC2790B0B9E8FADD136F9C66A709F">
-            <board type="NAMCOT-3301" mapper="0">
-                <prg size="8k" />
-                <chr size="8k" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="1394DED0" sha1="B1C6A700A9F3B73666018E46515D376F06B8E9C2">
-            <board type="NES-UNROM" mapper="2">
-                <prg size="64k" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="90D2E9F0" sha1="2801AADD9D0308CF2C9069A2BB76242ECA5B1501">
-            <board type="NES-NROM-256" mapper="0">
-                <prg size="32k" />
-                <chr size="8k" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="2DA5ECE0" sha1="F3554E45D3261157653643C23A378C0295A5F893">
-            <board type="NES-NROM-256" mapper="0">
-                <prg size="32k" />
-                <chr size="8k" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="Famicom" dump="unknown" crc="69977C9E" sha1="C43D5F049F4F7862E6DECCA7500C0C23E349AF9F">
-            <board mapper="0">
-                <prg size="32k" />
-                <chr size="8k" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="Famicom" dump="ok" crc="4FF17864" sha1="5119F1D6B67C5E44D63BA1E7080A6FE17623415C">
-            <board type="NES-SLROM" mapper="1">
-                <prg size="128k" />
-                <chr size="128k" />
-                <chip type="MMC1B2" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="00D2CB22" sha1="CCD60DBC65EC004956E972E116BDD114E8818E3E">
-            <board type="NES-NROM-256" mapper="0">
-                <prg size="32k" />
-                <chr size="8k" />
-                <pad h="1" v="0" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="5B8D4378" sha1="7194D3DB031C9342BB473A4ADE364DB1631B5EC9">
-            <board mapper="34">
-                <prg size="32k" />
-                <vram size="12k" />
-                <wram size="8k" battery="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="9FC43DD8" sha1="A4A44A54BA682223503BEABE55D5031B5C62B2A7">
-            <board mapper="34">
-                <prg size="32k" />
-                <vram size="8k" />
-                <wram size="8k" />
-                <pad h="1" v="0" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="58094016" sha1="8354E33F44156C42C7013EBBEACF378BFA6FD6B2">
-            <board mapper="4">
-                <prg size="64k" />
-                <chr size="128k" />
-                <wram size="8k" battery="1" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="40E1F09E" sha1="2B44E45C621D52C882C50BEF7A2F9B4C93DDF908">
-            <board mapper="2">
-                <prg size="64k" />
-                <vram size="8k" />
-                <wram size="8k" />
-                <pad h="1" v="0" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="9908C6C9" sha1="0A98AB1B7D069A00ACA5D1EB5975C181B2F79E5A">
-            <board type="NES-CNROM" mapper="3">
-                <prg size="32k" />
-                <chr size="32k" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="8C29D397" sha1="69612DDE41A2C52A802D9768D7C2942572939867">
-            <board type="NES-NROM-256" mapper="0">
-                <prg size="32k" />
-                <chr size="8k" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <peripherals>
-            <device type="turbofile" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="3046C4D5" sha1="1AF51255F2837484974DA44650B186333472C7B2">
-            <board type="NES-SXROM" mapper="1">
-                <prg size="512k" />
-                <vram size="8k" />
-                <wram size="32k" battery="1" />
-                <pad h="1" v="0" />
-                <chip type="MMC1" />
-            </board>
-        </cartridge>
-    </game>
     <!--game>
         <peripherals>
             <device type="zapper" />
@@ -27124,85 +27217,4 @@
             </board>
         </cartridge>
     </game>-->
-    <game>
-        <peripherals>
-            <device type="fourplayer" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="ok" crc="4E6B9078" sha1="93FF8CEC778771C7200F785798E0D1599EE8FEB5">
-            <board type="NES-NROM-256" mapper="0">
-                <prg size="32k" />
-                <chr size="8k" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <cartridge system="Famicom" dump="ok" crc="8589652D" sha1="0CC7ED7F5D7EE0959EE3724C3AF06EF8DF397C59">
-            <board type="NANJING" mapper="163">
-                <prg size="2048k" />
-                <wram size="8k" battery="1" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <cartridge system="NES-NTSC" dump="ok" crc="F312D1DE" sha1="35C157A921156E47FD3F6573D150F54108D0EDFC">
-            <board type="NES-TXROM" mapper="4">
-                <prg size="16k" />
-                <chip type="MMC3A" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <cartridge system="NES-NTSC" dump="ok" crc="A512BDF6" sha1="F794FDA12D34E611D58E652319ED583AE61B81E0">
-            <board type="NES-HKROM" mapper="4">
-                <prg size="32k" />
-                <chr size="8k" />
-                <pad h="0" v="1" />
-                <chip type="MMC6B" battery="0" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <cartridge system="NES-NTSC" dump="ok" crc="633AFE6F" sha1="2F29F3DC724027FAD926BC9D4470A481884E42A5">
-            <board type="NES-HKROM" mapper="4">
-                <prg size="32k" />
-                <chr size="8k" />
-                <pad h="0" v="1" />
-                <chip type="MMC6B" battery="0" />
-            </board>
-        </cartridge>
-    </game>
-    <game>
-        <cartridge system="NES-NTSC" dump="unknown" crc="BD75ED79" sha1="2E2B42DA4E0F41F411C778B5A9B66AA9FBD1167E">
-            <board type="CAMERICA-BF9093" mapper="71">
-                <prg size="64k" />
-                <vram size="8k" />
-                <pad h="1" v="0" />
-            </board>
-        </cartridge>
-    </game>
-        <game>
-        <peripherals>
-            <device type="zapper" />
-        </peripherals>
-        <cartridge system="NES-NTSC" dump="unknown" crc="1CA9C322" sha1="17869C4F55461D50E134CC3A4D15B89E7CAF8DE3">
-            <board mapper="258">
-                <prg size="128k" />
-                <chr size="128k" />
-            </board>
-        </cartridge>
-    </game>
-        <game>
-        <peripherals>
-            <device type="pokkunmoguraa" />
-        </peripherals>
-        <cartridge system="Famicom" dump="unknown" crc="C7BCC981" sha1="8A0DEADD84A0967B1D2DB0634262C7BDBBB732B7">
-            <board mapper="3">
-                <prg size="32k" />
-                <chr size="32k" />
-                <pad h="0" v="1" />
-            </board>
-        </cartridge>
-    </game>
 </database>

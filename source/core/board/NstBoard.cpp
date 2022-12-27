@@ -1814,35 +1814,54 @@ namespace Nes
 						break;
 
 					case 21:
-						
-						if (submapper == 1)
+
+						if (submapper == 2 || wram >= SIZE_8K) // VRC4c
 						{
 							Chips::Type& chip = chips.Add(L"Konami VRC IV");
-
+							chip.Pin(3) = L"PRG A7";
+							chip.Pin(4) = L"PRG A6";
+							name = "KONAMI VRC4";
+							id = Type::KONAMI_VRC4_2;
+						}
+						else // VRC4a - submapper 1
+						{
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
 							chip.Pin(3) = L"PRG A2";
 							chip.Pin(4) = L"PRG A1";
-
-							name = "KONAMI VRC4";
 							id = Type::KONAMI_VRC4_0;
 						}
-					case 25:
-
-						if (submapper == 2)
-						{ // The correct board is VRC2 but the functionality is implemented in the VRC4 code currently
-							Chips::Type& chip = chips.Add(L"Konami VRC IV");
-							chip.Pin(3)  = L"PRG A0";
-							chip.Pin(4)  = L"PRG A1";
-
-							name = "KONAMI VRC2";
-							id = Type::KONAMI_VRC4_2;
-							break;
-						}
-
-						if (!this->chips.Has(L"Konami VRC IV"))
-							return false;
 
 						name = "KONAMI VRC4";
-						id = Type::KONAMI_VRC4_2;
+
+						break;
+
+					case 25:
+
+						if (submapper == 3 || wram >= SIZE_8K) // VRC2c, but emulated as VRC4
+						{
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
+							chip.Pin(3) = L"PRG A0";
+							chip.Pin(4) = L"PRG A1";
+							id = Type::KONAMI_VRC4_2;
+							name = "KONAMI VRC2";
+							break;
+						}
+						else if (submapper == 2 || prg >= SIZE_256K) // VRC4d
+						{
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
+							chip.Pin(3) = L"PRG A2";
+							chip.Pin(4) = L"PRG A3";
+							id = Type::KONAMI_VRC4_0;
+						}
+						else // VRC4b - submapper 1
+						{
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
+							chip.Pin(3) = L"PRG A0";
+							chip.Pin(4) = L"PRG A1";
+							id = Type::KONAMI_VRC4_1;
+						}
+
+						name = "KONAMI VRC4";
 						break;
 
 					case 22:
@@ -1869,50 +1888,49 @@ namespace Nes
 
 					case 23:
 
-						if (submapper == 2)
+						if (submapper == 1) // VRC4f - Unknown, but plausibly World Hero?
 						{
 							Chips::Type& chip = chips.Add(L"Konami VRC IV");
-
-							chip.Pin(3) = L"PRG A3";
-							chip.Pin(4) = L"PRG A2";
-
+							chip.Pin(3) = L"PRG A1";
+							chip.Pin(4) = L"PRG A0";
 							name = "KONAMI VRC4";
 							id = Type::KONAMI_VRC4_0;
 						}
-						else if (submapper == 3)
+						else if (submapper == 2) // VRC4e
 						{
-							name = "KONAMI VRC2";
-							id = Type::KONAMI_VRC2;
-							break;
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
+							chip.Pin(3) = L"PRG A3";
+							chip.Pin(4) = L"PRG A2";
+							name = "KONAMI VRC4";
+							id = Type::KONAMI_VRC4_1;
 						}
-
-						if (prg >= SIZE_512K)
+						else if (prg >= SIZE_512K)
 						{
-							if (!this->chips.Has(L"Konami VRC IV"))
-							{
-								Chips::Type& chip = chips.Add(L"Konami VRC IV");
-
-								chip.Pin(3) = L"PRG A3";
-								chip.Pin(4) = L"PRG A2";
-							}
-
+							Chips::Type& chip = chips.Add(L"Konami VRC IV");
+							chip.Pin(3) = L"PRG A3";
+							chip.Pin(4) = L"PRG A2";
 							name = "BMC VRC4";
 							id = Type::BMC_VRC4;
 						}
-						else if (this->chips.Has(L"Konami VRC II"))
+						else // VRC2b - submapper 3
 						{
+							Chips::Type& chip = chips.Add(L"Konami VRC II");
+
+							chip.Pin(3)  = L"PRG A1";
+							chip.Pin(4)  = L"PRG A0";
+							chip.Pin(21) = L"CHR A10";
+							chip.Pin(22) = L"CHR A16";
+							chip.Pin(23) = L"CHR A11";
+							chip.Pin(24) = L"CHR A13";
+							chip.Pin(25) = L"CHR A14";
+							chip.Pin(26) = L"CHR A12";
+							chip.Pin(27) = L"CHR A15";
+							chip.Pin(28) = (chr >= SIZE_256K ? L"CHR A17" : L"NC");
+
 							name = "KONAMI VRC2";
 							id = Type::KONAMI_VRC2;
 						}
-						else if (this->chips.Has(L"Konami VRC IV"))
-						{
-							name = "KONAMI VRC4";
-							id = Type::KONAMI_VRC4_2;
-						}
-						else
-						{
-							return false;
-						}
+
 						break;
 
 					case 24:
@@ -2355,13 +2373,6 @@ namespace Nes
 
 					case 78:
 
-						if (submapper == 1)
-						{
-							name = "JALECO JF-16";
-							id = Type::JALECO_JF16;
-							break;
-						}
-						
 						if (submapper == 3)
 						{
 							name = "IREM-HOLYDIVER";
@@ -2369,6 +2380,7 @@ namespace Nes
 							break;
 						}
 
+						// Default to submapper 1
 						name = "JALECO JF-16";
 						id = Type::JALECO_JF16;
 						break;

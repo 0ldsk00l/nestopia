@@ -146,9 +146,7 @@ void audio_set_params(Sound::Output *soundoutput) {
 	// Set audio parameters
 	Sound sound(emulator);
 
-	sound.SetSampleBits(16);
 	sound.SetSampleRate(conf.audio_sample_rate);
-
 	sound.SetSpeaker(conf.audio_stereo ? Sound::SPEAKER_STEREO : Sound::SPEAKER_MONO);
 	sound.SetSpeed(Sound::DEFAULT_SPEED);
 

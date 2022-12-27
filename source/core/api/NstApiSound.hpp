@@ -262,7 +262,7 @@ namespace Nes
 			/**
 			* Sets the sample rate.
 			*
-			* @param rate value in the range 11025 to 96000, default is 44100
+			* @param rate value in the range 44100 to 96000, default is 44100
 			* @return result code
 			*/
 			Result SetSampleRate(ulong rate) throw();
@@ -273,21 +273,6 @@ namespace Nes
 			* @return sample rate
 			*/
 			ulong GetSampleRate() const throw();
-
-			/**
-			* Sets the sample bits.
-			*
-			* @param bits value of 8 or 16, default is 16
-			* @return result code
-			*/
-			Result SetSampleBits(uint bits) throw();
-
-			/**
-			* Returns the sample bits.
-			*
-			* @return number
-			*/
-			uint GetSampleBits() const throw();
 
 			/**
 			* Sets the speaker type.

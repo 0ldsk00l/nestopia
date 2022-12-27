@@ -39,7 +39,7 @@ namespace Nes
 			Buffer::Buffer(uint bits)
 			: output(new iword [SIZE])
 			{
-				Reset( bits, true );
+				Reset( true );
 			}
 
 			Buffer::~Buffer()
@@ -47,12 +47,12 @@ namespace Nes
 				delete [] output;
 			}
 
-			void Buffer::Reset(uint bits,bool clear)
+			void Buffer::Reset(bool clear)
 			{
 				pos = start = 0;
 				history.pos = 0;
 
-				std::fill( history.buffer, history.buffer+History::SIZE, iword(bits == 16 ? 0 : 0x80) );
+				std::fill( history.buffer, history.buffer+History::SIZE, iword(0) );
 
 				if (clear)
 					std::fill( output, output+SIZE, iword(0) );

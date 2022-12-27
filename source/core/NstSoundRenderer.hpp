@@ -59,7 +59,7 @@ namespace Nes
 					uint length;
 				};
 
-				void Reset(uint,bool=true);
+				void Reset(bool=true);
 				void operator >> (Block&);
 
 				template<typename,uint>

@@ -92,7 +92,7 @@ void config_file_write(const char *nstdir) {
 		fprintf(fp, "[audio]\n");
 		fprintf(fp, "; Valid values are 1 and 0.\n");
 		fprintf(fp, "stereo=%d\n\n", conf.audio_stereo);
-		fprintf(fp, "; Valid values are 11025, 22050, 44100, 48000, and 96000.\n");
+		fprintf(fp, "; Valid values are 44100, 48000, and 96000.\n");
 		fprintf(fp, "sample_rate=%d\n\n", conf.audio_sample_rate);
 		fprintf(fp, "; Valid values are 0 to 100.\n");
 		fprintf(fp, "volume=%d\n", conf.audio_volume);

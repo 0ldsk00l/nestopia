@@ -136,7 +136,6 @@ namespace Nes
 		enabled (e),
 		good    (false),
 		stereo  (false),
-		bits    (0),
 		rate    (0),
 		index   (0),
 		buffer  (NULL),
@@ -268,14 +267,13 @@ namespace Nes
 
 		bool Tracker::Rewinder::ReverseSound::Update()
 		{
-			const dword old = (bits == 16 ? size * sizeof(iword) : size * sizeof(byte));
+			const dword old = size * sizeof(iword);
 
-			bits = apu.GetSampleBits();
 			rate = apu.GetSampleRate();
 			stereo = apu.InStereo();
 			size = rate << (stereo+1);
 
-			const dword total = (bits == 16 ? size * sizeof(iword) : size * sizeof(byte));
+			const dword total = size * sizeof(iword);
 			NST_ASSERT( total );
 
 			if (!buffer || total != old)
@@ -296,10 +294,7 @@ namespace Nes
 			good = true;
 			index = 0;
 
-			if (bits == 16)
-				std::fill( static_cast<iword*>(buffer), static_cast<iword*>(buffer) + size, iword(0) );
-			else
-				std::memset( buffer, 0x80, size );
+			std::fill( static_cast<iword*>(buffer), static_cast<iword*>(buffer) + size, iword(0) );
 
 			return true;
 		}
@@ -587,13 +582,13 @@ namespace Nes
 		{
 			NST_COMPILE_ASSERT( NUM_FRAMES % 2 == 0 );
 
-			if (!buffer || (bits ^ apu.GetSampleBits()) | (rate ^ apu.GetSampleRate()) | (stereo ^ uint(bool(apu.InStereo()))))
+			if (!buffer || (rate ^ apu.GetSampleRate()) | (stereo ^ uint(bool(apu.InStereo()))))
 			{
 				if (!good || !Update() || !enabled)
 					return NULL;
 			}
 
-			return bits == 16 ? StoreType<iword>() : StoreType<byte>();
+			return StoreType<iword>();
 		}
 
 		template<typename T,int SILENCE>
@@ -632,14 +627,11 @@ namespace Nes
 			{
 				if (enabled & good)
 				{
-					input = (bits == 16) ? ReverseCopy<iword>( *target ) : ReverseCopy<byte>( *target );
+					input = ReverseCopy<iword>( *target );
 				}
 				else
 				{
-					if (bits == 16)
-						ReverseSilence<iword,0>( *target );
-					else
-						ReverseSilence<byte,0x80>( *target );
+					ReverseSilence<iword,0>( *target );
 				}
 
 				mutex.Unlock( *target );

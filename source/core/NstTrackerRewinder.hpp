@@ -181,7 +181,6 @@ namespace Nes
 				bool enabled;
 				bool good;
 				byte stereo;
-				byte bits;
 				dword rate;
 				uint index;
 				void* buffer;

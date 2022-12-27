@@ -142,11 +142,9 @@ static void cb_unlimited_sprites(Fl_Widget *w, long) {
 
 static void cb_samplerate(Fl_Widget *w, long) {
 	switch (((Fl_Choice*)w)->value()) {
-		case 0: conf.audio_sample_rate = 11025; break;
-		case 1: conf.audio_sample_rate = 22050; break;
-		case 2: conf.audio_sample_rate = 44100; break;
-		case 3: conf.audio_sample_rate = 48000; break;
-		case 4: conf.audio_sample_rate = 96000; break;
+		case 0: conf.audio_sample_rate = 44100; break;
+		case 1: conf.audio_sample_rate = 48000; break;
+		case 2: conf.audio_sample_rate = 96000; break;
 		default: conf.audio_sample_rate = 48000; break;
 	}
 
@@ -406,18 +404,14 @@ void NstConfWindow::populate() {
 
 	Fl_Choice *ch_samplerate = new Fl_Choice(20, 55, 160, 25, "Sample Rate");
 	ch_samplerate->align(FL_ALIGN_TOP_LEFT);
-	ch_samplerate->add("11025Hz");
-	ch_samplerate->add("22050Hz");
 	ch_samplerate->add("44100Hz");
 	ch_samplerate->add("48000Hz");
 	ch_samplerate->add("96000Hz");
 	switch (conf.audio_sample_rate) {
-		case 11025: ch_samplerate->value(0); break;
-		case 22050: ch_samplerate->value(1); break;
-		case 44100: ch_samplerate->value(2); break;
-		case 48000: ch_samplerate->value(3); break;
-		case 96000: ch_samplerate->value(4); break;
-		default: ch_samplerate->value(3); break;
+		case 44100: ch_samplerate->value(0); break;
+		case 48000: ch_samplerate->value(1); break;
+		case 96000: ch_samplerate->value(2); break;
+		default: ch_samplerate->value(1); break;
 	}
 	ch_samplerate->callback(cb_samplerate);
 

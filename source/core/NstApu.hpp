@@ -60,7 +60,6 @@ namespace Nes
 			void  ClockDMA(uint=0);
 
 			Result SetSampleRate(dword);
-			Result SetSampleBits(uint);
 			Result SetSpeed(uint);
 			Result SetVolume(uint,uint);
 			uint   GetVolume(uint) const;
@@ -599,7 +598,6 @@ namespace Nes
 				Settings();
 
 				dword rate;
-				uint bits;
 				byte speed;
 				bool muted;
 				bool transpose;
@@ -629,11 +627,6 @@ namespace Nes
 			dword GetSampleRate() const
 			{
 				return settings.rate;
-			}
-
-			uint GetSampleBits() const
-			{
-				return settings.bits;
 			}
 
 			uint GetSpeed() const

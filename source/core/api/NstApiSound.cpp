@@ -62,11 +62,6 @@ namespace Nes
 			return emulator.cpu.GetApu().SetSampleRate( rate );
 		}
 
-		Result Sound::SetSampleBits(uint bits) throw()
-		{
-			return emulator.cpu.GetApu().SetSampleBits( bits );
-		}
-
 		Result Sound::SetVolume(uint channels,uint volume) throw()
 		{
 			return emulator.cpu.GetApu().SetVolume( channels, volume );
@@ -95,11 +90,6 @@ namespace Nes
 		ulong Sound::GetSampleRate() const throw()
 		{
 			return emulator.cpu.GetApu().GetSampleRate();
-		}
-
-		uint Sound::GetSampleBits() const throw()
-		{
-			return emulator.cpu.GetApu().GetSampleBits();
 		}
 
 		uint Sound::GetVolume(uint channel) const throw()

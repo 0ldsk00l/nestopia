@@ -238,7 +238,7 @@ namespace Nes
 
 			stream = NULL;
 
-			buffer.Reset( settings.bits );
+			buffer.Reset();
 
 			if (on)
 			{
@@ -297,27 +297,10 @@ namespace Nes
 			if (!rate)
 				return RESULT_ERR_INVALID_PARAM;
 
-			if (rate < 11025 || rate > 96000)
+			if (rate < 44100 || rate > 96000)
 				return RESULT_ERR_UNSUPPORTED;
 
 			settings.rate = rate;
-			UpdateSettings();
-
-			return RESULT_OK;
-		}
-
-		Result Apu::SetSampleBits(const uint bits)
-		{
-			if (settings.bits == bits)
-				return RESULT_NOP;
-
-			if (!bits)
-				return RESULT_ERR_INVALID_PARAM;
-
-			if (bits != 8 && bits != 16)
-				return RESULT_ERR_UNSUPPORTED;
-
-			settings.bits = bits;
 			UpdateSettings();
 
 			return RESULT_OK;
@@ -421,7 +404,7 @@ namespace Nes
 			cycles.Update( settings.rate, settings.speed, cpu );
 			synchronizer.Reset( settings.speed, settings.rate, cpu );
 			dcBlocker.Reset();
-			buffer.Reset( settings.bits );
+			buffer.Reset();
 
 			Cycle rate; uint fixed;
 			CalculateOscillatorClock( rate, fixed );
@@ -863,20 +846,10 @@ namespace Nes
 				{
 					streamed = stream->length[0] + stream->length[1];
 
-					if (settings.bits == 16)
-					{
-						if (!settings.stereo)
-							FlushSound<iword,false>();
-						else
-							FlushSound<iword,true>();
-					}
+					if (!settings.stereo)
+						FlushSound<iword,false>();
 					else
-					{
-						if (!settings.stereo)
-							FlushSound<byte,false>();
-						else
-							FlushSound<byte,true>();
-					}
+						FlushSound<iword,true>();
 
 					Sound::Output::unlockCallback( *stream );
 				}
@@ -921,7 +894,7 @@ namespace Nes
 		#endif
 
 		Apu::Settings::Settings()
-		: rate(44100), bits(16), speed(0), muted(false), transpose(false), stereo(false), audible(true)
+		: rate(44100), speed(0), muted(false), transpose(false), stereo(false), audible(true)
 		{
 			for (uint i=0; i < MAX_CHANNELS; ++i)
 				volumes[i] = Channel::DEFAULT_VOLUME;
@@ -2458,7 +2431,7 @@ namespace Nes
 
 			dcBlocker.Reset();
 
-			buffer.Reset( settings.bits, false );
+			buffer.Reset( false );
 		}
 
 		#ifdef NST_MSVC_OPTIMIZE
