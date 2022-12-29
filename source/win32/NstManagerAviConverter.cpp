@@ -281,7 +281,7 @@ namespace Nestopia
 					{
 						wFormatTag      = WAVE_FORMAT_PCM;
 						nSamplesPerSec  = nes.GetSampleRate();
-						wBitsPerSample  = nes.GetSampleBits();
+						wBitsPerSample  = 16;
 						nChannels       = 1 + (nes.GetSpeaker() == Nes::Sound::SPEAKER_STEREO);
 						nBlockAlign     = wBitsPerSample / 8 * nChannels;
 						nAvgBytesPerSec = nSamplesPerSec * nBlockAlign;

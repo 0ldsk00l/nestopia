@@ -372,9 +372,9 @@ CAPTION "About Nestopia"
 FONT 8, "MS Shell Dlg", 400, 0, 1
 {
     GROUPBOX        "", IDC_STATIC, 7, 7, 147, 141, 0, WS_EX_LEFT
-    LTEXT           "Nestopia UE 1.51.1", IDC_ABOUT_NAMEVERSION, 47, 14, 63, 9, SS_LEFT, WS_EX_LEFT
+    LTEXT           "Nestopia UE 1.52.0", IDC_ABOUT_NAMEVERSION, 47, 14, 63, 9, SS_LEFT, WS_EX_LEFT
     ICON            "", IDC_ABOUT_ICON, 70, 36, 21, 20, SS_ICON, WS_EX_LEFT
-    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2021 R. Danbrook\nCopyright © 2020-2021 Rupert Carmichael", IDC_STATIC, 12, 69, 139, 25, SS_CENTER, WS_EX_LEFT
+    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2022 R. Danbrook\nCopyright © 2020-2022 Rupert Carmichael", IDC_STATIC, 12, 69, 139, 25, SS_CENTER, WS_EX_LEFT
     LTEXT           "Homepage", IDC_STATIC, 13, 124, 8, 1, SS_LEFT, WS_EX_LEFT
     CTEXT           "0ldsk00l.ca/nestopia", IDC_ABOUT_URL, 46, 107, 67, 8, SS_CENTER | SS_NOTIFY, WS_EX_LEFT
     DEFPUSHBUTTON   "OK", IDOK, 62, 125, 37, 13, 0, WS_EX_LEFT
@@ -1049,8 +1049,6 @@ FONT 8, "MS Shell Dlg", 400, 0, 1
     COMBOBOX        IDC_SOUND_DEVICE, 14, 20, 130, 46, WS_GROUP | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWNLIST, WS_EX_LEFT
     GROUPBOX        "Output", IDC_STATIC, 7, 50, 164, 64, 0, WS_EX_LEFT
     COMBOBOX        IDC_SOUND_SAMPLE_RATE, 14, 69, 67, 41, WS_GROUP | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWNLIST, WS_EX_LEFT
-    AUTORADIOBUTTON "8 Bit", IDC_SOUND_8_BIT, 91, 72, 28, 10, WS_GROUP | WS_TABSTOP, WS_EX_LEFT
-    AUTORADIOBUTTON "16 Bit", IDC_SOUND_16_BIT, 125, 72, 30, 10, WS_TABSTOP, WS_EX_LEFT
     AUTORADIOBUTTON "Mono", IDC_SOUND_MONO, 14, 95, 32, 10, WS_GROUP | WS_TABSTOP, WS_EX_LEFT
     AUTORADIOBUTTON "Stereo", IDC_SOUND_STEREO, 53, 95, 35, 10, WS_TABSTOP, WS_EX_LEFT
     AUTOCHECKBOX    "Adjust pitch", IDC_SOUND_ADJUST_PITCH, 111, 95, 54, 10, WS_GROUP, WS_EX_LEFT
@@ -1934,7 +1932,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
             VALUE "OriginalFilename", "English.nlg"
             VALUE "ProductName", "Nestopia Language Plugin - English (US)"
-            VALUE "ProductVersion", "1.51.1"
+            VALUE "ProductVersion", "1.52.0"
         }
     }
     BLOCK "VarFileInfo"

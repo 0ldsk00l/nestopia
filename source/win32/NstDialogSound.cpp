@@ -35,8 +35,6 @@ namespace Nestopia
 	{
 		NST_COMPILE_ASSERT
 		(
-			IDC_SOUND_8_BIT         == IDC_SOUND_SAMPLE_RATE + 1 &&
-			IDC_SOUND_16_BIT        == IDC_SOUND_SAMPLE_RATE + 2 &&
 			IDC_SOUND_LATENCY       == IDC_SOUND_SAMPLE_RATE + 3 &&
 			IDC_SOUND_LATENCY_ONE   == IDC_SOUND_SAMPLE_RATE + 4 &&
 			IDC_SOUND_LATENCY_TEN   == IDC_SOUND_SAMPLE_RATE + 5 &&
@@ -111,23 +109,12 @@ namespace Nestopia
 
 			switch (uint rate = sound["sample-rate"].Int())
 			{
-				case 11025:
-				case 22050:
 				case 44100:
 				case 48000:
 				case 88200:
 				case 96000:
 
 					nes.SetSampleRate( rate );
-					break;
-			}
-
-			switch (uint bits = sound["sample-bits"].Int())
-			{
-				case 8:
-				case 16:
-
-					nes.SetSampleBits( bits );
 					break;
 			}
 
@@ -175,7 +162,6 @@ namespace Nestopia
 				sound["device"].Str() = "none";
 
 			sound[ "sample-rate"  ].Int() = nes.GetSampleRate();
-			sound[ "sample-bits"  ].Int() = nes.GetSampleBits();
 			sound[ "buffers"      ].Int() = settings.latency;
 			sound[ "speakers"     ].Str() = (nes.GetSpeaker() == Nes::Sound::SPEAKER_STEREO ? "stereo" : "mono");
 			sound[ "adjust-pitch" ].YesNo() = nes.IsAutoTransposing();
@@ -233,8 +219,6 @@ namespace Nestopia
 				{
 					static const wchar_t rates[][6] =
 					{
-						L"11025",
-						L"22050",
 						L"44100",
 						L"48000",
 						L"88200",
@@ -245,12 +229,10 @@ namespace Nestopia
 
 					switch (nes.GetSampleRate())
 					{
-						case 11025: index = 0; break;
-						case 22050: index = 1; break;
-						case 48000: index = 3; break;
-						case 88200: index = 4; break;
-						case 96000: index = 5; break;
-						default:    index = 2; break;
+						case 48000: index = 1; break;
+						case 88200: index = 2; break;
+						case 96000: index = 3; break;
+						default:    index = 0; break;
 					}
 
 					const Control::ComboBox comboBox( dialog.ComboBox(IDC_SOUND_SAMPLE_RATE) );
@@ -259,7 +241,6 @@ namespace Nestopia
 					comboBox[index].Select();
 				}
 
-				dialog.RadioButton( nes.GetSampleBits() == 8 ? IDC_SOUND_8_BIT : IDC_SOUND_16_BIT ).Check();
 				dialog.RadioButton( nes.GetSpeaker() == Nes::Sound::SPEAKER_STEREO ? IDC_SOUND_STEREO : IDC_SOUND_MONO ).Check();
 				dialog.RadioButton( settings.pool == DirectSound::POOL_HARDWARE ? IDC_SOUND_POOL_HARDWARE : IDC_SOUND_POOL_SYSTEM ).Check();
 
@@ -377,9 +358,6 @@ namespace Nestopia
 				dialog.ComboBox( IDC_SOUND_DEVICE )[GetDefaultAdapter()+1].Select();
 				dialog.ComboBox( IDC_SOUND_SAMPLE_RATE )[1].Select();
 
-				dialog.RadioButton( IDC_SOUND_16_BIT ).Check();
-				dialog.RadioButton( IDC_SOUND_8_BIT ).Uncheck();
-
 				dialog.RadioButton( IDC_SOUND_MONO ).Check();
 				dialog.RadioButton( IDC_SOUND_STEREO ).Uncheck();
 
@@ -405,10 +383,9 @@ namespace Nestopia
 					settings.latency = dialog.Slider( IDC_SOUND_LATENCY ).Position();
 					settings.pool = (dialog.RadioButton( IDC_SOUND_POOL_HARDWARE ).Checked() ? DirectSound::POOL_HARDWARE : DirectSound::POOL_SYSTEM);
 
-					static const uint rates[] = {11025,22050,44100,48000,88200,96000};
+					static const uint rates[] = {44100,48000,88200,96000};
 
 					nes.SetSampleRate( rates[dialog.ComboBox( IDC_SOUND_SAMPLE_RATE ).Selection().GetIndex()] );
-					nes.SetSampleBits( dialog.RadioButton( IDC_SOUND_8_BIT ).Checked() ? 8 : 16 );
 					nes.SetSpeaker( dialog.RadioButton( IDC_SOUND_STEREO ).Checked() ? Nes::Sound::SPEAKER_STEREO : Nes::Sound::SPEAKER_MONO );
 					nes.SetAutoTranspose( dialog.CheckBox( IDC_SOUND_ADJUST_PITCH ).Checked() );
 

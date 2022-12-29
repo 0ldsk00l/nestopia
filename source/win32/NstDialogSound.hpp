@@ -57,7 +57,6 @@ namespace Nestopia
 
 			enum
 			{
-				DEFAULT_BITS = 16,
 				DEFAULT_RATE = 44100,
 				LATENCY_MAX = 10,
 				DEFAULT_LATENCY = 1,
