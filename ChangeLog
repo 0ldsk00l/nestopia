@@ -1,4 +1,34 @@
 ----------------------------------------------------------------
+1.52.0
+----------------------------------------------------------------
+Shell:
+
+  Changes:
+   - FLTK: Update to latest lodepng
+   - FLTK: Use NST prefix for data directories in build (cpasjuste)
+
+  Fixes:
+   - FLTK: Better frame timing on non-60Hz screens
+   - win32: Fix minor code problems (mjunix)
+
+Core:
+
+  Additions:
+   - Add support for Unlicensed MMC3 boards with PRG ROM over 512K
+   - Add support for Mapper 258 (UNL-158B)
+   - Add support for Mapper 400 (UNL-RET-X7-GBL)
+
+  Changes:
+   - Remove options for 8-bit audio and sample rates below 44100Hz
+   - Improve heuristics for VRC2/4 boards
+
+  Fixes:
+   - Fix IPS patching in cases where patches overlap ROM region boundaries
+   - Improve handling of fast sequential reads to 0x2007
+   - Improve opcode 9c and 9e timing
+   - Correct implementation of PPU Open Bus
+
+----------------------------------------------------------------
 1.51.1
 ----------------------------------------------------------------
 Shell:
