@@ -325,10 +325,10 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 
 	Fl_Box text2(0, 208, 460, 24, "Cycle-Accurate Nintendo Entertainment System Emulator");
 
-	Fl_Box text3(0, 256, 460, 24, "FLTK Frontend\n(c) 2012-2022, R. Danbrook\n(c) 2007-2008, R. Belmont");
+	Fl_Box text3(0, 256, 460, 24, "FLTK Frontend\n(c) 2012-2023, R. Danbrook\n(c) 2007-2008, R. Belmont");
 	text3.labelsize(10);
 
-	Fl_Box text4(0, 320, 460, 24, "Nestopia Emulator\n(c) 2020-2022, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij");
+	Fl_Box text4(0, 320, 460, 24, "Nestopia Emulator\n(c) 2020-2023, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij");
 	text4.labelsize(10);
 
 	Fl_Box text5(0, 360, 460, 24, "Icon based on drawing by Trollekop");
