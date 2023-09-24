@@ -3,7 +3,6 @@
 
 #define NUMGAMEPADS 2
 #define NUMBUTTONS 10
-#define TOTALBUTTONS (NUMGAMEPADS*NUMBUTTONS)
 #define DEADZONE (32768/3)
 
 #include "core/api/NstApiInput.hpp"
@@ -35,6 +34,19 @@ typedef struct {
 	SDL_Event softreset;
 	SDL_Event hardreset;
 } gamepad_t;
+
+typedef struct {
+	int buttons[14];
+	int trigger[1];
+	int coord[2];
+	int coin[2];
+} inputstate_t;
+
+typedef struct {
+	int *axis[12];
+	int *button[32];
+	int *hat[4];
+} buttonmap_t;
 
 typedef struct {
 	// User Interface
@@ -122,20 +134,11 @@ typedef struct {
 	unsigned char turbob;
 } nesinput_t;
 
-typedef struct {
-	int p1a;
-	int p1b;
-	int p2a;
-	int p2b;
-} turbo_t;
-
 void nst_input_init();
 
-void nst_input_inject(Input::Controllers *controllers, nesinput_t input);
-void nst_input_inject_mouse(Input::Controllers *controllers, int b, int s, int x, int y);
+void nst_input_inject_mouse(int b, int s, int x, int y);
 
-void nst_input_turbo_init();
-void nst_input_turbo_pulse(Input::Controllers *controllers);
+void nst_input_update();
 
 int nst_input_zapper_present();
 
@@ -151,13 +154,12 @@ void nstsdl_input_conf_write();
 void nstsdl_input_joysticks_detect();
 void nstsdl_input_joysticks_close();
 
-void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event event);
 int nstsdl_input_checksign(int axisvalue);
 
-void nstsdl_input_process(Input::Controllers *controllers, SDL_Event event);
+void nstsdl_input_process(SDL_Event& event);
 
 char* nstsdl_input_translate_event(SDL_Event event);
-SDL_Event nstsdl_input_translate_string(const char *string);
+SDL_Event nstsdl_input_translate_string(const char *str, const int pnum, const int bnum);
 
 void fltkui_input_conf_set(int kval, int pnum, int bnum);
 void fltkui_input_process_key(int e);

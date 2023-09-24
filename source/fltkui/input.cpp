@@ -1,7 +1,8 @@
 /*
  * Nestopia UE
  *
- * Copyright (C) 2012-2016 R. Danbrook
+ * Copyright (C) 2012-2023 R. Danbrook
+ * Copyright (C) 2020-2023 Rupert Carmichael
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +42,6 @@ gamepad_t player[NUMGAMEPADS];
 inputsettings_t inputconf;
 static char inputconfpath[256];
 
-static turbo_t turbostate;
-static turbo_t turbotoggle;
-
 extern Emulator emulator;
 extern nstpaths_t nstpaths;
 
@@ -52,7 +50,7 @@ extern Input::Controllers *cNstPads;
 
 extern int drawtext;
 
-static unsigned char nescodes[TOTALBUTTONS] = {
+static unsigned char nescodes[NUMBUTTONS] = {
 	Input::Controllers::Pad::UP,
 	Input::Controllers::Pad::DOWN,
 	Input::Controllers::Pad::LEFT,
@@ -63,21 +61,88 @@ static unsigned char nescodes[TOTALBUTTONS] = {
 	Input::Controllers::Pad::B,
 	Input::Controllers::Pad::A,
 	Input::Controllers::Pad::B,
-	Input::Controllers::Pad::UP,
-	Input::Controllers::Pad::DOWN,
-	Input::Controllers::Pad::LEFT,
-	Input::Controllers::Pad::RIGHT,
-	Input::Controllers::Pad::SELECT,
-	Input::Controllers::Pad::START,
-	Input::Controllers::Pad::A,
-	Input::Controllers::Pad::B,
-	Input::Controllers::Pad::A,
-	Input::Controllers::Pad::B
 };
+
+static inputstate_t inputstate[4];
+static buttonmap_t buttonmap[4];
+static int input_null = 0;
+
+static bool NST_CALLBACK nst_poll_pad(Input::UserData data, Input::Controllers::Pad& pad, uint port) {
+	uint buttons = 0;
+
+	for (int i = 0; i < NUMBUTTONS; i++) {
+		if (inputstate[port].buttons[i] == 1) {
+			buttons |= nescodes[i];
+		}
+	}
+
+	pad.buttons = buttons;
+	return true;
+}
+
+static bool NST_CALLBACK nst_poll_zapper(Input::UserData data, Input::Controllers::Zapper& zapper) {
+	zapper.fire = inputstate[1].trigger[0];
+	zapper.x = inputstate[1].coord[0];
+	zapper.y = inputstate[1].coord[1];
+	return true;
+}
+
+static bool NST_CALLBACK nst_poll_vssys(Input::UserData data, Input::Controllers::VsSystem& vsSystem) {
+	unsigned slots = 0;
+
+	if (inputstate[0].coin[0]) {
+		slots |= Input::Controllers::VsSystem::COIN_1;
+	}
+	if (inputstate[0].coin[1]) {
+		slots |= Input::Controllers::VsSystem::COIN_2;
+	}
+
+	vsSystem.insertCoin = slots;
+	return true;
+}
+
+
+void nst_input_update() {
+	for (int i = 0; i < NUMGAMEPADS; i++) {
+		if (inputstate[i].buttons[8]) {
+			if (inputstate[i].buttons[8] >= conf.timing_turbopulse) {
+				inputstate[i].buttons[8] = 1;
+			}
+			else {
+				inputstate[i].buttons[8]++;
+			}
+		}
+		if (inputstate[i].buttons[9]) {
+			if (inputstate[i].buttons[9] >= conf.timing_turbopulse) {
+				inputstate[i].buttons[9] = 1;
+			}
+			else {
+				inputstate[i].buttons[9]++;
+			}
+		}
+	}
+
+	if (inputstate[0].buttons[10]) {
+		nst_set_rewind(0);
+	}
+	if (inputstate[0].buttons[11]) {
+		nst_set_rewind(1);
+	}
+	if (inputstate[0].buttons[12]) {
+		nst_reset(0);
+	}
+	if (inputstate[0].buttons[13]) {
+		nst_reset(1);
+	}
+}
 
 void nst_input_init() {
 	// Initialize input
 	char controller[32];
+
+	Input::Controllers::Pad::callback.Set(nst_poll_pad, nullptr);
+	Input::Controllers::Zapper::callback.Set(nst_poll_zapper, nullptr);
+	Input::Controllers::VsSystem::callback.Set(nst_poll_vssys, nullptr);
 
 	for (int i = 0; i < NUMGAMEPADS; i++) {
 		Input(emulator).AutoSelectController(i);
@@ -170,26 +235,8 @@ void nst_input_init() {
 	}
 }
 
-void nst_input_inject(Input::Controllers *controllers, nesinput_t input) {
-	// Insert the input signal into the NES
-	if (controllers == NULL) { return; }
-
-	if (input.pressed) {
-		controllers->pad[input.player].buttons |= input.nescode;
-		if (input.turboa) { input.player == 0 ? turbostate.p1a = true : turbostate.p2a = true; }
-		if (input.turbob) { input.player == 0 ? turbostate.p1b = true : turbostate.p2b = true; }
-	}
-	else {
-		controllers->pad[input.player].buttons &= ~input.nescode;
-		if (input.turboa) { input.player == 0 ? turbostate.p1a = false : turbostate.p2a = false; }
-		if (input.turbob) { input.player == 0 ? turbostate.p1b = false : turbostate.p2b = false; }
-	}
-}
-
-void nst_input_inject_mouse(Input::Controllers *controllers, int b, int s, int x, int y) {
+void nst_input_inject_mouse(int b, int s, int x, int y) {
 	// Insert input signal for Zappers
-	if(controllers == NULL) { return; }
-
 	double xaspect;
 	double yaspect;
 
@@ -217,75 +264,28 @@ void nst_input_inject_mouse(Input::Controllers *controllers, int b, int s, int x
 				xaspect = (double)(conf.video_scale_factor * Video::Output::WIDTH) / (double)(rendersize.w);
 			}
 		}
-		controllers->zapper.x = (int)(x * xaspect) / conf.video_scale_factor;
+		inputstate[1].coord[0] = (x * xaspect) / conf.video_scale_factor;
 
 		// Get Y coords
 		if (conf.video_unmask_overscan) {
-			controllers->zapper.y = y / conf.video_scale_factor;
+			inputstate[1].coord[1] = y / conf.video_scale_factor;
 		}
 		else {
-			controllers->zapper.y = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
+			inputstate[1].coord[1] = (y + OVERSCAN_TOP * conf.video_scale_factor) / conf.video_scale_factor;
 		}
 
 		// Calculate fullscreen Y coords
 		if (conf.video_fullscreen) {
 			yaspect = (double)(conf.video_scale_factor * Video::Output::HEIGHT) / (double)(screensize.h);
-			controllers->zapper.y = (y * yaspect) / conf.video_scale_factor;
+			inputstate[1].coord[1] = (y * yaspect) / conf.video_scale_factor;
 		}
 
 		// Offscreen
-		if (b != 1) { controllers->zapper.x = ~1U; }
+		if (b != 1) { inputstate[1].coord[0] = ~1U; }
 
-		controllers->zapper.fire = true;
+		inputstate[1].trigger[0] = 1;
 	}
-	else { controllers->zapper.fire = false; }
-}
-
-void nst_input_turbo_init() {
-	// Initialize the turbo button states
-	turbostate.p1a = turbotoggle.p1a = 0;
-	turbostate.p1b = turbotoggle.p1b = 0;
-	turbostate.p2a = turbotoggle.p2a = 0;
-	turbostate.p2b = turbotoggle.p2b = 0;
-}
-
-void nst_input_turbo_pulse(Input::Controllers *controllers) {
-	// Pulse the turbo buttons if they're pressed
-	if (turbostate.p1a) {
-		turbotoggle.p1a++;
-		if (turbotoggle.p1a >= conf.timing_turbopulse) {
-			turbotoggle.p1a = 0;
-			controllers->pad[0].buttons &= ~Input::Controllers::Pad::A;
-		}
-		else { controllers->pad[0].buttons |= Input::Controllers::Pad::A; }
-	}
-
-	if (turbostate.p1b) {
-		turbotoggle.p1b++;
-		if (turbotoggle.p1b >= conf.timing_turbopulse) {
-			turbotoggle.p1b = 0;
-			controllers->pad[0].buttons &= ~Input::Controllers::Pad::B;
-		}
-		else { controllers->pad[0].buttons |= Input::Controllers::Pad::B; }
-	}
-
-	if (turbostate.p2a) {
-		turbotoggle.p2a++;
-		if (turbotoggle.p2a >= conf.timing_turbopulse) {
-			turbotoggle.p2a = 0;
-			controllers->pad[1].buttons &= ~Input::Controllers::Pad::A;
-		}
-		else { controllers->pad[1].buttons |= Input::Controllers::Pad::A; }
-	}
-
-	if (turbostate.p2b) {
-		turbotoggle.p2b++;
-		if (turbotoggle.p2b >= conf.timing_turbopulse) {
-			turbotoggle.p2b = 0;
-			controllers->pad[1].buttons &= ~Input::Controllers::Pad::B;
-		}
-		else { controllers->pad[1].buttons |= Input::Controllers::Pad::B; }
-	}
+	else { inputstate[1].trigger[0] = 0; }
 }
 
 int nst_input_zapper_present() {
@@ -307,8 +307,6 @@ void nstsdl_input_joysticks_detect() {
 	}
 
 	SDL_SetHint(SDL_HINT_JOYSTICK_ALLOW_BACKGROUND_EVENTS, "1");
-
-	nst_input_turbo_init();
 }
 
 void nstsdl_input_joysticks_close() {
@@ -319,159 +317,6 @@ void nstsdl_input_joysticks_close() {
 int nstsdl_input_checksign(int axisvalue) {
 	if (axisvalue <= 0) { return 0; }
 	else { return 1; }
-}
-
-void nstsdl_input_match_joystick(Input::Controllers *controllers, SDL_Event event) {
-	// Match NES buttons to joystick input
-	int j;
-
-	nesinput_t input, reverseinput;
-
-	input.nescode = 0x00;
-	input.player = 0;
-	input.pressed = 0;
-	input.turboa = 0;
-	input.turbob = 0;
-
-	// This is for releasing opposing directions
-	reverseinput.nescode = 0x00;
-	reverseinput.player = 0;
-	reverseinput.pressed = 0;
-
-	SDL_Event buttons[TOTALBUTTONS] = {
-		player[0].ju, player[0].jd, player[0].jl, player[0].jr,
-		player[0].jselect, player[0].jstart, player[0].ja, player[0].jb,
-		player[0].jta, player[0].jtb,
-
-		player[1].ju, player[1].jd, player[1].jl, player[1].jr,
-		player[1].jselect, player[1].jstart, player[1].ja, player[1].jb,
-		player[1].jta, player[1].jtb
-	};
-
-	SDL_Event rw[2] = { player[0].rwstart, player[0].rwstop };
-	SDL_Event reset[2] = { player[0].softreset, player[0].hardreset };
-
-	switch(event.type) {
-		// Handle button input
-		case SDL_JOYBUTTONUP:
-		case SDL_JOYBUTTONDOWN:
-			// Gamepad input
-			for (j = 0; j < TOTALBUTTONS; j++) {
-				if (buttons[j].jbutton.button == event.jbutton.button
-					&& buttons[j].jbutton.which == event.jbutton.which) {
-					input.nescode = nescodes[j];
-					if (j >= NUMBUTTONS) { input.player = 1; }
-					// This is really dirty
-					if (j == 8 || j == 18) { input.turboa = 1; }
-					if (j == 9 || j == 19) { input.turbob = 1; }
-				}
-			}
-			input.pressed = event.jbutton.state;
-
-			// Rewind
-			if (event.jbutton.button == rw[0].jbutton.button && event.jbutton.which == rw[0].jbutton.which) { nst_set_rewind(0); }
-			if (event.jbutton.button == rw[1].jbutton.button && event.jbutton.which == rw[1].jbutton.which) { nst_set_rewind(1); }
-			if (event.jbutton.button == reset[0].jbutton.button && event.jbutton.which == reset[0].jbutton.which) { nst_reset(0); }
-			if (event.jbutton.button == reset[1].jbutton.button && event.jbutton.which == reset[1].jbutton.which) { nst_reset(1); }
-			break;
-
-		// Handling hat input can be a lot of fun if you like pain
-		case SDL_JOYHATMOTION:
-			unsigned char hu, hd, hl, hr;
-			hu = hd = hl = hr = 0;
-
-			// Start a loop to check if input matches
-			for (j = 0; j < TOTALBUTTONS; j++) {
-
-				// Read value of each hat direction on current hat
-				if (buttons[j].type == event.type
-					&& buttons[j].jhat.which == event.jhat.which
-					&& buttons[j].jhat.hat == event.jhat.hat) {
-					if (j >= NUMBUTTONS) { input.player = reverseinput.player = 1; }
-
-					// Find the values at each hat position on the current hat
-					if (buttons[j].jhat.value == SDL_HAT_UP) { hu = nescodes[j]; }
-					else if (buttons[j].jhat.value == SDL_HAT_DOWN) { hd = nescodes[j]; }
-					else if (buttons[j].jhat.value == SDL_HAT_LEFT) { hl = nescodes[j]; }
-					else if (buttons[j].jhat.value == SDL_HAT_RIGHT) { hr = nescodes[j]; }
-
-					input.pressed = 1;
-
-					// Make sure opposing hat positions are turned off
-					switch(event.jhat.value) {
-						case SDL_HAT_UP:
-							input.nescode |= hu;
-							reverseinput.nescode |= hd |= hl |= hr;
-							break;
-						case SDL_HAT_LEFTUP:
-							input.nescode |= hu |= hl;
-							reverseinput.nescode |= hd |= hr;
-							break;
-						case SDL_HAT_RIGHTUP:
-							input.nescode |= hu |= hr;
-							reverseinput.nescode |= hd |= hl;
-							break;
-						case SDL_HAT_DOWN:
-							input.nescode |= hd;
-							reverseinput.nescode |= hu |= hl |= hr;
-							break;
-						case SDL_HAT_LEFTDOWN:
-							input.nescode |= hd |= hl;
-							reverseinput.nescode |= hu |= hr;
-							break;
-						case SDL_HAT_RIGHTDOWN:
-							input.nescode |= hd |= hr;
-							reverseinput.nescode |= hu |= hl;
-							break;
-						case SDL_HAT_LEFT:
-							input.nescode |= hl;
-							reverseinput.nescode |= hr |= hu |= hd;
-							break;
-						case SDL_HAT_RIGHT:
-							input.nescode |= hr;
-							reverseinput.nescode |= hl |= hu |= hd;
-							break;
-						default:
-							input.nescode |= hu |= hd |= hl |= hr;
-							break;
-					}
-				}
-			}
-			break;
-
-		// Handle axis input
-		case SDL_JOYAXISMOTION:
-			for (j = 0; j < TOTALBUTTONS; j++) {
-
-				int nvalue = nstsdl_input_checksign(event.jaxis.value);
-
-				if (buttons[j].jaxis.axis == event.jaxis.axis
-					&& buttons[j].jaxis.which == event.jaxis.which
-					&& buttons[j].jaxis.type == event.jaxis.type
-					&& buttons[j].jaxis.value == nvalue) {
-
-					if (j >= NUMBUTTONS) { input.player = reverseinput.player = 1; }
-
-					input.nescode = nescodes[j];
-				}
-
-				if (buttons[j].jaxis.axis == event.jaxis.axis
-					&& buttons[j].jaxis.which == event.jaxis.which
-					&& buttons[j].jaxis.type == event.jaxis.type
-					&& buttons[j].jaxis.value == !nvalue) {
-
-					reverseinput.nescode = nescodes[j];
-				}
-
-				if (abs(event.jaxis.value) > DEADZONE) { input.pressed = 1; }
-			}
-			break;
-
-		default: break;
-	}
-
-	nst_input_inject(controllers, reverseinput);
-	nst_input_inject(controllers, input);
 }
 
 void nstsdl_input_conf_defaults() {
@@ -503,21 +348,21 @@ void nstsdl_input_conf_defaults() {
 	player[0].ta = 'x';
 	player[0].tb = 's';
 
-	player[0].ju = nstsdl_input_translate_string("j0h01");
-	player[0].jd = nstsdl_input_translate_string("j0h04");
-	player[0].jl = nstsdl_input_translate_string("j0h08");
-	player[0].jr = nstsdl_input_translate_string("j0h02");
-	player[0].jselect = nstsdl_input_translate_string("j0b8");
-	player[0].jstart = nstsdl_input_translate_string("j0b9");
-	player[0].ja = nstsdl_input_translate_string("j0b1");
-	player[0].jb = nstsdl_input_translate_string("j0b0");
-	player[0].jta = nstsdl_input_translate_string("j0b2");
-	player[0].jtb = nstsdl_input_translate_string("j0b3");
+	player[0].ju = nstsdl_input_translate_string("j0h01", 0, 0);
+	player[0].jd = nstsdl_input_translate_string("j0h04", 0, 1);
+	player[0].jl = nstsdl_input_translate_string("j0h08", 0, 2);
+	player[0].jr = nstsdl_input_translate_string("j0h02", 0, 3);
+	player[0].jselect = nstsdl_input_translate_string("j0b8", 0, 4);
+	player[0].jstart = nstsdl_input_translate_string("j0b9", 0, 5);
+	player[0].ja = nstsdl_input_translate_string("j0b1", 0, 6);
+	player[0].jb = nstsdl_input_translate_string("j0b0", 0, 7);
+	player[0].jta = nstsdl_input_translate_string("j0b2", 0, 8);
+	player[0].jtb = nstsdl_input_translate_string("j0b3", 0, 9);
 
-	player[0].rwstart = nstsdl_input_translate_string("j0b4");
-	player[0].rwstop = nstsdl_input_translate_string("j0b5");
-	player[0].softreset = nstsdl_input_translate_string("j0b99");
-	player[0].hardreset = nstsdl_input_translate_string("j0b99");
+	player[0].rwstart = nstsdl_input_translate_string("j0b4", 0, 10);
+	player[0].rwstop = nstsdl_input_translate_string("j0b5", 0, 11);
+	player[0].softreset = nstsdl_input_translate_string("j0b99", 0, 12);
+	player[0].hardreset = nstsdl_input_translate_string("j0b99", 0, 13);
 
 	player[1].u = 'i';
 	player[1].d = 'j';
@@ -530,16 +375,16 @@ void nstsdl_input_conf_defaults() {
 	player[1].ta = 'b';
 	player[1].tb = 'v';
 
-	player[1].ju = nstsdl_input_translate_string("j1h01");
-	player[1].jd = nstsdl_input_translate_string("j1h04");
-	player[1].jl = nstsdl_input_translate_string("j1h08");
-	player[1].jr = nstsdl_input_translate_string("j1h02");
-	player[1].jselect = nstsdl_input_translate_string("j1b8");
-	player[1].jstart = nstsdl_input_translate_string("j1b9");
-	player[1].ja = nstsdl_input_translate_string("j1b1");
-	player[1].jb = nstsdl_input_translate_string("j1b0");
-	player[1].jta = nstsdl_input_translate_string("j1b2");
-	player[1].jtb = nstsdl_input_translate_string("j1b3");
+	player[1].ju = nstsdl_input_translate_string("j1h01", 1, 0);
+	player[1].jd = nstsdl_input_translate_string("j1h04", 1, 1);
+	player[1].jl = nstsdl_input_translate_string("j1h08", 1, 2);
+	player[1].jr = nstsdl_input_translate_string("j1h02", 1, 3);
+	player[1].jselect = nstsdl_input_translate_string("j1b8", 1, 4);
+	player[1].jstart = nstsdl_input_translate_string("j1b9", 1, 5);
+	player[1].ja = nstsdl_input_translate_string("j1b1", 1, 6);
+	player[1].jb = nstsdl_input_translate_string("j1b0", 1, 7);
+	player[1].jta = nstsdl_input_translate_string("j1b2", 1, 8);
+	player[1].jtb = nstsdl_input_translate_string("j1b3", 1, 9);
 }
 
 void fltkui_input_conf_set(int kval, int pnum, int bnum) {
@@ -562,16 +407,16 @@ void fltkui_input_conf_set(int kval, int pnum, int bnum) {
 void nstsdl_input_conf_set(SDL_Event event, int pnum, int bnum) {
 	// Set an input item to what was requested by configuration process
 	switch (bnum) {
-		case 0: player[pnum].ju = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 1: player[pnum].jd = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 2: player[pnum].jl = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 3: player[pnum].jr = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 4: player[pnum].jselect = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 5: player[pnum].jstart = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 6: player[pnum].ja = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 7: player[pnum].jb = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 8: player[pnum].jta = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
-		case 9: player[pnum].jtb = nstsdl_input_translate_string(nstsdl_input_translate_event(event)); break;
+		case 0: player[pnum].ju = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 1: player[pnum].jd = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 2: player[pnum].jl = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 3: player[pnum].jr = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 4: player[pnum].jselect = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 5: player[pnum].jstart = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 6: player[pnum].ja = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 7: player[pnum].jb = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 8: player[pnum].jta = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
+		case 9: player[pnum].jtb = nstsdl_input_translate_string(nstsdl_input_translate_event(event), pnum, bnum); break;
 		default: break;
 	}
 }
@@ -662,6 +507,19 @@ void nstsdl_input_conf_read() {
 	// Read the input config file
 	snprintf(inputconfpath, sizeof(inputconfpath), "%sinput.conf", nstpaths.nstconfdir);
 
+	// Map all input pointers to null
+	for (int i = 0; i < 4; i++) {
+		for (int j = 0; j < 12; j++) {
+			buttonmap[i].axis[j] = &input_null;
+		}
+		for (int j = 0; j < 32; j++) {
+			buttonmap[i].button[j] = &input_null;
+		}
+		for (int j = 0; j < 4; j++) {
+			buttonmap[i].hat[j] = &input_null;
+		}
+	}
+
 	if (ini_parse(inputconfpath, nstsdl_input_config_match, &inputconf) < 0) {
 		fprintf(stderr, "Failed to load input config file %s: Using defaults.\n", inputconfpath);
 	}
@@ -677,22 +535,22 @@ void nstsdl_input_conf_read() {
 		player[0].ta = inputconf.kb_p1ta;
 		player[0].tb = inputconf.kb_p1tb;
 
-		player[0].ju = nstsdl_input_translate_string(inputconf.js_p1u);
-		player[0].jd = nstsdl_input_translate_string(inputconf.js_p1d);
-		player[0].jl = nstsdl_input_translate_string(inputconf.js_p1l);
-		player[0].jr = nstsdl_input_translate_string(inputconf.js_p1r);
-		player[0].jselect = nstsdl_input_translate_string(inputconf.js_p1select);
-		player[0].jstart = nstsdl_input_translate_string(inputconf.js_p1start);
-		player[0].ja = nstsdl_input_translate_string(inputconf.js_p1a);
-		player[0].jb = nstsdl_input_translate_string(inputconf.js_p1b);
-		player[0].jta = nstsdl_input_translate_string(inputconf.js_p1ta);
-		player[0].jtb = nstsdl_input_translate_string(inputconf.js_p1tb);
+		player[0].ju = nstsdl_input_translate_string(inputconf.js_p1u, 0, 0);
+		player[0].jd = nstsdl_input_translate_string(inputconf.js_p1d, 0, 1);
+		player[0].jl = nstsdl_input_translate_string(inputconf.js_p1l, 0, 2);
+		player[0].jr = nstsdl_input_translate_string(inputconf.js_p1r, 0, 3);
+		player[0].jselect = nstsdl_input_translate_string(inputconf.js_p1select, 0, 4);
+		player[0].jstart = nstsdl_input_translate_string(inputconf.js_p1start, 0, 5);
+		player[0].ja = nstsdl_input_translate_string(inputconf.js_p1a, 0, 6);
+		player[0].jb = nstsdl_input_translate_string(inputconf.js_p1b, 0, 7);
+		player[0].jta = nstsdl_input_translate_string(inputconf.js_p1ta, 0, 8);
+		player[0].jtb = nstsdl_input_translate_string(inputconf.js_p1tb, 0, 9);
 
-		if (inputconf.js_rwstart) { player[0].rwstart = nstsdl_input_translate_string(inputconf.js_rwstart); }
-		if (inputconf.js_rwstop) { player[0].rwstop = nstsdl_input_translate_string(inputconf.js_rwstop); }
+		if (inputconf.js_rwstart) { player[0].rwstart = nstsdl_input_translate_string(inputconf.js_rwstart, 0, 10); }
+		if (inputconf.js_rwstop) { player[0].rwstop = nstsdl_input_translate_string(inputconf.js_rwstop, 0, 11); }
 
-		if (inputconf.js_softreset) { player[0].softreset = nstsdl_input_translate_string(inputconf.js_softreset); }
-		if (inputconf.js_hardreset) { player[0].hardreset = nstsdl_input_translate_string(inputconf.js_hardreset); }
+		if (inputconf.js_softreset) { player[0].softreset = nstsdl_input_translate_string(inputconf.js_softreset, 0, 12); }
+		if (inputconf.js_hardreset) { player[0].hardreset = nstsdl_input_translate_string(inputconf.js_hardreset, 0, 13); }
 
 		// Player 2
 		player[1].u = inputconf.kb_p2u;
@@ -706,16 +564,16 @@ void nstsdl_input_conf_read() {
 		player[1].ta = inputconf.kb_p2ta;
 		player[1].tb = inputconf.kb_p2tb;
 
-		player[1].ju = nstsdl_input_translate_string(inputconf.js_p2u);
-		player[1].jd = nstsdl_input_translate_string(inputconf.js_p2d);
-		player[1].jl = nstsdl_input_translate_string(inputconf.js_p2l);
-		player[1].jr = nstsdl_input_translate_string(inputconf.js_p2r);
-		player[1].jselect = nstsdl_input_translate_string(inputconf.js_p2select);
-		player[1].jstart = nstsdl_input_translate_string(inputconf.js_p2start);
-		player[1].ja = nstsdl_input_translate_string(inputconf.js_p2a);
-		player[1].jb = nstsdl_input_translate_string(inputconf.js_p2b);
-		player[1].jta = nstsdl_input_translate_string(inputconf.js_p2ta);
-		player[1].jtb = nstsdl_input_translate_string(inputconf.js_p2tb);
+		player[1].ju = nstsdl_input_translate_string(inputconf.js_p2u, 1, 0);
+		player[1].jd = nstsdl_input_translate_string(inputconf.js_p2d, 1, 1);
+		player[1].jl = nstsdl_input_translate_string(inputconf.js_p2l, 1, 2);
+		player[1].jr = nstsdl_input_translate_string(inputconf.js_p2r, 1, 3);
+		player[1].jselect = nstsdl_input_translate_string(inputconf.js_p2select, 1, 4);
+		player[1].jstart = nstsdl_input_translate_string(inputconf.js_p2start, 1, 5);
+		player[1].ja = nstsdl_input_translate_string(inputconf.js_p2a, 1, 6);
+		player[1].jb = nstsdl_input_translate_string(inputconf.js_p2b, 1, 7);
+		player[1].jta = nstsdl_input_translate_string(inputconf.js_p2ta, 1, 8);
+		player[1].jtb = nstsdl_input_translate_string(inputconf.js_p2tb, 1, 9);
 	}
 }
 
@@ -800,15 +658,32 @@ void nstsdl_input_conf_write() {
 	}
 }
 
-void nstsdl_input_process(Input::Controllers *controllers, SDL_Event event) {
+void nstsdl_input_process(SDL_Event& event) {
 	// Process input events
-	switch(event.type) {
+	switch (event.type) {
 		case SDL_JOYBUTTONUP:
-		case SDL_JOYBUTTONDOWN:
-		case SDL_JOYAXISMOTION:
-		case SDL_JOYHATMOTION:
-			nstsdl_input_match_joystick(controllers, event);
+		case SDL_JOYBUTTONDOWN: {
+			*buttonmap[event.jbutton.which].button[event.jbutton.button] = event.jbutton.type == SDL_JOYBUTTONDOWN;
 			break;
+		}
+		case SDL_JOYAXISMOTION: {
+			if (abs(event.jaxis.value) > DEADZONE) {
+				*buttonmap[event.jaxis.which].axis[(event.jaxis.axis * 2)] = event.jaxis.value < 0;
+				*buttonmap[event.jaxis.which].axis[(event.jaxis.axis * 2) + 1] = event.jaxis.value > 0;
+			}
+			else {
+				*buttonmap[event.jaxis.which].axis[(event.jaxis.axis * 2)] = 0;
+				*buttonmap[event.jaxis.which].axis[(event.jaxis.axis * 2) + 1] = 0;
+			}
+			break;
+		}
+		case SDL_JOYHATMOTION: {
+			*buttonmap[event.jhat.which].hat[0] = event.jhat.value & SDL_HAT_UP;
+			*buttonmap[event.jhat.which].hat[1] = (event.jhat.value & SDL_HAT_DOWN) >> 2;
+			*buttonmap[event.jhat.which].hat[2] = (event.jhat.value & SDL_HAT_LEFT) >> 3;
+			*buttonmap[event.jhat.which].hat[3] = (event.jhat.value & SDL_HAT_RIGHT) >> 1;
+			break;
+		}
 		default: break;
 	}
 }
@@ -834,7 +709,7 @@ char* nstsdl_input_translate_event(SDL_Event event) {
 	return inputcode;
 }
 
-SDL_Event nstsdl_input_translate_string(const char *string) {
+SDL_Event nstsdl_input_translate_string(const char *str, const int pnum, const int bnum) {
 	// Translate an inputcode to an SDL_Event
 	SDL_Event event;
 
@@ -843,7 +718,7 @@ SDL_Event nstsdl_input_translate_string(const char *string) {
 	int which = 0, whichdigits = 0;
 
 	for (int i = 1; ; i++) {
-		if (isdigit(string[i])) {
+		if (isdigit(str[i])) {
 			whichdigits++;
 		}
 		else {
@@ -852,37 +727,63 @@ SDL_Event nstsdl_input_translate_string(const char *string) {
 	}
 
 	for (int i = 1; i <= whichdigits; i++) {
-		which += (string[i] - '0') * (pow (10, (whichdigits - i)));
+		which += (str[i] - '0') * (pow (10, (whichdigits - i)));
 	}
 
-	if ((unsigned char)string[whichdigits + 1] == 0x61) { // Axis
-		axis = string[whichdigits + 2] - '0';
-		value = string[whichdigits + 3] - '0';
+	if ((unsigned char)str[whichdigits + 1] == 0x61) { // Axis
+		axis = str[whichdigits + 2] - '0';
+		value = str[whichdigits + 3] - '0';
 		event.type = SDL_JOYAXISMOTION;
 		event.jaxis.which = which;
 		event.jaxis.axis = axis;
 		event.jaxis.value = value;
 	}
-	else if ((unsigned char)string[whichdigits + 1] == 0x62) { // Button
-		value = string[whichdigits + 2] - '0';
-		if (string[whichdigits + 3]) {
-			value = ((string[whichdigits + 2] - '0') * 10) + (string[whichdigits + 3] - '0');
+	else if ((unsigned char)str[whichdigits + 1] == 0x62) { // Button
+		value = str[whichdigits + 2] - '0';
+		if (str[whichdigits + 3]) {
+			value = ((str[whichdigits + 2] - '0') * 10) + (str[whichdigits + 3] - '0');
 		}
 		event.type = SDL_JOYBUTTONDOWN;
 		event.jbutton.which = which;
 		event.jbutton.button = value;
 
 	}
-	else if ((unsigned char)string[whichdigits + 1] == 0x68) { // Hat
-		axis = string[whichdigits + 2] - '0';
-		value = string[whichdigits + 3] - '0';
+	else if ((unsigned char)str[whichdigits + 1] == 0x68) { // Hat
+		axis = str[whichdigits + 2] - '0';
+		value = str[whichdigits + 3] - '0';
 		event.type = SDL_JOYHATMOTION;
 		event.jhat.which = which;
 		event.jhat.hat = axis;
 		event.jhat.value = value;
 	}
 	else {
-		fprintf(stderr, "Malformed inputcode: %s\n", string);
+		fprintf(stderr, "Malformed inputcode: %s\n", str);
+	}
+
+	// Map to buttonmap
+	switch (event.type) {
+		case SDL_JOYBUTTONDOWN:
+			//printf("mapping js %d button %d to player %d nstbutton %d\n", event.jbutton.which, event.jbutton.button, pnum, bnum);
+			buttonmap[event.jbutton.which].button[event.jbutton.button] = &inputstate[pnum].buttons[bnum];
+			break;
+		case SDL_JOYHATMOTION:
+			if (event.jhat.value & SDL_HAT_UP) {
+				buttonmap[event.jhat.which].hat[0] = &inputstate[pnum].buttons[bnum];
+			}
+			else if (event.jhat.value & SDL_HAT_DOWN) {
+				buttonmap[event.jhat.which].hat[1] = &inputstate[pnum].buttons[bnum];
+			}
+			else if (event.jhat.value & SDL_HAT_LEFT) {
+				buttonmap[event.jhat.which].hat[2] = &inputstate[pnum].buttons[bnum];
+			}
+			else if (event.jhat.value & SDL_HAT_RIGHT) {
+				buttonmap[event.jhat.which].hat[3] = &inputstate[pnum].buttons[bnum];
+			}
+			break;
+		case SDL_JOYAXISMOTION:
+			//printf("mapping js %d axis %d direction %d to player %d nstbutton %d\n", event.jaxis.which, event.jaxis.axis, event.jaxis.value, pnum, bnum);
+			buttonmap[event.jaxis.which].axis[(event.jaxis.axis * 2) + event.jaxis.value] = &inputstate[pnum].buttons[bnum];
+			break;
 	}
 
 	return event;
@@ -926,12 +827,9 @@ void nstsdl_input_conf_button(int pnum, int bnum) {
 }
 
 void fltkui_input_process_key(int e) {
-	nesinput_t input;
+	int pressed = e == FL_KEYDOWN;
 
-	input.nescode = input.player = input.pressed = input.turboa = input.turbob = 0;
-
-	if (e == FL_KEYDOWN) {
-		input.pressed = 1;
+	if (pressed) {
 		if (Fl::event_key() == '`') nst_timing_set_ffspeed();
 		else if (Fl::event_key() == inputconf.qsave1) nst_state_quicksave(0);
 		else if (Fl::event_key() == inputconf.qsave2) nst_state_quicksave(1);
@@ -940,8 +838,6 @@ void fltkui_input_process_key(int e) {
 		else if (Fl::event_key() == inputconf.screenshot) { video_screenshot(NULL); }
 		else if (Fl::event_key() == inputconf.fdsflip) { nst_fds_flip(); }
 		else if (Fl::event_key() == inputconf.fdsswitch) { nst_fds_switch(); }
-		else if (Fl::event_key() == inputconf.insertcoin1) { cNstPads->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_1; }
-		else if (Fl::event_key() == inputconf.insertcoin2) { cNstPads->vsSystem.insertCoin |= Input::Controllers::VsSystem::COIN_2; }
 		else if (Fl::event_key() == inputconf.reset) { nst_reset(0); }
 		else if (Fl::event_key() == inputconf.rwstart) { nst_set_rewind(0); }
 		else if (Fl::event_key() == inputconf.rwstop) { nst_set_rewind(1); }
@@ -954,24 +850,33 @@ void fltkui_input_process_key(int e) {
 	}
 
 	for (int i = 0; i < NUMGAMEPADS; i++) {
-		if (Fl::event_key() == player[i].u) { input.player = i; input.nescode = Input::Controllers::Pad::UP; }
-		else if (Fl::event_key() == player[i].d) { input.player = i; input.nescode = Input::Controllers::Pad::DOWN; }
-		else if (Fl::event_key() == player[i].l) { input.player = i; input.nescode = Input::Controllers::Pad::LEFT; }
-		else if (Fl::event_key() == player[i].r) { input.player = i; input.nescode = Input::Controllers::Pad::RIGHT; }
-		else if (Fl::event_key() == player[i].select) { input.player = i; input.nescode = Input::Controllers::Pad::SELECT; }
-		else if (Fl::event_key() == player[i].start) { input.player = i; input.nescode = Input::Controllers::Pad::START; }
-		else if (Fl::event_key() == player[i].a) { input.player = i; input.nescode = Input::Controllers::Pad::A; }
-		else if (Fl::event_key() == player[i].b) { input.player = i; input.nescode = Input::Controllers::Pad::B; }
-		else if (Fl::event_key() == player[i].ta) { input.player = i; input.turboa = 1; input.nescode = Input::Controllers::Pad::A; }
-		else if (Fl::event_key() == player[i].tb) { input.player = i; input.turbob = 1; input.nescode = Input::Controllers::Pad::B; }
+		if (Fl::event_key() == player[i].u) { inputstate[i].buttons[0] = pressed; }
+		else if (Fl::event_key() == player[i].d) { inputstate[i].buttons[1] = pressed; }
+		else if (Fl::event_key() == player[i].l) { inputstate[i].buttons[2] = pressed; }
+		else if (Fl::event_key() == player[i].r) { inputstate[i].buttons[3] = pressed; }
+		else if (Fl::event_key() == player[i].select) { inputstate[i].buttons[4] = pressed; }
+		else if (Fl::event_key() == player[i].start) { inputstate[i].buttons[5] = pressed; }
+		else if (Fl::event_key() == player[i].a) { inputstate[i].buttons[6] = pressed; }
+		else if (Fl::event_key() == player[i].b) { inputstate[i].buttons[7] = pressed; }
+		else if (Fl::event_key() == player[i].ta) {
+			if (!pressed || inputstate[i].buttons[8] == 0) {
+				inputstate[i].buttons[8] = pressed;
+			}
+		}
+		else if (Fl::event_key() == player[i].tb) {
+			if (!pressed || inputstate[i].buttons[9] == 0) {
+				inputstate[i].buttons[9] = pressed;
+			}
+		}
 	}
 
-	nst_input_inject(cNstPads, input);
+	if (Fl::event_key() == inputconf.insertcoin1) { inputstate[0].coin[0] = pressed; }
+	else if (Fl::event_key() == inputconf.insertcoin2) { inputstate[0].coin[1] = pressed; }
 
-	if (nst_nsf() && input.player == 0 && input.pressed == 0) {
-		if (input.nescode & Input::Controllers::Pad::UP) { nst_nsf_play(); }
-		if (input.nescode & Input::Controllers::Pad::DOWN) { nst_nsf_stop(); }
-		if (input.nescode & Input::Controllers::Pad::LEFT) { nst_nsf_prev(); }
-		if (input.nescode & Input::Controllers::Pad::RIGHT) { nst_nsf_next(); }
+	if (nst_nsf() && pressed == 0) {
+		if (Fl::event_key() == player[0].u) { nst_nsf_play(); }
+		if (Fl::event_key() == player[0].d) { nst_nsf_stop(); }
+		if (Fl::event_key() == player[0].l) { nst_nsf_prev(); }
+		if (Fl::event_key() == player[0].r) { nst_nsf_next(); }
 	}
 }

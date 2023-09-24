@@ -378,10 +378,10 @@ int NstGlArea::handle(int e) {
 				cursor(FL_CURSOR_DEFAULT);
 				break;
 			case FL_PUSH:
-				nst_input_inject_mouse(cNstPads, Fl::event_button(), 1, Fl::event_x(), Fl::event_y());
+				nst_input_inject_mouse(Fl::event_button(), 1, Fl::event_x(), Fl::event_y());
 				break;
 			case FL_RELEASE:
-				nst_input_inject_mouse(cNstPads, Fl::event_button(), 0, Fl::event_x(), Fl::event_y());
+				nst_input_inject_mouse(Fl::event_button(), 0, Fl::event_x(), Fl::event_y());
 				break;
 		}
 	}
@@ -541,17 +541,10 @@ int main(int argc, char *argv[]) {
 		else if (!nstwin->shown() && (confwin->shown() || chtwin->shown())) {
 			break;
 		}
+
 		SDL_Event event;
 		while (SDL_PollEvent(&event)) {
-			switch (event.type) {
-				case SDL_JOYHATMOTION:
-				case SDL_JOYAXISMOTION:
-				case SDL_JOYBUTTONDOWN:
-				case SDL_JOYBUTTONUP:
-					nstsdl_input_process(cNstPads, event);
-					break;
-				default: break;
-			}
+			nstsdl_input_process(event);
 		}
 
 		frames = (fps / refreshrate);

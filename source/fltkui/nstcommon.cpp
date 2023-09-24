@@ -837,11 +837,9 @@ void nst_emuloop() {
 	}
 
 	if (playing) {
-		// Pulse the turbo buttons
-		nst_input_turbo_pulse(cNstPads);
-
 		// Execute frames
 		for (int i = 0; i < (ffspeed ? conf.timing_ffspeed : 1); i++) {
+			nst_input_update();
 			emulator.Execute(cNstVideo, cNstSound, cNstPads);
 		}
 	}
