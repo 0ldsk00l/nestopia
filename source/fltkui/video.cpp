@@ -505,7 +505,7 @@ void nst_video_print(const char *text, int xpos, int ypos, int seconds, bool bg)
 	snprintf(osdtext.textbuf, sizeof(osdtext.textbuf), "%s", text);
 	osdtext.xpos = xpos;
 	osdtext.ypos = ypos;
-	osdtext.drawtext = seconds * nst_pal() ? 50 : 60;
+	osdtext.drawtext = seconds * (nst_pal() ? 50 : 60);
 	osdtext.bg = bg;
 }
 
