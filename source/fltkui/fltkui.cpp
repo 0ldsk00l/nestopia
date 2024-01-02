@@ -101,7 +101,7 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
 	Fl_Native_File_Chooser fc;
 	fc.title("Select a ROM");
 	fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-	fc.filter("NES Games\t*.{nes,unf,fds,zip,7z,gz,bz2,xz}");
+	fc.filter("NES Games\t*.{nes,unf,fds,zip,7z,gz,bz2,xz,zst}");
 
 	// Show file chooser
 	switch (fc.show()) {
