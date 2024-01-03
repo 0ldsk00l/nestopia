@@ -229,6 +229,11 @@ bool nst_archive_checkext(const char *filename) {
 }
 
 bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize) {
+	// File not compressed
+	if (nst_archive_checkext(filename)) {
+		return false;
+	}
+
 	// Select a filename to pull out of the archive
 	struct archive *a;
 	struct archive_entry *entry;
@@ -237,6 +242,7 @@ bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize
 	a = archive_read_new();
 	archive_read_support_filter_all(a);
 	archive_read_support_format_all(a);
+	archive_read_support_format_raw(a);
 	r = archive_read_open_filename(a, filename, 10240);
 
 	// Test if it's actually an archive
@@ -249,7 +255,7 @@ bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize
 		// Find files with valid extensions within the archive
 		while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 			const char *currentfile = archive_entry_pathname(entry);
-			if (nst_archive_checkext(currentfile)) {
+			if (nst_archive_checkext(currentfile) || (!strcasecmp(currentfile, "data"))) {
 				numarchives++;
 				snprintf(reqfile, reqsize, "%s", currentfile);
 			}
@@ -271,11 +277,12 @@ bool nst_archive_open(const char *filename, char **rom, int *romsize, const char
 	struct archive *a;
 	struct archive_entry *entry;
 	int r;
-	int64_t entrysize;
+	int64_t entrysize = 5*1024*1024;
 
 	a = archive_read_new();
 	archive_read_support_filter_all(a);
 	archive_read_support_format_all(a);
+	archive_read_support_format_raw(a);
 	r = archive_read_open_filename(a, filename, 10240);
 
 	// Test if it's actually an archive
@@ -288,24 +295,16 @@ bool nst_archive_open(const char *filename, char **rom, int *romsize, const char
 	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 		char *rombuf;
 		const char *currentfile = archive_entry_pathname(entry);
-		if (nst_archive_checkext(currentfile)) {
+		if (nst_archive_checkext(currentfile) || (!strcasecmp(currentfile, "data"))) {
 			nst_set_paths(currentfile);
-			// If there's a specific file we want, load it
-			if (reqfile != NULL) {
-				if (!strcmp(currentfile, reqfile)) {
-					entrysize = archive_entry_size(entry);
-					rombuf = (char*)malloc(entrysize);
-					archive_read_data(a, rombuf, entrysize);
-					archive_read_data_skip(a);
-					r = archive_read_free(a);
-					*romsize = entrysize;
-					*rom = rombuf;
-					return true;
-				}
+			if (!strcasecmp(currentfile, "data")) {
+				nst_set_paths(filename);
+				reqfile = NULL;
 			}
-			// Otherwise just take the first file in the archive
-			else {
-				entrysize = archive_entry_size(entry);
+			if (reqfile == NULL || (!strcmp(currentfile, reqfile))) {
+				if (archive_entry_size_is_set(entry)) {
+					entrysize = archive_entry_size(entry);
+				}
 				rombuf = (char*)malloc(entrysize);
 				archive_read_data(a, rombuf, entrysize);
 				archive_read_data_skip(a);
@@ -694,7 +693,6 @@ void nst_set_dirs() {
 }
 
 void nst_set_paths(const char *filename) {
-
 	// Set up the save directory
 	snprintf(nstpaths.savedir, sizeof(nstpaths.savedir), "%ssave/", nstpaths.nstdir);
 
