@@ -61,6 +61,11 @@ static void fltkui_archive_setfile(Fl_Widget *w, long) {
 }
 
 bool fltkui_archive_select(const char *filename, char *reqfile, size_t reqsize) {
+	// File not compressed
+	if (nst_archive_checkext(filename)) {
+		return false;
+	}
+
 	// Select a filename to pull out of the archive
 	struct archive *a;
 	struct archive_entry *entry;
@@ -69,6 +74,7 @@ bool fltkui_archive_select(const char *filename, char *reqfile, size_t reqsize) 
 	a = archive_read_new();
 	archive_read_support_filter_all(a);
 	archive_read_support_format_all(a);
+	archive_read_support_format_raw(a);
 	r = archive_read_open_filename(a, filename, 10240);
 
 	// Test if it's actually an archive
@@ -94,7 +100,7 @@ bool fltkui_archive_select(const char *filename, char *reqfile, size_t reqsize) 
 		// Fill the treestore with the filenames
 		while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
 			const char *currentfile = archive_entry_pathname(entry);
-			if (nst_archive_checkext(currentfile)) {
+			if (nst_archive_checkext(currentfile) || (!strcasecmp(currentfile, "data"))) {
 				browser->add(currentfile);
 				numarchives++;
 				snprintf(reqfile, reqsize, "%s", currentfile);
