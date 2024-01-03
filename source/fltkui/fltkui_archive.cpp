@@ -62,9 +62,7 @@ static void fltkui_archive_setfile(Fl_Widget *w, long) {
 
 bool fltkui_archive_select(const char *filename, char *reqfile, size_t reqsize) {
 	// File not compressed
-	if (nst_archive_checkext(filename)) {
-		return false;
-	}
+	if (nst_archive_checkext(filename)) { return false; }
 
 	// Select a filename to pull out of the archive
 	struct archive *a;
@@ -82,50 +80,51 @@ bool fltkui_archive_select(const char *filename, char *reqfile, size_t reqsize) 
 		r = archive_read_free(a);
 		return false;
 	}
+
 	// If it is an archive, handle it
-	else {
-		if (window) { delete window; }
+	if (window) { delete window; }
 
-		window = new Fl_Double_Window(420, 260, "Load from Archive");
-		browser = new Fl_Select_Browser(0, 0, window->w(), 200, 0);
-		browser->type(FL_HOLD_BROWSER);
-		browser->callback(fltkui_archive_setfile, 0);
-		Fl_Button btncancel(260, 220, 80, 24, "&Cancel");
-		btncancel.callback(fltkui_archive_cancel, 0);
-		Fl_Button btnok(350, 220, 40, 24, "&OK");
-		btnok.callback(fltkui_archive_ok, 0);
+	window = new Fl_Double_Window(420, 260, "Load from Archive");
+	browser = new Fl_Select_Browser(0, 0, window->w(), 200, 0);
+	browser->type(FL_HOLD_BROWSER);
+	browser->callback(fltkui_archive_setfile, 0);
+	Fl_Button btncancel(260, 220, 80, 24, "&Cancel");
+	btncancel.callback(fltkui_archive_cancel, 0);
+	Fl_Button btnok(350, 220, 40, 24, "&OK");
+	btnok.callback(fltkui_archive_ok, 0);
 
-		romfile = reqfile;
+	romfile = reqfile;
 
-		// Fill the treestore with the filenames
-		while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-			const char *currentfile = archive_entry_pathname(entry);
-			if (nst_archive_checkext(currentfile) || (!strcasecmp(currentfile, "data"))) {
-				browser->add(currentfile);
-				numarchives++;
-				snprintf(reqfile, reqsize, "%s", currentfile);
-			}
-			archive_read_data_skip(a);
+	// Fill the treestore with the filenames
+	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+		const char *currentfile = archive_entry_pathname(entry);
+		if (nst_archive_checkext(currentfile) || (!strcasecmp(currentfile, "data"))) {
+			browser->add(currentfile);
+			numarchives++;
+			snprintf(reqfile, reqsize, "%s", currentfile);
 		}
-
-		// Free the archive
-		r = archive_read_free(a);
-
-		// If there are no valid files in the archive, return
-		if (numarchives == 0) {	return false; }
-		// If there's only one file, don't bring up the selector
-		else if (numarchives == 1) { return true; }
-
-		browser->select(1);
-		snprintf(romfile, 256, "%s", browser->text(1));
-
-		window->resizable(browser);
-		window->show();
-		window->set_modal();
-		window->show();
-		while (window->shown()) { Fl::wait(); }
-
-		if (strlen(romfile)) { return true; }
+		archive_read_data_skip(a);
 	}
+
+	// Free the archive
+	r = archive_read_free(a);
+
+	// If there are no valid files in the archive, return
+	if (numarchives == 0) { return false; }
+	// If there's only one file, don't bring up the selector
+	if (numarchives == 1) { return true; }
+
+	// Show selector
+	browser->select(1);
+	snprintf(romfile, 256, "%s", browser->text(1));
+
+	window->resizable(browser);
+	window->show();
+	window->set_modal();
+	window->show();
+	while (window->shown()) { Fl::wait(); }
+
+	if (strlen(romfile)) { return true; }
+
 	return false;
 }

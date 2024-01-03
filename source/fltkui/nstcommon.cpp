@@ -230,9 +230,7 @@ bool nst_archive_checkext(const char *filename) {
 
 bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize) {
 	// File not compressed
-	if (nst_archive_checkext(filename)) {
-		return false;
-	}
+	if (nst_archive_checkext(filename)) { return false; }
 
 	// Select a filename to pull out of the archive
 	struct archive *a;
@@ -250,25 +248,23 @@ bool nst_archive_select_file(const char *filename, char *reqfile, size_t reqsize
 		r = archive_read_free(a);
 		return false;
 	}
-	// If it is an archive, handle it
-	else {
-		// Find files with valid extensions within the archive
-		while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
-			const char *currentfile = archive_entry_pathname(entry);
-			if (nst_archive_checkext(currentfile) || (!strcasecmp(currentfile, "data"))) {
-				numarchives++;
-				snprintf(reqfile, reqsize, "%s", currentfile);
-			}
-			archive_read_data_skip(a);
-			break; // Load the first one found
-		}
-		// Free the archive
-		r = archive_read_free(a);
 
-		// If there are no valid files in the archive, return
-		if (numarchives == 0) {	return false; }
-		else { return true; }
+	// Find files with valid extensions within the archive
+	while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
+		const char *currentfile = archive_entry_pathname(entry);
+		if (nst_archive_checkext(currentfile) || (!strcasecmp(currentfile, "data"))) {
+			numarchives++;
+			snprintf(reqfile, reqsize, "%s", currentfile);
+		}
+		archive_read_data_skip(a);
+		break; // Load the first one found
 	}
+	// Free the archive
+	r = archive_read_free(a);
+
+	// If there are no valid files in the archive, return
+	if (numarchives > 0) { return true; }
+
 	return false;
 }
 
