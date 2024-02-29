@@ -28,7 +28,6 @@ AS_IF([test "x${enable_debug}" = "xno"],
 		AS_CASE([${host_os}],
 			[darwin*],
 			[ldflags_test="-Wl,-dead_strip_dylibs"],
-			[linux*],
 			[ldflags_test="-Wl,-O1 -Wl,--as-needed"]
 		)
 	]
@@ -83,9 +82,6 @@ AC_SUBST(FLTK_CFLAGS,"$(fltk-config --use-gl --use-images --cxxflags)")
 AS_CASE([${host_os}],
 	[darwin*],
 	[AC_SUBST(FLTK_LIBS,"$(fltk-config --use-gl --use-images --ldflags)")],
-	[freebsd*],
-	[AC_SUBST(FLTK_LIBS,"-lGL $(fltk-config --use-gl --use-images --ldflags)")],
-	[linux*],
 	[AC_SUBST(FLTK_LIBS,"-lGL $(fltk-config --use-gl --use-images --ldflags)")]
 )
 
