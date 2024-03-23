@@ -175,7 +175,7 @@ void ChtTable::draw_cell(TableContext context, int r, int c, int X, int Y, int W
 	switch (context) {
 		case CONTEXT_COL_HEADER:
 			switch (c) {
-				case 0: snprintf(s, sizeof(s), ""); break;
+				case 0: s[0] = '\0'; break;
 				case 1: snprintf(s, sizeof(s), "Game Genie"); break;
 				case 2: snprintf(s, sizeof(s), "PAR"); break;
 				case 3: snprintf(s, sizeof(s), "Raw"); break;
@@ -203,7 +203,7 @@ void ChtTable::draw_cell(TableContext context, int r, int c, int X, int Y, int W
 						snprintf(s, sizeof(s), "%04X %02X %02X", chtlist[r].address, chtlist[r].value, chtlist[r].compare);
 					}
 					else {
-						snprintf(s, sizeof(s), "");
+						s[0] = '\0';
 					}
 					break;
 				case 4: snprintf(s, sizeof(s), "%ls", chtlist[r].description.c_str()); break;
