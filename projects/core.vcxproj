@@ -135,9 +135,11 @@
     <ClInclude Include="..\source\core\board\NstBoardAcclaim.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardAcclaimMcAcc.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardAction53.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc120in1.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardInlNsf.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardMagicKidGoogoo.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnl158b.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardUnlFam250Schi24.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnlRetX7Gbl.hpp" />
     <ClInclude Include="..\source\core\NstHomebrew.hpp" />
     <ClInclude Include="..\source\core\NstVideoFilterxBR.hpp" />
@@ -469,9 +471,11 @@
     <ClCompile Include="..\source\core\api\NstApiVideo.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardAcclaimMcAcc.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardAction53.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc120in1.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardInlNsf.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardMagicKidGoogoo.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnl158b.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardUnlFam250Schi24.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnlRetX7Gbl.cpp" />
     <ClCompile Include="..\source\core\NstHomebrew.cpp" />
     <ClCompile Include="..\source\core\NstVideoFilterxBR.cpp" />

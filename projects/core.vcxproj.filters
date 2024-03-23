@@ -933,6 +933,12 @@
     <ClInclude Include="..\source\core\board\NstBoardUnlRetX7Gbl.hpp">
       <Filter>Board</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardUnlFam250Schi24.hpp">
+      <Filter>Board\Unl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardBmc120in1.hpp">
+      <Filter>Board\Bmc</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\source\core\api\NstApiBarcodeReader.cpp">
@@ -1731,6 +1737,12 @@
     </ClCompile>
     <ClCompile Include="..\source\core\board\NstBoardUnlRetX7Gbl.cpp">
       <Filter>Board</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardUnlFam250Schi24.cpp">
+      <Filter>Board\Unl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardBmc120in1.cpp">
+      <Filter>Board\Bmc</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
