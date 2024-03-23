@@ -77,6 +77,20 @@ namespace Nes
 
 					NES_DECL_POKE( 6000 );
 				};
+
+				class SuperGun : public Board
+				{
+				public:
+
+					explicit SuperGun(const Context& c)
+					: Board(c) {}
+
+				private:
+
+					void SubReset(bool);
+
+					NES_DECL_POKE( 8000 );
+				};
 			}
 		}
 	}

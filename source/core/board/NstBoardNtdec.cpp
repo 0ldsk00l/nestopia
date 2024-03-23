@@ -176,6 +176,21 @@ namespace Nes
 						case 0x3: prg.SwapBank<SIZE_8K,0x0000>( data      ); break;
 					}
 				}
+
+				void SuperGun::SubReset(const bool hard)
+				{
+					Map( 0x8000U, 0xFFFFU, &SuperGun::Poke_8000 );
+
+					if (hard)
+						prg.SwapBank<SIZE_16K,0x0000>(0);
+				}
+
+				NES_POKE_AD(SuperGun,8000)
+				{
+					ppu.Update();
+					prg.SwapBank<SIZE_16K,0x0000>((address >> 2) & 0xFF);
+					chr.SwapBank<SIZE_8K,0x0000>(address & 0xFF);
+				}
 			}
 		}
 	}

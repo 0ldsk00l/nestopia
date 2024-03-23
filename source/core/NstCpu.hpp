@@ -488,6 +488,9 @@ namespace Nes
 			Apu apu;
 			IoMap map;
 
+			bool dmaOam;
+			uint dmaOamCycle;
+
 			static dword logged;
 			static void (Cpu::*const opcodes[0x100])();
 			static const byte writeClocks[0x100];
@@ -503,6 +506,30 @@ namespace Nes
 			{
 				apu.ClockDMA( readAddress );
 				return cycles.count;
+			}
+
+			void SetOamDMA(bool dma)
+			{
+				if (dma && !dmaOam && IsOddCycle())
+				{
+					StealCycles( GetClock() );
+				}
+				dmaOam = dma;
+			}
+
+			bool GetOamDMA()
+			{
+				return dmaOam;
+			}
+
+			uint GetOamDMACycle()
+			{
+				return dmaOamCycle;
+			}
+
+			void SetOamDMACycle(uint count)
+			{
+				dmaOamCycle = count;
 			}
 
 			void DoIRQ(IrqLine line=IRQ_EXT)

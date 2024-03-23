@@ -101,6 +101,7 @@
 #include "NstBoardUnlA9746.hpp"
 #include "NstBoardUnlCc21.hpp"
 #include "NstBoardUnlEdu2000.hpp"
+#include "NstBoardUnlFam250Schi24.hpp"
 #include "NstBoardUnlKingOfFighters96.hpp"
 #include "NstBoardUnlKingOfFighters97.hpp"
 #include "NstBoardUnlMmc3BigPrgRom.hpp"
@@ -128,6 +129,7 @@
 #include "NstBoardBtlTobidaseDaisakusen.hpp"
 #include "NstBoardBmc110in1.hpp"
 #include "NstBoardBmc1200in1.hpp"
+#include "NstBoardBmc120in1.hpp"
 #include "NstBoardBmc150in1.hpp"
 #include "NstBoardBmc15in1.hpp"
 #include "NstBoardBmc20in1.hpp"
@@ -1575,65 +1577,8 @@ namespace Nes
 
 					case 5:
 
-						if
-						(
-							(prg == SIZE_128K || prg == SIZE_256K || prg == SIZE_512K) &&
-							(chr == SIZE_128K || chr == SIZE_256K || chr == SIZE_512K) &&
-							(wram <= SIZE_32K)
-						)
-						{
-							if (wram > SIZE_16K)
-							{
-								name = "EWROM";
-								id = Type::STD_EWROM;
-							}
-							else if (wram > SIZE_8K)
-							{
-								name = "ETROM";
-								id = Type::STD_ETROM;
-							}
-							else if (wram || useWramAuto)
-							{
-								wramAuto = useWramAuto;
-								name = "EKROM";
-								id = Type::STD_EKROM;
-							}
-							else
-							{
-								name = "ELROM";
-								id = Type::STD_ELROM;
-							}
-						}
-						else
-						{
-							name = "ExROM (non-standard)";
-
-							if (wram > SIZE_40K)
-							{
-								id = Type::STD_EXROM_5;
-							}
-							else if (wram > SIZE_32K)
-							{
-								id = Type::STD_EXROM_4;
-							}
-							else if (wram > SIZE_16K)
-							{
-								id = Type::STD_EXROM_3;
-							}
-							else if (wram > SIZE_8K)
-							{
-								id = Type::STD_EXROM_2;
-							}
-							else if (wram || useWramAuto)
-							{
-								wramAuto = useWramAuto;
-								id = Type::STD_EXROM_1;
-							}
-							else
-							{
-								id = Type::STD_EXROM_0;
-							}
-						}
+						name = "ExROM";
+						id = Type::STD_EXROM_5;
 						break;
 
 					case 6:
@@ -2395,6 +2340,12 @@ namespace Nes
 
 						name = "TAITO X1-005 (a)";
 						id = Type::TAITO_X1005;
+						break;
+
+					case 81:
+
+						name = "NTDEC N715021";
+						id = Type::NTDEC_SUPERGUN;
 						break;
 
 					case 82:
@@ -3253,8 +3204,15 @@ namespace Nes
 
 					case 227:
 
-						name = "BMC 1200-IN-1";
-						id = Type::BMC_1200IN1;
+						if (submapper == 1)
+						{
+							name = "BMC 120-IN-1";
+							id = Type::BMC_120IN1;
+						}
+						else {
+							name = "BMC 1200-IN-1";
+							id = Type::BMC_1200IN1;
+						}
 						break;
 
 					case 228:
@@ -3523,6 +3481,18 @@ namespace Nes
 						id = Type::BMC_SUPER_40IN1;
 						break;
 
+					case 354:
+
+						name = "UNL-FAM250-SCHI24";
+						id = Type::UNL_FAM250SCHI24;
+
+						if (submapper == 1)
+						{
+							chips.Add(L"SCHI-24");
+						}
+
+						break;
+
 					case 400:
 
 						name = "UNL-RET-X7-GBL";
@@ -3686,6 +3656,7 @@ namespace Nes
 					case Type::BMC_DRAGONBOLLPARTY        : return new Cony::Standard(c);
 					case Type::BMC_110IN1                 : return new Bmc::B110in1(c);
 					case Type::BMC_1200IN1                : return new Bmc::B1200in1(c);
+					case Type::BMC_120IN1                 : return new Bmc::B120in1(c);
 					case Type::BMC_150IN1                 : return new Bmc::B150in1(c);
 					case Type::BMC_15IN1                  : return new Bmc::B15in1(c);
 					case Type::BMC_20IN1                  : return new Bmc::B20in1(c);
@@ -3865,6 +3836,7 @@ namespace Nes
 					case Type::NTDEC_ASDER_0              :
 					case Type::NTDEC_ASDER_1              : return new Ntdec::Asder(c);
 					case Type::NTDEC_FIGHTINGHERO         : return new Ntdec::FightingHero(c);
+					case Type::NTDEC_SUPERGUN             : return new Ntdec::SuperGun(c);
 					case Type::OPENCORP_DAOU306           : return new OpenCorp::Daou306(c);
 					case Type::REXSOFT_SL1632             : return new RexSoft::Sl1632(c);
 					case Type::REXSOFT_DBZ5               : return new RexSoft::Dbz5(c);
@@ -3926,6 +3898,7 @@ namespace Nes
 					case Type::UNL_A9746                  : return new Unlicensed::A9746(c);
 					case Type::UNL_CC21                   : return new Unlicensed::Cc21(c);
 					case Type::UNL_EDU2000                : return new Unlicensed::Edu2000(c);
+					case Type::UNL_FAM250SCHI24           : return new Unlicensed::Fam250Schi24(c);
 					case Type::UNL_FS304                  : return new Waixing::Fs304(c);
 					case Type::UNL_KINGOFFIGHTERS96       : return new Unlicensed::KingOfFighters96(c);
 					case Type::UNL_KINGOFFIGHTERS97       : return new Unlicensed::KingOfFighters97(c);

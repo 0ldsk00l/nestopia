@@ -264,6 +264,7 @@ namespace Nes
 						BMC_150IN1                 = MakeId<  202,  128,   64,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_15IN1                  = MakeId<  205,  512,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						BMC_1200IN1                = MakeId<  227,  512,    0,  0,  0, CRM_8,  NMT_V,  0 >::ID,
+						BMC_120IN1                 = MakeId<  227,  512,    0,  0,  0, CRM_8,  NMT_V,  1 >::ID,
 						BMC_20IN1                  = MakeId<  231,  512,    0,  0,  0, CRM_8,  NMT_V,  0 >::ID,
 						BMC_21IN1                  = MakeId<  201,  128,   32,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_22GAMES                = MakeId<  230, 1024,    0,  0,  0, CRM_8,  NMT_V,  0 >::ID,
@@ -434,7 +435,7 @@ namespace Nes
 						KAY_PANDAPRINCE            = MakeId<  121,  256,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						// Konami
 						KONAMI_VRC1                = MakeId<   75,  128,  128,  0,  0, CRM_0,  NMT_V,  0 >::ID,
-						KONAMI_VRC2                = MakeId<   22,  128,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
+						KONAMI_VRC2                = MakeId<   22,  256,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						KONAMI_VRC3                = MakeId<   73,  128,    0,  8,  0, CRM_8,  NMT_X,  0 >::ID,
 						KONAMI_VRC4_0              = MakeId<   21,  256,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						KONAMI_VRC4_1              = MakeId<   21,  256,  256,  2,  0, CRM_0,  NMT_V,  0 >::ID,
@@ -467,6 +468,7 @@ namespace Nes
 						NTDEC_ASDER_0              = MakeId<  112,  256,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						NTDEC_ASDER_1              = MakeId<  112,  256,  512,  8,  0, CRM_0,  NMT_X,  0 >::ID,
 						NTDEC_FIGHTINGHERO         = MakeId<  193,  128,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
+						NTDEC_SUPERGUN             = MakeId<   81,   64,   32,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Nanjing
 						NANJING_STD                = MakeId<  163, 2048,    0,  8,  0, CRM_8,  NMT_X,  0 >::ID,
 						// Nihon Bussan
@@ -544,6 +546,7 @@ namespace Nes
 						UNL_A9746                  = MakeId<  219,  128,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						UNL_CC21                   = MakeId<   27,   32,    8,  0,  0, CRM_0,  NMT_Z,  0 >::ID,
 						UNL_EDU2000                = MakeId<  329, 1024,    0,  0, 32, CRM_8,  NMT_Z,  0 >::ID,
+						UNL_FAM250SCHI24           = MakeId<  354, 4096,    0,  0,  0, CRM_8,  NMT_V,  0 >::ID,
 						UNL_FS304                  = MakeId<  162, 2048,    0,  8,  0, CRM_8,  NMT_X,  0 >::ID,
 						UNL_KINGOFFIGHTERS96       = MakeId<  187,  512,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						UNL_KINGOFFIGHTERS97       = MakeId<  263,  256,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,

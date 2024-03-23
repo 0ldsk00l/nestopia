@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2023 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -23,7 +24,7 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 
 #include "NstBoard.hpp"
-#include "NstBoardTxcPoliceman.hpp"
+#include "NstBoardBmc120in1.hpp"
 
 namespace Nes
 {
@@ -31,30 +32,47 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			namespace Txc
+			namespace Bmc
 			{
 				#ifdef NST_MSVC_OPTIMIZE
 				#pragma optimize("s", on)
 				#endif
 
-				void Policeman::SubReset(const bool hard)
+				void B120in1::SubReset(bool)
 				{
-					Map( 0x8400U, 0xFFFEU, &Policeman::Poke_8400 );
-
-					if (hard)
-						prg.SwapBank<SIZE_32K,0x0000>(0);
+					Map( 0x8000U, 0xFFFFU, &B120in1::Poke_8000 );
+					NES_DO_POKE(8000,0x8000,0x00);
 				}
 
 				#ifdef NST_MSVC_OPTIMIZE
 				#pragma optimize("", on)
 				#endif
 
-				NES_POKE_AD(Policeman,8400)
+				NES_POKE_A(B120in1,8000)
 				{
-					ppu.Update();
-					//data = GetBusData(address,data); // Unnecessary
-					prg.SwapBank<SIZE_32K,0x0000>( data >> 4 );
-					chr.SwapBank<SIZE_8K,0x0000>( data & 0x0F );
+					const uint bank = (address >> 4 & 0x10) | (address >> 3 & 0x0F);
+
+					if (address & 0x1)
+					{
+						prg.SwapBank<SIZE_32K,0x0000>( bank );
+					}
+					else
+					{
+						const uint offset = (bank << 1) | (address >> 2 & 0x1);
+						prg.SwapBanks<SIZE_16K,0x0000>( offset, offset );
+					}
+
+					if (!(address & 0x80))
+					{
+						prg.SwapBank<SIZE_16K,0x4000>( ((address & 0x200) ? 0x7 : 0x0) | (bank << 1 & 0x38) );
+						chr.Source().SetSecurity(true, true);
+					}
+					else
+					{
+						chr.Source().SetSecurity(true, false);
+					}
+
+					ppu.SetMirroring( (address & 0x2) ? Ppu::NMT_H : Ppu::NMT_V );
 				}
 			}
 		}

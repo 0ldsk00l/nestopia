@@ -50,7 +50,8 @@ namespace Nes
 					chr.SwapBank<SIZE_1K>( 0x1800, (chrHigh[6] << 8) | chrLow[6] );
 					chr.SwapBank<SIZE_1K>( 0x1C00, (chrHigh[7] << 8) | chrLow[7] );
 
-					if (mirrorUsed) {
+					if (mirrorUsed)
+					{
 						ppu.SetMirroring( mirror ^ 0x1 ? Ppu::NMT_V : Ppu::NMT_H );
 					}
 					else
@@ -65,6 +66,9 @@ namespace Nes
 					{
 						chrLow[i] = chrHigh[i] = 0;
 					}
+
+					mirror = 0;
+					mirrorUsed = 0;
 
 					Map( 0xC000U, 0xC00FU, &Daou306::Poke_C000 );
 					Map( 0xC010U, PRG_SWAP_16K_0 );

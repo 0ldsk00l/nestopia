@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2023 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -22,8 +23,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
-#include "NstBoard.hpp"
-#include "NstBoardTxcPoliceman.hpp"
+#ifndef NST_BOARD_BMC_120IN1_H
+#define NST_BOARD_BMC_120IN1_H
+
+#ifdef NST_PRAGMA_ONCE
+#pragma once
+#endif
 
 namespace Nes
 {
@@ -31,32 +36,24 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			namespace Txc
+			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
-				void Policeman::SubReset(const bool hard)
+				class B120in1 : public Board
 				{
-					Map( 0x8400U, 0xFFFEU, &Policeman::Poke_8400 );
+				public:
 
-					if (hard)
-						prg.SwapBank<SIZE_32K,0x0000>(0);
-				}
+					explicit B120in1(const Context& c)
+					: Board(c) {}
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
+				private:
 
-				NES_POKE_AD(Policeman,8400)
-				{
-					ppu.Update();
-					//data = GetBusData(address,data); // Unnecessary
-					prg.SwapBank<SIZE_32K,0x0000>( data >> 4 );
-					chr.SwapBank<SIZE_8K,0x0000>( data & 0x0F );
-				}
+					void SubReset(bool);
+
+					NES_DECL_POKE( 8000 );
+				};
 			}
 		}
 	}
 }
+
+#endif

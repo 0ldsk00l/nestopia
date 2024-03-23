@@ -297,8 +297,8 @@ namespace Nes
 			if (!rate)
 				return RESULT_ERR_INVALID_PARAM;
 
-			if (rate < 44100 || rate > 96000)
-				return RESULT_ERR_UNSUPPORTED;
+			/*if (rate < 44100 || rate > 96000)
+				return RESULT_ERR_UNSUPPORTED;*/
 
 			settings.rate = rate;
 			UpdateSettings();
@@ -2283,19 +2283,36 @@ namespace Nes
 		{
 			NST_VERIFY( !dma.buffered && (!readAddress || !cpu.IsWriteCycle(clock)) );
 
-			if (!readAddress)
+			/* DMC DMA adds:
+			 * case 1: 4 cycles normally
+			 * case 2: 3 if it lands on a CPU write
+			 * case 3: 2 if it lands on the $4014 write or during OAM DMA
+			 * case 4: 1 if on the next-to-next-to-last DMA cycle
+			 * case 5: 3 if on the last DMA cycle
+			 * https://forums.nesdev.org/viewtopic.php?f=3&t=6100
+			 * https://www.nesdev.org/wiki/DMA
+			*/
+			uint cyclesToSteal = cpu.IsWriteCycle(clock) ? 3 : 4;
+
+			if (cpu.GetOamDMA())
 			{
-				cpu.StealCycles( cpu.GetClock(cpu.IsWriteCycle(clock) ? 2 : 3) );
+				if (cpu.GetOamDMACycle() == 255)
+				{
+					cyclesToSteal = 3;
+				}
+				else if (cpu.GetOamDMACycle() == 254)
+				{
+					cyclesToSteal = 1;
+				}
+				else
+				{
+					cyclesToSteal = 2;
+				}
 			}
-			else if (cpu.GetCycles() != clock)
-			{
-				cpu.StealCycles( cpu.GetClock(3) );
-			}
-			else
+
+			if (readAddress && cpu.GetCycles() == clock)
 			{
 				NST_DEBUG_MSG("DMA/Read conflict!");
-
-				cpu.StealCycles( cpu.GetClock(1) );
 
 				/* According to dmc_dma_during_read4/dma_2007_read, DMC DMA during read causes
 				 * 2-3 extra $2007 reads before the real read. The nesdev wiki states that this
@@ -2307,13 +2324,12 @@ namespace Nes
 					cpu.Peek( readAddress );
 				}
 
-				cpu.StealCycles( cpu.GetClock(1) );
 				cpu.Peek( readAddress );
-				cpu.StealCycles( cpu.GetClock(1) );
 			}
 
+			cpu.StealCycles( cpu.GetClock() * cyclesToSteal);
+
 			dma.buffer = cpu.Peek( dma.address );
-			cpu.StealCycles( cpu.GetClock() );
 			dma.address = 0x8000 | ((dma.address + 1U) & 0x7FFF);
 			dma.buffered = true;
 

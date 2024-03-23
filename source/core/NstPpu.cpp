@@ -1070,9 +1070,6 @@ namespace Nes
 
 		NES_POKE_D(Ppu,4014)
 		{
-			if (cpu.IsOddCycle())
-				cpu.StealCycles( cpu.GetClock() );
-
 			Update( cycles.one );
 			cpu.StealCycles( cpu.GetClock() );
 
@@ -1082,18 +1079,30 @@ namespace Nes
 
 			if ((regs.oam == 0x00 && data < 0x2000) && (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || cpu.GetCycles() <= GetHVIntClock() - cpu.GetClock() * 512))
 			{
-				cpu.StealCycles( cpu.GetClock() * 512 );
-
 				const byte* const NST_RESTRICT cpuRam = cpu.GetRam() + (data & (Cpu::RAM_SIZE-1));
 				byte* const NST_RESTRICT oamRam = oam.ram;
 
-				for (uint i=0x00; i < 0x100; i += 0x4)
+				cpu.SetOamDMA(true);
+
+				for (uint i=0x00; i < 0x100; i++)
 				{
-					oamRam[i+0x0] = cpuRam[i+0x0];
-					oamRam[i+0x1] = cpuRam[i+0x1];
-					oamRam[i+0x2] = cpuRam[i+0x2] & 0xE3U;
-					oamRam[i+0x3] = cpuRam[i+0x3];
+					cpu.SetOamDMACycle(i);
+
+					cpu.StealCycles( cpu.GetClock() );
+					cpu.Update();
+
+					oamRam[i] = cpuRam[i];
+					if ((i & 0x03) == 0x02)
+					{
+						oamRam[i] &= 0xE3U;
+					}
+
+					cpu.StealCycles( cpu.GetClock() );
+					cpu.Update();
 				}
+
+				cpu.SetOamDMACycle(0);
+				cpu.SetOamDMA(false);
 
 				io.latch = oamRam[0xFF];
 				UpdateDecay(0xFF);

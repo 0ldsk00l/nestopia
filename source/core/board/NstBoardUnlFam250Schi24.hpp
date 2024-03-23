@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2020-2024 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -22,8 +23,12 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
-#include "NstBoard.hpp"
-#include "NstBoardTxcPoliceman.hpp"
+#ifndef NST_BOARD_UNL_FAM250SCHI24_H
+#define NST_BOARD_UNL_FAM250SCHI24_H
+
+#ifdef NST_PRAGMA_ONCE
+#pragma once
+#endif
 
 namespace Nes
 {
@@ -31,32 +36,30 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			namespace Txc
+			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
-				void Policeman::SubReset(const bool hard)
+				class Fam250Schi24 : public Board
 				{
-					Map( 0x8400U, 0xFFFEU, &Policeman::Poke_8400 );
+				public:
 
-					if (hard)
-						prg.SwapBank<SIZE_32K,0x0000>(0);
-				}
+					explicit Fam250Schi24(const Context& c)
+					: Board(c) { submapper = c.chips.Has(L"SCHI-24") ? 1 : 0; }
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
+				private:
 
-				NES_POKE_AD(Policeman,8400)
-				{
-					ppu.Update();
-					//data = GetBusData(address,data); // Unnecessary
-					prg.SwapBank<SIZE_32K,0x0000>( data >> 4 );
-					chr.SwapBank<SIZE_8K,0x0000>( data & 0x0F );
-				}
+					void SubReset(bool);
+					void SubLoad(State::Loader&,dword);
+					void SubSave(State::Saver&) const;
+
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_POKE( F000 );
+
+					uint bankreg;
+					uint submapper;
+				};
 			}
 		}
 	}
 }
+
+#endif
