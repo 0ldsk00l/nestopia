@@ -1064,7 +1064,7 @@
             <device type="zapper" />
         </peripherals>
         <cartridge system="Famicom" dump="unknown" crc="0AFB395E" sha1="CFFAC7D2ECB18A28C36E0E90A6682DFE5BA6E3D1">
-            <board mapper="5">
+            <board type="HVC-ELROM" mapper="5">
                 <prg size="128k" />
                 <chr size="128k" />
             </board>
@@ -2879,7 +2879,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="1CED086F" sha1="46C0B521B3C595409C05972388909CCB0D5F6369">
-            <board mapper="5">
+            <board type="HVC-ETROM" mapper="5">
                 <prg size="256k" />
                 <chr size="128k" />
                 <wram size="8k" />
@@ -3125,6 +3125,17 @@
             <board mapper="121">
                 <prg size="256k" />
                 <chr size="256k" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <peripherals>
+            <device type="zapper" />
+        </peripherals>
+        <cartridge system="NES-NTSC" dump="ok" crc="1F14123C" sha1="9B1B8354B7449FDDA4176C93BCE7660D47F66019">
+            <board mapper="4">
+                <prg size="32k" />
+                <chr size="16k" />
             </board>
         </cartridge>
     </game>
@@ -10280,7 +10291,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="6396B988" sha1="B326D1984D5D369BC168028AD7672D2EFC2ECDDB">
-            <board mapper="5">
+            <board type="HVC-ETROM" mapper="5">
                 <prg size="256k" />
                 <chr size="128k" />
                 <wram size="8k" />
@@ -11493,7 +11504,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="6F4E4312" sha1="99CF6CA63B173A2B86125F16BBE11885EF1AC377">
-            <board mapper="5">
+            <board type="HVC-EWROM" mapper="5">
                 <prg size="512k" />
                 <chr size="256k" />
                 <wram size="32k" battery="1" />
@@ -19131,7 +19142,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="B4735FAC" sha1="4AC3E9136706AB009EE2F68C7D009422D73EE8E8">
-            <board mapper="5">
+            <board type="HVC-ELROM" mapper="5">
                 <prg size="512k" />
                 <chr size="512k" />
             </board>
@@ -19825,7 +19836,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="BB7F829A" sha1="BC7393653D04F3E3D35E3D0623ACA4A2C27E0AA1">
-            <board mapper="5">
+            <board type= "HVC-ELROM" mapper="5">
                 <prg size="128k" />
                 <chr size="128k" />
             </board>
@@ -19952,7 +19963,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="BC80FB52" sha1="74DBA27392CA4451875AD0267E5466F92D835A62">
-            <board mapper="5">
+            <board type="HVC-EKROM" mapper="5">
                 <prg size="256k" />
                 <chr size="256k" />
                 <wram size="8k" battery="1" />
@@ -25490,7 +25501,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="EEE9A682" sha1="46C443D0EB27AF7A566E744F096F981034A06E59">
-            <board mapper="5">
+            <board type="HVC-ETROM" mapper="5">
                 <prg size="256k" />
                 <chr size="128k" />
                 <wram size="8k" />
@@ -25978,7 +25989,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="F540677B" sha1="44A5BC2B8156D50518EEBEEFA522A7642E0476DC">
-            <board mapper="5">
+            <board type="HVC-EWROM" mapper="5">
                 <prg size="512k" />
                 <chr size="256k" />
                 <wram size="32k" battery="1" />
@@ -27057,7 +27068,7 @@
     </game>
     <game>
         <cartridge system="Famicom" dump="unknown" crc="FE3488D1" sha1="800AEFE756E85A0A78CCB4DAE68EBBA5DF24BF41">
-            <board mapper="5">
+            <board type="HVC-ETROM" mapper="5">
                 <prg size="512k" />
                 <chr size="128k" />
                 <wram size="8k" />
