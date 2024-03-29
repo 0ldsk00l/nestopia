@@ -372,9 +372,9 @@ CAPTION "About Nestopia"
 FONT 8, "MS Shell Dlg", 400, 0, 1
 {
     GROUPBOX        "", IDC_STATIC, 7, 7, 147, 141, 0, WS_EX_LEFT
-    LTEXT           "Nestopia UE 1.52.0", IDC_ABOUT_NAMEVERSION, 47, 14, 63, 9, SS_LEFT, WS_EX_LEFT
+    LTEXT           "Nestopia UE 1.52.1", IDC_ABOUT_NAMEVERSION, 47, 14, 63, 9, SS_LEFT, WS_EX_LEFT
     ICON            "", IDC_ABOUT_ICON, 70, 36, 21, 20, SS_ICON, WS_EX_LEFT
-    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2022 R. Danbrook\nCopyright © 2020-2022 Rupert Carmichael", IDC_STATIC, 12, 69, 139, 25, SS_CENTER, WS_EX_LEFT
+    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2024 R. Danbrook\nCopyright © 2020-2024 Rupert Carmichael", IDC_STATIC, 12, 69, 139, 25, SS_CENTER, WS_EX_LEFT
     LTEXT           "Homepage", IDC_STATIC, 13, 124, 8, 1, SS_LEFT, WS_EX_LEFT
     CTEXT           "0ldsk00l.ca/nestopia", IDC_ABOUT_URL, 46, 107, 67, 8, SS_CENTER | SS_NOTIFY, WS_EX_LEFT
     DEFPUSHBUTTON   "OK", IDOK, 62, 125, 37, 13, 0, WS_EX_LEFT
@@ -1932,7 +1932,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
             VALUE "OriginalFilename", "English.nlg"
             VALUE "ProductName", "Nestopia Language Plugin - English (US)"
-            VALUE "ProductVersion", "1.52.0"
+            VALUE "ProductVersion", "1.52.1"
         }
     }
     BLOCK "VarFileInfo"

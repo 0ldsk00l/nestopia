@@ -1,4 +1,33 @@
 ----------------------------------------------------------------
+1.52.1
+----------------------------------------------------------------
+Shell:
+
+  Changes:
+   - FLTK: Allow loading more compressed file types (xiota)
+
+  Fixes:
+   - FLTK: Fix text drawing time calculation (xiota)
+   - FLTK: Only explicitly check for Darwin at build time (orbea)
+   - FLTK: Clean up input code, use callbacks for polling input
+
+Core:
+
+  Additions:
+   - Support for Mapper 81 (NTDEC N715021)
+   - Support for Mapper 227.1 (BMC 120-IN-1)
+   - Support for Mapper 354 (submapper 0 and 1)
+   - Zapper support for Fruit Shinobi (EstebenZapataME)
+   - New palettes from HighNES and FBX
+
+  Fixes:
+   - Pass sprdma_and_dmc_dma and sprdma_and_dmc_dma_512 tests
+   - CHR banking in TxcPoliceman - Policeman (Spain) (En) (Gluk Video) (Unl)
+   - Increase maximum PRG size for VRC2 to handle modern VRC2 hacks
+   - Simplify MMC5 heuristics to better handle newer hacks and homebrew
+   - Fix mirroring glitch in mapper 156
+
+----------------------------------------------------------------
 1.52.0
 ----------------------------------------------------------------
 Shell:
