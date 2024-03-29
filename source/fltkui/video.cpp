@@ -232,7 +232,7 @@ void video_set_filter() {
 
 		case 2: // Custom
 			video.GetPalette().SetMode(Video::Palette::MODE_CUSTOM);
-			video.GetPalette().SetCustom((const unsigned char (*)[3])custompalette, Video::Palette::EXT_PALETTE);
+			video.GetPalette().SetCustom((const unsigned char (*)[3])custompalette, Video::Palette::STD_PALETTE);
 			break;
 
 		default: break;
