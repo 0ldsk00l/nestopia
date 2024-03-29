@@ -48,8 +48,6 @@
 #include "fltkui_cheats.h"
 #include "fltkui_config.h"
 
-#define MBARHEIGHT 24
-
 static NstWindow *nstwin;
 static Fl_Menu_Bar *menubar;
 static NstGlArea *glarea;
@@ -265,9 +263,9 @@ static void fltkui_reset(Fl_Widget* w, void* userdata) {
 void fltkui_resize() {
 	video_set_dimensions();
 	dimensions_t rendersize = nst_video_get_dimensions_render();
-	nstwin->size(rendersize.w, rendersize.h + MBARHEIGHT);
-	menubar->resize(0, 0, nstwin->w(), MBARHEIGHT);
-	glarea->resize(0, 24, rendersize.w, rendersize.h);
+	nstwin->size(rendersize.w, rendersize.h + UI_MBARHEIGHT);
+	menubar->resize(0, 0, nstwin->w(), UI_MBARHEIGHT);
+	glarea->resize(0, UI_MBARHEIGHT, rendersize.w, rendersize.h);
 	nst_video_set_dimensions_screen(rendersize);
 	video_init();
 }
@@ -292,10 +290,10 @@ void fltkui_fullscreen(Fl_Widget* w, void* userdata) {
 		video_set_dimensions();
 		dimensions_t rendersize = nst_video_get_dimensions_render();
 		nstwin->fullscreen_off();
-		nstwin->size(rendersize.w, rendersize.h + MBARHEIGHT);
+		nstwin->size(rendersize.w, rendersize.h + UI_MBARHEIGHT);
 		menubar->show();
-		menubar->resize(0, 0, nstwin->w(), MBARHEIGHT);
-		glarea->resize(0, 24, rendersize.w, rendersize.h);
+		menubar->resize(0, 0, nstwin->w(), UI_MBARHEIGHT);
+		glarea->resize(0, UI_MBARHEIGHT, rendersize.w, rendersize.h);
 		nst_video_set_dimensions_screen(rendersize);
 		video_init();
 	}
@@ -318,20 +316,20 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 	Fl_Window about(460, 440);
 	Fl_Box iconbox(166, 16, 128, 128);
 
-	Fl_Box text0(0, 144, 460, 24, "Nestopia UE");
+	Fl_Box text0(0, 144, 460, UI_SPACING, "Nestopia UE");
 	text0.labelfont(FL_BOLD);
 
-	Fl_Box text1(0, 166, 460, 24, "1.52.0");
+	Fl_Box text1(0, 166, 460, UI_SPACING, "1.52.1");
 
-	Fl_Box text2(0, 208, 460, 24, "Cycle-Accurate Nintendo Entertainment System Emulator");
+	Fl_Box text2(0, 208, 460, UI_SPACING, "Cycle-Accurate Nintendo Entertainment System Emulator");
 
-	Fl_Box text3(0, 256, 460, 24, "FLTK Frontend\n(c) 2012-2023, R. Danbrook\n(c) 2007-2008, R. Belmont");
+	Fl_Box text3(0, 256, 460, UI_SPACING, "FLTK Frontend\n(c) 2012-2024, R. Danbrook\n(c) 2007-2008, R. Belmont");
 	text3.labelsize(10);
 
-	Fl_Box text4(0, 320, 460, 24, "Nestopia Emulator\n(c) 2020-2023, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij");
+	Fl_Box text4(0, 320, 460, UI_SPACING, "Nestopia Emulator\n(c) 2020-2024, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij");
 	text4.labelsize(10);
 
-	Fl_Box text5(0, 360, 460, 24, "Icon based on drawing by Trollekop");
+	Fl_Box text5(0, 360, 460, UI_SPACING, "Icon based on drawing by Trollekop");
 	text5.labelsize(10);
 
 	// Set up the icon
@@ -346,7 +344,7 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 	Fl_PNG_Image nsticon(iconpath);
 	iconbox.image(nsticon);
 
-	Fl_Button close(360, 400, 80, 24, "&Close");
+	Fl_Button close(360, 400, 80, UI_SPACING, "&Close");
 	close.callback(fltkui_about_close, (void*)&about);
 
 	about.set_modal();
@@ -448,16 +446,16 @@ void makenstwin(const char *name) {
 	confwin->populate();
 
 	// Main Window
-	nstwin = new NstWindow(rendersize.w, rendersize.h + MBARHEIGHT, name);
+	nstwin = new NstWindow(rendersize.w, rendersize.h + UI_MBARHEIGHT, name);
 	nstwin->color(FL_BLACK);
 	nstwin->xclass("nestopia");
 
 	// Menu Bar
-	menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), MBARHEIGHT);
+	menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
 	menubar->box(FL_FLAT_BOX);
 	menubar->menu(menutable);
 
-	glarea = new NstGlArea(0, MBARHEIGHT, nstwin->w(), nstwin->h() - MBARHEIGHT);
+	glarea = new NstGlArea(0, UI_MBARHEIGHT, nstwin->w(), nstwin->h() - UI_MBARHEIGHT);
 	glarea->color(FL_BLACK);
 
 	nstwin->end();

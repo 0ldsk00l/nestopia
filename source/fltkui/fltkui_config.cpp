@@ -280,7 +280,7 @@ void NstConfWindow::populate() {
 
 	Fl_Group *vtab = new Fl_Group(10, 30, 380, 360, "&Video");
 
-	Fl_Choice *ch_filter = new Fl_Choice(20, 55, 160, 25, "Filter");
+	Fl_Choice *ch_filter = new Fl_Choice(20, 55, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Filter");
 	ch_filter->align(FL_ALIGN_TOP_LEFT);
 	ch_filter->add("None");
 	ch_filter->add("NTSC");
@@ -291,7 +291,7 @@ void NstConfWindow::populate() {
 	ch_filter->value(conf.video_filter);
 	ch_filter->callback(cb_filter);
 
-	Fl_Choice *ch_scale = new Fl_Choice(200, 55, 160, 25, "Scale Factor");
+	Fl_Choice *ch_scale = new Fl_Choice(200, 55, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Scale Factor");
 	ch_scale->align(FL_ALIGN_TOP_LEFT);
 	ch_scale->add("1x");
 	ch_scale->add("2x");
@@ -304,7 +304,7 @@ void NstConfWindow::populate() {
 	ch_scale->value(conf.video_scale_factor - 1);
 	ch_scale->callback(cb_scale);
 
-	Fl_Choice *ch_ntscmode = new Fl_Choice(20, 105, 160, 25, "NTSC Mode");
+	Fl_Choice *ch_ntscmode = new Fl_Choice(20, 105, UI_ELEMWIDTH, UI_ELEMHEIGHT, "NTSC Mode");
 	ch_ntscmode->align(FL_ALIGN_TOP_LEFT);
 	ch_ntscmode->add("Composite");
 	ch_ntscmode->add("S-Video");
@@ -314,7 +314,7 @@ void NstConfWindow::populate() {
 	ch_ntscmode->value(conf.video_ntsc_mode);
 	ch_ntscmode->callback(cb_ntscmode);
 
-	Fl_Choice *ch_xbrrounding = new Fl_Choice(200, 105, 160, 25, "xBR Corner Rounding");
+	Fl_Choice *ch_xbrrounding = new Fl_Choice(200, 105, UI_ELEMWIDTH, UI_ELEMHEIGHT, "xBR Corner Rounding");
 	ch_xbrrounding->align(FL_ALIGN_TOP_LEFT);
 	ch_xbrrounding->add("None");
 	ch_xbrrounding->add("Some");
@@ -322,7 +322,7 @@ void NstConfWindow::populate() {
 	ch_xbrrounding->value(conf.video_xbr_corner_rounding);
 	ch_xbrrounding->callback(cb_xbrrounding);
 
-	Fl_Choice *ch_palettemode = new Fl_Choice(20, 155, 160, 25, "Palette Mode");
+	Fl_Choice *ch_palettemode = new Fl_Choice(20, 155, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Palette Mode");
 	ch_palettemode->align(FL_ALIGN_TOP_LEFT);
 	ch_palettemode->add("YUV");
 	ch_palettemode->add("RGB");
@@ -330,7 +330,7 @@ void NstConfWindow::populate() {
 	ch_palettemode->value(conf.video_palette_mode);
 	ch_palettemode->callback(cb_palettemode);
 
-	Fl_Choice *ch_decoder = new Fl_Choice(200, 155, 160, 25, "YUV Decoder");
+	Fl_Choice *ch_decoder = new Fl_Choice(200, 155, UI_ELEMWIDTH, UI_ELEMHEIGHT, "YUV Decoder");
 	ch_decoder->align(FL_ALIGN_TOP_LEFT);
 	ch_decoder->add("Consumer");
 	ch_decoder->add("Canonical");
@@ -338,7 +338,7 @@ void NstConfWindow::populate() {
 	ch_decoder->value(conf.video_decoder);
 	ch_decoder->callback(cb_decoder);
 
-	Fl_Hor_Value_Slider *sld_brightness = new Fl_Hor_Value_Slider(20, 210, 160, 25, "Brightness");
+	Fl_Hor_Value_Slider *sld_brightness = new Fl_Hor_Value_Slider(20, 210, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Brightness");
 	sld_brightness->align(FL_ALIGN_TOP_LEFT);
 	sld_brightness->bounds(-100, 100);
 	sld_brightness->box(FL_FLAT_BOX);
@@ -348,7 +348,7 @@ void NstConfWindow::populate() {
 	sld_brightness->type(FL_HOR_NICE_SLIDER);
 	sld_brightness->value(conf.video_brightness);
 
-	Fl_Hor_Value_Slider *sld_saturation = new Fl_Hor_Value_Slider(20, 250, 160, 25, "Saturation");
+	Fl_Hor_Value_Slider *sld_saturation = new Fl_Hor_Value_Slider(20, 250, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Saturation");
 	sld_saturation->align(FL_ALIGN_TOP_LEFT);
 	sld_saturation->bounds(-100, 100);
 	sld_saturation->box(FL_FLAT_BOX);
@@ -358,7 +358,7 @@ void NstConfWindow::populate() {
 	sld_saturation->type(FL_HOR_NICE_SLIDER);
 	sld_saturation->value(conf.video_saturation);
 
-	Fl_Hor_Value_Slider *sld_contrast = new Fl_Hor_Value_Slider(20, 290, 160, 25, "Contrast");
+	Fl_Hor_Value_Slider *sld_contrast = new Fl_Hor_Value_Slider(20, 290, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Contrast");
 	sld_contrast->align(FL_ALIGN_TOP_LEFT);
 	sld_contrast->bounds(-100, 100);
 	sld_contrast->box(FL_FLAT_BOX);
@@ -368,7 +368,7 @@ void NstConfWindow::populate() {
 	sld_contrast->type(FL_HOR_NICE_SLIDER);
 	sld_contrast->value(conf.video_contrast);
 
-	Fl_Hor_Value_Slider *sld_hue = new Fl_Hor_Value_Slider(20, 330, 160, 25, "Hue");
+	Fl_Hor_Value_Slider *sld_hue = new Fl_Hor_Value_Slider(20, 330, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Hue");
 	sld_hue->align(FL_ALIGN_TOP_LEFT);
 	sld_hue->bounds(-45, 45);
 	sld_hue->box(FL_FLAT_BOX);
@@ -378,23 +378,23 @@ void NstConfWindow::populate() {
 	sld_hue->type(FL_HOR_NICE_SLIDER);
 	sld_hue->value(conf.video_hue);
 
-	Fl_Check_Button *chk_xbrpixblend = new Fl_Check_Button(200, 210, 160, 25, "xBR Pixel Blending");
+	Fl_Check_Button *chk_xbrpixblend = new Fl_Check_Button(200, 210, UI_ELEMWIDTH, UI_ELEMHEIGHT, "xBR Pixel Blending");
 	chk_xbrpixblend->value(conf.video_xbr_pixel_blending);
 	chk_xbrpixblend->callback(cb_xbrpixblend);
 
-	Fl_Check_Button *chk_linearfilter = new Fl_Check_Button(200, 235, 160, 25, "Linear Filter");
+	Fl_Check_Button *chk_linearfilter = new Fl_Check_Button(200, 235, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Linear Filter");
 	chk_linearfilter->value(conf.video_linear_filter);
 	chk_linearfilter->callback(cb_linearfilter);
 
-	Fl_Check_Button *chk_tvaspect = new Fl_Check_Button(200, 260, 160, 25, "TV Aspect Ratio");
+	Fl_Check_Button *chk_tvaspect = new Fl_Check_Button(200, 260, UI_ELEMWIDTH, UI_ELEMHEIGHT, "TV Aspect Ratio");
 	chk_tvaspect->value(conf.video_tv_aspect);
 	chk_tvaspect->callback(cb_tvaspect);
 
-	Fl_Check_Button *chk_unmask_overscan = new Fl_Check_Button(200, 285, 160, 25, "Unmask Overscan");
+	Fl_Check_Button *chk_unmask_overscan = new Fl_Check_Button(200, 285, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Unmask Overscan");
 	chk_unmask_overscan->value(conf.video_unmask_overscan);
 	chk_unmask_overscan->callback(cb_unmask_overscan);
 
-	Fl_Check_Button *chk_unlimited_sprites = new Fl_Check_Button(200, 310, 160, 25, "Unlimited Sprites");
+	Fl_Check_Button *chk_unlimited_sprites = new Fl_Check_Button(200, 310, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Unlimited Sprites");
 	chk_unlimited_sprites->value(conf.video_unlimited_sprites);
 	chk_unlimited_sprites->callback(cb_unlimited_sprites);
 
@@ -402,7 +402,7 @@ void NstConfWindow::populate() {
 
 	Fl_Group *atab = new Fl_Group(10, 30, 380, 360, "&Audio");
 
-	Fl_Choice *ch_samplerate = new Fl_Choice(20, 55, 160, 25, "Sample Rate");
+	Fl_Choice *ch_samplerate = new Fl_Choice(20, 55, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Sample Rate");
 	ch_samplerate->align(FL_ALIGN_TOP_LEFT);
 	ch_samplerate->add("44100Hz");
 	ch_samplerate->add("48000Hz");
@@ -415,11 +415,11 @@ void NstConfWindow::populate() {
 	}
 	ch_samplerate->callback(cb_samplerate);
 
-	Fl_Check_Button *chk_stereo = new Fl_Check_Button(200, 55, 160, 25, "Stereo");
+	Fl_Check_Button *chk_stereo = new Fl_Check_Button(200, 55, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Stereo");
 	chk_stereo->value(conf.audio_stereo);
 	chk_stereo->callback(cb_stereo);
 
-	dial_vall = new Fl_Dial(20, 100, 100, 100, "All");
+	dial_vall = new Fl_Dial(20, 100, UI_DIAL_LG, UI_DIAL_LG, "All");
 	dial_vall->bounds(0, 100);
 	dial_vall->step(1);
 	dial_vall->color(NstPurple);
@@ -427,7 +427,7 @@ void NstConfWindow::populate() {
 	dial_vall->callback(cb_volume, 0);
 	dial_vall->value(conf.audio_volume);
 
-	dial_vsq1 = new Fl_Dial(130, 115, 40, 40, "SQ1");
+	dial_vsq1 = new Fl_Dial(130, 115, UI_DIAL_SM, UI_DIAL_SM, "SQ1");
 	dial_vsq1->bounds(0, 100);
 	dial_vsq1->step(1);
 	dial_vsq1->color(NstGreen);
@@ -435,7 +435,7 @@ void NstConfWindow::populate() {
 	dial_vsq1->callback(cb_volume, 1);
 	dial_vsq1->value(conf.audio_vol_sq1);
 
-	dial_vsq2 = new Fl_Dial(180, 115, 40, 40, "SQ2");
+	dial_vsq2 = new Fl_Dial(180, 115, UI_DIAL_SM, UI_DIAL_SM, "SQ2");
 	dial_vsq2->bounds(0, 100);
 	dial_vsq2->step(1);
 	dial_vsq2->color(NstGreen);
@@ -443,7 +443,7 @@ void NstConfWindow::populate() {
 	dial_vsq2->callback(cb_volume, 2);
 	dial_vsq2->value(conf.audio_vol_sq2);
 
-	dial_vtri = new Fl_Dial(230, 115, 40, 40, "TRI");
+	dial_vtri = new Fl_Dial(230, 115, UI_DIAL_SM, UI_DIAL_SM, "TRI");
 	dial_vtri->bounds(0, 100);
 	dial_vtri->step(1);
 	dial_vtri->color(NstGreen);
@@ -451,7 +451,7 @@ void NstConfWindow::populate() {
 	dial_vtri->callback(cb_volume, 3);
 	dial_vtri->value(conf.audio_vol_tri);
 
-	dial_vnoise = new Fl_Dial(280, 115, 40, 40, "NOISE");
+	dial_vnoise = new Fl_Dial(280, 115, UI_DIAL_SM, UI_DIAL_SM, "NOISE");
 	dial_vnoise->bounds(0, 100);
 	dial_vnoise->step(1);
 	dial_vnoise->color(NstGreen);
@@ -459,7 +459,7 @@ void NstConfWindow::populate() {
 	dial_vnoise->callback(cb_volume, 4);
 	dial_vnoise->value(conf.audio_vol_noise);
 
-	dial_vdpcm = new Fl_Dial(330, 115, 40, 40, "DPCM");
+	dial_vdpcm = new Fl_Dial(330, 115, UI_DIAL_SM, UI_DIAL_SM, "DPCM");
 	dial_vdpcm->bounds(0, 100);
 	dial_vdpcm->step(1);
 	dial_vdpcm->color(NstGreen);
@@ -467,7 +467,7 @@ void NstConfWindow::populate() {
 	dial_vdpcm->callback(cb_volume, 5);
 	dial_vdpcm->value(conf.audio_vol_dpcm);
 
-	dial_vfds = new Fl_Dial(80, 225, 40, 40, "FDS");
+	dial_vfds = new Fl_Dial(80, 225, UI_DIAL_SM, UI_DIAL_SM, "FDS");
 	dial_vfds->bounds(0, 100);
 	dial_vfds->step(1);
 	dial_vfds->color(NstGreen);
@@ -475,7 +475,7 @@ void NstConfWindow::populate() {
 	dial_vfds->callback(cb_volume, 6);
 	dial_vfds->value(conf.audio_vol_fds);
 
-	dial_vmmc5 = new Fl_Dial(130, 225, 40, 40, "MMC5");
+	dial_vmmc5 = new Fl_Dial(130, 225, UI_DIAL_SM, UI_DIAL_SM, "MMC5");
 	dial_vmmc5->bounds(0, 100);
 	dial_vmmc5->step(1);
 	dial_vmmc5->color(NstGreen);
@@ -483,7 +483,7 @@ void NstConfWindow::populate() {
 	dial_vmmc5->callback(cb_volume, 7);
 	dial_vmmc5->value(conf.audio_vol_mmc5);
 
-	dial_vvrc6 = new Fl_Dial(180, 225, 40, 40, "VRC6");
+	dial_vvrc6 = new Fl_Dial(180, 225, UI_DIAL_SM, UI_DIAL_SM, "VRC6");
 	dial_vvrc6->bounds(0, 100);
 	dial_vvrc6->step(1);
 	dial_vvrc6->color(NstGreen);
@@ -491,7 +491,7 @@ void NstConfWindow::populate() {
 	dial_vvrc6->callback(cb_volume, 8);
 	dial_vvrc6->value(conf.audio_vol_vrc6);
 
-	dial_vvrc7 = new Fl_Dial(230, 225, 40, 40, "VRC7");
+	dial_vvrc7 = new Fl_Dial(230, 225, UI_DIAL_SM, UI_DIAL_SM, "VRC7");
 	dial_vvrc7->bounds(0, 100);
 	dial_vvrc7->step(1);
 	dial_vvrc7->color(NstGreen);
@@ -499,7 +499,7 @@ void NstConfWindow::populate() {
 	dial_vvrc7->callback(cb_volume, 9);
 	dial_vvrc7->value(conf.audio_vol_vrc7);
 
-	dial_vn163 = new Fl_Dial(280, 225, 40, 40, "N163");
+	dial_vn163 = new Fl_Dial(280, 225, UI_DIAL_SM, UI_DIAL_SM, "N163");
 	dial_vn163->bounds(0, 100);
 	dial_vn163->step(1);
 	dial_vn163->color(NstGreen);
@@ -507,7 +507,7 @@ void NstConfWindow::populate() {
 	dial_vn163->callback(cb_volume, 10);
 	dial_vn163->value(conf.audio_vol_n163);
 
-	dial_vs5b = new Fl_Dial(330, 225, 40, 40, "S5B");
+	dial_vs5b = new Fl_Dial(330, 225, UI_DIAL_SM, UI_DIAL_SM, "S5B");
 	dial_vs5b->bounds(0, 100);
 	dial_vs5b->step(1);
 	dial_vs5b->color(NstGreen);
@@ -519,80 +519,80 @@ void NstConfWindow::populate() {
 
 	Fl_Group *itab = new Fl_Group(10, 30, 380, 360, "&Input");
 
-	Fl_Button *btn_icfg_u = new Fl_Button(70, 55, 30, 24, "U");
+	Fl_Button *btn_icfg_u = new Fl_Button(70, 55, 30, UI_ELEMHEIGHT, "U");
 	btn_icfg_u->callback(cb_icfg, 0);
 	btn_icfg_u->color(NstBlueGrey);
 	btn_icfg_u->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_d = new Fl_Button(70, 115, 30, 24, "D");
+	Fl_Button *btn_icfg_d = new Fl_Button(70, 115, 30, UI_ELEMHEIGHT, "D");
 	btn_icfg_d->callback(cb_icfg, 1);
 	btn_icfg_d->color(NstBlueGrey);
 	btn_icfg_d->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_l = new Fl_Button(30, 85, 30, 24, "L");
+	Fl_Button *btn_icfg_l = new Fl_Button(30, 85, 30, UI_ELEMHEIGHT, "L");
 	btn_icfg_l->callback(cb_icfg, 2);
 	btn_icfg_l->color(NstBlueGrey);
 	btn_icfg_l->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_r = new Fl_Button(110, 85, 30, 24, "R");
+	Fl_Button *btn_icfg_r = new Fl_Button(110, 85, 30, UI_ELEMHEIGHT, "R");
 	btn_icfg_r->callback(cb_icfg, 3);
 	btn_icfg_r->color(NstBlueGrey);
 	btn_icfg_r->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_slct = new Fl_Button(150, 85, 60, 24, "Select");
+	Fl_Button *btn_icfg_slct = new Fl_Button(150, 85, 60, UI_ELEMHEIGHT, "Select");
 	btn_icfg_slct->callback(cb_icfg, 4);
 	btn_icfg_slct->color(NstGreen);
 	btn_icfg_slct->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_strt = new Fl_Button(220, 85, 60, 24, "Start");
+	Fl_Button *btn_icfg_strt = new Fl_Button(220, 85, 60, UI_ELEMHEIGHT, "Start");
 	btn_icfg_strt->callback(cb_icfg, 5);
 	btn_icfg_strt->color(NstGreen);
 	btn_icfg_strt->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_a = new Fl_Button(330, 100, 30, 24, "A");
+	Fl_Button *btn_icfg_a = new Fl_Button(330, 100, 30, UI_ELEMHEIGHT, "A");
 	btn_icfg_a->callback(cb_icfg, 6);
 	btn_icfg_a->color(NstRed);
 	btn_icfg_a->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_b = new Fl_Button(290, 100, 30, 24, "B");
+	Fl_Button *btn_icfg_b = new Fl_Button(290, 100, 30, UI_ELEMHEIGHT, "B");
 	btn_icfg_b->callback(cb_icfg, 7);
 	btn_icfg_b->color(NstRed);
 	btn_icfg_b->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_ta = new Fl_Button(330, 65, 30, 24, "TA");
+	Fl_Button *btn_icfg_ta = new Fl_Button(330, 65, 30, UI_ELEMHEIGHT, "TA");
 	btn_icfg_ta->callback(cb_icfg, 8);
 	btn_icfg_ta->color(NstRed);
 	btn_icfg_ta->labelcolor(NstLightGrey);
 
-	Fl_Button *btn_icfg_tb = new Fl_Button(290, 65, 30, 24, "TB");
+	Fl_Button *btn_icfg_tb = new Fl_Button(290, 65, 30, UI_ELEMHEIGHT, "TB");
 	btn_icfg_tb->callback(cb_icfg, 9);
 	btn_icfg_tb->color(NstRed);
 	btn_icfg_tb->labelcolor(NstLightGrey);
 
-	icfg = new NstInputConfWindow(110, 55, 170, 24, "Input Config");
+	icfg = new NstInputConfWindow(110, 55, 170, UI_ELEMHEIGHT, "Input Config");
 	icfg->color(NstPurple);
 	icfg->hide();
-	icfg->text = new Fl_Box(0, 0, 0, 24);
+	icfg->text = new Fl_Box(0, 0, 0, UI_ELEMHEIGHT);
 	icfg->text->align(FL_ALIGN_RIGHT);
 	icfg->text->labelcolor(NstLightGrey);
 	icfg->player = icfg->btn = icfg->device = 0;
 	icfg->end();
 
-	Fl_Choice *ch_player = new Fl_Choice(20, 180, 160, 25, "Player");
+	Fl_Choice *ch_player = new Fl_Choice(20, 180, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Player");
 	ch_player->align(FL_ALIGN_TOP_LEFT);
 	ch_player->add("Player 1");
 	ch_player->add("Player 2");
 	ch_player->value(0);
 	ch_player->callback(cb_player);
 
-	Fl_Choice *ch_idevice = new Fl_Choice(20, 230, 160, 25, "Input Device");
+	Fl_Choice *ch_idevice = new Fl_Choice(20, 230, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Input Device");
 	ch_idevice->align(FL_ALIGN_TOP_LEFT);
 	ch_idevice->add("Keyboard");
 	ch_idevice->add("Joystick");
 	ch_idevice->value(0);
 	ch_idevice->callback(cb_idevice);
 
-	Fl_Hor_Value_Slider *sld_turbopulse = new Fl_Hor_Value_Slider(200, 180, 160, 25, "Turbo Pulse");
+	Fl_Hor_Value_Slider *sld_turbopulse = new Fl_Hor_Value_Slider(200, 180, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Turbo Pulse");
 	sld_turbopulse->align(FL_ALIGN_TOP_LEFT);
 	sld_turbopulse->bounds(2, 9);
 	sld_turbopulse->box(FL_FLAT_BOX);
@@ -606,7 +606,7 @@ void NstConfWindow::populate() {
 
 	Fl_Group *mtab = new Fl_Group(10, 30, 380, 360, "&Misc");
 
-	Fl_Choice *ch_default_system = new Fl_Choice(20, 55, 160, 25, "Default System");
+	Fl_Choice *ch_default_system = new Fl_Choice(20, 55, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Default System");
 	ch_default_system->align(FL_ALIGN_TOP_LEFT);
 	ch_default_system->add("Auto");
 	ch_default_system->add("NTSC");
@@ -616,7 +616,7 @@ void NstConfWindow::populate() {
 	ch_default_system->value(conf.misc_default_system);
 	ch_default_system->callback(cb_default_system);
 
-	Fl_Choice *ch_power_state = new Fl_Choice(20, 105, 160, 25, "RAM Power-on State");
+	Fl_Choice *ch_power_state = new Fl_Choice(20, 105, UI_ELEMWIDTH, UI_ELEMHEIGHT, "RAM Power-on State");
 	ch_power_state->align(FL_ALIGN_TOP_LEFT);
 	ch_power_state->add("0x00");
 	ch_power_state->add("0xFF");
@@ -624,7 +624,7 @@ void NstConfWindow::populate() {
 	ch_power_state->value(conf.misc_power_state);
 	ch_power_state->callback(cb_power_state);
 
-	Fl_Hor_Value_Slider *sld_ffspeed = new Fl_Hor_Value_Slider(20, 160, 160, 25, "Fast-Forward Speed");
+	Fl_Hor_Value_Slider *sld_ffspeed = new Fl_Hor_Value_Slider(20, 160, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Fast-Forward Speed");
 	sld_ffspeed->align(FL_ALIGN_TOP_LEFT);
 	sld_ffspeed->bounds(1, 8);
 	sld_ffspeed->box(FL_FLAT_BOX);
@@ -634,19 +634,19 @@ void NstConfWindow::populate() {
 	sld_ffspeed->type(FL_HOR_NICE_SLIDER);
 	sld_ffspeed->value(conf.timing_ffspeed);
 
-	Fl_Check_Button *chk_soft_patching = new Fl_Check_Button(200, 55, 185, 25, "Auto Soft Patching");
+	Fl_Check_Button *chk_soft_patching = new Fl_Check_Button(200, 55, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Auto Soft Patching");
 	chk_soft_patching->value(conf.misc_soft_patching);
 	chk_soft_patching->callback(cb_soft_patching);
 
-	Fl_Check_Button *chk_genie_distortion = new Fl_Check_Button(200, 80, 185, 25, "Genie Sound Distortion");
+	Fl_Check_Button *chk_genie_distortion = new Fl_Check_Button(200, 80, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Genie Sound Distortion");
 	chk_genie_distortion->value(conf.misc_genie_distortion);
 	chk_genie_distortion->callback(cb_genie_distortion);
 
-	Fl_Check_Button *chk_disable_cursor = new Fl_Check_Button(200, 105, 185, 25, "Disable Cursor");
+	Fl_Check_Button *chk_disable_cursor = new Fl_Check_Button(200, 105, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Disable Cursor");
 	chk_disable_cursor->value(conf.misc_disable_cursor);
 	chk_disable_cursor->callback(cb_disable_cursor);
 
-	Fl_Check_Button *chk_disable_cursor_special = new Fl_Check_Button(200, 130, 185, 25, "Disable Special Cursor");
+	Fl_Check_Button *chk_disable_cursor_special = new Fl_Check_Button(200, 130, UI_ELEMWIDTH, UI_ELEMHEIGHT, "Disable Special Cursor");
 	chk_disable_cursor_special->value(conf.misc_disable_cursor_special);
 	chk_disable_cursor_special->callback(cb_disable_cursor_special);
 
@@ -654,7 +654,7 @@ void NstConfWindow::populate() {
 
 	tabs->end();
 
-	Fl_Button *btn_ok = new Fl_Button(350, 370, 40, 24, "&OK");
+	Fl_Button *btn_ok = new Fl_Button(350, 370, 40, UI_ELEMHEIGHT, "&OK");
 	btn_ok->callback(cb_ok, 0);
 	this->end();
 }

@@ -27,10 +27,13 @@
 #include <FL/Fl_Table_Row.H>
 #include <FL/Fl_Input.H>
 #include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_Gl_Window.H>
 #include <FL/fl_draw.H>
 
 #include "cheats.h"
 #include "nstcommon.h"
+#include "video.h"
+#include "fltkui.h"
 #include "fltkui_cheats.h"
 
 static Fl_Input *input_desc;
@@ -246,29 +249,29 @@ void NstChtWindow::populate() {
 	ctable->when(FL_WHEN_CHANGED);
 	ctable->end();
 
-	input_desc = new Fl_Input(380, 310, 260, 25, "Description:");
-	input_gg = new Fl_Input(380, 340, 260, 25, "Game Genie:");
-	input_par = new Fl_Input(380, 370, 260, 25, "Pro Action Rocky:");
+	input_desc = new Fl_Input(380, 310, 260, UI_ELEMHEIGHT, "Description:");
+	input_gg = new Fl_Input(380, 340, 260, UI_ELEMHEIGHT, "Game Genie:");
+	input_par = new Fl_Input(380, 370, 260, UI_ELEMHEIGHT, "Pro Action Rocky:");
 
-	Fl_Button *btnadd = new Fl_Button(380, 400, 80, 25, "Add");
+	Fl_Button *btnadd = new Fl_Button(380, 400, UI_ELEMWIDTH / 2, UI_ELEMHEIGHT, "Add");
 	btnadd->callback(cb_add, 0);
 
-	Fl_Button *btntog = new Fl_Button(20, 300, 80, 25, "Toggle");
+	Fl_Button *btntog = new Fl_Button(20, 300, UI_ELEMWIDTH / 2, UI_ELEMHEIGHT, "Toggle");
 	btntog->callback(cb_toggle, 0);
 
-	Fl_Button *btndel = new Fl_Button(110, 300, 80, 25, "Delete");
+	Fl_Button *btndel = new Fl_Button(110, 300, UI_ELEMWIDTH / 2, UI_ELEMHEIGHT, "Delete");
 	btndel->callback(cb_del, 0);
 
-	Fl_Button *btnclr = new Fl_Button(200, 300, 80, 25, "Clear");
+	Fl_Button *btnclr = new Fl_Button(200, 300, UI_ELEMWIDTH / 2, UI_ELEMHEIGHT, "Clear");
 	btnclr->callback(cb_clr, 0);
 
-	Fl_Button *btnload = new Fl_Button(20, 350, 80, 25, "Load...");
+	Fl_Button *btnload = new Fl_Button(20, 350, UI_ELEMWIDTH / 2, UI_ELEMHEIGHT, "Load...");
 	btnload->callback(cb_load, 0);
 
-	Fl_Button *btnsave = new Fl_Button(20, 380, 80, 25, "Save...");
+	Fl_Button *btnsave = new Fl_Button(20, 380, UI_ELEMWIDTH / 2, UI_ELEMHEIGHT, "Save...");
 	btnsave->callback(cb_save, 0);
 
-	Fl_Button *btnok = new Fl_Button(560, 460, 80, 25, "&OK");
+	Fl_Button *btnok = new Fl_Button(560, 460, UI_ELEMWIDTH / 2, UI_ELEMHEIGHT, "&OK");
 	btnok->callback(cb_ok, 0);
 
 	this->end();

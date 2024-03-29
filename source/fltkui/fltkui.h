@@ -1,6 +1,13 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+#define UI_MBARHEIGHT 24
+#define UI_SPACING 24
+#define UI_ELEMHEIGHT 25
+#define UI_ELEMWIDTH 160
+#define UI_DIAL_LG 100
+#define UI_DIAL_SM 40
+
 class NstWindow : public Fl_Double_Window {
 private:
 	int handle(int e);
