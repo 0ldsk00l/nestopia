@@ -25,7 +25,6 @@
 #include <getopt.h>
 
 #include "cli.h"
-#include "config.h"
 
 void cli_error(const char *message) {
 	cli_show_usage();
@@ -92,11 +91,11 @@ void cli_handle_command(int argc, char *argv[]) {
 
 		switch(c) {
 			case 'f':
-				conf.video_fullscreen = true;
+				//conf.video_fullscreen = true;
 				break;
 
 			case 'w':
-				conf.video_fullscreen = false;
+				//conf.video_fullscreen = false;
 				break;
 
 			case 'h':
@@ -107,7 +106,7 @@ void cli_handle_command(int argc, char *argv[]) {
 			case 'l':
 				optint = atoi(optarg);
 				if (optint < 6) {
-					conf.video_filter = optint;
+					//conf.video_filter = optint;
 				}
 				else {
 					cli_error("Error: Invalid filter");
@@ -115,25 +114,25 @@ void cli_handle_command(int argc, char *argv[]) {
 				break;
 
 			case 'm':
-				conf.video_unmask_overscan = false;
+				//conf.video_unmask_overscan = false;
 				break;
 
 			case 'n':
-				conf.video_unmask_overscan = true;
+				//conf.video_unmask_overscan = true;
 				break;
 
 			case 'o':
-				conf.video_stretch_aspect = true;
+				//conf.video_stretch_aspect = true;
 				break;
 
 			case 'p':
-				conf.video_stretch_aspect = false;
+				//conf.video_stretch_aspect = false;
 				break;
 
 			case 's':
 				optint = atoi(optarg);
 				if (optint < 5 && optint != 0) {
-					conf.video_scale_factor = optint;
+					//conf.video_scale_factor = optint;
 				}
 				else {
 					cli_error("Error: Invalid scale factor");
@@ -141,19 +140,19 @@ void cli_handle_command(int argc, char *argv[]) {
 				break;
 
 			case 't':
-				conf.video_tv_aspect = true;
+				//conf.video_tv_aspect = true;
 				break;
 
 			case 'r':
-				conf.video_tv_aspect = false;
+				//conf.video_tv_aspect = false;
 				break;
 
 			case 'u':
-				conf.video_unlimited_sprites = true;
+				//conf.video_unlimited_sprites = true;
 				break;
 
 			case 'q':
-				conf.video_unlimited_sprites = false;
+				//conf.video_unlimited_sprites = false;
 				break;
 
 			case 'v':

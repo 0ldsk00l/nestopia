@@ -31,7 +31,7 @@
 #include <FL/fl_draw.H>
 
 #include "cheats.h"
-#include "nstcommon.h"
+
 #include "video.h"
 #include "fltkui.h"
 #include "fltkui_cheats.h"
@@ -43,7 +43,6 @@ static int rsel = 0;
 
 extern Emulator emulator;
 extern std::vector<NstCheat> chtlist;
-extern nstpaths_t nstpaths;
 
 class ChtTable : public Fl_Table_Row
 {
@@ -52,7 +51,6 @@ protected:
 
 public:
 	ChtTable(int x, int y, int w, int h, const char *l=0) : Fl_Table_Row(x,y,w,h,l) { end(); }
-	~ChtTable() { }
 };
 
 static ChtTable *ctable;
@@ -61,7 +59,7 @@ static void cb_ok(Fl_Widget *w, long) {
 	w->parent()->hide();
 }
 
-void cb_table(Fl_Widget* w, long rn) {
+static void cb_table(Fl_Widget* w, long rn) {
 	Fl_Table *table = (Fl_Table*)w;
 
 	if (!table->rows()) { return; }
@@ -138,7 +136,7 @@ void cb_load(Fl_Widget* w, long) {
 	Fl_Native_File_Chooser fc;
 	fc.title("Select a Cheat List");
 	fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-	fc.directory((const char*)nstpaths.cheatpath);
+	//fc.directory((const char*)nstpaths.cheatpath); // FIXME
 	fc.filter("Nestopia Cheats\t*.xml");
 
 	// Show file chooser
@@ -159,9 +157,9 @@ void cb_save(Fl_Widget* w, long) {
 	Fl_Native_File_Chooser fc;
 	fc.title("Save Cheat List");
 	fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-	fc.directory((const char*)nstpaths.cheatpath);
-	std::string preset = std::string(nstpaths.cheatpath) + "/" + std::string(nstpaths.gamename) + ".xml";
-	fc.preset_file(preset.c_str());
+	//fc.directory((const char*)nstpaths.cheatpath); // FIXME
+	//std::string preset = std::string(nstpaths.cheatpath) + "/" + std::string(nstpaths.gamename) + ".xml";
+	//fc.preset_file(preset.c_str());
 	fc.filter("Nestopia Cheats\t*.xml");
 	fc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
 

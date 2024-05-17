@@ -1,6 +1,7 @@
-#ifndef _FLTKUI_ARCHIVE_H_
-#define _FLTKUI_ARCHIVE_H_
+#pragma once
 
-bool fltkui_archive_select(const char *filename, char *reqfile, size_t reqsize);
+#include <string>
+#include <vector>
 
-#endif
+void fltkui_archive_load_file(const char *filename, std::string& arcname, std::vector<uint8_t>& game);
+bool fltkui_archive_select(const char *filename, std::string& arcname);

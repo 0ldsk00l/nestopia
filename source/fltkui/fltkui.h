@@ -1,5 +1,8 @@
-#ifndef MAIN_H
-#define MAIN_H
+#pragma once
+
+#include <string>
+
+#include <video.h>
 
 #define UI_MBARHEIGHT 24
 #define UI_SPACING 24
@@ -10,31 +13,38 @@
 
 class NstWindow : public Fl_Double_Window {
 private:
-	int handle(int e);
+    int handle(int e);
 
 public:
-	NstWindow(int w, int h, const char* t = 0) : Fl_Double_Window(w, h, t) { }
-	virtual ~NstWindow() { }
+    NstWindow(int w, int h, const char* t = 0) : Fl_Double_Window(w, h, t) { }
+    virtual ~NstWindow() { }
+
+    void resize(int x, int y, int w, int h);
 };
 
 class NstGlArea : public Fl_Gl_Window {
 private:
-	void draw() { nst_ogl_render(); }
-	int handle(int e);
+    void draw() { nst_ogl_render(); }
+    int handle(int e);
 
 public:
-	NstGlArea(int x, int y, int w, int h, const char *l = 0) : Fl_Gl_Window(x, y, w, h, l) {
-		box(FL_DOWN_FRAME);
-	}
+    NstGlArea(int x, int y, int w, int h, const char *l = 0) : Fl_Gl_Window(x, y, w, h, l) {
+        box(FL_DOWN_FRAME);
+    }
+
+    void resize(int x, int y, int w, int h);
 };
 
-extern Fl_Color NstGreen;
-extern Fl_Color NstPurple;
-extern Fl_Color NstRed;
-extern Fl_Color NstBlueGrey;
-extern Fl_Color NstLightGrey;
+constexpr Fl_Color NstGreen = 0x255f6500;
+constexpr Fl_Color NstPurple = 0x5f578700;
+constexpr Fl_Color NstRed = 0xb51e2c00;
+constexpr Fl_Color NstWhite = 0xffffff00;
+constexpr Fl_Color NstBlueGrey = 0x383c4a00;
+constexpr Fl_Color NstLightGrey = 0xd3dae300;
 
-void fltkui_resize();
-void fltkui_fullscreen(Fl_Widget* w, void* userdata);
+void fltkui_fullscreen(Fl_Widget *w = nullptr, void *data = nullptr);
+void fltkui_enable_menu();
+void fltkui_set_ffspeed(bool on);
+void fltkui_show_msgbox(bool show);
 
-#endif
+std::string& fltkui_get_confpath();

@@ -1,7 +1,7 @@
 /*
  * Nestopia UE
  *
- * Copyright (C) 2018-2018 Phil Smith
+ * Copyright (C) 2012-2024 R. Danbrook
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,14 +20,37 @@
  *
  */
 
-#ifndef _HOMEBREW_H_
-#define _HOMEBREW_H_
+#include <iostream>
 
-#include "core/api/NstApiEmulator.hpp"
-#include "core/api/NstApiHomebrew.hpp"
+#include <FL/Fl.H>
+#include <FL/Fl_Button.H>
+#include <FL/Fl_Double_Window.H>
+#include <FL/Fl_Box.H>
+#include <FL/Fl_Menu_Bar.H>
+#include <FL/Fl_Native_File_Chooser.H>
+#include <FL/Fl_PNG_Image.H>
+#include <FL/Fl_Gl_Window.H>
+#include <FL/Fl_Table_Row.H>
+#include <FL/gl.h>
 
-using namespace Nes::Api;
+#include "fltkui.h"
 
-void nst_homebrew_init();
+#include "uiadapter.h"
 
-#endif
+void UiAdapter::fullscreen() {
+    fltkui_fullscreen();
+}
+
+void UiAdapter::fastforward(bool on) {
+    fltkui_set_ffspeed(on);
+}
+
+void UiAdapter::pause() {
+}
+
+void UiAdapter::screenshot() {
+}
+
+void UiAdapter::show_msgbox(bool show) {
+    fltkui_show_msgbox(show);
+}

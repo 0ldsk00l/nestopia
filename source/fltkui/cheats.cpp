@@ -31,11 +31,11 @@ static Xml::Node saveroot;
 
 std::vector<NstCheat> chtlist;
 
-extern Emulator emulator;
+//extern Emulator emulator;
 
 void nst_cheats_init(const char *cheatpath) {
 	// Initialize cheat engine
-	Cheats cheats(emulator);
+	/*Cheats cheats(emulator);
 	Xml xml;
 
 	cheats.ClearCodes();
@@ -93,12 +93,12 @@ void nst_cheats_init(const char *cheatpath) {
 			}
 		}
 		cheatfile.close();
-	}
+	}*/
 }
 
 void nst_cheats_save(const char *cheatpath) {
 	// Save the cheat list
-	std::ofstream cheatfile(cheatpath, std::ifstream::out|std::ifstream::binary);
+	/*std::ofstream cheatfile(cheatpath, std::ifstream::out|std::ifstream::binary);
 
 	if (cheatfile.is_open()) {
 		saveroot = (savexml.GetRoot());
@@ -142,35 +142,35 @@ void nst_cheats_save(const char *cheatpath) {
 
 		savexml.Write(saveroot, cheatfile);
 		cheatfile.close();
-	}
+	}*/
 }
 
 void nst_cheats_code_gg_add(const std::wstring data) {
 	// Add a Game Genie code
-	Cheats cheats(emulator);
+	/*Cheats cheats(emulator);
 	Cheats::Code code;
 
 	char gg[9];
 	snprintf(gg, sizeof(gg), "%ls", data.c_str());
 
 	cheats.GameGenieDecode(gg, code);
-	cheats.SetCode(code);
+	cheats.SetCode(code);*/
 }
 
 void nst_cheats_code_par_add(const std::wstring data) {
 	// Add a Pro Action Rocky code
-	Cheats cheats(emulator);
+	/*Cheats cheats(emulator);
 	Cheats::Code code;
 
 	char par[9];
 	snprintf(par, sizeof(par), "%ls", data.c_str());
 
 	cheats.ProActionRockyDecode(par, code);
-	cheats.SetCode(code);
+	cheats.SetCode(code);*/
 }
 
 void nst_cheats_refresh() {
-	Cheats cheats(emulator);
+	/*Cheats cheats(emulator);
 	cheats.ClearCodes();
 
 	for (int i = 0; i < chtlist.size(); i++) {
@@ -191,13 +191,13 @@ void nst_cheats_refresh() {
 				cheats.SetCode(code);
 			}
 		}
-	}
+	}*/
 }
 
 // DIP Switches
 void nst_dip_handle(const char *dippath) {
 	// Handle the DIP switch file
-	DipSwitches dipswitches(emulator);
+	/*DipSwitches dipswitches(emulator);
 	Xml xml;
 
 	std::ifstream dipfile(dippath, std::ifstream::in|std::ifstream::binary);
@@ -251,5 +251,5 @@ void nst_dip_handle(const char *dippath) {
 		}
 
 		dipout.close();
-	}
+	}*/
 }

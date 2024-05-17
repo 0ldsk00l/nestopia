@@ -28,6 +28,13 @@ nestopia_LDADD = \
 databasedir = $(datadir)/nestopia
 dist_database_DATA = NstDatabase.xml
 
+palettedir = $(datadir)/nestopia/palettes
+dist_palette_DATA = palettes/SONY_CXA2025AS_US.pal palettes/Royaltea.pal \
+	palettes/Nobilitea.pal palettes/Digital_Prime_FBX.pal \
+	palettes/Magnum_FBX.pal palettes/PVM_Style_D93_FBX.pal \
+	palettes/Smooth_V2_FBX.pal
+
+
 # freedesktop.org-specific files
 desktopdir = $(datarootdir)/applications
 dist_desktop_DATA = icons/nestopia.desktop
@@ -703,39 +710,39 @@ nestopia_SOURCES = \
 	source/nes_ntsc/demo_impl.h
 
 nestopia_SOURCES += \
-	source/fltkui/nstcommon.cpp \
-	source/fltkui/nstcommon.h \
 	source/fltkui/cheats.cpp \
 	source/fltkui/cheats.h \
-	source/fltkui/homebrew.cpp \
-	source/fltkui/homebrew.h \
 	source/fltkui/cli.cpp \
 	source/fltkui/cli.h \
-	source/fltkui/config.cpp \
-	source/fltkui/config.h \
 	source/fltkui/video.cpp \
 	source/fltkui/video.h \
-	source/fltkui/input.cpp \
-	source/fltkui/input.h \
-	source/fltkui/samples.cpp \
-	source/fltkui/samples.h \
-	source/fltkui/font.h \
-	source/fltkui/ini.cpp \
 	source/fltkui/ini.h \
+	source/fltkui/inputmanager.cpp \
+	source/fltkui/inputmanager.h \
+	source/fltkui/font.h \
 	source/fltkui/png.cpp \
 	source/fltkui/png.h \
 	source/fltkui/audio.cpp \
-	source/fltkui/audio.h
+	source/fltkui/audio.h \
+	source/fltkui/jgmanager.cpp \
+	source/fltkui/jgmanager.h \
+	source/fltkui/setmanager.cpp \
+	source/fltkui/setmanager.h \
+	source/fltkui/uiadapter.cpp \
+	source/fltkui/uiadapter.h \
+	source/fltkui/jg.cpp \
+	source/fltkui/jg/jg.h \
+	source/fltkui/jg/jg_nes.h
 
 nestopia_SOURCES += \
-	source/fltkui/fltkui_config.h \
 	source/fltkui/fltkui_archive.h \
 	source/fltkui/fltkui_archive.cpp \
 	source/fltkui/fltkui_cheats.h \
 	source/fltkui/fltkui_cheats.cpp \
 	source/fltkui/fltkui.cpp \
 	source/fltkui/fltkui.h \
-	source/fltkui/fltkui_config.cpp
+	source/fltkui/fltkui_settings.cpp \
+	source/fltkui/fltkui_settings.h
 
 # install full HTML suite
 if ENABLE_FULL_HTML
