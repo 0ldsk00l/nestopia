@@ -46,7 +46,7 @@ private:
     jg_fileinfo_t gameinfo;
     jg_pathinfo_t pathinfo;
 
-    bool loaded;
+    bool loaded{false};
 
     std::string basepath;
     std::string corepath;
