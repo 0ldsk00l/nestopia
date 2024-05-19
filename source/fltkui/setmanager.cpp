@@ -95,10 +95,6 @@ SettingManager::SettingManager() {
     std::filesystem::create_directories(confpath);
 }
 
-SettingManager::~SettingManager() {
-    // Save frontend and emulator settings to the config file
-}
-
 void SettingManager::read(JGManager& jgm) {
     // Read in any settings
     mINI::INIFile file(confpath + "/nestopia.conf");

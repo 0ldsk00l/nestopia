@@ -266,6 +266,14 @@ void JGManager::media_insert() {
     jg_media_insert();
 }
 
+void JGManager::cheat_clear() {
+    jg_cheat_clear();
+}
+
+void JGManager::cheat_set(const char *code) {
+    jg_cheat_set(code);
+}
+
 int JGManager::get_frametime() {
     return frametime;
 }

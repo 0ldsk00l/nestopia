@@ -43,11 +43,10 @@
 #include "jgmanager.h"
 #include "setmanager.h"
 #include "inputmanager.h"
+#include "chtmanager.h"
 
 #include "audio.h"
 #include "video.h"
-
-#include "cheats.h"
 
 #include "fltkui.h"
 #include "fltkui_archive.h"
@@ -67,6 +66,7 @@ static NstSettingsWindow *setwin;
 static JGManager *jgm = nullptr;
 static SettingManager *setmgr = nullptr;
 static InputManager *inputmgr = nullptr;
+static CheatManager *chtmgr = nullptr;
 
 static std::vector<uint8_t> game;
 
@@ -153,6 +153,8 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
                 fltkui_load_file(fc.filename());
 
                 if (jgm->is_loaded()) {
+                    chtmgr->clear();
+                    chtwin->refresh();
                     fltkui_enable_menu();
                     nstwin->label(jgm->get_gamename().c_str());
                     jg_setup_audio();
@@ -538,7 +540,7 @@ void makenstwin(const char *name) {
     Fl::add_handler(handle);
 
     // Cheats Window
-    chtwin = new NstChtWindow(660, 500, "Cheat Manager");
+    chtwin = new NstChtWindow(720, 500, "Cheat Manager", *chtmgr);
     chtwin->populate();
 
     // Settings Window
@@ -601,6 +603,7 @@ int main(int argc, char *argv[]) {
     //nst_archive_select = &fltkui_archive_select;
 
     inputmgr = new InputManager(*jgm, *setmgr);
+    chtmgr = new CheatManager(*jgm);
 
     makenstwin(argv[0]);
     nstwin->label("Nestopia UE");
@@ -681,6 +684,10 @@ int main(int argc, char *argv[]) {
 
     if (setmgr) {
         delete setmgr;
+    }
+
+    if (chtmgr) {
+        delete chtmgr;
     }
 
     delete chtwin;

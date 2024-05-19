@@ -12,7 +12,7 @@ constexpr unsigned FLAG_FRONTEND = 0x8000000;
 class SettingManager {
 public:
     SettingManager();
-    ~SettingManager();
+    ~SettingManager() {}
 
     void read(JGManager& jgm);
     void write(JGManager& jgm);

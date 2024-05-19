@@ -40,7 +40,6 @@ public:
     void show_msgbox(bool show) { if (show) msgbox->show(); else msgbox->hide(); }
 
 private:
-
     void cb_chooser(Fl_Widget *w, void *data);
     static void cb_chooser_s(Fl_Widget *w, void *data);
 

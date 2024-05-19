@@ -710,8 +710,8 @@ nestopia_SOURCES = \
 	source/nes_ntsc/demo_impl.h
 
 nestopia_SOURCES += \
-	source/fltkui/cheats.cpp \
-	source/fltkui/cheats.h \
+	source/fltkui/chtmanager.cpp \
+	source/fltkui/chtmanager.h \
 	source/fltkui/cli.cpp \
 	source/fltkui/cli.h \
 	source/fltkui/video.cpp \

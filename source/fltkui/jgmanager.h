@@ -29,6 +29,9 @@ public:
     void media_select();
     void media_insert();
 
+    void cheat_clear();
+    void cheat_set(const char *code);
+
     int get_frametime();
 
     std::string& get_basepath();
