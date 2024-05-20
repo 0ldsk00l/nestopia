@@ -437,12 +437,17 @@ int handle(int e) {
 
 int NstWindow::handle(int e) {
     switch (e) {
-        case FL_KEYDOWN: case FL_KEYUP:
-            inputmgr->event(Fl::event_key(), e == FL_KEYDOWN);
+        case FL_KEYDOWN: case FL_KEYUP: {
+            // GNOME has a bad habit of spamming keyup events while holding
+            // a button down, so Fl::get_key is required here.
+            int key = Fl::event_key();
+            bool down = Fl::get_key(key);
+            inputmgr->event(key, down);
             if (jgm->is_loaded()) {
                 inputmgr->ui_events();
             }
             break;
+        }
     }
     return Fl_Double_Window::handle(e);
 }
@@ -550,6 +555,7 @@ void makenstwin(const char *name) {
     nstwin = new NstWindow(rw, rh + UI_MBARHEIGHT, name);
     nstwin->color(FL_BLACK);
     nstwin->xclass("nestopia");
+    nstwin->resizable(nstwin);
 
     nstwin->begin();
 

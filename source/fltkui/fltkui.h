@@ -17,7 +17,6 @@ private:
 
 public:
     NstWindow(int w, int h, const char* t = 0) : Fl_Double_Window(w, h, t) { }
-    virtual ~NstWindow() { }
 
     void resize(int x, int y, int w, int h);
 };
