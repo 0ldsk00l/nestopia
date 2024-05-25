@@ -20,12 +20,12 @@ libretro community. For libretro-specific issues, please use the libretro reposi
 https://github.com/libretro/nestopia
 
 This project depends on the following libraries:
-FLTK 1.3, SDL2, libarchive, zlib
+FLTK 1.3, SDL2, libarchive, libsamplerate, zlib
 
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
 ```
-apt-get install build-essential autoconf autoconf-archive automake autotools-dev libfltk1.3-dev libsdl2-dev libarchive-dev zlib1g-dev
+apt-get install build-essential autoconf autoconf-archive automake autotools-dev libfltk1.3-dev libsamplerate0-dev libsdl2-dev libarchive-dev zlib1g-dev
 ```
 
 ## FLTK Build
@@ -43,7 +43,7 @@ make install
 ## macOS Build
 ```
 # Install dependencies
-brew install autoconf automake autoconf-archive pkg-config libarchive libepoxy fltk
+brew install autoconf automake autoconf-archive pkg-config libarchive libepoxy libsamplerate fltk sdl2
 
 # Build
 autoreconf -vif

@@ -72,6 +72,9 @@ PKG_CHECK_MODULES([ZLIB], [zlib])
 dnl libarchive
 PKG_CHECK_MODULES([LIBARCHIVE], [libarchive])
 
+dnl SAMPLERATE
+PKG_CHECK_MODULES([SAMPLERATE], [samplerate])
+
 dnl SDL2
 PKG_CHECK_MODULES([SDL2], [sdl2])
 

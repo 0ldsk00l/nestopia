@@ -52,6 +52,11 @@ jg_setting_t fe_settings[] = {
       "Set the aspect ratio to the correct TV aspect, 1:1 (square pixels), or 4:3",
       0, 0, 2, FLAG_FRONTEND
     },
+    { "a_rsqual", "Audio Resampler Quality",
+      "0 = Sinc (Best), 1 = Sinc (Medium), 2 = Sinc (Fast), 3 = Zero Order Hold, 4 = Linear",
+      "Set the frontend's audio resampling quality. Use Sinc unless you are on extremely weak hardware.",
+      2, 0, 4, FLAG_FRONTEND
+    },
     { "m_ffspeed", "Fast-forward Speed",
       "N = Fast-forward speed multiplier",
       "Set the speed multiplier to run emulation faster",
@@ -177,10 +182,6 @@ void SettingManager::write(JGManager& jgm) {
             std::cout << key << " = " << value << std::endl;
         }
     }*/
-}
-
-void SettingManager::rehash() {
-    nst_video_rehash();
 }
 
 std::vector<jg_setting_t*> *SettingManager::get_settings() {

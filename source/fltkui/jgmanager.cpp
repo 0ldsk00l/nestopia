@@ -30,17 +30,11 @@
 
 #include "jgmanager.h"
 
- // FIXME - move these...
-#include "audio.h"
-#include "video.h"
+#include "video.h" // FIXME - move this
 
 namespace {
 
 int frametime = 0;
-
-void jg_audio(size_t in_size) {
-    audio_queue(in_size);
-}
 
 void jg_frametime(double interval) {
     frametime = interval + 0.5;
@@ -83,7 +77,6 @@ JGManager::JGManager() {
         settings.push_back(&jg_settings[i]);
     }
 
-    jg_set_cb_audio(&jg_audio);
     jg_set_cb_frametime(jg_frametime);
     jg_set_cb_log(&jg_log);
     jg_init();
@@ -290,4 +283,12 @@ jg_coreinfo_t *JGManager::get_coreinfo() {
 
 jg_inputinfo_t *JGManager::get_inputinfo(int port) {
     return jg_get_inputinfo(port);
+}
+
+jg_audioinfo_t *JGManager::get_audioinfo() {
+    return jg_get_audioinfo();
+}
+
+void JGManager::set_audio_cb(jg_cb_audio_t cb) {
+    jg_set_cb_audio(cb);
 }

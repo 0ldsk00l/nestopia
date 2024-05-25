@@ -40,12 +40,12 @@
 
 #include <SDL.h>
 
+#include "audiomanager.h"
+#include "chtmanager.h"
+#include "inputmanager.h"
 #include "jgmanager.h"
 #include "setmanager.h"
-#include "inputmanager.h"
-#include "chtmanager.h"
 
-#include "audio.h"
 #include "video.h"
 
 #include "fltkui.h"
@@ -66,6 +66,7 @@ static NstSettingsWindow *setwin;
 static JGManager *jgm = nullptr;
 static SettingManager *setmgr = nullptr;
 static InputManager *inputmgr = nullptr;
+static AudioManager *audiomgr = nullptr;
 static CheatManager *chtmgr = nullptr;
 
 static std::vector<uint8_t> game;
@@ -319,12 +320,12 @@ static void fltkui_state_qsave(Fl_Widget* w, void* userdata) {
 static void fltkui_pause(Fl_Widget* w, void* userdata) {
     paused ^= 1;
     if (paused) {
-        audio_pause();
+        audiomgr->pause();
         Fl_Menu_Item* m = const_cast<Fl_Menu_Item*>(((Fl_Menu_Bar*)w)->mvalue());
         m->label("Play");
     }
     else {
-        audio_unpause();
+        audiomgr->unpause();
         Fl_Menu_Item* m = const_cast<Fl_Menu_Item*>(((Fl_Menu_Bar*)w)->mvalue());
         m->label("Pause");
     }
@@ -349,6 +350,11 @@ void NstWindow::resize(int x, int y, int w, int h) {
 void NstGlArea::resize(int x, int y, int w, int h) {
     Fl_Window::resize(x, y, w, h);
     nst_video_resize(w, h);
+}
+
+void fltkui_rehash() {
+    nst_video_rehash();
+    audiomgr->rehash();
 }
 
 void fltkui_fullscreen(Fl_Widget *w, void *data) {
@@ -579,7 +585,7 @@ void fltkui_set_ffspeed(bool on) {
         speed = 1;
     }
 
-    audio_set_speed(speed);
+    audiomgr->set_speed(speed);
 }
 
 int main(int argc, char *argv[]) {
@@ -599,8 +605,7 @@ int main(int argc, char *argv[]) {
     // Read frontend and emulator settings
     setmgr->read(*jgm);
 
-    audio_init(jgm);
-    audio_unpause();
+    audiomgr = new AudioManager(*jgm, *setmgr);
 
     // Initialize video params
     video_init(setmgr, jgm);
@@ -674,11 +679,12 @@ int main(int argc, char *argv[]) {
         glarea->redraw();
     }
 
-    // Deinitialize audio
-    audio_deinit();
-
     // Write frontend and emulator settings
     setmgr->write(*jgm);
+
+    if (audiomgr) {
+        delete audiomgr;
+    }
 
     if (inputmgr) {
         delete inputmgr;

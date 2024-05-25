@@ -17,8 +17,6 @@ public:
     void read(JGManager& jgm);
     void write(JGManager& jgm);
 
-    void rehash();
-
     std::vector<jg_setting_t*>* get_settings();
     jg_setting_t* get_setting(std::string name);
 

@@ -13,11 +13,13 @@ nestopia_CPPFLAGS = \
 	-DNST_PRAGMA_ONCE \
 	$(ZLIB_CFLAGS) \
 	$(LIBARCHIVE_CFLAGS) \
+	$(SAMPLERATE_CFLAGS) \
 	$(SDL2_CFLAGS) \
 	$(FLTK_CFLAGS)
 nestopia_LDADD = \
 	$(ZLIB_LIBS) \
 	$(LIBARCHIVE_LIBS) \
+	$(SAMPLERATE_LIBS) \
 	$(SDL2_LIBS) \
 	$(FLTK_LIBS)
 
@@ -710,6 +712,8 @@ nestopia_SOURCES = \
 	source/nes_ntsc/demo_impl.h
 
 nestopia_SOURCES += \
+	source/fltkui/audiomanager.cpp \
+	source/fltkui/audiomanager.h \
 	source/fltkui/chtmanager.cpp \
 	source/fltkui/chtmanager.h \
 	source/fltkui/cli.cpp \
@@ -722,8 +726,6 @@ nestopia_SOURCES += \
 	source/fltkui/font.h \
 	source/fltkui/png.cpp \
 	source/fltkui/png.h \
-	source/fltkui/audio.cpp \
-	source/fltkui/audio.h \
 	source/fltkui/jgmanager.cpp \
 	source/fltkui/jgmanager.h \
 	source/fltkui/setmanager.cpp \

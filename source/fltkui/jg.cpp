@@ -1305,6 +1305,8 @@ int jg_game_load(void) {
         jg_cb_frametime(FRAMERATE_PAL);
     }
     else {
+        vidinfo.aspect = ASPECT_NTSC;
+        audinfo.spf = (SAMPLERATE / (unsigned)FRAMERATE) * CHANNELS;
         jg_cb_frametime(FRAMERATE);
     }
 

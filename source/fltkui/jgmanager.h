@@ -32,7 +32,7 @@ public:
     void cheat_clear();
     void cheat_set(const char *code);
 
-    int get_frametime();
+    static int get_frametime();
 
     std::string& get_basepath();
     std::string& get_gamename();
@@ -42,6 +42,9 @@ public:
 
     jg_coreinfo_t* get_coreinfo();
     jg_inputinfo_t* get_inputinfo(int port);
+    jg_audioinfo_t* get_audioinfo();
+
+    void set_audio_cb(jg_cb_audio_t cb);
 
 private:
     void set_paths();

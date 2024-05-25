@@ -41,6 +41,7 @@ constexpr Fl_Color NstWhite = 0xffffff00;
 constexpr Fl_Color NstBlueGrey = 0x383c4a00;
 constexpr Fl_Color NstLightGrey = 0xd3dae300;
 
+void fltkui_rehash();
 void fltkui_fullscreen(Fl_Widget *w = nullptr, void *data = nullptr);
 void fltkui_enable_menu();
 void fltkui_set_ffspeed(bool on);
