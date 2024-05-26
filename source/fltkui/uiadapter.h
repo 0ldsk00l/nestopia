@@ -5,12 +5,11 @@ public:
     UiAdapter() {}
     ~UiAdapter() {}
 
-    void fullscreen();
-    void fastforward(bool ff);
-    void pause();
-    void screenshot();
-
-    void show_msgbox(bool show);
+    static void fullscreen();
+    static void fastforward(bool ff);
+    static void pause();
+    static void screenshot();
+    static void show_msgbox(bool show);
 
 private:
 

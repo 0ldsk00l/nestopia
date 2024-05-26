@@ -20,8 +20,6 @@
  *
  */
 
-#include <iostream>
-
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
@@ -34,15 +32,14 @@
 #include <FL/gl.h>
 
 #include "fltkui.h"
-
 #include "uiadapter.h"
 
 void UiAdapter::fullscreen() {
-    fltkui_fullscreen();
+    FltkUi::fullscreen();
 }
 
 void UiAdapter::fastforward(bool on) {
-    fltkui_set_ffspeed(on);
+    FltkUi::set_ffspeed(on);
 }
 
 void UiAdapter::pause() {
@@ -52,5 +49,5 @@ void UiAdapter::screenshot() {
 }
 
 void UiAdapter::show_msgbox(bool show) {
-    fltkui_show_msgbox(show);
+    FltkUi::show_msgbox(show);
 }

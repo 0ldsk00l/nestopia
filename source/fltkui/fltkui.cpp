@@ -53,23 +53,27 @@
 #include "fltkui_cheats.h"
 #include "fltkui_settings.h"
 
-static int paused = 0;
-static int speed = 1;
-static int video_fullscreen = 0;
+namespace {
 
-static NstWindow *nstwin;
-static Fl_Menu_Bar *menubar;
-static NstGlArea *glarea;
-static NstChtWindow *chtwin;
-static NstSettingsWindow *setwin;
+int paused{0};
+int speed{1};
+int video_fullscreen{0};
 
-static JGManager *jgm = nullptr;
-static SettingManager *setmgr = nullptr;
-static InputManager *inputmgr = nullptr;
-static AudioManager *audiomgr = nullptr;
-static CheatManager *chtmgr = nullptr;
+NstWindow *nstwin{nullptr};
+Fl_Menu_Bar *menubar{nullptr};
+NstGlArea *glarea{nullptr};
+NstChtWindow *chtwin{nullptr};
+NstSettingsWindow *setwin{nullptr};
 
-static std::vector<uint8_t> game;
+JGManager *jgm{nullptr};
+SettingManager *setmgr{nullptr};
+InputManager *inputmgr{nullptr};
+AudioManager *audiomgr{nullptr};
+CheatManager *chtmgr{nullptr};
+
+std::vector<uint8_t> game;
+
+}
 
 static int fltkui_refreshrate(void) {
     // Get the screen refresh rate using an SDL window
@@ -156,7 +160,7 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
                 if (jgm->is_loaded()) {
                     chtmgr->clear();
                     chtwin->refresh();
-                    fltkui_enable_menu();
+                    FltkUi::enable_menu();
                     nstwin->label(jgm->get_gamename().c_str());
                     jg_setup_audio();
                     jg_setup_video();
@@ -352,12 +356,12 @@ void NstGlArea::resize(int x, int y, int w, int h) {
     nst_video_resize(w, h);
 }
 
-void fltkui_rehash() {
+void FltkUi::rehash() {
     nst_video_rehash();
     audiomgr->rehash();
 }
 
-void fltkui_fullscreen(Fl_Widget *w, void *data) {
+void FltkUi::fullscreen(Fl_Widget *w, void *data) {
     if (!jgm->is_loaded()) {
         return;
     }
@@ -458,6 +462,10 @@ int NstWindow::handle(int e) {
     return Fl_Double_Window::handle(e);
 }
 
+void NstGlArea::draw() {
+    nst_ogl_render();
+}
+
 int NstGlArea::handle(int e) {
     int xc, yc;
     switch (e) {
@@ -522,7 +530,7 @@ static Fl_Menu_Item menutable[] = {
         {"Pause", 0, fltkui_pause, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
         {"Reset (Soft)", 0, fltkui_reset, (void*)"0", FL_MENU_INACTIVE},
         {"Reset (Hard)", 0, fltkui_reset, (void*)"1", FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Fullscreen", 0, fltkui_fullscreen, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Fullscreen", 0, FltkUi::fullscreen, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
         {"Switch Disk Side", 0, fltkui_fds_next, 0, FL_MENU_INACTIVE},
         {"Insert/Eject Disk", 0, fltkui_fds_insert, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
         {"Cheats...", 0, fltkui_cheats, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
@@ -534,13 +542,13 @@ static Fl_Menu_Item menutable[] = {
     {0} // End Menu
 };
 
-void fltkui_enable_menu() {
+void FltkUi::enable_menu() {
     for (int i = 0; i < menutable[0].size(); ++i) {
         menutable[i].activate();
     }
 }
 
-void fltkui_show_msgbox(bool show) {
+void FltkUi::show_msgbox(bool show) {
     setwin->show_msgbox(show);
 }
 
@@ -577,7 +585,7 @@ void makenstwin(const char *name) {
     nstwin->end();
 }
 
-void fltkui_set_ffspeed(bool on) {
+void FltkUi::set_ffspeed(bool on) {
     if (on) {
         speed = setmgr->get_setting("m_ffspeed")->val;
     }
@@ -632,7 +640,7 @@ int main(int argc, char *argv[]) {
         //jgm->load_game(argv[argc - 1]);
         if (jgm->is_loaded()) {
             nstwin->label(jgm->get_gamename().c_str());
-            fltkui_enable_menu();
+            FltkUi::enable_menu();
             jg_setup_audio();
             jg_setup_video();
             inputmgr->reassign();
@@ -644,7 +652,7 @@ int main(int argc, char *argv[]) {
 
     if (video_fullscreen) {
         video_fullscreen = 0;
-        fltkui_fullscreen(NULL, NULL);
+        FltkUi::fullscreen(NULL, NULL);
     }
 
     int frames = 0;

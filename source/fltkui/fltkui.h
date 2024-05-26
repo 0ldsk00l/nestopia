@@ -1,15 +1,17 @@
 #pragma once
 
-#include <string>
-
-#include <video.h>
-
-#define UI_MBARHEIGHT 24
-#define UI_SPACING 24
-#define UI_ELEMHEIGHT 25
-#define UI_ELEMWIDTH 160
-#define UI_DIAL_LG 100
-#define UI_DIAL_SM 40
+constexpr Fl_Color NstGreen = 0x255f6500;
+constexpr Fl_Color NstPurple = 0x5f578700;
+constexpr Fl_Color NstRed = 0xb51e2c00;
+constexpr Fl_Color NstWhite = 0xffffff00;
+constexpr Fl_Color NstBlueGrey = 0x383c4a00;
+constexpr Fl_Color NstLightGrey = 0xd3dae300;
+constexpr int UI_MBARHEIGHT = 24;
+constexpr int UI_SPACING = 24;
+constexpr int UI_ELEMHEIGHT = 25;
+constexpr int UI_ELEMWIDTH = 160;
+constexpr int UI_DIAL_LG = 100;
+constexpr int UI_DIAL_SM = 40;
 
 class NstWindow : public Fl_Double_Window {
 private:
@@ -23,7 +25,7 @@ public:
 
 class NstGlArea : public Fl_Gl_Window {
 private:
-    void draw() { nst_ogl_render(); }
+    void draw();
     int handle(int e);
 
 public:
@@ -34,17 +36,11 @@ public:
     void resize(int x, int y, int w, int h);
 };
 
-constexpr Fl_Color NstGreen = 0x255f6500;
-constexpr Fl_Color NstPurple = 0x5f578700;
-constexpr Fl_Color NstRed = 0xb51e2c00;
-constexpr Fl_Color NstWhite = 0xffffff00;
-constexpr Fl_Color NstBlueGrey = 0x383c4a00;
-constexpr Fl_Color NstLightGrey = 0xd3dae300;
-
-void fltkui_rehash();
-void fltkui_fullscreen(Fl_Widget *w = nullptr, void *data = nullptr);
-void fltkui_enable_menu();
-void fltkui_set_ffspeed(bool on);
-void fltkui_show_msgbox(bool show);
-
-std::string& fltkui_get_confpath();
+class FltkUi {
+public:
+    static void enable_menu();
+    static void rehash();
+    static void set_ffspeed(bool on);
+    static void show_msgbox(bool show);
+    static void fullscreen(Fl_Widget *w = nullptr, void *data = nullptr);
+};

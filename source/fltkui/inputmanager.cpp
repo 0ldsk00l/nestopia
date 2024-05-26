@@ -37,8 +37,6 @@
 
 namespace {
 
-UiAdapter uiadpt;
-
 jg_inputstate_t coreinput[5];
 jg_inputinfo_t *inputinfo[5];
 
@@ -478,16 +476,16 @@ void InputManager::ui_events() {
                     jgm.state_qload(1);
                     break;
                 case 8: // Fullscreen
-                    uiadpt.fullscreen();
+                    UiAdapter::fullscreen();
                     break;
                 case 9: // Pause
-                    uiadpt.pause();
+                    UiAdapter::pause();
                     break;
                 case 10: // FastForward
-                    uiadpt.fastforward(false);
+                    UiAdapter::fastforward(false);
                     break;
                 case 11: // Screenshot
-                    uiadpt.screenshot();
+                    UiAdapter::screenshot();
                     break;
             }
         }
@@ -496,7 +494,7 @@ void InputManager::ui_events() {
     }
 
     if (uistate.button[10]) {
-        uiadpt.fastforward(true);
+        UiAdapter::fastforward(true);
     }
 }
 
@@ -575,6 +573,6 @@ void InputManager::set_cfg_running(bool running) {
     cfg_running = running;
     if (!running) {
         // Turn off the message now
-        uiadpt.show_msgbox(running);
+        UiAdapter::show_msgbox(running);
     }
 }

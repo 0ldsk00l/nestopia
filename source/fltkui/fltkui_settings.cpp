@@ -117,7 +117,7 @@ void NstSettingsWindow::cb_chooser(Fl_Widget *w, void *data) {
     setting->val = ((Fl_Choice*)w)->value();
 
     if (setting->flags & FLAG_FRONTEND) {
-        fltkui_rehash();
+        FltkUi::rehash();
     }
     else {
         jgm.rehash();
@@ -137,7 +137,7 @@ void NstSettingsWindow::cb_slider(Fl_Widget *w, void *data) {
     setting->val = ((Fl_Hor_Value_Slider*)w)->value();
 
     if (setting->flags & FLAG_FRONTEND) {
-        fltkui_rehash();
+        FltkUi::rehash();
     }
     else {
         jgm.rehash();
