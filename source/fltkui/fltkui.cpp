@@ -52,6 +52,8 @@
 #include "fltkui_cheats.h"
 #include "fltkui_settings.h"
 
+#include "logdriver.h"
+
 namespace {
 
 int paused{0};
@@ -151,7 +153,9 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
 
     // Show file chooser
     switch (fc.show()) {
-        case -1: fprintf(stderr, "Error: %s\n", fc.errmsg()); break;
+        case -1:
+            LogDriver::log(LogLevel::Error, std::string(fc.errmsg()));
+            break;
         case 1: break; // Cancel
         default:
             if (fc.filename()) {
@@ -185,7 +189,9 @@ static void fltkui_movie_load(Fl_Widget* w, void* userdata) {
 
     // Show file chooser
     switch (fc.show()) {
-        case -1: fprintf(stderr, "Error: %s\n", fc.errmsg()); break;
+        case -1:
+            LogDriver::log(LogLevel::Error, std::string(fc.errmsg()));
+            break;
         case 1: break; // Cancel
         default:
             if (fc.filename()) {
@@ -232,7 +238,9 @@ static void fltkui_state_load(Fl_Widget* w, void* userdata) {
 
     // Show file chooser
     switch (fc.show()) {
-        case -1: fprintf(stderr, "Error: %s\n", fc.errmsg()); break;
+        case -1:
+            LogDriver::log(LogLevel::Error, std::string(fc.errmsg()));
+            break;
         case 1: break; // Cancel
         default:
             if (fc.filename()) {
@@ -293,7 +301,9 @@ static void fltkui_palette_open(Fl_Widget* w, void* userdata) {
 
     // Show file chooser
     switch (fc.show()) {
-        case -1: fprintf(stderr, "Error: %s\n", fc.errmsg()); break;
+        case -1:
+            LogDriver::log(LogLevel::Error, std::string(fc.errmsg()));
+            break;
         case 1: break; // Cancel
         default:
             if (fc.filename()) {
@@ -598,7 +608,7 @@ int main(int argc, char *argv[]) {
 
     // Initialize SDL Audio and Joystick
     if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
-        fprintf(stderr, "Couldn't initialize SDL: %s\n", SDL_GetError());
+        LogDriver::log(LogLevel::Error, "Failed to initialize SDL: " + std::string(SDL_GetError()));
         return 1;
     }
 

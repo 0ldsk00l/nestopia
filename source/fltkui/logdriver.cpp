@@ -20,9 +20,23 @@
  *
  */
 
+#include <iostream>
+
 #include "videomanager.h"
 
 #include "logdriver.h"
+
+void LogDriver::log(LogLevel level, std::string text) {
+    if (level == LogLevel::OSD) {
+        VideoManager::text_print(text.c_str(), 8, 212, 2, true);
+    }
+    else if (level == LogLevel::Info) {
+        std::cout << text << std::endl;
+    }
+    else {
+        std::cerr << text << std::endl;
+    }
+}
 
 void LogDriver::jg_log(int level, const char *fmt, ...) {
     va_list va;

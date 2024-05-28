@@ -33,6 +33,8 @@
 #include "fltkui.h"
 #include "fltkui_cheats.h"
 
+#include "logdriver.h"
+
 namespace {
 
 NstChtWindow *chtwin = nullptr;
@@ -178,7 +180,9 @@ void NstChtWindow::cb_load(Fl_Widget*, void*) {
 
     // Show file chooser
     switch (fc.show()) {
-        case -1: fprintf(stderr, "Error: %s\n", fc.errmsg()); break;
+        case -1:
+            LogDriver::log(LogLevel::Error, std::string(fc.errmsg()));
+            break;
         case 1: break; // Cancel
         default:
             if (fc.filename()) {

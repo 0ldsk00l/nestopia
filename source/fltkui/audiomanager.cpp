@@ -31,6 +31,8 @@
 #include "audiomanager.h"
 #include "jgmanager.h"
 
+#include "logdriver.h"
+
 namespace {
 
 jg_audioinfo_t* audinfo{nullptr};
@@ -107,7 +109,7 @@ AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
 
     dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
     if (!dev) {
-        fprintf(stderr, "Error opening audio device.\n");
+        LogDriver::log(LogLevel::Error, "Error opening audio device");
     }
 
     SDL_PauseAudioDevice(dev, 0);  // Setting to 0 unpauses
