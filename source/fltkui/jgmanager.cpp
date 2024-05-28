@@ -20,7 +20,6 @@
  *
  */
 
-#include <cstdarg>
 #include <cstdlib>
 #include <cstring>
 #include <filesystem>
@@ -30,7 +29,7 @@
 
 #include "jgmanager.h"
 
-#include "videomanager.h" // FIXME - move this
+#include "logdriver.h"
 
 namespace {
 
@@ -38,32 +37,6 @@ int frametime = 0;
 
 void jg_frametime(double interval) {
     frametime = interval + 0.5;
-}
-
-void jg_log(int level, const char *fmt, ...) {
-    va_list va;
-    char buffer[512];
-    static const char *lcol[4] = {
-        "\033[0;35m", "\033[0;36m", "\033[7;33m", "\033[1;7;31m"
-    };
-
-    va_start(va, fmt);
-    vsnprintf(buffer, sizeof(buffer), fmt, va);
-    va_end(va);
-
-    FILE *fout = level == 1 ? stdout : stderr;
-
-    if (level == JG_LOG_SCR) {
-        VideoManager::text_print(buffer, 8, 212, 2, true);
-        return;
-    }
-
-    fprintf(fout, "%s%s\033[0m", lcol[level], buffer);
-    fflush(fout);
-
-    if (level == JG_LOG_ERR) {
-        VideoManager::text_print(buffer, 8, 212, 2, true);
-    }
 }
 
 } // namespace
@@ -78,7 +51,7 @@ JGManager::JGManager() {
     }
 
     jg_set_cb_frametime(jg_frametime);
-    jg_set_cb_log(&jg_log);
+    jg_set_cb_log(&LogDriver::jg_log);
     jg_init();
 }
 
@@ -211,9 +184,9 @@ int JGManager::state_qload(int slot) {
     int result = state_load(slotpath);
 
     switch (result) {
-        case 0: jg_log(JG_LOG_SCR, "State Load Failed", 8, 212, 2, true); break;
-        case 1: jg_log(JG_LOG_SCR, "State Loaded", 8, 212, 2, true); break;
-        default: jg_log(JG_LOG_SCR, "State Load Unknown", 8, 212, 2, true); break;
+        case 0: LogDriver::jg_log(JG_LOG_SCR, "State Load Failed"); break;
+        case 1: LogDriver::jg_log(JG_LOG_SCR, "State Loaded"); break;
+        default: LogDriver::jg_log(JG_LOG_SCR, "State Load Unknown"); break;
     }
 
     return result;
@@ -237,9 +210,9 @@ int JGManager::state_qsave(int slot) {
     int result = state_save(slotpath);
 
     switch (result) {
-        case 0: jg_log(JG_LOG_SCR, "State Save Failed", 8, 212, 2, true); break;
-        case 1: jg_log(JG_LOG_SCR, "State Saved", 8, 212, 2, true); break;
-        default: jg_log(JG_LOG_SCR, "State Save Unknown", 8, 212, 2, true); break;
+        case 0: LogDriver::jg_log(JG_LOG_SCR, "State Save Failed"); break;
+        case 1: LogDriver::jg_log(JG_LOG_SCR, "State Saved"); break;
+        default: LogDriver::jg_log(JG_LOG_SCR, "State Save Unknown"); break;
     }
 
     return result;
