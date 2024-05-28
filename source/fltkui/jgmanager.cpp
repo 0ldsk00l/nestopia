@@ -30,7 +30,7 @@
 
 #include "jgmanager.h"
 
-#include "video.h" // FIXME - move this
+#include "videomanager.h" // FIXME - move this
 
 namespace {
 
@@ -54,7 +54,7 @@ void jg_log(int level, const char *fmt, ...) {
     FILE *fout = level == 1 ? stdout : stderr;
 
     if (level == JG_LOG_SCR) {
-        nst_video_print(buffer, 8, 212, 2, true);
+        VideoManager::text_print(buffer, 8, 212, 2, true);
         return;
     }
 
@@ -62,7 +62,7 @@ void jg_log(int level, const char *fmt, ...) {
     fflush(fout);
 
     if (level == JG_LOG_ERR) {
-        nst_video_print(buffer, 8, 212, 2, true);
+        VideoManager::text_print(buffer, 8, 212, 2, true);
     }
 }
 

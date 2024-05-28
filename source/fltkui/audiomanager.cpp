@@ -182,8 +182,8 @@ void AudioManager::queue(size_t in_size) {
     for (int i = 0; i < srcdata.output_frames_gen; i++) {
         fltbuf_out[i] *= 32768;
         buf_out[bufend] = fltbuf_out[i] >= 32767.0 ? 32767 :
-                         fltbuf_out[i] <= -32768.0 ? -32768 :
-                         fltbuf_out[i];
+                          fltbuf_out[i] <= -32768.0 ? -32768 :
+                          fltbuf_out[i];
         bufend = (bufend + 1) % BUFSIZE;
         bufsamples++;
         if (bufsamples >= BUFSIZE - 1) {

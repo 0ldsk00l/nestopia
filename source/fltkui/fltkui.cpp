@@ -45,8 +45,7 @@
 #include "inputmanager.h"
 #include "jgmanager.h"
 #include "setmanager.h"
-
-#include "video.h"
+#include "videomanager.h"
 
 #include "fltkui.h"
 #include "fltkui_archive.h"
@@ -69,6 +68,7 @@ JGManager *jgm{nullptr};
 SettingManager *setmgr{nullptr};
 InputManager *inputmgr{nullptr};
 AudioManager *audiomgr{nullptr};
+VideoManager *videomgr{nullptr};
 CheatManager *chtmgr{nullptr};
 
 std::vector<uint8_t> game;
@@ -123,7 +123,7 @@ static void fltkui_load_file(const char *filename) {
             jgm->load_game(arcname.c_str(), game);
         }
         else {
-            nst_video_print("No valid files in archive", 8, 212, 2, true);
+            VideoManager::text_print("No valid files in archive", 8, 212, 2, true);
         }
     }
     else {
@@ -281,7 +281,7 @@ static void fltkui_screenshot(Fl_Widget* w, void* userdata) {
         return;
     }
 
-    video_screenshot(fc.filename());
+    //video_screenshot(fc.filename());
 }
 
 static void fltkui_palette_open(Fl_Widget* w, void* userdata) {
@@ -353,11 +353,11 @@ void NstWindow::resize(int x, int y, int w, int h) {
 
 void NstGlArea::resize(int x, int y, int w, int h) {
     Fl_Window::resize(x, y, w, h);
-    nst_video_resize(w, h);
+    videomgr->resize(w, h);
 }
 
 void FltkUi::rehash() {
-    nst_video_rehash();
+    videomgr->rehash();
     audiomgr->rehash();
 }
 
@@ -369,14 +369,10 @@ void FltkUi::fullscreen(Fl_Widget *w, void *data) {
     video_fullscreen ^= 1;
 
     if (video_fullscreen) {
-        int x, y, w, h;
-        Fl::screen_xywh(x, y, w, h);
         menubar->hide();
         nstwin->fullscreen();
     }
     else {
-        int rw, rh;
-        nst_video_dimensions(&rw, &rh);
         nstwin->fullscreen_off();
         menubar->show();
     }
@@ -463,7 +459,7 @@ int NstWindow::handle(int e) {
 }
 
 void NstGlArea::draw() {
-    nst_ogl_render();
+    videomgr->ogl_render();
 }
 
 int NstGlArea::handle(int e) {
@@ -487,11 +483,11 @@ int NstGlArea::handle(int e) {
             inputmgr->event(Fl::event_button() + 1000, false);
             break;
         case FL_MOVE:
-            video_scaled_coords(Fl::event_x(), Fl::event_y(), &xc, &yc);
+            videomgr->get_scaled_coords(Fl::event_x(), Fl::event_y(), &xc, &yc);
             inputmgr->event(xc, yc);
             break;
         case FL_DRAG:
-            video_scaled_coords(Fl::event_x(), Fl::event_y(), &xc, &yc);
+            videomgr->get_scaled_coords(Fl::event_x(), Fl::event_y(), &xc, &yc);
             inputmgr->event(xc, yc);
             inputmgr->event(Fl::event_button() + 1000, Fl::event_state() ? true : false);
             break;
@@ -554,7 +550,7 @@ void FltkUi::show_msgbox(bool show) {
 
 void makenstwin(const char *name) {
     int rw, rh;
-    nst_video_dimensions(&rw, &rh);
+    videomgr->get_dimensions(&rw, &rh);
 
     Fl::add_handler(handle);
 
@@ -613,10 +609,9 @@ int main(int argc, char *argv[]) {
     // Read frontend and emulator settings
     setmgr->read(*jgm);
 
+    // Bring up Audio/Video managers
     audiomgr = new AudioManager(*jgm, *setmgr);
-
-    // Initialize video params
-    video_init(setmgr, jgm);
+    videomgr = new VideoManager(*jgm, *setmgr);
 
     // Set archive handler function pointer
     //nst_archive_select = &fltkui_archive_select;
@@ -632,7 +627,7 @@ int main(int argc, char *argv[]) {
     glarea->show();
     Fl::check();
 
-    nst_ogl_init();
+    videomgr->ogl_init();
 
     // Load a rom from the command line
     if (argc > 1 && argv[argc - 1][0] != '-') {
@@ -692,6 +687,10 @@ int main(int argc, char *argv[]) {
 
     if (audiomgr) {
         delete audiomgr;
+    }
+
+    if (videomgr) {
+        delete videomgr;
     }
 
     if (inputmgr) {

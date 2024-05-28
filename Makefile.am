@@ -718,8 +718,6 @@ nestopia_SOURCES += \
 	source/fltkui/chtmanager.h \
 	source/fltkui/cli.cpp \
 	source/fltkui/cli.h \
-	source/fltkui/video.cpp \
-	source/fltkui/video.h \
 	source/fltkui/ini.h \
 	source/fltkui/inputmanager.cpp \
 	source/fltkui/inputmanager.h \
@@ -732,6 +730,8 @@ nestopia_SOURCES += \
 	source/fltkui/setmanager.h \
 	source/fltkui/uiadapter.cpp \
 	source/fltkui/uiadapter.h \
+	source/fltkui/videomanager.cpp \
+	source/fltkui/videomanager.h \
 	source/fltkui/jg.cpp \
 	source/fltkui/jg/jg.h \
 	source/fltkui/jg/jg_nes.h

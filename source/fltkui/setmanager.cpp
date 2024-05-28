@@ -27,12 +27,12 @@
 #include <iostream>
 #include <iterator>
 
-#include "setmanager.h"
+#include <jg/jg.h>
 #include <jg/jg_nes.h>
 
 #include "ini.h"
 
-#include "video.h" // Use UiAdapter for this...
+#include "setmanager.h"
 
 namespace {
 

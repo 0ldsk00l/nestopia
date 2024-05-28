@@ -20,68 +20,65 @@
  *
  */
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <stdint.h>
-#include <time.h>
+#include <cstdint>
+#include <cstring>
 
 #include <FL/gl.h>
 
-#include "video.h"
+#include "videomanager.h"
+
 #include "font.h"
 #include "png.h"
 
-static uint32_t videobuf[602 * 240]; // FIXME hardcoded
+namespace {
 
-static osdtext_t osdtext;
+struct osdtext {
+    int xpos;
+    int ypos;
+    char textbuf[32];
+    char timebuf[6];
+    int drawtext;
+    bool drawtime;
+    bool bg;
+} osdtext;
 
-static jg_videoinfo_t* vidinfo;
+jg_videoinfo_t *vidinfo;
+uint32_t *videobuf;
 
-static GLuint gl_texture_id = 0;
-
-static double aspect = 1.0;
-
-static SettingManager *setmgr;
-static JGManager *jgm;
-
-// Triangle and Texture vertices
-static GLfloat vertices[] = {
-    -1.0, -1.0, // Vertex 1 (X, Y) Left Bottom
-    -1.0, 1.0,  // Vertex 2 (X, Y) Left Top
-    1.0, -1.0,  // Vertex 3 (X, Y) Right Bottom
-    1.0, 1.0,   // Vertex 4 (X, Y) Right Top
-
-    0.0, 0.0,   // Texture 2 (X, Y) Left Top
-    0.0, 1.0,   // Texture 1 (X, Y) Left Bottom
-    1.0, 0.0,   // Texture 4 (X, Y) Right Top
-    1.0, 1.0,   // Texture 3 (X, Y) Right Bottom
-};
-
-// Dimensions
-static struct _dimensions {
-    int ww; int wh;
-    float rw; float rh;
-    float xo; float yo;
-    float dpiscale;
-} dimensions;
-
-// FIXME maybe use std::tuple here
-void video_scaled_coords(int x, int y, int *xcoord, int *ycoord) {
-    float xscale = dimensions.rw / (vidinfo->aspect * vidinfo->h) / dimensions.dpiscale;
-    float yscale = dimensions.rh / vidinfo->h / dimensions.dpiscale;
-    float xo = dimensions.xo / dimensions.dpiscale;
-    float yo = dimensions.yo / dimensions.dpiscale;
-    *xcoord = (x - xo) / ((vidinfo->aspect * vidinfo->h * xscale)/(float)vidinfo->w);
-    *ycoord = ((y - yo) / yscale) + vidinfo->y;
 }
 
-static void nst_video_set_aspect() {
-    switch (setmgr->get_setting("v_aspect")->val) {
+VideoManager::VideoManager(JGManager& jgm, SettingManager& setmgr)
+        : jgm(jgm), setmgr(setmgr) {
+    // Initialize video
+    vidinfo = jg_get_videoinfo();
+
+    videobuf = (uint32_t*)calloc(1, vidinfo->hmax * vidinfo->wmax * sizeof(uint32_t));
+    vidinfo->buf = (void*)&videobuf[0];
+
+    set_aspect();
+
+    int scale = setmgr.get_setting("v_scale")->val;
+    dimensions.ww = (aspect * vidinfo->h * scale) + 0.5;
+    dimensions.wh = (vidinfo->h * scale) + 0.5;
+    dimensions.rw = dimensions.ww;
+    dimensions.rh = dimensions.wh;
+    dimensions.dpiscale = 1.0;
+}
+
+VideoManager::~VideoManager() {
+    ogl_deinit();
+    if (videobuf) {
+        free(videobuf);
+    }
+}
+
+void VideoManager::set_aspect() {
+    switch (setmgr.get_setting("v_aspect")->val) {
         case 0:
             aspect = vidinfo->aspect;
             break;
         case 1:
-            if (jgm->get_setting("ntsc_filter")->val) {
+            if (jgm.get_setting("ntsc_filter")->val) {
                 aspect = 301/(double)vidinfo->h;
             }
             else {
@@ -95,12 +92,12 @@ static void nst_video_set_aspect() {
     }
 }
 
-void nst_video_rehash() {
-    GLuint filter = setmgr->get_setting("v_linearfilter")->val ? GL_LINEAR : GL_NEAREST;
+void VideoManager::rehash() {
+    GLuint filter = setmgr.get_setting("v_linearfilter")->val ? GL_LINEAR : GL_NEAREST;
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 
-    nst_video_set_aspect();
+    set_aspect();
     dimensions.rw = dimensions.ww;
     dimensions.rh = dimensions.wh;
 
@@ -115,8 +112,7 @@ void nst_video_rehash() {
     dimensions.yo = (dimensions.wh - dimensions.rh) / 2;
 }
 
-void nst_ogl_init() {
-    // Initialize OpenGL
+void VideoManager::ogl_init() {
     // Generate texture for raw game output
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &gl_texture_id);
@@ -128,7 +124,7 @@ void nst_ogl_init() {
         vidinfo->wmax, vidinfo->hmax, 0, GL_BGRA, GL_UNSIGNED_BYTE,
         videobuf);
 
-    GLuint filter = setmgr->get_setting("v_linearfilter")->val ? GL_LINEAR : GL_NEAREST;
+    GLuint filter = setmgr.get_setting("v_linearfilter")->val ? GL_LINEAR : GL_NEAREST;
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -136,22 +132,22 @@ void nst_ogl_init() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 }
 
-void nst_ogl_deinit() {
+void VideoManager::ogl_deinit() {
     // Deinitialize OpenGL
     if (gl_texture_id) {
         glDeleteTextures(1, &gl_texture_id);
     }
 }
 
-void nst_ogl_render() {
+void VideoManager::ogl_render() {
     // OSD Text
     if (osdtext.drawtext) {
-        nst_video_text_draw(osdtext.textbuf, osdtext.xpos, osdtext.ypos, osdtext.bg);
+        text_draw(osdtext.textbuf, osdtext.xpos, osdtext.ypos, osdtext.bg);
         osdtext.drawtext--;
     }
 
     if (osdtext.drawtime) {
-        nst_video_text_draw(osdtext.timebuf, 208, 218, false);
+        text_draw(osdtext.timebuf, 208, 218, false);
     }
 
     //jgrf_video_gl_refresh(); // Check for changes
@@ -209,40 +205,28 @@ void nst_ogl_render() {
     glEnd();
 }
 
-void nst_video_dimensions(int *w, int *h) {
+void VideoManager::get_dimensions(int *w, int *h) {
     *w = dimensions.rw;
     *h = dimensions.rh;
 }
 
-void nst_video_resize(int w, int h) {
+// FIXME maybe use std::tuple here
+void VideoManager::get_scaled_coords(int x, int y, int *xcoord, int *ycoord) {
+    float xscale = dimensions.rw / (vidinfo->aspect * vidinfo->h) / dimensions.dpiscale;
+    float yscale = dimensions.rh / vidinfo->h / dimensions.dpiscale;
+    float xo = dimensions.xo / dimensions.dpiscale;
+    float yo = dimensions.yo / dimensions.dpiscale;
+    *xcoord = (x - xo) / ((vidinfo->aspect * vidinfo->h * xscale)/(float)vidinfo->w);
+    *ycoord = ((y - yo) / yscale) + vidinfo->y;
+}
+
+void VideoManager::resize(int w, int h) {
     dimensions.ww = w;
     dimensions.wh = h;
-    nst_video_rehash();
+    rehash();
 }
 
-void video_init(SettingManager *s, JGManager *j) {
-    setmgr = s;
-    jgm = j;
-    // Initialize video
-    vidinfo = jg_get_videoinfo();
-    vidinfo->buf = (void*)&videobuf[0];
-
-    nst_video_set_aspect();
-
-    int scale = setmgr->get_setting("v_scale")->val;
-    dimensions.ww = (aspect * vidinfo->h * scale) + 0.5;
-    dimensions.wh = (vidinfo->h * scale) + 0.5;
-    dimensions.rw = dimensions.ww;
-    dimensions.rh = dimensions.wh;
-    dimensions.dpiscale = 1.0;
-
-    /*if (nst_nsf()) {
-        video_clear_buffer();
-        video_disp_nsf();
-    }*/
-}
-
-void video_screenshot_flip(unsigned char *pixels, int width, int height, int bytes) {
+/*void video_screenshot_flip(unsigned char *pixels, int width, int height, int bytes) {
     // Flip the pixels
     int rowsize = width * bytes;
     unsigned char *row = (unsigned char*)malloc(rowsize);
@@ -259,7 +243,7 @@ void video_screenshot_flip(unsigned char *pixels, int width, int height, int byt
 
 void video_screenshot(const char* filename) {
     // Take a screenshot in .png format
-    /*unsigned char *pixels;
+    unsigned char *pixels;
     pixels = (unsigned char*)malloc(sizeof(unsigned char) * rendersize.w * rendersize.h * 4);
 
     // Read the pixels and flip them vertically
@@ -279,33 +263,10 @@ void video_screenshot(const char* filename) {
         lodepng_encode32_file(filename, (const unsigned char*)pixels, rendersize.w, rendersize.h);
     }
 
-    free(pixels);*/
-}
+    free(pixels);
+}*/
 
-void video_clear_buffer() {
-    // Write black to the video buffer
-    //memset(videobuf, 0x00, vidinfo->wmax * Video::Output::HEIGHT * sizeof(uint32_t));
-}
-
-void video_disp_nsf() {
-    // Display NSF text
-    /*Nsf nsf(emulator);
-
-    int xscale = vidinfo->wmax / vidinfo->wmax;
-    int yscale = Video::Output::HEIGHT / Video::Output::HEIGHT;
-
-    nst_video_text_draw(nsf.GetName(), 4 * xscale, 16 * yscale, false);
-    nst_video_text_draw(nsf.GetArtist(), 4 * xscale, 28 * yscale, false);
-    nst_video_text_draw(nsf.GetCopyright(), 4 * xscale, 40 * yscale, false);
-
-    char currentsong[10];
-    snprintf(currentsong, sizeof(currentsong), "%d / %d", nsf.GetCurrentSong() +1, nsf.GetNumSongs());
-    nst_video_text_draw(currentsong, 4 * xscale, 52 * yscale, false);
-
-    nst_ogl_render();*/
-}
-
-void nst_video_print(const char *text, int xpos, int ypos, int seconds, bool bg) {
+void VideoManager::text_print(const char *text, int xpos, int ypos, int seconds, bool bg) {
     snprintf(osdtext.textbuf, sizeof(osdtext.textbuf), "%s", text);
     osdtext.xpos = xpos;
     osdtext.ypos = ypos;
@@ -313,12 +274,12 @@ void nst_video_print(const char *text, int xpos, int ypos, int seconds, bool bg)
     osdtext.bg = bg;
 }
 
-void nst_video_print_time(const char *timebuf, bool drawtime) {
+void VideoManager::text_print_time(const char *timebuf, bool drawtime) {
     snprintf(osdtext.timebuf, sizeof(osdtext.timebuf), "%s", timebuf);
     osdtext.drawtime = drawtime;
 }
 
-void nst_video_text_draw(const char *text, int xpos, int ypos, bool bg) {
+void VideoManager::text_draw(const char *text, int xpos, int ypos, bool bg) {
     // Draw text on screen
     uint32_t w = 0xc0c0c0c0; // "White", actually Grey
     uint32_t b = 0x00000000; // Black
@@ -342,8 +303,9 @@ void nst_video_text_draw(const char *text, int xpos, int ypos, bool bg) {
         }
     }
 
+    // FIXME this code is terrible
     for (int tpos = 0; tpos < (8 * numchars); tpos+=8) {
-        nst_video_text_match(text, &letterxpos, &letterypos, letternum);
+        text_match(text, &letterxpos, &letterypos, letternum);
         for (int row = 0; row < 8; row++) { // Draw Rows
             for (int col = 0; col < 8; col++) { // Draw Columns
                 switch (nesfont[row + letterypos][col + letterxpos]) {
@@ -365,7 +327,7 @@ void nst_video_text_draw(const char *text, int xpos, int ypos, bool bg) {
     }
 }
 
-void nst_video_text_match(const char *text, int *xpos, int *ypos, int strpos) {
+void VideoManager::text_match(const char *text, int *xpos, int *ypos, int strpos) {
     // Match letters to draw on screen
     switch (text[strpos]) {
         case ' ': *xpos = 0; *ypos = 0; break;
