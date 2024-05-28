@@ -623,9 +623,6 @@ int main(int argc, char *argv[]) {
     audiomgr = new AudioManager(*jgm, *setmgr);
     videomgr = new VideoManager(*jgm, *setmgr);
 
-    // Set archive handler function pointer
-    //nst_archive_select = &fltkui_archive_select;
-
     inputmgr = new InputManager(*jgm, *setmgr);
     chtmgr = new CheatManager(*jgm);
 
@@ -642,7 +639,6 @@ int main(int argc, char *argv[]) {
     // Load a rom from the command line
     if (argc > 1 && argv[argc - 1][0] != '-') {
         fltkui_load_file(argv[argc - 1]);
-        //jgm->load_game(argv[argc - 1]);
         if (jgm->is_loaded()) {
             nstwin->label(jgm->get_gamename().c_str());
             FltkUi::enable_menu();
