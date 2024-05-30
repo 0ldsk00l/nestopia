@@ -27,6 +27,8 @@
 #include <iostream>
 #include <set>
 
+#include <epoxy/gl.h>
+
 #include <FL/Fl.H>
 #include <FL/Fl_Button.H>
 #include <FL/Fl_Double_Window.H>
@@ -125,7 +127,7 @@ static void fltkui_load_file(const char *filename) {
             jgm->load_game(arcname.c_str(), game);
         }
         else {
-            VideoManager::text_print("No valid files in archive", 8, 212, 2, true);
+            LogDriver::log(LogLevel::OSD, "No valid files in archive");
         }
     }
     else {
@@ -367,7 +369,7 @@ void NstGlArea::resize(int x, int y, int w, int h) {
 }
 
 void FltkUi::rehash() {
-    videomgr->rehash();
+    videomgr->rehash(true);
     audiomgr->rehash();
 }
 
@@ -443,6 +445,7 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 }
 
 static void quit_cb(Fl_Widget* w, void* userdata) {
+    videomgr->renderer_deinit();
     nstwin->hide();
 }
 
@@ -469,7 +472,7 @@ int NstWindow::handle(int e) {
 }
 
 void NstGlArea::draw() {
-    videomgr->ogl_render();
+    videomgr->render();
 }
 
 int NstGlArea::handle(int e) {
@@ -630,11 +633,12 @@ int main(int argc, char *argv[]) {
     nstwin->label("Nestopia UE");
     nstwin->show();
     menubar->show();
+
     glarea->make_current();
     glarea->show();
-    Fl::check();
+    videomgr->renderer_init();
 
-    videomgr->ogl_init();
+    Fl::check();
 
     // Load a rom from the command line
     if (argc > 1 && argv[argc - 1][0] != '-') {

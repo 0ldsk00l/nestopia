@@ -15,12 +15,14 @@ nestopia_CPPFLAGS = \
 	$(LIBARCHIVE_CFLAGS) \
 	$(SAMPLERATE_CFLAGS) \
 	$(SDL2_CFLAGS) \
+	$(LIBEPOXY_CFLAGS) \
 	$(FLTK_CFLAGS)
 nestopia_LDADD = \
 	$(ZLIB_LIBS) \
 	$(LIBARCHIVE_LIBS) \
 	$(SAMPLERATE_LIBS) \
 	$(SDL2_LIBS) \
+	$(LIBEPOXY_LIBS) \
 	$(FLTK_LIBS)
 
 ################
@@ -36,6 +38,9 @@ dist_palette_DATA = palettes/SONY_CXA2025AS_US.pal palettes/Royaltea.pal \
 	palettes/Magnum_FBX.pal palettes/PVM_Style_D93_FBX.pal \
 	palettes/Smooth_V2_FBX.pal
 
+shaderdir = $(datadir)/nestopia/shaders
+dist_shader_DATA = shaders/default.vs shaders/default.fs shaders/crtea.fs \
+	shaders/sharp-bilinear.fs
 
 # freedesktop.org-specific files
 desktopdir = $(datarootdir)/applications

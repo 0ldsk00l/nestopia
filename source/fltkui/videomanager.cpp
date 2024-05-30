@@ -22,15 +22,19 @@
 
 #include <cstdint>
 #include <cstring>
-
-#include <FL/gl.h>
+#include <filesystem>
 
 #include "videomanager.h"
+
+#include "logdriver.h"
 
 #include "font.h"
 #include "png.h"
 
 namespace {
+
+jg_videoinfo_t *vidinfo;
+uint32_t *videobuf;
 
 struct osdtext {
     int xpos;
@@ -42,77 +46,22 @@ struct osdtext {
     bool bg;
 } osdtext;
 
-jg_videoinfo_t *vidinfo;
-uint32_t *videobuf;
+// Dimensions
+struct _dimensions {
+    int ww; int wh;
+    float rw; float rh;
+    float xo; float yo;
+    float dpiscale;
+} dimensions;
 
+} // namespace
+
+VideoRenderer::VideoRenderer(SettingManager& setmgr)
+        : setmgr(setmgr) {
 }
 
-VideoManager::VideoManager(JGManager& jgm, SettingManager& setmgr)
-        : jgm(jgm), setmgr(setmgr) {
-    // Initialize video
-    vidinfo = jg_get_videoinfo();
-
-    videobuf = (uint32_t*)calloc(1, vidinfo->hmax * vidinfo->wmax * sizeof(uint32_t));
-    vidinfo->buf = (void*)&videobuf[0];
-
-    set_aspect();
-
-    int scale = setmgr.get_setting("v_scale")->val;
-    dimensions.ww = (aspect * vidinfo->h * scale) + 0.5;
-    dimensions.wh = (vidinfo->h * scale) + 0.5;
-    dimensions.rw = dimensions.ww;
-    dimensions.rh = dimensions.wh;
-    dimensions.dpiscale = 1.0;
-}
-
-VideoManager::~VideoManager() {
-    ogl_deinit();
-    if (videobuf) {
-        free(videobuf);
-    }
-}
-
-void VideoManager::set_aspect() {
-    switch (setmgr.get_setting("v_aspect")->val) {
-        case 0:
-            aspect = vidinfo->aspect;
-            break;
-        case 1:
-            if (jgm.get_setting("ntsc_filter")->val) {
-                aspect = 301/(double)vidinfo->h;
-            }
-            else {
-                aspect = vidinfo->w/(double)vidinfo->h;
-            }
-            break;
-        case 2:
-            aspect = 4.0/3.0;
-            break;
-        default: break;
-    }
-}
-
-void VideoManager::rehash() {
-    GLuint filter = setmgr.get_setting("v_linearfilter")->val ? GL_LINEAR : GL_NEAREST;
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-
-    set_aspect();
-    dimensions.rw = dimensions.ww;
-    dimensions.rh = dimensions.wh;
-
-    // Check which dimension to optimize
-    if (dimensions.rh * aspect > dimensions.rw)
-        dimensions.rh = dimensions.rw / aspect + 0.5;
-    else if (dimensions.rw / aspect > dimensions.rh)
-        dimensions.rw = dimensions.rh * aspect + 0.5;
-
-    // Store X and Y offsets
-    dimensions.xo = (dimensions.ww - dimensions.rw) / 2;
-    dimensions.yo = (dimensions.wh - dimensions.rh) / 2;
-}
-
-void VideoManager::ogl_init() {
+VideoRendererLegacy::VideoRendererLegacy(SettingManager& setmgr)
+        : VideoRenderer(setmgr) {
     // Generate texture for raw game output
     glEnable(GL_TEXTURE_2D);
     glGenTextures(1, &gl_texture_id);
@@ -124,7 +73,7 @@ void VideoManager::ogl_init() {
         vidinfo->wmax, vidinfo->hmax, 0, GL_BGRA, GL_UNSIGNED_BYTE,
         videobuf);
 
-    GLuint filter = setmgr.get_setting("v_linearfilter")->val ? GL_LINEAR : GL_NEAREST;
+    GLuint filter = setmgr.get_setting("v_postproc")->val ? GL_LINEAR : GL_NEAREST;
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
@@ -132,25 +81,103 @@ void VideoManager::ogl_init() {
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
 }
 
-void VideoManager::ogl_deinit() {
-    // Deinitialize OpenGL
+VideoRendererLegacy::~VideoRendererLegacy() {
     if (gl_texture_id) {
         glDeleteTextures(1, &gl_texture_id);
     }
 }
 
-void VideoManager::ogl_render() {
-    // OSD Text
-    if (osdtext.drawtext) {
-        text_draw(osdtext.textbuf, osdtext.xpos, osdtext.ypos, osdtext.bg);
-        osdtext.drawtext--;
+VideoRendererModern::VideoRendererModern(SettingManager& setmgr)
+        : VideoRenderer(setmgr) {
+    // Create Vertex Array Objects
+    glGenVertexArrays(1, &vao[0]);
+    glGenVertexArrays(1, &vao[1]);
+
+    // Create Vertex Buffer Objects
+    glGenBuffers(1, &vbo[0]);
+    glGenBuffers(1, &vbo[1]);
+
+    // Bind buffers for vertex buffer objects
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices),
+        vertices, GL_STATIC_DRAW);
+
+    GLfloat vertices_out[] = {
+        -1.0, -1.0, // Vertex 1 (X, Y) Left Bottom
+        -1.0, 1.0,  // Vertex 2 (X, Y) Left Top
+        1.0, -1.0,  // Vertex 3 (X, Y) Right Bottom
+        1.0, 1.0,   // Vertex 4 (X, Y) Right Top
+        0.0, 1.0,   // Texture 1 (X, Y) Left Bottom
+        0.0, 0.0,   // Texture 2 (X, Y) Left Top
+        1.0, 1.0,   // Texture 3 (X, Y) Right Bottom
+        1.0, 0.0,   // Texture 4 (X, Y) Right Top
+    };
+
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices_out),
+        vertices_out, GL_STATIC_DRAW);
+
+    // Bind vertex array and specify layout for first pass
+    glBindVertexArray(vao[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+
+    // Generate texture for raw game output
+    glGenTextures(1, &tex[0]);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+
+    // The full sized source image before any clipping
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+        vidinfo->wmax, vidinfo->hmax, 0, GL_BGRA, GL_UNSIGNED_BYTE,
+        videobuf);
+
+    // Create framebuffer
+    glGenFramebuffers(1, &framebuf);
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuf);
+
+    // Create texture to hold colour buffer
+    glGenTextures(1, &tex[1]);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex[1]);
+
+    // The framebuffer texture that is being rendered to offscreen, after clip
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+        vidinfo->w, vidinfo->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
+        tex[1], 0);
+
+    shader_setup();
+
+    ogl_refresh();
+}
+
+VideoRendererModern::~VideoRendererModern() {
+    if (gl_texture_id) {
+        glDeleteTextures(1, &gl_texture_id);
     }
 
-    if (osdtext.drawtime) {
-        text_draw(osdtext.timebuf, 208, 218, false);
+    if (framebuf) {
+        glDeleteFramebuffers(1, &framebuf);
     }
 
-    //jgrf_video_gl_refresh(); // Check for changes
+    for (size_t i = 0; i < NUMPASSES; ++i) {
+        if (shaderprog[i]) glDeleteProgram(shaderprog[i]);
+        if (tex[i]) glDeleteTextures(1, &tex[i]);
+        if (vao[i]) glDeleteVertexArrays(1, &vao[i]);
+        if (vbo[i]) glDeleteBuffers(1, &vbo[i]);
+    }
+}
+
+void VideoRendererLegacy::rehash(bool reset_shaders) {
+    if (reset_shaders) {
+        GLuint filter = setmgr.get_setting("v_postproc")->val ? GL_LINEAR : GL_NEAREST;
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+    }
+}
+
+void VideoRendererLegacy::ogl_refresh() {
     float top = (float)vidinfo->y / vidinfo->hmax;
     float bottom = 1.0 + top -
         ((vidinfo->hmax - (float)vidinfo->h) / vidinfo->hmax);
@@ -166,6 +193,20 @@ void VideoManager::ogl_render() {
         vertices[8] = vertices[10] = left;
         vertices[12] = vertices[14] = right;
     }
+}
+
+void VideoRendererLegacy::ogl_render() {
+    // OSD Text
+    if (osdtext.drawtext) {
+        text_draw(osdtext.textbuf, osdtext.xpos, osdtext.ypos, osdtext.bg);
+        osdtext.drawtext--;
+    }
+
+    if (osdtext.drawtime) {
+        text_draw(osdtext.timebuf, 208, 218, false);
+    }
+
+    ogl_refresh(); // Check for changes
 
     glPixelStorei(GL_UNPACK_ROW_LENGTH, vidinfo->p);
 
@@ -205,25 +246,333 @@ void VideoManager::ogl_render() {
     glEnd();
 }
 
-void VideoManager::get_dimensions(int *w, int *h) {
-    *w = dimensions.rw;
-    *h = dimensions.rh;
+void VideoRendererModern::rehash(bool reset_shaders) {
+    if (reset_shaders) {
+        shader_setup();
+    }
 }
 
-// FIXME maybe use std::tuple here
-void VideoManager::get_scaled_coords(int x, int y, int *xcoord, int *ycoord) {
-    float xscale = dimensions.rw / (vidinfo->aspect * vidinfo->h) / dimensions.dpiscale;
-    float yscale = dimensions.rh / vidinfo->h / dimensions.dpiscale;
-    float xo = dimensions.xo / dimensions.dpiscale;
-    float yo = dimensions.yo / dimensions.dpiscale;
-    *xcoord = (x - xo) / ((vidinfo->aspect * vidinfo->h * xscale)/(float)vidinfo->w);
-    *ycoord = ((y - yo) / yscale) + vidinfo->y;
+// Load a shader source file into memory
+const char* VideoRendererModern::shader_load(const char *filename) {
+    FILE *file = fopen(filename, "rb");
+
+    //if (!file)
+    //    jgrf_log(JG_LOG_ERR, "Could not open shader file, exiting...\n");
+
+    // Get the size of the shader source file
+    fseek(file, 0, SEEK_END);
+    size_t size = ftell(file);
+    rewind(file);
+
+    // Allocate memory to store the shader source including version string
+    GLchar *src = (GLchar*)calloc(size + SIZE_GLSLVER, sizeof(GLchar));
+    //if (!src)
+    //    jgrf_log(JG_LOG_ERR, "Could not allocate memory, exiting...\n");
+
+    // Allocate memory for the shader source without version string
+    GLchar *shader = (GLchar*)calloc(size + 1, sizeof(GLchar));
+
+    // Write version string into the buffer for the full shader source
+    //snprintf(src, SIZE_GLSLVER, "%s", settings[VIDEO_API].val ?
+    //    "#version 300 es\n" : "#version 330 core\n");
+    snprintf(src, SIZE_GLSLVER, "%s", "#version 330 core\n");
+
+    if (!shader || !fread(shader, size, sizeof(GLchar), file)) {
+        free(src);
+        fclose(file);
+        //jgrf_log(JG_LOG_ERR, "Could not open shader file, exiting...\n");
+        return NULL;
+    }
+
+    // Close file handle after reading
+    fclose(file);
+
+    // Append shader source to version string
+    src = strncat(src, shader, size + SIZE_GLSLVER);
+
+    // Free the shader source without version string
+    free(shader);
+
+    return src;
 }
 
-void VideoManager::resize(int w, int h) {
-    dimensions.ww = w;
-    dimensions.wh = h;
-    rehash();
+GLuint VideoRendererModern::shader_create(const char *vs, const char *fs) {
+    // If the binary is run from the source directory, shader path is PWD
+    std::string shaderpath{};
+    if (std::filesystem::exists(std::filesystem::path{"shaders/default.vs"})) {
+        shaderpath = std::string(std::getenv("PWD")) + "/shaders/";
+    }
+    else {
+        shaderpath = std::string(NST_DATADIR) + "/shaders/";
+    }
+
+    std::string vspath{shaderpath + std::string(vs)};
+    std::string fspath{shaderpath + std::string(fs)};
+
+    const GLchar *vsrc = shader_load(vspath.c_str());
+    const GLchar *fsrc = shader_load(fspath.c_str());
+    GLint err;
+
+    // Create and compile the vertex shader
+    GLuint vshader = glCreateShader(GL_VERTEX_SHADER);
+    glShaderSource(vshader, 1, &vsrc, NULL);
+    glCompileShader(vshader);
+
+    // Test if the shader compiled
+    glGetShaderiv(vshader, GL_COMPILE_STATUS, &err);
+    if (err == GL_FALSE) {
+        char shaderlog[1024];
+        glGetShaderInfoLog(vshader, 1024, NULL, shaderlog);
+        LogDriver::log(LogLevel::Warn, "Vertex shader: " + std::string(shaderlog));
+    }
+
+    // Create and compile the fragment shader
+    GLuint fshader = glCreateShader(GL_FRAGMENT_SHADER);
+    glShaderSource(fshader, 1, &fsrc, NULL);
+    glCompileShader(fshader);
+
+    // Test if the fragment shader compiled
+    glGetShaderiv(fshader, GL_COMPILE_STATUS, &err);
+    if (err == GL_FALSE) {
+        char shaderlog[1024];
+        glGetShaderInfoLog(fshader, 1024, NULL, shaderlog);
+        LogDriver::log(LogLevel::Warn, "Vertex shader: " + std::string(shaderlog));
+    }
+
+    // Free the allocated memory for shader sources
+    free((GLchar*)vsrc);
+    free((GLchar*)fsrc);
+
+    // Create the shader program
+    GLuint prog = glCreateProgram();
+    glAttachShader(prog, vshader);
+    glAttachShader(prog, fshader);
+    glLinkProgram(prog);
+
+    // Clean up fragment and vertex shaders
+    glDeleteShader(vshader);
+    glDeleteShader(fshader);
+
+    // Return the successfully linked shader program
+    return prog;
+}
+
+void VideoRendererModern::shader_setup(void) {
+    for (size_t i = 0; i < NUMPASSES; ++i) {
+        if (shaderprog[i]) {
+            glDeleteProgram(shaderprog[i]);
+        }
+        texfilter[i] = GL_NEAREST;
+    }
+
+    // Create the shader program for the first pass (clipping)
+    shaderprog[0] = shader_create("default.vs", "default.fs");
+
+    GLint posattrib = glGetAttribLocation(shaderprog[0], "position");
+    glEnableVertexAttribArray(posattrib);
+    glVertexAttribPointer(posattrib, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    GLint texattrib = glGetAttribLocation(shaderprog[0], "vtxCoord");
+    glEnableVertexAttribArray(texattrib);
+    glVertexAttribPointer(texattrib, 2, GL_FLOAT, GL_FALSE,
+                          0, (void*)(8 * sizeof(GLfloat)));
+
+    // Set up uniform for input texture
+    glUseProgram(shaderprog[0]);
+    glUniform1i(glGetUniformLocation(shaderprog[0], "source"), 0);
+
+    // Set up the post-processing shader
+    switch (setmgr.get_setting("v_postproc")->val) {
+        default: case 0: { // Nearest Neighbour
+            shaderprog[1] = shader_create("default.vs", "default.fs");
+            break;
+        }
+        case 1: { // Linear
+            shaderprog[1] = shader_create("default.vs", "default.fs");
+            texfilter[1] = GL_LINEAR;
+            break;
+        }
+        case 2: { // Sharp Bilinear
+            shaderprog[1] = shader_create("default.vs", "sharp-bilinear.fs");
+            texfilter[0] = GL_LINEAR;
+            texfilter[1] = GL_LINEAR;
+            break;
+        }
+        case 3: { // CRTea
+            shaderprog[1] = shader_create("default.vs", "crtea.fs");
+            break;
+        }
+    }
+
+    // Set texture parameters for input texture
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texfilter[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texfilter[0]);
+
+    // Bind vertex array and specify layout for second pass
+    glBindVertexArray(vao[1]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[1]);
+
+    GLint posattrib_out = glGetAttribLocation(shaderprog[1], "position");
+    glEnableVertexAttribArray(posattrib_out);
+    glVertexAttribPointer(posattrib_out, 2, GL_FLOAT, GL_FALSE, 0, 0);
+
+    GLint texattrib_out = glGetAttribLocation(shaderprog[1], "vtxCoord");
+    glEnableVertexAttribArray(texattrib_out);
+    glVertexAttribPointer(texattrib_out, 2, GL_FLOAT, GL_FALSE,
+                          0, (void*)(8 * sizeof(GLfloat)));
+
+    // Set up uniforms for post-processing texture
+    glUseProgram(shaderprog[1]);
+
+    glUniform1i(glGetUniformLocation(shaderprog[1], "source"), 0);
+    glUniform4f(glGetUniformLocation(shaderprog[1], "sourceSize"),
+                                     (float)vidinfo->w, (float)vidinfo->h,
+                                     1.0/(float)vidinfo->w, 1.0/(float)vidinfo->h);
+    glUniform4f(glGetUniformLocation(shaderprog[1], "targetSize"),
+                                     dimensions.rw, dimensions.rh,
+                                     1.0/dimensions.rw, 1.0/dimensions.rh);
+
+    // Settings for CRT
+    glUniform1i(glGetUniformLocation(shaderprog[1], "masktype"),
+                setmgr.get_setting("s_crtmasktype")->val);
+    glUniform1f(glGetUniformLocation(shaderprog[1], "maskstr"),
+                setmgr.get_setting("s_crtmaskstr")->val / 10.0);
+    glUniform1f(glGetUniformLocation(shaderprog[1], "scanstr"),
+                setmgr.get_setting("s_crtscanstr")->val / 10.0);
+    glUniform1f(glGetUniformLocation(shaderprog[1], "sharpness"),
+                float(setmgr.get_setting("s_crtsharp")->val));
+    glUniform1f(glGetUniformLocation(shaderprog[1], "curve"),
+                setmgr.get_setting("s_crtcurve")->val / 100.0);
+    glUniform1f(glGetUniformLocation(shaderprog[1], "corner"),
+                setmgr.get_setting("s_crtcorner")->val ?
+                float(setmgr.get_setting("s_crtcorner")->val) : -3.0);
+    glUniform1f(glGetUniformLocation(shaderprog[1], "tcurve"),
+                setmgr.get_setting("s_crttcurve")->val / 10.0);
+
+    // Set parameters for output texture
+    glBindTexture(GL_TEXTURE_2D, tex[1]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, texfilter[1]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, texfilter[1]);
+}
+
+void VideoRendererModern::ogl_render() {
+    // OSD Text
+    if (osdtext.drawtext) {
+        text_draw(osdtext.textbuf, osdtext.xpos, osdtext.ypos, osdtext.bg);
+        osdtext.drawtext--;
+    }
+
+    if (osdtext.drawtime) {
+        text_draw(osdtext.timebuf, 208, 218, false);
+    }
+
+    ogl_refresh(); // Check for changes
+
+    // Viewport set to size of the input pixel array
+    glViewport(0, 0, vidinfo->w, vidinfo->h);
+
+    // Make sure first pass shader program is active
+    glUseProgram(shaderprog[0]);
+
+    // Bind user-created framebuffer and draw scene onto it
+    glBindFramebuffer(GL_FRAMEBUFFER, framebuf);
+    glBindVertexArray(vao[0]);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+
+    // Render if there is new pixel data, do Black Frame Insertion otherwise
+    glTexSubImage2D(GL_TEXTURE_2D,
+            0,
+            0, // xoffset
+            0, // yoffset
+            vidinfo->w + vidinfo->x, // width
+            vidinfo->h + vidinfo->y, // height
+            GL_BGRA, // format
+            GL_UNSIGNED_BYTE, // type
+        videobuf);
+
+    // Clear the screen to black
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw a rectangle from the 2 triangles
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+
+    // Now deal with the actual image to be output
+    // Viewport adjusted for output
+    glViewport(dimensions.xo, dimensions.yo, dimensions.rw, dimensions.rh);
+
+    // Make sure second pass shader program is active
+    glUseProgram(shaderprog[1]);
+
+    // Bind default framebuffer and draw contents of user framebuffer
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glBindVertexArray(vao[1]);
+
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, tex[1]);
+
+    // Clear the screen to black again
+    glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Draw framebuffer contents
+    glDrawArrays(GL_TRIANGLE_STRIP, 0, 4);
+}
+
+void VideoRendererModern::ogl_refresh() {
+    float top = (float)vidinfo->y / vidinfo->hmax;
+    float bottom = 1.0 + top -
+        ((vidinfo->hmax - (float)vidinfo->h) / vidinfo->hmax);
+    float left = (float)vidinfo->x / vidinfo->wmax;
+    float right = 1.0 + left -
+        ((vidinfo->wmax -(float)vidinfo->w) / vidinfo->wmax);
+
+    // Check if any vertices have changed since last time
+    if (vertices[9] != top || vertices[11] != bottom
+        || vertices[8] != left || vertices[12] != right) {
+        vertices[9] = vertices[13] = top;
+        vertices[11] = vertices[15] = bottom;
+        vertices[8] = vertices[10] = left;
+        vertices[12] = vertices[14] = right;
+    }
+    else {
+        return;
+    }
+
+    // Bind the VAO/VBO for the offscreen texture, update with new vertex data
+    glBindVertexArray(vao[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo[0]);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+
+    // Resize the offscreen texture
+    glBindTexture(GL_TEXTURE_2D, tex[0]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+        vidinfo->wmax, vidinfo->hmax, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+
+    // Set row length
+    glUseProgram(shaderprog[0]);
+    glPixelStorei(GL_UNPACK_ROW_LENGTH, vidinfo->p);
+
+    // Resize the output texture
+    glUseProgram(shaderprog[1]);
+    glBindTexture(GL_TEXTURE_2D, tex[1]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA,
+        vidinfo->w, vidinfo->h, 0, GL_BGRA, GL_UNSIGNED_BYTE, NULL);
+
+    // Update uniforms for post-processing
+    glUniform4f(glGetUniformLocation(shaderprog[1], "sourceSize"),
+        (float)vidinfo->w, (float)vidinfo->h,
+        1.0/(float)vidinfo->w, 1.0/(float)vidinfo->h);
+    glUniform4f(glGetUniformLocation(shaderprog[1], "targetSize"),
+        dimensions.rw, dimensions.rh,
+        1.0/dimensions.rw, 1.0/dimensions.rh);
 }
 
 /*void video_screenshot_flip(unsigned char *pixels, int width, int height, int bytes) {
@@ -266,7 +615,7 @@ void video_screenshot(const char* filename) {
     free(pixels);
 }*/
 
-void VideoManager::text_print(const char *text, int xpos, int ypos, int seconds, bool bg) {
+void VideoRenderer::text_print(const char *text, int xpos, int ypos, int seconds, bool bg) {
     snprintf(osdtext.textbuf, sizeof(osdtext.textbuf), "%s", text);
     osdtext.xpos = xpos;
     osdtext.ypos = ypos;
@@ -274,12 +623,12 @@ void VideoManager::text_print(const char *text, int xpos, int ypos, int seconds,
     osdtext.bg = bg;
 }
 
-void VideoManager::text_print_time(const char *timebuf, bool drawtime) {
+void VideoRenderer::text_print_time(const char *timebuf, bool drawtime) {
     snprintf(osdtext.timebuf, sizeof(osdtext.timebuf), "%s", timebuf);
     osdtext.drawtime = drawtime;
 }
 
-void VideoManager::text_draw(const char *text, int xpos, int ypos, bool bg) {
+void VideoRenderer::text_draw(const char *text, int xpos, int ypos, bool bg) {
     // Draw text on screen
     uint32_t w = 0xc0c0c0c0; // "White", actually Grey
     uint32_t b = 0x00000000; // Black
@@ -327,7 +676,7 @@ void VideoManager::text_draw(const char *text, int xpos, int ypos, bool bg) {
     }
 }
 
-void VideoManager::text_match(const char *text, int *xpos, int *ypos, int strpos) {
+void VideoRenderer::text_match(const char *text, int *xpos, int *ypos, int strpos) {
     // Match letters to draw on screen
     switch (text[strpos]) {
         case ' ': *xpos = 0; *ypos = 0; break;
@@ -427,5 +776,110 @@ void VideoManager::text_match(const char *text, int *xpos, int *ypos, int strpos
         case '~': *xpos = 112; *ypos = 40; break;
         //case ' ': *xpos = 120; *ypos = 40; break; // Triangle
         default: *xpos = 0; *ypos = 0; break;
+    }
+}
+
+VideoManager::VideoManager(JGManager& jgm, SettingManager& setmgr)
+        : jgm(jgm), setmgr(setmgr) {
+    // Initialize video
+    vidinfo = jg_get_videoinfo();
+
+    videobuf = (uint32_t*)calloc(1, vidinfo->hmax * vidinfo->wmax * sizeof(uint32_t));
+    vidinfo->buf = (void*)&videobuf[0];
+
+    set_aspect();
+
+    int scale = setmgr.get_setting("v_scale")->val;
+    dimensions.ww = (aspect * vidinfo->h * scale) + 0.5;
+    dimensions.wh = (vidinfo->h * scale) + 0.5;
+    dimensions.rw = dimensions.ww;
+    dimensions.rh = dimensions.wh;
+    dimensions.dpiscale = 1.0;
+}
+
+VideoManager::~VideoManager() {
+    if (videobuf) {
+        free(videobuf);
+    }
+}
+
+void VideoManager::renderer_init() {
+    if (setmgr.get_setting("v_renderer")->val) {
+        renderer = new VideoRendererLegacy(setmgr);
+    }
+    else {
+        renderer = new VideoRendererModern(setmgr);
+    }
+}
+
+void VideoManager::renderer_deinit() {
+    if (renderer) {
+        delete renderer;
+        renderer = nullptr;
+    }
+}
+
+void VideoManager::render() {
+    renderer->ogl_render();
+}
+
+void VideoManager::get_dimensions(int *w, int *h) {
+    *w = dimensions.rw;
+    *h = dimensions.rh;
+}
+
+// FIXME maybe use std::tuple here
+void VideoManager::get_scaled_coords(int x, int y, int *xcoord, int *ycoord) {
+    float xscale = dimensions.rw / (vidinfo->aspect * vidinfo->h) / dimensions.dpiscale;
+    float yscale = dimensions.rh / vidinfo->h / dimensions.dpiscale;
+    float xo = dimensions.xo / dimensions.dpiscale;
+    float yo = dimensions.yo / dimensions.dpiscale;
+    *xcoord = (x - xo) / ((vidinfo->aspect * vidinfo->h * xscale)/(float)vidinfo->w);
+    *ycoord = ((y - yo) / yscale) + vidinfo->y;
+}
+
+void VideoManager::rehash(bool reset_shaders) {
+    renderer->rehash(reset_shaders);
+
+    set_aspect();
+    dimensions.rw = dimensions.ww;
+    dimensions.rh = dimensions.wh;
+
+    // Check which dimension to optimize
+    if (dimensions.rh * aspect > dimensions.rw) {
+        dimensions.rh = dimensions.rw / aspect + 0.5;
+    }
+    else if (dimensions.rw / aspect > dimensions.rh) {
+        dimensions.rw = dimensions.rh * aspect + 0.5;
+    }
+
+    // Store X and Y offsets
+    dimensions.xo = (dimensions.ww - dimensions.rw) / 2;
+    dimensions.yo = (dimensions.wh - dimensions.rh) / 2;
+}
+
+void VideoManager::resize(int w, int h) {
+    dimensions.ww = w;
+    dimensions.wh = h;
+    rehash();
+}
+
+void VideoManager::set_aspect() {
+    switch (setmgr.get_setting("v_aspect")->val) {
+        case 0:
+            aspect = vidinfo->aspect;
+            break;
+        case 1:
+            if (jgm.get_setting("ntsc_filter")->val) {
+                aspect = 301/(double)vidinfo->h;
+            }
+            else {
+                aspect = vidinfo->w/(double)vidinfo->h;
+            }
+            break;
+        case 2:
+            aspect = 4.0/3.0;
+            break;
+        default: break;
     }
 }

@@ -37,20 +37,25 @@
 namespace {
 
 jg_setting_t fe_settings[] = {
-    { "v_scale", "Initial Window Scale",
-      "N = Window scale factor at startup",
-      "Set the window's initial scale factor (multiple of NES resolution)",
-      2, 1, 16, FLAG_FRONTEND | JG_SETTING_RESTART
+    { "v_renderer", "Video Renderer",
+      "0 = Modern, 1 = Legacy",
+      "Use Modern (Core Profile) or Legacy (Compatibility Profile) OpenGL",
+      0, 0, 1, FLAG_FRONTEND | JG_SETTING_RESTART
     },
-    { "v_linearfilter", "Linear Filter",
-      "0 = Disable, 1 = Enable",
-      "Use the GPU's built-in linear filter for video output",
-      1, 0, 1, FLAG_FRONTEND
+    { "v_postproc", "Post-processing",
+      "0 = Nearest Neighbour, 1 = Linear, 2 = Sharp Bilinear, 3 = CRT",
+      "Select a video post-processing effect",
+      2, 0, 3, FLAG_FRONTEND
     },
     { "v_aspect", "Aspect Ratio",
       "0 = TV Correct, 1 = 1:1, 2 = 4:3",
       "Set the aspect ratio to the correct TV aspect, 1:1 (square pixels), or 4:3",
       0, 0, 2, FLAG_FRONTEND
+    },
+    { "v_scale", "Initial Window Scale",
+      "N = Window scale factor at startup",
+      "Set the window's initial scale factor (multiple of NES resolution)",
+      2, 1, 16, FLAG_FRONTEND | JG_SETTING_RESTART
     },
     { "a_rsqual", "Audio Resampler Quality",
       "0 = Sinc (Best), 1 = Sinc (Medium), 2 = Sinc (Fast), 3 = Zero Order Hold, 4 = Linear",
@@ -71,6 +76,42 @@ jg_setting_t fe_settings[] = {
       "0 = Disabled, 1 = Enabled",
       "Hide the crosshair when a Zapper is present",
       0, 0, 1, FLAG_FRONTEND
+    },
+    { "s_crtmasktype", "CRT Mask Type",
+      "0 = No Mask, 1 = Aperture Grille Lite, 2 = Aperture Grille, "
+      "3 = Shadow Mask",
+      "",
+      1, 0, 3, FLAG_FRONTEND
+    },
+    { "s_crtmaskstr", "CRT Mask Strength",
+      "N = CRT Mask Strength",
+      "",
+      5, 0, 10, FLAG_FRONTEND
+    },
+    { "s_crtscanstr", "CRT Scanline Strength",
+      "N = CRT Scanline Strength",
+      "",
+      6, 0, 10, FLAG_FRONTEND
+    },
+    { "s_crtsharp", "CRT Sharpness",
+      "N = CRT Sharpness",
+      "",
+      4, 0, 10, FLAG_FRONTEND
+    },
+    { "s_crtcurve", "CRT Curve",
+      "N = CRT Curvature",
+      "",
+      3, 0, 10, FLAG_FRONTEND
+    },
+    { "s_crtcorner", "CRT Corner",
+      "N = CRT Corner",
+      "",
+      3, 0, 10, FLAG_FRONTEND
+    },
+    { "s_crttcurve", "CRT Trinitron Curve",
+      "N = CRT Trinitron Curvature",
+      "",
+      10, 0, 10, FLAG_FRONTEND
     },
 };
 
