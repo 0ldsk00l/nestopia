@@ -48,9 +48,9 @@ jg_setting_t fe_settings[] = {
       2, 0, 3, FLAG_FRONTEND
     },
     { "v_aspect", "Aspect Ratio",
-      "0 = TV Correct, 1 = 1:1, 2 = 4:3",
-      "Set the aspect ratio to the correct TV aspect, 1:1 (square pixels), or 4:3",
-      0, 0, 2, FLAG_FRONTEND
+      "0 = Auto, 1 = 1:1, 2 = 4:3, 3 = 5:4",
+      "Set the aspect ratio to the correct TV aspect (Auto), 1:1 (square pixels), 4:3, or 5:4",
+      0, 0, 3, FLAG_FRONTEND
     },
     { "v_scale", "Initial Window Scale",
       "N = Window scale factor at startup",

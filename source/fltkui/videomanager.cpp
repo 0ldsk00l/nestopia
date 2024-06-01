@@ -880,6 +880,9 @@ void VideoManager::set_aspect() {
         case 2:
             aspect = 4.0/3.0;
             break;
+        case 3:
+            aspect = 5.0/4.0;
+            break;
         default: break;
     }
 }
