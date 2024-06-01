@@ -48,6 +48,10 @@ void UiAdapter::pause() {
 void UiAdapter::screenshot() {
 }
 
+void UiAdapter::quit() {
+    FltkUi::quit();
+}
+
 void UiAdapter::show_msgbox(bool show) {
     FltkUi::show_msgbox(show);
 }

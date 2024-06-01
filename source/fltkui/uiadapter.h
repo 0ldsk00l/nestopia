@@ -9,6 +9,7 @@ public:
     static void fastforward(bool ff);
     static void pause();
     static void screenshot();
+    static void quit();
     static void show_msgbox(bool show);
 
 private:

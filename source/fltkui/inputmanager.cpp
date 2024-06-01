@@ -43,11 +43,11 @@ jg_inputinfo_t *inputinfo[5];
 jg_inputstate_t uistate;
 jg_inputinfo_t uiinfo;
 
-constexpr size_t NDEFS_UI = 12;
+constexpr size_t NDEFS_UI = 13;
 const char *defs_ui[NDEFS_UI] = {
     "ResetSoft", "ResetHard", "FDSNextSide", "FDSInsertEject",
     "QuickSave1", "QuickSave2", "QuickLoad1", "QuickLoad2",
-    "Fullscreen", "Pause", "FastForward", "Screenshot"
+    "Fullscreen", "Pause", "FastForward", "Screenshot", "Quit"
 };
 
 bool uiprev[NDEFS_UI];
@@ -129,7 +129,8 @@ void InputManager::assign() {
         0xffbd + 6, 0xffbd + 7, 0xffbd + 8, 'f', 'p', '`', 0xffbd + 9
     };
 
-    for (size_t i = 0; i < NDEFS_UI; ++i) {
+    // -1 to prevent "Quit" from being defined by default
+    for (size_t i = 0; i < NDEFS_UI - 1; ++i) {
         // Keyboard/Mouse
         std::string val = setmgr.get_input("ui", uiinfo.defs[i]);
         if (val.empty()) {
@@ -486,6 +487,9 @@ void InputManager::ui_events() {
                     break;
                 case 11: // Screenshot
                     UiAdapter::screenshot();
+                    break;
+                case 12: // Quit
+                    UiAdapter::quit();
                     break;
             }
         }

@@ -444,7 +444,7 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
     while (about.shown()) { Fl::wait(); }
 }
 
-static void quit_cb(Fl_Widget* w, void* userdata) {
+void FltkUi::quit(Fl_Widget *w, void *data) {
     videomgr->renderer_deinit();
     nstwin->hide();
 }
@@ -533,7 +533,7 @@ static Fl_Menu_Item menutable[] = {
         {"Load Movie...", 0, fltkui_movie_load, 0, FL_MENU_INACTIVE},
         {"Record Movie...", 0, fltkui_movie_save, 0, FL_MENU_INACTIVE},
         {"Stop Movie", 0, fltkui_movie_stop, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"&Quit", FL_ALT + 'q', quit_cb, 0, 0},
+        {"&Quit", FL_ALT + 'q', FltkUi::quit, 0, 0},
         {0}, // End File
     {"&Emulator", FL_ALT + 'e', 0, 0, FL_SUBMENU},
         {"Pause", 0, fltkui_pause, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
