@@ -250,6 +250,14 @@ void VideoRendererModern::rehash(bool reset_shaders) {
     if (reset_shaders) {
         shader_setup();
     }
+
+    // Update uniforms for post-processing
+    glUniform4f(glGetUniformLocation(shaderprog[1], "sourceSize"),
+        (float)vidinfo->w, (float)vidinfo->h,
+        1.0/(float)vidinfo->w, 1.0/(float)vidinfo->h);
+    glUniform4f(glGetUniformLocation(shaderprog[1], "targetSize"),
+        dimensions.rw, dimensions.rh,
+        1.0/dimensions.rw, 1.0/dimensions.rh);
 }
 
 // Load a shader source file into memory
