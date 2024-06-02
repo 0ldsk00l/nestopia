@@ -40,7 +40,7 @@
 #include "core/api/NstApiCartridge.hpp"
 #include "core/api/NstApiUser.hpp"
 #include "core/api/NstApiFds.hpp"
-//#include "version.h"
+#include "version.h"
 
 #define SAMPLERATE 48000
 #define FRAMERATE 60.098814
@@ -65,7 +65,7 @@ static jg_cb_log_t jg_cb_log;
 static jg_cb_rumble_t jg_cb_rumble;
 
 static jg_coreinfo_t coreinfo = {
-    "nestopia", "Nestopia JG", "1.52.1", "nes", NUMINPUTS, 0
+    "nestopia", "Nestopia JG", JG_VERSION, "nes", NUMINPUTS, 0
 };
 
 static jg_fileinfo_t biosinfo;

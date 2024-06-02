@@ -56,6 +56,8 @@
 
 #include "logdriver.h"
 
+#include "version.h"
+
 namespace {
 
 int paused{0};
@@ -410,7 +412,7 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
     Fl_Box text0(0, 144, 460, UI_SPACING, "Nestopia UE");
     text0.labelfont(FL_BOLD);
 
-    Fl_Box text1(0, 166, 460, UI_SPACING, "1.52.1");
+    Fl_Box text1(0, 166, 460, UI_SPACING, JG_VERSION);
 
     Fl_Box text2(0, 208, 460, UI_SPACING, "Cycle-Accurate Nintendo Entertainment System Emulator");
 

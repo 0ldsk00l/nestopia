@@ -739,6 +739,7 @@ nestopia_SOURCES += \
 	source/fltkui/uiadapter.h \
 	source/fltkui/videomanager.cpp \
 	source/fltkui/videomanager.h \
+	source/fltkui/version.h \
 	source/fltkui/jg.cpp \
 	source/fltkui/jg/jg.h \
 	source/fltkui/jg/jg_nes.h
