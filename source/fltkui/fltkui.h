@@ -44,4 +44,6 @@ public:
     static void show_msgbox(bool show);
     static void fullscreen(Fl_Widget *w = nullptr, void *data = nullptr);
     static void quit(Fl_Widget *w = nullptr, void *data = nullptr);
+    static void about(Fl_Widget *w = nullptr, void *data = nullptr);
+    static void about_close(Fl_Widget *w = nullptr, void *data = nullptr);
 };

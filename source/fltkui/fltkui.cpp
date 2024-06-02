@@ -400,12 +400,12 @@ static void fltkui_fds_insert(Fl_Widget* w, void* userdata) {
     jg_media_insert();
 }
 
-static void fltkui_about_close(Fl_Widget* w, void* userdata) {
-    Fl_Window *about = (Fl_Window*)userdata;
+void FltkUi::about_close(Fl_Widget *w, void *data) {
+    Fl_Window *about = (Fl_Window*)data;
     about->hide();
 }
 
-static void fltkui_about(Fl_Widget* w, void* userdata) {
+void FltkUi::about(Fl_Widget *w, void *data) {
     Fl_Window about(460, 440);
     Fl_Box iconbox(166, 16, 128, 128);
 
@@ -416,34 +416,38 @@ static void fltkui_about(Fl_Widget* w, void* userdata) {
 
     Fl_Box text2(0, 208, 460, UI_SPACING, "Cycle-Accurate Nintendo Entertainment System Emulator");
 
-    Fl_Box text3(0, 256, 460, UI_SPACING, "FLTK Frontend\n(c) 2012-2024, R. Danbrook");
+    Fl_Box text3(0, 256, 460, UI_SPACING,
+                 "FLTK Frontend\n(c) 2012-2024, R. Danbrook");
     text3.labelsize(10);
 
-    Fl_Box text4(0, 320, 460, UI_SPACING, "Nestopia Emulator\n(c) 2020-2024, Rupert Carmichael\n(c) 2012-2020, Nestopia UE Contributors\n(c) 2003-2008, Martin Freij");
+    Fl_Box text4(0, 320, 460, UI_SPACING,
+                 "Nestopia Emulator\n"
+                 "(c) 2020-2024, Rupert Carmichael\n"
+                 "(c) 2012-2020, Nestopia UE Contributors\n"
+                 "(c) 2003-2008, Martin Freij");
     text4.labelsize(10);
 
     Fl_Box text5(0, 360, 460, UI_SPACING, "Icon based on drawing by Trollekop");
     text5.labelsize(10);
 
     // Set up the icon
-    char iconpath[512];
-    snprintf(iconpath, sizeof(iconpath), "%s/icons/hicolor/128x128/apps/nestopia.png", NST_DATAROOTDIR);
-    // Load the SVG from local source dir if make install hasn't been done
-    struct stat svgstat;
-    if (stat(iconpath, &svgstat) == -1) {
-        snprintf(iconpath, sizeof(iconpath), "icons/128/nestopia.png");
+    std::string iconpath{"icons/128/nestopia.png"};
+    if (!std::filesystem::exists(std::filesystem::path{iconpath})) {
+        iconpath = std::string(NST_DATAROOTDIR) + "/icons/hicolor/128x128/apps/nestopia.png";
     }
 
-    Fl_PNG_Image nsticon(iconpath);
+    Fl_PNG_Image nsticon(iconpath.c_str());
     iconbox.image(nsticon);
 
     Fl_Button close(360, 400, 80, UI_SPACING, "&Close");
     close.shortcut(FL_ALT + 'c');
-    close.callback(fltkui_about_close, (void*)&about);
+    close.callback(FltkUi::about_close, (void*)&about);
 
     about.set_modal();
     about.show();
-    while (about.shown()) { Fl::wait(); }
+    while (about.shown()) {
+        Fl::wait();
+    }
 }
 
 void FltkUi::quit(Fl_Widget *w, void *data) {
@@ -548,7 +552,7 @@ static Fl_Menu_Item menutable[] = {
         {"Settings...", 0, fltkui_settings, 0, 0},
         {0}, // End Emulator
     {"&Help", FL_ALT + 'h', 0, 0, FL_SUBMENU},
-        {"About", 0, fltkui_about, 0, 0},
+        {"About", 0, FltkUi::about, 0, 0},
         {0}, // End Help
     {0} // End Menu
 };
