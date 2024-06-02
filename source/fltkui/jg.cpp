@@ -48,8 +48,8 @@
 #define CHANNELS 1
 #define NUMINPUTS 5
 
-#define ASPECT_NTSC 1.3061224
-#define ASPECT_PAL 1.4257812
+#define ASPECT_NTSC 8.0 / 7.0
+#define ASPECT_PAL 7375000.0 / 5320342.5
 #define NTSC_FILTER_RATIO 2.3515625 // 602 / 256
 
 using namespace Nes::Api;
@@ -77,11 +77,11 @@ static jg_videoinfo_t vidinfo = {
     Video::Output::NTSC_WIDTH,  // wmax
     Video::Output::HEIGHT,      // hmax
     Video::Output::WIDTH,       // w
-    Video::Output::HEIGHT - 16, // h
+    Video::Output::HEIGHT,      // h
     0,                          // x
-    8,                          // y
+    0,                          // y
     Video::Output::NTSC_WIDTH,  // p
-    ASPECT_NTSC,                // aspect
+    (Video::Output::WIDTH * ASPECT_NTSC) / Video::Output::HEIGHT, // aspect
     NULL
 };
 
@@ -152,6 +152,26 @@ static jg_setting_t settings_nst[] = {
       "Set the NTSC Filter Mode",
       0, 0, 3, 0
     },
+    { "overscan_t", "Overscan Mask (Top)",
+      "N = Hide N pixels of Overscan (Top)",
+      "Hide N pixels of Overscan (Top)",
+      8, 0, 12, 0
+    },
+    { "overscan_b", "Overscan Mask (Bottom)",
+      "N = Hide N pixels of Overscan (Bottom)",
+      "Hide N pixels of Overscan (Bottom)",
+      8, 0, 12, 0
+    },
+    { "overscan_l", "Overscan Mask (Left)",
+      "N = Hide N pixels of Overscan (Left)",
+      "Hide N pixels of Overscan (Left)",
+      0, 0, 12, 0
+    },
+    { "overscan_r", "Overscan Mask (Right)",
+      "N = Hide N pixels of Overscan (Right)",
+      "Hide N pixels of Overscan (Right)",
+      0, 0, 12, 0
+    },
     { "favored_system", "Favored/System",
       "0 = NTSC, 1 = PAL, 2 = Famicom, 3 = Dendy",
       "Set the desired system in cases where a database entry does not exist",
@@ -196,6 +216,10 @@ enum {
     PALETTE,
     NTSC,
     NTSCMODE,
+    OVERSCAN_T,
+    OVERSCAN_B,
+    OVERSCAN_L,
+    OVERSCAN_R,
     FAVSYSTEM,
     FORCEREGION,
     RAMPOWERSTATE,
@@ -1000,7 +1024,21 @@ static void nst_params_video(void) {
     // Set up video parameters
     int renderwidth = settings_nst[NTSC].val ?
         Video::Output::NTSC_WIDTH : Video::Output::WIDTH;
-    vidinfo.w = renderwidth;
+
+    unsigned aspect_w = Video::Output::WIDTH - (settings_nst[OVERSCAN_L].val +
+        settings_nst[OVERSCAN_R].val);
+    unsigned w = renderwidth - (settings_nst[OVERSCAN_L].val +
+        settings_nst[OVERSCAN_R].val);
+    unsigned h = Video::Output::HEIGHT - (settings_nst[OVERSCAN_T].val +
+        settings_nst[OVERSCAN_B].val);
+
+    vidinfo.w = w;
+    vidinfo.h = h;
+    vidinfo.x = settings_nst[OVERSCAN_L].val;
+    vidinfo.y = settings_nst[OVERSCAN_T].val;
+
+    bool pal = Machine(emulator).GetMode() == Machine::PAL;
+    vidinfo.aspect = (aspect_w * (pal ? ASPECT_PAL : ASPECT_NTSC)) / (double)h;
 
     Video video(emulator);
     Video::RenderState renderState;
@@ -1300,12 +1338,10 @@ int jg_game_load(void) {
 
     // Adjustments for PAL mode
     if (machine.GetMode() == Machine::PAL) {
-        vidinfo.aspect = ASPECT_PAL;
         audinfo.spf = (SAMPLERATE / (unsigned)FRAMERATE_PAL) * CHANNELS;
         jg_cb_frametime(FRAMERATE_PAL);
     }
     else {
-        vidinfo.aspect = ASPECT_NTSC;
         audinfo.spf = (SAMPLERATE / (unsigned)FRAMERATE) * CHANNELS;
         jg_cb_frametime(FRAMERATE);
     }
