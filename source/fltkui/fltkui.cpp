@@ -79,9 +79,49 @@ CheatManager *chtmgr{nullptr};
 
 std::vector<uint8_t> game;
 
-}
+Fl_Menu_Item menutable[] = {
+    {"&File", FL_ALT + 'f', 0, 0, FL_SUBMENU},
+        {"Open", 0, FltkUi::rom_open, 0, FL_MENU_DIVIDER},
+        {"Load State...", 0, FltkUi::state_load, 0, FL_MENU_INACTIVE},
+        {"Save State...", 0, FltkUi::state_save, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Quick Load", 0, 0, 0, FL_SUBMENU|FL_MENU_INACTIVE},
+            {"Slot 0", 0, FltkUi::state_qload, (void*)"0", FL_MENU_INACTIVE},
+            {"Slot 1", 0, FltkUi::state_qload, (void*)"1", FL_MENU_INACTIVE},
+            {"Slot 2", 0, FltkUi::state_qload, (void*)"2", FL_MENU_INACTIVE},
+            {"Slot 3", 0, FltkUi::state_qload, (void*)"3", FL_MENU_INACTIVE},
+            {"Slot 4", 0, FltkUi::state_qload, (void*)"4", FL_MENU_INACTIVE},
+            {0},
+        {"Quick Save", 0, 0, 0, FL_SUBMENU|FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+            {"Slot 0", 0, FltkUi::state_qsave, (void*)"0", FL_MENU_INACTIVE},
+            {"Slot 1", 0, FltkUi::state_qsave, (void*)"1", FL_MENU_INACTIVE},
+            {"Slot 2", 0, FltkUi::state_qsave, (void*)"2", FL_MENU_INACTIVE},
+            {"Slot 3", 0, FltkUi::state_qsave, (void*)"3", FL_MENU_INACTIVE},
+            {"Slot 4", 0, FltkUi::state_qsave, (void*)"4", FL_MENU_INACTIVE},
+            {0},
+        {"Open Palette...", 0, FltkUi::palette_open, 0, FL_MENU_DIVIDER},
+        //{"Screenshot...", 0, fltkui_screenshot, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        /*{"Load Movie...", 0, fltkui_movie_load, 0, FL_MENU_INACTIVE},
+        {"Record Movie...", 0, fltkui_movie_save, 0, FL_MENU_INACTIVE},
+        {"Stop Movie", 0, fltkui_movie_stop, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},*/
+        {"&Quit", FL_ALT + 'q', FltkUi::quit, 0, 0},
+        {0}, // End File
+    {"&Emulator", FL_ALT + 'e', 0, 0, FL_SUBMENU},
+        {"Pause", 0, FltkUi::pause, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Reset (Soft)", 0, FltkUi::reset, (void*)"0", FL_MENU_INACTIVE},
+        {"Reset (Hard)", 0, FltkUi::reset, (void*)"1", FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Fullscreen", 0, FltkUi::fullscreen, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Switch Disk Side", 0, FltkUi::fds_next, 0, FL_MENU_INACTIVE},
+        {"Insert/Eject Disk", 0, FltkUi::fds_insert, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Cheats...", 0, FltkUi::chtwin_open, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Settings...", 0, FltkUi::setwin_open, 0, 0},
+        {0}, // End Emulator
+    {"&Help", FL_ALT + 'h', 0, 0, FL_SUBMENU},
+        {"About", 0, FltkUi::about, 0, 0},
+        {0}, // End Help
+    {0} // End Menu
+};
 
-static int fltkui_refreshrate(void) {
+int get_refreshrate(void) {
     // Get the screen refresh rate using an SDL window
     int refresh = 60;
     SDL_Window *sdlwin;
@@ -97,7 +137,9 @@ static int fltkui_refreshrate(void) {
     return refresh;
 }
 
-static void fltkui_cheats(Fl_Widget* w, void* userdata) {
+}
+
+void FltkUi::chtwin_open(Fl_Widget *w, void *data) {
     if (!jgm->is_loaded()) {
         return;
     }
@@ -106,11 +148,11 @@ static void fltkui_cheats(Fl_Widget* w, void* userdata) {
     chtwin->show();
 }
 
-static void fltkui_settings(Fl_Widget* w, void* userdata) {
+void FltkUi::setwin_open(Fl_Widget *w, void *data) {
     setwin->show();
 }
 
-static void fltkui_load_file(const char *filename) {
+void FltkUi::load_file(const char *filename) {
     // First, check if it's an archive
     std::set<std::string> archive_exts = { ".zip", ".7z", ".gz", ".bz2", ".xz", ".zst" };
     std::string fileext = std::filesystem::path(filename).extension().string();
@@ -148,7 +190,7 @@ static void fltkui_load_file(const char *filename) {
     }
 }
 
-static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
+void FltkUi::rom_open(Fl_Widget *w, void *data) {
     // Create native chooser
     Fl_Native_File_Chooser fc;
     fc.title("Select a ROM");
@@ -163,7 +205,7 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
         case 1: break; // Cancel
         default:
             if (fc.filename()) {
-                fltkui_load_file(fc.filename());
+                load_file(fc.filename());
 
                 if (jgm->is_loaded()) {
                     chtmgr->clear();
@@ -179,7 +221,7 @@ static void fltkui_rom_open(Fl_Widget* w, void* userdata) {
     }
 }
 
-static void fltkui_movie_load(Fl_Widget* w, void* userdata) {
+/*static void fltkui_movie_load(Fl_Widget* w, void* userdata) {
     // Create native chooser
     if (!jgm->is_loaded()) {
         return;
@@ -226,9 +268,9 @@ static void fltkui_movie_save(Fl_Widget* w, void* userdata) {
 
 static void fltkui_movie_stop(Fl_Widget* w, void* userdata) {
     //nst_movie_stop();
-}
+}*/
 
-static void fltkui_state_load(Fl_Widget* w, void* userdata) {
+void FltkUi::state_load(Fl_Widget *w, void *userdata) {
     // Create native chooser
     if (!jgm->is_loaded()) {
         return;
@@ -255,7 +297,7 @@ static void fltkui_state_load(Fl_Widget* w, void* userdata) {
     }
 }
 
-static void fltkui_state_save(Fl_Widget* w, void* userdata) {
+void FltkUi::state_save(Fl_Widget *w, void *data) {
     // Create native chooser
     if (!jgm->is_loaded()) {
         return;
@@ -276,7 +318,7 @@ static void fltkui_state_save(Fl_Widget* w, void* userdata) {
     jgm->state_save(statefile);
 }
 
-static void fltkui_screenshot(Fl_Widget* w, void* userdata) {
+/*static void fltkui_screenshot(Fl_Widget* w, void* userdata) {
     // Create native chooser
     if (!jgm->is_loaded()) {
         return;
@@ -294,9 +336,9 @@ static void fltkui_screenshot(Fl_Widget* w, void* userdata) {
     }
 
     //video_screenshot(fc.filename());
-}
+}*/
 
-static void fltkui_palette_open(Fl_Widget* w, void* userdata) {
+void FltkUi::palette_open(Fl_Widget *w, void *data) {
     // Create native chooser
     Fl_Native_File_Chooser fc;
     fc.title("Select a Palette");
@@ -325,17 +367,17 @@ static void fltkui_palette_open(Fl_Widget* w, void* userdata) {
     }
 }
 
-static void fltkui_state_qload(Fl_Widget* w, void* userdata) {
-    int slot = atoi((const char*)userdata);
+void FltkUi::state_qload(Fl_Widget *w, void *data) {
+    int slot = atoi((const char*)data);
     jgm->state_qload(slot);
 }
 
-static void fltkui_state_qsave(Fl_Widget* w, void* userdata) {
-    int slot = atoi((const char*)userdata);
+void FltkUi::state_qsave(Fl_Widget *w, void *data) {
+    int slot = atoi((const char*)data);
     jgm->state_qsave(slot);
 }
 
-static void fltkui_pause(Fl_Widget* w, void* userdata) {
+void FltkUi::pause(Fl_Widget *w, void *data) {
     paused ^= 1;
     if (paused) {
         audiomgr->pause();
@@ -349,8 +391,8 @@ static void fltkui_pause(Fl_Widget* w, void* userdata) {
     }
 }
 
-static void fltkui_reset(Fl_Widget* w, void* userdata) {
-    jgm->reset(atoi((const char*)userdata));
+void FltkUi::reset(Fl_Widget *w, void *data) {
+    jgm->reset(atoi((const char*)data));
 }
 
 void NstWindow::resize(int x, int y, int w, int h) {
@@ -392,11 +434,11 @@ void FltkUi::fullscreen(Fl_Widget *w, void *data) {
     }
 }
 
-static void fltkui_fds_next(Fl_Widget* w, void* userdata) {
+void FltkUi::fds_next(Fl_Widget *w, void *data) {
     jg_media_select();
 }
 
-static void fltkui_fds_insert(Fl_Widget* w, void* userdata) {
+void FltkUi::fds_insert(Fl_Widget *w, void *data) {
     jg_media_insert();
 }
 
@@ -455,8 +497,8 @@ void FltkUi::quit(Fl_Widget *w, void *data) {
     nstwin->hide();
 }
 
-// this is used to stop Esc from exiting the program:
-int handle(int e) {
+int FltkUi::handle(int e) {
+    // This is used to stop Esc from exiting the program
     return (e == FL_SHORTCUT); // eat all keystrokes
 }
 
@@ -515,48 +557,6 @@ int NstGlArea::handle(int e) {
     return Fl_Gl_Window::handle(e);
 }
 
-static Fl_Menu_Item menutable[] = {
-    {"&File", FL_ALT + 'f', 0, 0, FL_SUBMENU},
-        {"Open", 0, fltkui_rom_open, 0, FL_MENU_DIVIDER},
-        {"Load State...", 0, fltkui_state_load, 0, FL_MENU_INACTIVE},
-        {"Save State...", 0, fltkui_state_save, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Quick Load", 0, 0, 0, FL_SUBMENU|FL_MENU_INACTIVE},
-            {"Slot 0", 0, fltkui_state_qload, (void*)"0", FL_MENU_INACTIVE},
-            {"Slot 1", 0, fltkui_state_qload, (void*)"1", FL_MENU_INACTIVE},
-            {"Slot 2", 0, fltkui_state_qload, (void*)"2", FL_MENU_INACTIVE},
-            {"Slot 3", 0, fltkui_state_qload, (void*)"3", FL_MENU_INACTIVE},
-            {"Slot 4", 0, fltkui_state_qload, (void*)"4", FL_MENU_INACTIVE},
-            {0},
-        {"Quick Save", 0, 0, 0, FL_SUBMENU|FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-            {"Slot 0", 0, fltkui_state_qsave, (void*)"0", FL_MENU_INACTIVE},
-            {"Slot 1", 0, fltkui_state_qsave, (void*)"1", FL_MENU_INACTIVE},
-            {"Slot 2", 0, fltkui_state_qsave, (void*)"2", FL_MENU_INACTIVE},
-            {"Slot 3", 0, fltkui_state_qsave, (void*)"3", FL_MENU_INACTIVE},
-            {"Slot 4", 0, fltkui_state_qsave, (void*)"4", FL_MENU_INACTIVE},
-            {0},
-        {"Open Palette...", 0, fltkui_palette_open, 0, FL_MENU_DIVIDER},
-        {"Screenshot...", 0, fltkui_screenshot, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Load Movie...", 0, fltkui_movie_load, 0, FL_MENU_INACTIVE},
-        {"Record Movie...", 0, fltkui_movie_save, 0, FL_MENU_INACTIVE},
-        {"Stop Movie", 0, fltkui_movie_stop, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"&Quit", FL_ALT + 'q', FltkUi::quit, 0, 0},
-        {0}, // End File
-    {"&Emulator", FL_ALT + 'e', 0, 0, FL_SUBMENU},
-        {"Pause", 0, fltkui_pause, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Reset (Soft)", 0, fltkui_reset, (void*)"0", FL_MENU_INACTIVE},
-        {"Reset (Hard)", 0, fltkui_reset, (void*)"1", FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Fullscreen", 0, FltkUi::fullscreen, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Switch Disk Side", 0, fltkui_fds_next, 0, FL_MENU_INACTIVE},
-        {"Insert/Eject Disk", 0, fltkui_fds_insert, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Cheats...", 0, fltkui_cheats, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        {"Settings...", 0, fltkui_settings, 0, 0},
-        {0}, // End Emulator
-    {"&Help", FL_ALT + 'h', 0, 0, FL_SUBMENU},
-        {"About", 0, FltkUi::about, 0, 0},
-        {0}, // End Help
-    {0} // End Menu
-};
-
 void FltkUi::enable_menu() {
     for (int i = 0; i < menutable[0].size(); ++i) {
         menutable[i].activate();
@@ -567,12 +567,12 @@ void FltkUi::show_msgbox(bool show) {
     setwin->show_msgbox(show);
 }
 
-void makenstwin(const char *name) {
+void FltkUi::nstwin_open(const char *name) {
     int rw, rh;
     videomgr->set_dimensions();
     videomgr->get_dimensions(&rw, &rh);
 
-    Fl::add_handler(handle);
+    Fl::add_handler(FltkUi::handle);
 
     // Cheats Window
     chtwin = new NstChtWindow(720, 500, "Cheat Manager", *chtmgr);
@@ -622,7 +622,7 @@ int main(int argc, char *argv[]) {
         return 1;
     }
 
-    int refreshrate = fltkui_refreshrate();
+    int refreshrate = get_refreshrate();
 
     jgm = new JGManager();
 
@@ -638,7 +638,7 @@ int main(int argc, char *argv[]) {
 
     // Load a rom from the command line
     if (argc > 1 && argv[argc - 1][0] != '-') {
-        fltkui_load_file(argv[argc - 1]);
+        FltkUi::load_file(argv[argc - 1]);
         if (jgm->is_loaded()) {
             jg_setup_audio();
             jg_setup_video();
@@ -649,7 +649,7 @@ int main(int argc, char *argv[]) {
         video_fullscreen = 0;
     }
 
-    makenstwin(argv[0]);
+    FltkUi::nstwin_open(argv[0]);
 
     if (jgm->is_loaded()) {
         nstwin->label(jgm->get_gamename().c_str());
