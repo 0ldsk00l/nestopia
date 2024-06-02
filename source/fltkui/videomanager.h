@@ -86,6 +86,8 @@ public:
     ~VideoManager();
 
     void get_dimensions(int *w, int *h);
+    void set_dimensions();
+
     void get_scaled_coords(int x, int y, int *xcoord, int *ycoord);
 
     void rehash(bool reset_shaders = false);

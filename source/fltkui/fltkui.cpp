@@ -563,6 +563,7 @@ void FltkUi::show_msgbox(bool show) {
 
 void makenstwin(const char *name) {
     int rw, rh;
+    videomgr->set_dimensions();
     videomgr->get_dimensions(&rw, &rh);
 
     Fl::add_handler(handle);
@@ -629,23 +630,10 @@ int main(int argc, char *argv[]) {
     inputmgr = new InputManager(*jgm, *setmgr);
     chtmgr = new CheatManager(*jgm);
 
-    makenstwin(argv[0]);
-    nstwin->label("Nestopia UE");
-    nstwin->show();
-    menubar->show();
-
-    glarea->make_current();
-    glarea->show();
-    videomgr->renderer_init();
-
-    Fl::check();
-
     // Load a rom from the command line
     if (argc > 1 && argv[argc - 1][0] != '-') {
         fltkui_load_file(argv[argc - 1]);
         if (jgm->is_loaded()) {
-            nstwin->label(jgm->get_gamename().c_str());
-            FltkUi::enable_menu();
             jg_setup_audio();
             jg_setup_video();
             inputmgr->reassign();
@@ -654,6 +642,25 @@ int main(int argc, char *argv[]) {
     else if (video_fullscreen) {
         video_fullscreen = 0;
     }
+
+    makenstwin(argv[0]);
+
+    if (jgm->is_loaded()) {
+        nstwin->label(jgm->get_gamename().c_str());
+        FltkUi::enable_menu();
+    }
+    else {
+        nstwin->label("Nestopia UE");
+    }
+
+    nstwin->show();
+    menubar->show();
+
+    glarea->make_current();
+    glarea->show();
+    videomgr->renderer_init();
+
+    Fl::check();
 
     if (video_fullscreen) {
         video_fullscreen = 0;

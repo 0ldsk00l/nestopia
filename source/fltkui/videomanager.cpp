@@ -786,15 +786,6 @@ VideoManager::VideoManager(JGManager& jgm, SettingManager& setmgr)
 
     videobuf = (uint32_t*)calloc(1, vidinfo->hmax * vidinfo->wmax * sizeof(uint32_t));
     vidinfo->buf = (void*)&videobuf[0];
-
-    set_aspect();
-
-    int scale = setmgr.get_setting("v_scale")->val;
-    dimensions.ww = (aspect * vidinfo->h * scale) + 0.5;
-    dimensions.wh = (vidinfo->h * scale) + 0.5;
-    dimensions.rw = dimensions.ww;
-    dimensions.rh = dimensions.wh;
-    dimensions.dpiscale = 1.0;
 }
 
 VideoManager::~VideoManager() {
@@ -826,6 +817,31 @@ void VideoManager::render() {
 void VideoManager::get_dimensions(int *w, int *h) {
     *w = dimensions.rw;
     *h = dimensions.rh;
+}
+
+void VideoManager::set_dimensions() {
+    // Try to guess the correct video parameters if no game is loaded
+    if (!jgm.is_loaded()) {
+        int t = jgm.get_setting("overscan_t")->val;
+        int b = jgm.get_setting("overscan_b")->val;
+        int l = jgm.get_setting("overscan_l")->val;
+        int r = jgm.get_setting("overscan_r")->val;
+
+        vidinfo->w = vidinfo->w - (l + r);
+        vidinfo->h = vidinfo->h - (t + b);
+        vidinfo->x = l;
+        vidinfo->y = t;
+        vidinfo->aspect = (vidinfo->w * 8.0 / 7.0) / vidinfo->h; // NTSC
+    }
+
+    set_aspect();
+
+    int scale = setmgr.get_setting("v_scale")->val;
+    dimensions.ww = (aspect * vidinfo->h * scale) + 0.5;
+    dimensions.wh = (vidinfo->h * scale) + 0.5;
+    dimensions.rw = dimensions.ww;
+    dimensions.rh = dimensions.wh;
+    dimensions.dpiscale = 1.0;
 }
 
 // FIXME maybe use std::tuple here

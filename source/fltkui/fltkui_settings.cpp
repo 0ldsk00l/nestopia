@@ -141,6 +141,9 @@ void NstSettingsWindow::cb_slider(Fl_Widget *w, void *data) {
     }
     else {
         jgm.rehash();
+        if (std::string(setting->name).find("overscan") != std::string::npos) {
+            FltkUi::rehash();
+        }
     }
 }
 
