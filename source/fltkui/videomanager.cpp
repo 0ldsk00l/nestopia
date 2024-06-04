@@ -87,8 +87,8 @@ VideoRendererLegacy::~VideoRendererLegacy() {
     }
 }
 
-VideoRendererModern::VideoRendererModern(SettingManager& setmgr)
-        : VideoRenderer(setmgr) {
+VideoRendererModern::VideoRendererModern(SettingManager& setmgr, const std::string ver)
+        : VideoRenderer(setmgr), glslver(ver) {
     // Create Vertex Array Objects
     glGenVertexArrays(1, &vao[0]);
     glGenVertexArrays(1, &vao[1]);
@@ -281,9 +281,7 @@ const char* VideoRendererModern::shader_load(const char *filename) {
     GLchar *shader = (GLchar*)calloc(size + 1, sizeof(GLchar));
 
     // Write version string into the buffer for the full shader source
-    //snprintf(src, SIZE_GLSLVER, "%s", settings[VIDEO_API].val ?
-    //    "#version 300 es\n" : "#version 330 core\n");
-    snprintf(src, SIZE_GLSLVER, "%s", "#version 330 core\n");
+    snprintf(src, SIZE_GLSLVER, "%s", glslver.c_str());
 
     if (!shader || !fread(shader, size, sizeof(GLchar), file)) {
         free(src);
@@ -807,7 +805,37 @@ void VideoManager::renderer_init() {
         renderer = new VideoRendererLegacy(setmgr);
     }
     else {
-        renderer = new VideoRendererModern(setmgr);
+        const std::string ver_core{"#version 130\n"};
+        const std::string ver_es{"#version 300 es\n"};
+
+        // Build a test vertex shader to check version compatibility
+        auto shadertest = [](const std::string ver) -> bool {
+            GLuint nullshader = glCreateShader(GL_VERTEX_SHADER);
+            std::string nullsrc = ver + "void main() {}\n";
+            const char *c_str = nullsrc.c_str();
+
+            glShaderSource(nullshader, 1, &c_str, NULL);
+            glCompileShader(nullshader);
+
+            GLint err;
+            glGetShaderiv(nullshader, GL_COMPILE_STATUS, &err);
+            glDeleteShader(nullshader);
+
+            return err != GL_FALSE;
+        };
+
+        if (shadertest(ver_core)) {
+            renderer = new VideoRendererModern(setmgr, ver_core);
+            LogDriver::log(LogLevel::Debug, "OpenGL 3.1");
+        }
+        else if (shadertest(ver_es)) {
+            renderer = new VideoRendererModern(setmgr, ver_es);
+            LogDriver::log(LogLevel::Debug, "OpenGL ES 3.0");
+        }
+        else {
+            renderer = new VideoRendererLegacy(setmgr);
+            LogDriver::log(LogLevel::Warn, "Legacy OpenGL (Fallback)");
+        }
     }
 }
 

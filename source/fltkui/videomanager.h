@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 #include <epoxy/gl.h>
 
 #include "setmanager.h"
@@ -55,7 +57,7 @@ public:
 class VideoRendererModern : public VideoRenderer {
 public:
     VideoRendererModern() = delete;
-    VideoRendererModern(SettingManager& setmgr);
+    VideoRendererModern(SettingManager& setmgr, const std::string ver);
     ~VideoRendererModern() override;
 
     void ogl_render() override;
@@ -70,6 +72,8 @@ private:
 
     static constexpr size_t NUMPASSES = 2;
     #define SIZE_GLSLVER 20
+
+    std::string glslver{};
 
     GLuint vao[NUMPASSES];
     GLuint vbo[NUMPASSES];
