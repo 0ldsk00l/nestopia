@@ -25,6 +25,7 @@
 #include <filesystem>
 #include <fstream>
 #include <iostream>
+#include <regex>
 #include <set>
 
 #include <epoxy/gl.h>
@@ -552,6 +553,23 @@ int NstGlArea::handle(int e) {
             inputmgr->event(xc, yc);
             inputmgr->event(Fl::event_button() + 1000, Fl::event_state() ? true : false);
             break;
+        case FL_DND_ENTER: // return 1 for these events to accept Drag and Drop
+        case FL_DND_DRAG:
+        case FL_DND_RELEASE:
+            return 1;
+        case FL_PASTE: { // handle the actual drop event
+            std::string filepath{std::regex_replace(std::string(Fl::event_text()),
+                                                    std::regex("\\n|file://"), "")};
+            FltkUi::load_file(filepath.c_str());
+            if (jgm->is_loaded()) {
+                FltkUi::enable_menu();
+                nstwin->label(jgm->get_gamename().c_str());
+                jg_setup_audio();
+                jg_setup_video();
+                inputmgr->reassign();
+            }
+            return 1;
+        }
     }
 
     return Fl_Gl_Window::handle(e);
