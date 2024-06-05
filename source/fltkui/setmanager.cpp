@@ -39,12 +39,13 @@ namespace {
 jg_setting_t fe_settings[] = {
     { "v_renderer", "Video Renderer",
       "0 = Modern, 1 = Legacy",
-      "Use Modern (Core Profile) or Legacy (Compatibility Profile) OpenGL",
+      "Use Modern (Core Profile, GLES) or Legacy (Compatibility Profile) OpenGL. "
+      "Use Modern unless you are on extremely weak or incapable hardware.",
       0, 0, 1, FLAG_FRONTEND | JG_SETTING_RESTART
     },
     { "v_postproc", "Post-processing",
       "0 = Nearest Neighbour, 1 = Linear, 2 = Sharp Bilinear, 3 = CRT",
-      "Select a video post-processing effect",
+      "Select a video post-processing effect. Advanced effects are only available to the Modern renderer.",
       2, 0, 3, FLAG_FRONTEND
     },
     { "v_aspect", "Aspect Ratio",
@@ -57,7 +58,7 @@ jg_setting_t fe_settings[] = {
       "Set the window's initial scale factor (multiple of NES resolution)",
       2, 1, 16, FLAG_FRONTEND | JG_SETTING_RESTART
     },
-    { "a_rsqual", "Audio Resampler Quality",
+    { "a_rsqual", "Audio Resampler",
       "0 = Sinc (Best), 1 = Sinc (Medium), 2 = Sinc (Fast), 3 = Zero Order Hold, 4 = Linear",
       "Set the frontend's audio resampling quality. Use Sinc unless you are on extremely weak hardware.",
       2, 0, 4, FLAG_FRONTEND
