@@ -66,12 +66,10 @@ public:
     void rehash(bool reset_shaders = false) override;
 
 private:
-    GLuint shader_create(const char *vs, const char *fs);
+    GLuint shader_create(const std::string& vs, const std::string& fs);
     void shader_setup(void);
-    const char* shader_load(const char *filename);
 
     static constexpr size_t NUMPASSES = 2;
-    #define SIZE_GLSLVER 20
 
     std::string glslver{};
 

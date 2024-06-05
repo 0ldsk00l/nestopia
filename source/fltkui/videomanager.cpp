@@ -20,9 +20,9 @@
  *
  */
 
-#include <cstdint>
-#include <cstring>
 #include <filesystem>
+#include <sstream>
+#include <fstream>
 
 #include "videomanager.h"
 
@@ -260,49 +260,7 @@ void VideoRendererModern::rehash(bool reset_shaders) {
         1.0/dimensions.rw, 1.0/dimensions.rh);
 }
 
-// Load a shader source file into memory
-const char* VideoRendererModern::shader_load(const char *filename) {
-    FILE *file = fopen(filename, "rb");
-
-    //if (!file)
-    //    jgrf_log(JG_LOG_ERR, "Could not open shader file, exiting...\n");
-
-    // Get the size of the shader source file
-    fseek(file, 0, SEEK_END);
-    size_t size = ftell(file);
-    rewind(file);
-
-    // Allocate memory to store the shader source including version string
-    GLchar *src = (GLchar*)calloc(size + SIZE_GLSLVER, sizeof(GLchar));
-    //if (!src)
-    //    jgrf_log(JG_LOG_ERR, "Could not allocate memory, exiting...\n");
-
-    // Allocate memory for the shader source without version string
-    GLchar *shader = (GLchar*)calloc(size + 1, sizeof(GLchar));
-
-    // Write version string into the buffer for the full shader source
-    snprintf(src, SIZE_GLSLVER, "%s", glslver.c_str());
-
-    if (!shader || !fread(shader, size, sizeof(GLchar), file)) {
-        free(src);
-        fclose(file);
-        //jgrf_log(JG_LOG_ERR, "Could not open shader file, exiting...\n");
-        return NULL;
-    }
-
-    // Close file handle after reading
-    fclose(file);
-
-    // Append shader source to version string
-    src = strncat(src, shader, size + SIZE_GLSLVER);
-
-    // Free the shader source without version string
-    free(shader);
-
-    return src;
-}
-
-GLuint VideoRendererModern::shader_create(const char *vs, const char *fs) {
+GLuint VideoRendererModern::shader_create(const std::string& vs, const std::string& fs) {
     // If the binary is run from the source directory, shader path is PWD
     std::string shaderpath{};
     if (std::filesystem::exists(std::filesystem::path{"shaders/default.vs"})) {
@@ -312,12 +270,22 @@ GLuint VideoRendererModern::shader_create(const char *vs, const char *fs) {
         shaderpath = std::string(NST_DATADIR) + "/shaders/";
     }
 
-    std::string vspath{shaderpath + std::string(vs)};
-    std::string fspath{shaderpath + std::string(fs)};
+    auto shader_load = [this](const std::string filename) -> std::string {
+        std::ifstream shader_file(filename);
+        if (shader_file.is_open()) {
+            std::stringstream buffer;
+            buffer << shader_file.rdbuf();
+            shader_file.close();
+            return glslver + buffer.str();
+        }
+        return {};
+    };
 
-    const GLchar *vsrc = shader_load(vspath.c_str());
-    const GLchar *fsrc = shader_load(fspath.c_str());
-    GLint err;
+    std::string vssrc = shader_load(shaderpath + vs);
+    const GLchar *vsrc = vssrc.c_str();
+
+    std::string fssrc = shader_load(shaderpath + fs);
+    const GLchar *fsrc = fssrc.c_str();
 
     // Create and compile the vertex shader
     GLuint vshader = glCreateShader(GL_VERTEX_SHADER);
@@ -325,6 +293,7 @@ GLuint VideoRendererModern::shader_create(const char *vs, const char *fs) {
     glCompileShader(vshader);
 
     // Test if the shader compiled
+    GLint err;
     glGetShaderiv(vshader, GL_COMPILE_STATUS, &err);
     if (err == GL_FALSE) {
         char shaderlog[1024];
@@ -344,10 +313,6 @@ GLuint VideoRendererModern::shader_create(const char *vs, const char *fs) {
         glGetShaderInfoLog(fshader, 1024, NULL, shaderlog);
         LogDriver::log(LogLevel::Warn, "Vertex shader: " + std::string(shaderlog));
     }
-
-    // Free the allocated memory for shader sources
-    free((GLchar*)vsrc);
-    free((GLchar*)fsrc);
 
     // Create the shader program
     GLuint prog = glCreateProgram();
