@@ -56,7 +56,7 @@ jg_setting_t fe_settings[] = {
     { "v_scale", "Initial Window Scale",
       "N = Window scale factor at startup",
       "Set the window's initial scale factor (multiple of NES resolution)",
-      2, 1, 16, FLAG_FRONTEND | JG_SETTING_RESTART
+      3, 1, 16, FLAG_FRONTEND | JG_SETTING_RESTART
     },
     { "a_rsqual", "Audio Resampler",
       "0 = Sinc (Best), 1 = Sinc (Medium), 2 = Sinc (Fast), 3 = Zero Order Hold, 4 = Linear",
@@ -82,7 +82,7 @@ jg_setting_t fe_settings[] = {
       "0 = No Mask, 1 = Aperture Grille Lite, 2 = Aperture Grille, "
       "3 = Shadow Mask",
       "",
-      1, 0, 3, FLAG_FRONTEND
+      0, 0, 3, FLAG_FRONTEND
     },
     { "s_crtmaskstr", "CRT Mask Strength",
       "N = CRT Mask Strength",
@@ -97,7 +97,7 @@ jg_setting_t fe_settings[] = {
     { "s_crtsharp", "CRT Sharpness",
       "N = CRT Sharpness",
       "",
-      4, 0, 10, FLAG_FRONTEND
+      3, 0, 10, FLAG_FRONTEND
     },
     { "s_crtcurve", "CRT Curve",
       "N = CRT Curvature",
