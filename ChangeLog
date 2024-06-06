@@ -1,4 +1,24 @@
 ----------------------------------------------------------------
+Upcoming
+----------------------------------------------------------------
+Shell:
+
+  Changes:
+   - FLTK: Major rewrite to become a Nestopia-specific "Jolly Good API" frontend
+   - FLTK: Use libsamplerate directly instead of relying on SDL's abstraction
+   - FLTK: Better looking theme
+   - FLTK: Window is freely resizable and the image scales to the window size
+
+  Additions:
+   - FLTK: Support for significantly more input devices
+   - FLTK: Joystick hotplugging
+   - FLTK: All UI controls may be assigned to a joystick button
+   - FLTK: Aspect ratio options
+   - FLTK: OpenGL 3.1/GLES 3.0 renderer with shaders
+   - FLTK: Configurable overscan masking on all edges
+   - FLTK: Drag and Drop support
+
+----------------------------------------------------------------
 1.52.1
 ----------------------------------------------------------------
 Shell:
