@@ -373,6 +373,14 @@ void VideoRendererModern::shader_setup(void) {
             shaderprog[1] = shader_create("default.vs", "crtea.fs");
             break;
         }
+        case 4: { // MMPX
+            shaderprog[1] = shader_create("default.vs", "mmpx.fs");
+            break;
+        }
+        case 5: { // Omniscale
+            shaderprog[1] = shader_create("default.vs", "omniscale.fs");
+            break;
+        }
     }
 
     // Set texture parameters for input texture

@@ -44,9 +44,9 @@ jg_setting_t fe_settings[] = {
       0, 0, 1, FLAG_FRONTEND | JG_SETTING_RESTART
     },
     { "v_postproc", "Post-processing",
-      "0 = Nearest Neighbour, 1 = Linear, 2 = Sharp Bilinear, 3 = CRT",
+      "0 = Nearest Neighbour, 1 = Linear, 2 = Sharp Bilinear, 3 = CRT, 4 = MMPX, 5 = OmniScale",
       "Select a video post-processing effect. Advanced effects are only available to the Modern renderer.",
-      2, 0, 3, FLAG_FRONTEND
+      2, 0, 5, FLAG_FRONTEND
     },
     { "v_aspect", "Aspect Ratio",
       "0 = Auto, 1 = 1:1, 2 = 4:3, 3 = 5:4",

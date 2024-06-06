@@ -40,7 +40,7 @@ dist_palette_DATA = palettes/SONY_CXA2025AS_US.pal palettes/Royaltea.pal \
 
 shaderdir = $(datadir)/nestopia/shaders
 dist_shader_DATA = shaders/default.vs shaders/default.fs shaders/crtea.fs \
-	shaders/sharp-bilinear.fs
+	shaders/sharp-bilinear.fs shaders/mmpx.fs shaders/omniscale.fs
 
 # freedesktop.org-specific files
 desktopdir = $(datarootdir)/applications
