@@ -29,7 +29,6 @@
 #include "logdriver.h"
 
 #include "font.h"
-#include "png.h"
 
 namespace {
 

@@ -727,10 +727,10 @@ nestopia_SOURCES += \
 	source/fltkui/inputmanager.cpp \
 	source/fltkui/inputmanager.h \
 	source/fltkui/font.h \
+	source/fltkui/lodepng.cpp \
+	source/fltkui/lodepng.h \
 	source/fltkui/logdriver.cpp \
 	source/fltkui/logdriver.h \
-	source/fltkui/png.cpp \
-	source/fltkui/png.h \
 	source/fltkui/jgmanager.cpp \
 	source/fltkui/jgmanager.h \
 	source/fltkui/setmanager.cpp \
