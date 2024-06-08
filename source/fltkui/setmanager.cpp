@@ -81,37 +81,38 @@ jg_setting_t fe_settings[] = {
     { "s_crtmasktype", "CRT Mask Type",
       "0 = No Mask, 1 = Aperture Grille Lite, 2 = Aperture Grille, "
       "3 = Shadow Mask",
-      "",
+      "Set the type of CRT mask. Set no mask for pure scanlines, or use Aperture "
+      "Grille or Shadow Mask options to mimic the appearance of a real CRT screen.",
       0, 0, 3, FLAG_FRONTEND
     },
     { "s_crtmaskstr", "CRT Mask Strength",
       "N = CRT Mask Strength",
-      "",
+      "Set the strength of the CRT mask",
       5, 0, 10, FLAG_FRONTEND
     },
     { "s_crtscanstr", "CRT Scanline Strength",
       "N = CRT Scanline Strength",
-      "",
+      "Set the strength of the scanlines",
       6, 0, 10, FLAG_FRONTEND
     },
     { "s_crtsharp", "CRT Sharpness",
       "N = CRT Sharpness",
-      "",
+      "Set the level of blur/sharpness",
       3, 0, 10, FLAG_FRONTEND
     },
     { "s_crtcurve", "CRT Curve",
       "N = CRT Curvature",
-      "",
+      "Set the level of screen curvature on the horizontal and vertical axes",
       3, 0, 10, FLAG_FRONTEND
     },
     { "s_crtcorner", "CRT Corner",
       "N = CRT Corner",
-      "",
+      "Set the size of the corner mask",
       3, 0, 10, FLAG_FRONTEND
     },
     { "s_crttcurve", "CRT Trinitron Curve",
       "N = CRT Trinitron Curvature",
-      "",
+      "Set the level of Trinitron Curvature, which reduces the curve on the vertical axis",
       10, 0, 10, FLAG_FRONTEND
     },
 };
