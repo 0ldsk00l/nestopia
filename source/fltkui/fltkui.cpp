@@ -119,6 +119,17 @@ Fl_Menu_Item menutable[] = {
     {0} // End Menu
 };
 
+Fl_Menu_Item *get_menuitem(std::string label) {
+    Fl_Menu_Item *m = menutable->first();
+    for (int i = 0; i < menutable->size(); ++i) {
+        if (m->label() != nullptr && std::string(m->label()) == label) {
+            return m;
+        }
+        ++m;
+    }
+    return nullptr;
+}
+
 int get_refreshrate(void) {
     // Get the screen refresh rate using an SDL window
     int refresh = 60;
@@ -340,17 +351,26 @@ void FltkUi::state_qsave(Fl_Widget *w, void *data) {
 }
 
 void FltkUi::pause(Fl_Widget *w, void *data) {
+    Fl_Menu_Item* m = nullptr;
+
+    m = w ? const_cast<Fl_Menu_Item*>(((Fl_Menu_Bar*)w)->mvalue()) :
+            get_menuitem(paused ? "Play" : "Pause");
+
+    if (m == nullptr) {
+        LogDriver::log(LogLevel::Warn, "Menu item does not exist");
+        return;
+    }
+
     paused ^= 1;
+
     if (paused) {
         audiomgr->pause();
-        Fl_Menu_Item* m = const_cast<Fl_Menu_Item*>(((Fl_Menu_Bar*)w)->mvalue());
-        m->label("Play");
     }
     else {
         audiomgr->unpause();
-        Fl_Menu_Item* m = const_cast<Fl_Menu_Item*>(((Fl_Menu_Bar*)w)->mvalue());
-        m->label("Pause");
     }
+
+    m->label(paused ? "Play" : "Pause");
 }
 
 void FltkUi::reset(Fl_Widget *w, void *data) {

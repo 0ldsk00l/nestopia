@@ -43,6 +43,7 @@ void UiAdapter::fastforward(bool on) {
 }
 
 void UiAdapter::pause() {
+    FltkUi::pause();
 }
 
 void UiAdapter::screenshot() {
