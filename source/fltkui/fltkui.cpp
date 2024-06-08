@@ -21,6 +21,7 @@
  */
 
 #include <algorithm>
+#include <chrono>
 #include <cstdio>
 #include <filesystem>
 #include <fstream>
@@ -100,7 +101,7 @@ Fl_Menu_Item menutable[] = {
             {"Slot 4", 0, FltkUi::state_qsave, (void*)"4", FL_MENU_INACTIVE},
             {0},
         {"Open Palette...", 0, FltkUi::palette_open, 0, FL_MENU_DIVIDER},
-        //{"Screenshot...", 0, fltkui_screenshot, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Screenshot...", 0, FltkUi::screenshot_save, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
         /*{"Load Movie...", 0, fltkui_movie_load, 0, FL_MENU_INACTIVE},
         {"Record Movie...", 0, fltkui_movie_save, 0, FL_MENU_INACTIVE},
         {"Stop Movie", 0, fltkui_movie_stop, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},*/
@@ -220,6 +221,39 @@ void FltkUi::rom_open(Fl_Widget *w, void *data) {
             }
             break;
     }
+}
+
+void FltkUi::screenshot(std::string filename) {
+    if (filename.empty()) {
+        auto now = std::chrono::system_clock::now();
+        auto epoch = std::chrono::system_clock::from_time_t(0);
+        auto duration = std::chrono::duration_cast<std::chrono::milliseconds>
+                                                  (now.time_since_epoch()).count();
+        std::string msecs = std::to_string(duration);
+        filename = jgm->get_basepath() + "/screenshots/" + msecs + ".png";
+    }
+    videomgr->screenshot(filename);
+    LogDriver::log(LogLevel::OSD, "Screenshot Saved");
+}
+
+void FltkUi::screenshot_save(Fl_Widget *w, void *data) {
+    // Create native chooser
+    if (!jgm->is_loaded()) {
+        return;
+    }
+
+    Fl_Native_File_Chooser fc;
+    fc.title("Save Screenshot");
+    fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
+    fc.filter("Screenshots\t*.png");
+    fc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
+
+    // Show file chooser
+    if (fc.show()) {
+        return;
+    }
+
+    screenshot(fc.filename());
 }
 
 /*static void fltkui_movie_load(Fl_Widget* w, void* userdata) {

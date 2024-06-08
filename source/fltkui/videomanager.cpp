@@ -25,10 +25,10 @@
 #include <fstream>
 
 #include "videomanager.h"
-
 #include "logdriver.h"
 
 #include "font.h"
+#include "lodepng.h"
 
 namespace {
 
@@ -553,46 +553,6 @@ void VideoRendererModern::ogl_refresh() {
         1.0/dimensions.rw, 1.0/dimensions.rh);
 }
 
-/*void video_screenshot_flip(unsigned char *pixels, int width, int height, int bytes) {
-    // Flip the pixels
-    int rowsize = width * bytes;
-    unsigned char *row = (unsigned char*)malloc(rowsize);
-    unsigned char *low = pixels;
-    unsigned char *high = &pixels[(height - 1) * rowsize];
-
-    for (; low < high; low += rowsize, high -= rowsize) {
-        memcpy(row, low, rowsize);
-        memcpy(low, high, rowsize);
-        memcpy(high, row, rowsize);
-    }
-    free(row);
-}
-
-void video_screenshot(const char* filename) {
-    // Take a screenshot in .png format
-    unsigned char *pixels;
-    pixels = (unsigned char*)malloc(sizeof(unsigned char) * rendersize.w * rendersize.h * 4);
-
-    // Read the pixels and flip them vertically
-    glReadPixels(0, 0, rendersize.w, rendersize.h, GL_RGBA, GL_UNSIGNED_BYTE, pixels);
-    video_screenshot_flip(pixels, rendersize.w, rendersize.h, 4);
-
-    if (filename == NULL) {
-        // Set the filename
-        char sshotpath[512];
-        snprintf(sshotpath, sizeof(sshotpath), "%sscreenshots/%s-%ld-%d.png", nstpaths.nstdir, nstpaths.gamename, time(NULL), rand() % 899 + 100);
-
-        // Save the file
-        lodepng_encode32_file(sshotpath, (const unsigned char*)pixels, rendersize.w, rendersize.h);
-        fprintf(stderr, "Screenshot: %s\n", sshotpath);
-    }
-    else {
-        lodepng_encode32_file(filename, (const unsigned char*)pixels, rendersize.w, rendersize.h);
-    }
-
-    free(pixels);
-}*/
-
 void VideoRenderer::text_print(const char *text, int xpos, int ypos, int seconds, bool bg) {
     snprintf(osdtext.textbuf, sizeof(osdtext.textbuf), "%s", text);
     osdtext.xpos = xpos;
@@ -757,6 +717,30 @@ void VideoRenderer::text_match(const char *text, int *xpos, int *ypos, int strpo
     }
 }
 
+void VideoRenderer::get_pixeldata(std::vector<uint8_t>& pixels) {
+    int w = dimensions.rw;
+    int h = dimensions.rh;
+
+    // Remove any on-screen text before grabbing pixel data
+    int drawtext = osdtext.drawtext;
+    bool drawtime = osdtext.drawtime;
+    osdtext.drawtext = osdtext.drawtime = 0;
+    ogl_render();
+    glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
+
+    // Put any text back on screen
+    osdtext.drawtext = drawtext;
+    osdtext.drawtime = drawtime;
+
+
+    // Flip the image
+    for (int line = 0; line != h / 2; ++line) {
+        std::swap_ranges(pixels.begin() + sizeof(uint32_t) * w * line,
+                         pixels.begin() + sizeof(uint32_t) * w * (line + 1),
+                         pixels.begin() + sizeof(uint32_t) * w * (h - line - 1));
+    }
+}
+
 VideoManager::VideoManager(JGManager& jgm, SettingManager& setmgr)
         : jgm(jgm), setmgr(setmgr) {
     // Initialize video
@@ -909,4 +893,12 @@ void VideoManager::set_aspect() {
             break;
         default: break;
     }
+}
+
+void VideoManager::screenshot(std::string& filename) {
+    int w = dimensions.rw;
+    int h = dimensions.rh;
+    std::vector<uint8_t> pixels(sizeof(uint32_t) * w * h);
+    renderer->get_pixeldata(pixels);
+    lodepng_encode32_file(filename.c_str(), pixels.data(), w, h);
 }

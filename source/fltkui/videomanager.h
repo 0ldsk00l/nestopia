@@ -20,6 +20,8 @@ public:
 
     static void text_print(const char *text, int xpos, int ypos, int seconds, bool bg);
 
+    void get_pixeldata(std::vector<uint8_t>& pixeldata);
+
 protected:
     static void text_draw(const char *text, int xpos, int ypos, bool bg);
     static void text_print_time(const char *timebuf, bool drawtime);
@@ -99,6 +101,8 @@ public:
     void renderer_init();
     void renderer_deinit();
     void render();
+
+    void screenshot(std::string& sspath);
 
 private:
     JGManager &jgm;

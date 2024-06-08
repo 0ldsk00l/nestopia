@@ -1,5 +1,7 @@
 #pragma once
 
+#include <string>
+
 constexpr Fl_Color NstGreen = 0x255f6500;
 constexpr Fl_Color NstPurple = 0x5f578700;
 constexpr Fl_Color NstRed = 0xb51e2c00;
@@ -47,6 +49,8 @@ public:
     static void about(Fl_Widget *w = nullptr, void *data = nullptr);
     static void about_close(Fl_Widget *w = nullptr, void *data = nullptr);
     static void rom_open(Fl_Widget *w = nullptr, void *data = nullptr);
+    static void screenshot(std::string filename = "");
+    static void screenshot_save(Fl_Widget *w = nullptr, void *data = nullptr);
     static void load_file(const char *filename);
     static void fds_next(Fl_Widget *w = nullptr, void *data = nullptr);
     static void fds_insert(Fl_Widget *w = nullptr, void *data = nullptr);

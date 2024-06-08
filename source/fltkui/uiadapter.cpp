@@ -46,6 +46,7 @@ void UiAdapter::pause() {
 }
 
 void UiAdapter::screenshot() {
+    FltkUi::screenshot();
 }
 
 void UiAdapter::quit() {

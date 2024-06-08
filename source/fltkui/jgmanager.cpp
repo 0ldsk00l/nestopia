@@ -115,8 +115,9 @@ void JGManager::set_paths() {
     // Create the save path, which includes creating the base path
     std::filesystem::create_directories(savepath);
 
-    // Create a path for states (Not part of the JG API)
+    // Create paths for states and screenshots (Not part of the JG API)
     std::filesystem::create_directories(basepath + "/state");
+    std::filesystem::create_directories(basepath + "/screenshots");
 
     // If the binary is run from the source directory, core asset path is PWD
     if (std::filesystem::exists(std::filesystem::path{"NstDatabase.xml"})) {
