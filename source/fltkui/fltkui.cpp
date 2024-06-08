@@ -22,7 +22,6 @@
 
 #include <algorithm>
 #include <chrono>
-#include <cstdio>
 #include <filesystem>
 #include <fstream>
 #include <iostream>
@@ -102,9 +101,6 @@ Fl_Menu_Item menutable[] = {
             {0},
         {"Open Palette...", 0, FltkUi::palette_open, 0, FL_MENU_DIVIDER},
         {"Screenshot...", 0, FltkUi::screenshot_save, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        /*{"Load Movie...", 0, fltkui_movie_load, 0, FL_MENU_INACTIVE},
-        {"Record Movie...", 0, fltkui_movie_save, 0, FL_MENU_INACTIVE},
-        {"Stop Movie", 0, fltkui_movie_stop, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},*/
         {"&Quit", FL_ALT + 'q', FltkUi::quit, 0, 0},
         {0}, // End File
     {"&Emulator", FL_ALT + 'e', 0, 0, FL_SUBMENU},
@@ -256,55 +252,6 @@ void FltkUi::screenshot_save(Fl_Widget *w, void *data) {
     screenshot(fc.filename());
 }
 
-/*static void fltkui_movie_load(Fl_Widget* w, void* userdata) {
-    // Create native chooser
-    if (!jgm->is_loaded()) {
-        return;
-    }
-
-    Fl_Native_File_Chooser fc;
-    fc.title("Select a Movie");
-    fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-    //fc.directory((const char*)nstpaths.nstdir);
-    fc.filter("Nestopia Movies\t*.nsv");
-
-    // Show file chooser
-    switch (fc.show()) {
-        case -1:
-            LogDriver::log(LogLevel::Error, std::string(fc.errmsg()));
-            break;
-        case 1: break; // Cancel
-        default:
-            if (fc.filename()) {
-                //nst_movie_load(fc.filename());
-            }
-            break;
-    }
-}
-
-static void fltkui_movie_save(Fl_Widget* w, void* userdata) {
-    // Create native chooser
-    if (!jgm->is_loaded()) {
-        return;
-    }
-
-    Fl_Native_File_Chooser fc;
-    fc.title("Save Movie");
-    fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-    //fc.directory((const char*)nstpaths.nstdir);
-    fc.filter("Nestopia Moviess\t*.nsv");
-    fc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
-
-    // Show file chooser
-    if (fc.show()) { return; }
-
-    //nst_movie_save(fc.filename());
-}
-
-static void fltkui_movie_stop(Fl_Widget* w, void* userdata) {
-    //nst_movie_stop();
-}*/
-
 void FltkUi::state_load(Fl_Widget *w, void *userdata) {
     // Create native chooser
     if (!jgm->is_loaded()) {
@@ -352,26 +299,6 @@ void FltkUi::state_save(Fl_Widget *w, void *data) {
     std::string statefile{fc.filename()};
     jgm->state_save(statefile);
 }
-
-/*static void fltkui_screenshot(Fl_Widget* w, void* userdata) {
-    // Create native chooser
-    if (!jgm->is_loaded()) {
-        return;
-    }
-
-    Fl_Native_File_Chooser fc;
-    fc.title("Save Screenshot");
-    fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
-    fc.filter("PNG Screenshots\t*.png");
-    fc.options(Fl_Native_File_Chooser::SAVEAS_CONFIRM | Fl_Native_File_Chooser::USE_FILTER_EXT);
-
-    // Show file chooser
-    if (fc.show()) {
-        return;
-    }
-
-    //video_screenshot(fc.filename());
-}*/
 
 void FltkUi::palette_open(Fl_Widget *w, void *data) {
     // Create native chooser
