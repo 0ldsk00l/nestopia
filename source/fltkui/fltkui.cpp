@@ -578,7 +578,7 @@ void FltkUi::nstwin_open(const char *name) {
     chtwin->populate();
 
     // Settings Window
-    setwin = new NstSettingsWindow(500, 500, "Settings", *jgm, *setmgr, *inputmgr);
+    setwin = new NstSettingsWindow(500, 550, "Settings", *jgm, *setmgr, *inputmgr);
 
     // Main Window
     nstwin = new NstWindow(rw, rh + UI_MBARHEIGHT, name);

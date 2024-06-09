@@ -44,9 +44,9 @@
 
 namespace {
 
-constexpr int UI_TABHEIGHT = 450;
+constexpr int UI_TABHEIGHT = 500;
 constexpr int UI_TABWIDTH = 480;
-constexpr unsigned UI_SETTINGS_PER_COL = 8;
+constexpr unsigned UI_SETTINGS_PER_COL = 9;
 
 std::unordered_map<int, std::string> keycodes = { //FL_Button ??
     { ' ', "Space" },
@@ -382,7 +382,7 @@ void NstSettingsWindow::populate_input() {
     iselect->align(FL_ALIGN_TOP_LEFT);
 
     itable = new InputTable(inputmgr, input_info,
-                            200, 110, 275, 280);
+                            200, 110, 275, 330);
     itable->set_devicenum(0);
     itable->cols(3);
     itable->col_width(0, 115);
@@ -402,7 +402,7 @@ void NstSettingsWindow::populate_input() {
     iselect->value(0);
     itable->rows(input_info[0].numaxes + input_info[0].numbuttons);
 
-    msgbox = new Fl_Box(200, 400, 240, UI_ELEMHEIGHT);
+    msgbox = new Fl_Box(200, 450, 240, UI_ELEMHEIGHT);
     msgbox->label("Press the desired key, ESC to clear");
     msgbox->hide();
 }
