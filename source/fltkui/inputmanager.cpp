@@ -124,7 +124,7 @@ void InputManager::assign() {
     }
 
     // Set up UI definitiions
-    int ui_defaults[NDEFS_UI] = {
+    int ui_defaults[NDEFS_UI - 1] = {
         0xffbd + 1, 0xffbd + 2, 0xffbd + 3, 0xffbd + 4, 0xffbd + 5,
         0xffbd + 6, 0xffbd + 7, 0xffbd + 8, 'f', 'p', '`', 0xffbd + 9
     };
@@ -140,6 +140,12 @@ void InputManager::assign() {
         else {
             kbmap[std::stoi(val)] = &uistate.button[i];
         }
+    }
+
+    // If "Quit" was defined, apply the definition
+    std::string val = setmgr.get_input("ui", uiinfo.defs[NDEFS_UI - 1]);
+    if (!val.empty()) {
+        kbmap[std::stoi(val)] = &uistate.button[NDEFS_UI - 1];
     }
 
     remap_js();

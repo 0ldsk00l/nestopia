@@ -53,6 +53,11 @@ jg_setting_t fe_settings[] = {
       "Set the aspect ratio to the correct TV aspect (Auto), 1:1 (square pixels), 4:3, or 5:4",
       0, 0, 3, FLAG_FRONTEND
     },
+    { "v_fullscreen", "Start in Fullscreen Mode",
+      "0 = Disabled, 1 = Enabled",
+      "Start the emulator in fullscreen mode if a valid ROM is entered on the command line",
+      0, 0, 1, FLAG_FRONTEND | JG_SETTING_RESTART
+    },
     { "v_scale", "Initial Window Scale",
       "N = Window scale factor at startup",
       "Set the window's initial scale factor (multiple of NES resolution)",

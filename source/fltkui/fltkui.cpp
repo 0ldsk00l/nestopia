@@ -642,6 +642,10 @@ int main(int argc, char *argv[]) {
             jg_setup_audio();
             jg_setup_video();
             inputmgr->reassign();
+            video_fullscreen = setmgr->get_setting("v_fullscreen")->val;
+        }
+        else {
+            video_fullscreen = 0;
         }
     }
     else if (video_fullscreen) {
