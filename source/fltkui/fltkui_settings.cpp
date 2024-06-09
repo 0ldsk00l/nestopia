@@ -24,6 +24,7 @@
 #include <cstring>
 #include <iostream>
 #include <sstream>
+#include <unordered_map>
 
 #include <FL/Fl.H>
 #include <FL/Fl_Double_Window.H>
@@ -46,6 +47,88 @@ namespace {
 constexpr int UI_TABHEIGHT = 450;
 constexpr int UI_TABWIDTH = 480;
 constexpr unsigned UI_SETTINGS_PER_COL = 8;
+
+std::unordered_map<int, std::string> keycodes = { //FL_Button ??
+    { ' ', "Space" },
+    { FL_BackSpace, "Backspace" },
+    { FL_Tab, "Tab" },
+    { FL_Iso_Key,"ISO Key" },
+    { FL_Enter, "Enter" },
+    { FL_Pause, "Pause" },
+    { FL_Scroll_Lock, "Scroll Lock"},
+    { FL_Escape, "Escape" },
+    { FL_Kana, "Kana" },
+    { FL_Eisu, "Eisu" },
+    { FL_Yen, "Yen" },
+    { FL_JIS_Underscore, "Underscore" },
+    { FL_Home, "Home" },
+    { FL_Left, "Left" },
+    { FL_Up, "Up" },
+    { FL_Right, "Right" },
+    { FL_Down, "Down" },
+    { FL_Page_Up, "Page Up" },
+    { FL_Page_Down, "Page Down" },
+    { FL_End, "End" },
+    { FL_Print, "Print" },
+    { FL_Insert, "Insert" },
+    { FL_Menu, "Menu" },
+    { FL_Help, "Help" },
+    { FL_Num_Lock, "Num Lock" },
+    { FL_KP + 0x2a, "KP *" },
+    { FL_KP + 0x2b, "KP +" },
+    { FL_KP + 0x2d, "KP -" },
+    { FL_KP + 0x2f, "KP /" },
+    { FL_KP + 0x30, "KP 0" },
+    { FL_KP + 0x31, "KP 1" },
+    { FL_KP + 0x32, "KP 2" },
+    { FL_KP + 0x33, "KP 3" },
+    { FL_KP + 0x34, "KP 4" },
+    { FL_KP + 0x35, "KP 5" },
+    { FL_KP + 0x36, "KP 6" },
+    { FL_KP + 0x37, "KP 7" },
+    { FL_KP + 0x38, "KP 8" },
+    { FL_KP + 0x39, "KP 9" },
+    { FL_KP_Enter, "KP Enter"},
+    { FL_F + 1, "F1" },
+    { FL_F + 2, "F2" },
+    { FL_F + 3, "F3" },
+    { FL_F + 4, "F4" },
+    { FL_F + 5, "F5" },
+    { FL_F + 6, "F6" },
+    { FL_F + 7, "F7" },
+    { FL_F + 8, "F8" },
+    { FL_F + 9, "F9" },
+    { FL_F + 10, "F10" },
+    { FL_F + 11, "F11" },
+    { FL_F + 12, "F12" },
+    { FL_Shift_L, "Shift L" },
+    { FL_Shift_R, "Shift R" },
+    { FL_Control_L, "Control L" },
+    { FL_Control_R, "Control R" },
+    { FL_Caps_Lock, "Caps Lock" },
+    { FL_Meta_L, "Meta L" },
+    { FL_Meta_R, "Meta R" },
+    { FL_Alt_L, "Alt L" },
+    { FL_Alt_R, "Alt R" },
+    { FL_Delete, "Delete" },
+    //{ FL_Alt_Gr, "Alt Gr" },
+    { FL_Volume_Down, "Volume Down" },
+    { FL_Volume_Mute, "Volume Mute" },
+    { FL_Volume_Up, "Volume Up" },
+    { FL_Media_Play, "Play" },
+    { FL_Media_Stop," Stop" },
+    { FL_Media_Prev, "Prev" },
+    { FL_Media_Next, "Next" },
+    { FL_Home_Page, "Home Page" },
+    { FL_Mail, "Mail" },
+    { FL_Search, "Search" },
+    { FL_Back, "Back" },
+    { FL_Forward, "Forward" },
+    { FL_Stop, "Stop" },
+    { FL_Refresh, "Refresh" },
+    { FL_Sleep, "Sleep" },
+    { FL_Favorites, "Favorites" }
+};
 
 NstSettingsWindow *win = nullptr;
 
@@ -341,7 +424,18 @@ void InputTable::draw_cell(TableContext context, int r, int c, int x, int y, int
                 text = defname;
             }
             else if (c == 1) {
-                text = inputmgr.get_inputdef(input_info[devicenum].name, defname).c_str();
+                std::string key = inputmgr.get_inputdef(input_info[devicenum].name, defname);
+                int keynum = key.empty() ? 0 : std::stoi(key);
+                if (keycodes.count(keynum)) {
+                    text = keycodes[keynum].c_str();
+                }
+                else if (keynum >= 33 && keynum <= 126) {
+                    std::string str = std::string(1, keynum);
+                    text = str.c_str();
+                }
+                else {
+                    text = key.c_str();
+                }
             }
             else if (c == 2) {
                 text = inputmgr.get_inputdef(std::string(input_info[devicenum].name) + "j", defname).c_str();
