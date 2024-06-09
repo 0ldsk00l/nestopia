@@ -395,6 +395,7 @@ void NstGlArea::resize(int x, int y, int w, int h) {
 }
 
 void FltkUi::rehash() {
+    LogDriver::set_level(setmgr->get_setting("l_loglevel")->val);
     videomgr->rehash(true);
     audiomgr->rehash();
 }
@@ -627,6 +628,7 @@ int main(int argc, char *argv[]) {
 
     // Read frontend and emulator settings
     setmgr->read(*jgm);
+    LogDriver::set_level(setmgr->get_setting("l_loglevel")->val);
 
     // Bring up Audio/Video managers
     audiomgr = new AudioManager(*jgm, *setmgr);

@@ -120,6 +120,11 @@ jg_setting_t fe_settings[] = {
       "Set the level of Trinitron Curvature, which reduces the curve on the vertical axis",
       10, 0, 10, FLAG_FRONTEND
     },
+    { "l_loglevel", "Console Log Level",
+      "0 = Debug, 1 = Info, 2 = Warn, 3 = Error",
+      "Set the level of logs printed to the console. Debug shows all, Error shows only critical errors.",
+      1, 0, 3, FLAG_FRONTEND
+    },
 };
 
 jg_setting_t nullsetting;

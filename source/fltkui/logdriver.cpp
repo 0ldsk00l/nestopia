@@ -26,7 +26,15 @@
 
 #include "logdriver.h"
 
+namespace {
+    LogLevel minlevel{LogLevel::Info};
+}
+
 void LogDriver::log(LogLevel level, std::string text) {
+    if (level < minlevel) {
+        return;
+    }
+
     if (level == LogLevel::OSD) {
         VideoRenderer::text_print(text.c_str(), 16, 212, 2, true);
     }
@@ -39,6 +47,10 @@ void LogDriver::log(LogLevel level, std::string text) {
 }
 
 void LogDriver::jg_log(int level, const char *fmt, ...) {
+    if (level < static_cast<int>(minlevel)) {
+        return;
+    }
+
     va_list va;
     char buffer[512];
     static const char *lcol[4] = {
@@ -62,4 +74,8 @@ void LogDriver::jg_log(int level, const char *fmt, ...) {
     if (level == JG_LOG_ERR) {
         VideoRenderer::text_print(buffer, 16, 212, 2, true);
     }
+}
+
+void LogDriver::set_level(int level) {
+    minlevel = static_cast<LogLevel>(level);
 }
