@@ -310,7 +310,7 @@ GLuint VideoRendererModern::shader_create(const std::string& vs, const std::stri
     if (err == GL_FALSE) {
         char shaderlog[1024];
         glGetShaderInfoLog(fshader, 1024, NULL, shaderlog);
-        LogDriver::log(LogLevel::Warn, "Vertex shader: " + std::string(shaderlog));
+        LogDriver::log(LogLevel::Warn, "Fragment shader: " + std::string(shaderlog));
     }
 
     // Create the shader program
