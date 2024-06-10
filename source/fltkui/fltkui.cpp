@@ -613,6 +613,19 @@ void FltkUi::set_ffspeed(bool on) {
 }
 
 int main(int argc, char *argv[]) {
+    // Parse command line arguments
+    std::string filename{};
+    std::vector<std::string> flags{};
+    for (int i = 1; i < argc; ++i) {
+        if (filename.empty() && argv[i][0] != '-') {
+            // The first non-flag argument is considered the filename
+            filename = std::string{argv[i]};
+        }
+        else if (argv[i][0] == '-') {
+            flags.push_back(std::string{argv[i]});
+        }
+    }
+
     // Set default config options
     setmgr = new SettingManager();
 
@@ -638,20 +651,16 @@ int main(int argc, char *argv[]) {
     chtmgr = new CheatManager(*jgm);
 
     // Load a rom from the command line
-    if (argc > 1 && argv[argc - 1][0] != '-') {
-        FltkUi::load_file(argv[argc - 1]);
+    if (!filename.empty()) {
+        FltkUi::load_file(filename.c_str());
         if (jgm->is_loaded()) {
             jg_setup_audio();
             jg_setup_video();
             inputmgr->reassign();
-            video_fullscreen = setmgr->get_setting("v_fullscreen")->val;
+            video_fullscreen = setmgr->get_setting("v_fullscreen")->val ||
+                               std::find(flags.begin(), flags.end(), "-f") != flags.end() ||
+                               std::find(flags.begin(), flags.end(), "--fullscreen") != flags.end();
         }
-        else {
-            video_fullscreen = 0;
-        }
-    }
-    else if (video_fullscreen) {
-        video_fullscreen = 0;
     }
 
     FltkUi::nstwin_open(argv[0]);
