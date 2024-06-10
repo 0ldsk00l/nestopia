@@ -721,8 +721,6 @@ nestopia_SOURCES += \
 	source/fltkui/audiomanager.h \
 	source/fltkui/chtmanager.cpp \
 	source/fltkui/chtmanager.h \
-	source/fltkui/cli.cpp \
-	source/fltkui/cli.h \
 	source/fltkui/ini.h \
 	source/fltkui/inputmanager.cpp \
 	source/fltkui/inputmanager.h \
