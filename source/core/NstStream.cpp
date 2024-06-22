@@ -273,6 +273,13 @@ namespace Nes
 				return data;
 			}
 
+			qaword In::Peek64()
+			{
+				const qaword data = Read64();
+				Seek( -8 );
+				return data;
+			}
+
 			void In::Peek(byte* data,dword length)
 			{
 				Read( data, length );

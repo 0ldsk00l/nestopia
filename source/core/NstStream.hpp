@@ -73,6 +73,7 @@ namespace Nes
 				uint  Peek8();
 				uint  Peek16();
 				dword Peek32();
+				qaword Peek64();
 				void  Seek(idword);
 				ulong Length();
 				bool  Eof();

@@ -184,8 +184,15 @@ namespace Nes
 
 				Result result = ReadHeader( setup, header, 16 );
 
-				if (NES_FAILED(result))
-					throw RESULT_ERR_CORRUPT_FILE;
+				if (NES_FAILED(result)) {
+					// This might be a VC/NES Remix game, seek to end of container and re-read header
+					stream.Seek(32);
+					stream.Read( header );
+					result = ReadHeader( setup, header, 16, false );
+
+					if (NES_FAILED(result))
+						throw RESULT_ERR_CORRUPT_FILE;
+				}
 
 				Log log;
 
@@ -615,7 +622,7 @@ namespace Nes
 			loader.Load();
 		}
 
-		Result Cartridge::Ines::ReadHeader(Header& setup,const byte* const file,const ulong length)
+		Result Cartridge::Ines::ReadHeader(Header& setup,const byte* const file,const ulong length,const bool lbyte)
 		{
 			if (file == NULL)
 				return RESULT_ERR_INVALID_PARAM;
@@ -626,7 +633,7 @@ namespace Nes
 				file[0] != Ascii<'N'>::V ||
 				file[1] != Ascii<'E'>::V ||
 				file[2] != Ascii<'S'>::V ||
-				file[3] != 0x1A
+				(file[3] != 0x1A && lbyte) // Last byte may be ignored for "official" ROMs
 			)
 				return RESULT_ERR_INVALID_FILE;
 

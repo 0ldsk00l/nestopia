@@ -55,7 +55,7 @@ namespace Nes
 				const ImageDatabase*
 			);
 
-			static Result ReadHeader(Header&,const byte*,ulong);
+			static Result ReadHeader(Header&,const byte*,ulong,const bool=true);
 			static Result WriteHeader(const Header&,byte*,ulong);
 		};
 	}
