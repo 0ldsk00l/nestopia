@@ -41,7 +41,6 @@ dnl =======================================
 AX_COMPILER_VENDOR
 AX_COMPILER_VERSION
 AC_PROG_SED
-AC_PROG_CXX
 AX_CXX_COMPILE_STDCXX([17], [noext], [mandatory])
 
 
