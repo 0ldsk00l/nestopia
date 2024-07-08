@@ -761,7 +761,7 @@ void VideoManager::renderer_init() {
         renderer = new VideoRendererLegacy(setmgr);
     }
     else {
-        const std::string ver_core{"#version 130\n"};
+        const std::string ver_core{"#version 140\n"};
         const std::string ver_es{"#version 300 es\n"};
 
         // Build a test vertex shader to check version compatibility
@@ -867,6 +867,9 @@ void VideoManager::rehash(bool reset_shaders) {
 }
 
 void VideoManager::resize(int w, int h) {
+    if (!renderer) {
+        return;
+    }
     dimensions.ww = w;
     dimensions.wh = h;
     rehash();

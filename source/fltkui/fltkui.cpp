@@ -488,11 +488,16 @@ int FltkUi::handle(int e) {
 int NstWindow::handle(int e) {
     switch (e) {
         case FL_KEYDOWN: case FL_KEYUP: {
+            #ifdef __APPLE__
+            inputmgr->event(Fl::event_key(), e == FL_KEYDOWN);
+            #else
             // GNOME has a bad habit of spamming keyup events while holding
             // a button down, so Fl::get_key is required here.
             int key = Fl::event_key();
             bool down = Fl::get_key(key);
             inputmgr->event(key, down);
+            #endif
+
             if (jgm->is_loaded()) {
                 inputmgr->ui_events();
             }
@@ -596,6 +601,8 @@ void FltkUi::nstwin_open(const char *name) {
     menubar->selection_color(NstGreen);
 
     glarea = new NstGlArea(0, UI_MBARHEIGHT, nstwin->w(), nstwin->h() - UI_MBARHEIGHT);
+    glarea->mode(FL_RGB | FL_RGB8 | FL_INDEX | FL_DOUBLE | FL_ACCUM |
+                 FL_ALPHA | FL_DEPTH | FL_STENCIL | FL_OPENGL3);
     glarea->color(FL_BLACK);
 
     nstwin->end();
