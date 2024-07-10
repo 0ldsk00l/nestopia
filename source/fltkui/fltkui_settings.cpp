@@ -418,20 +418,21 @@ void InputTable::draw_cell(TableContext context, int r, int c, int x, int y, int
 
             // Text
             const char *defname = input_info[devicenum].defs[r];
+            std::string key{};
             fl_color(row_selected(r) ? NstWhite : FL_BLACK);
             const char *text;
             if (c == 0) {
                 text = defname;
             }
             else if (c == 1) {
-                std::string key = inputmgr.get_inputdef(input_info[devicenum].name, defname);
+                key = inputmgr.get_inputdef(input_info[devicenum].name, defname);
                 int keynum = key.empty() ? 0 : std::stoi(key);
                 if (keycodes.count(keynum)) {
                     text = keycodes[keynum].c_str();
                 }
                 else if (keynum >= 33 && keynum <= 126) {
-                    std::string str = std::string(1, keynum);
-                    text = str.c_str();
+                    key = std::string(1, keynum);
+                    text = key.c_str();
                 }
                 else {
                     text = key.c_str();
