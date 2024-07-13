@@ -782,15 +782,15 @@ void VideoManager::renderer_init() {
 
         if (shadertest(ver_core)) {
             renderer = new VideoRendererModern(setmgr, ver_core);
-            LogDriver::log(LogLevel::Debug, "OpenGL 3.1");
+            LogDriver::log(LogLevel::Debug, "Renderer: OpenGL 3.1");
         }
         else if (shadertest(ver_es)) {
             renderer = new VideoRendererModern(setmgr, ver_es);
-            LogDriver::log(LogLevel::Debug, "OpenGL ES 3.0");
+            LogDriver::log(LogLevel::Debug, "Renderer: OpenGL ES 3.0");
         }
         else {
             renderer = new VideoRendererLegacy(setmgr);
-            LogDriver::log(LogLevel::Warn, "Legacy OpenGL (Fallback)");
+            LogDriver::log(LogLevel::Warn, "Renderer: Legacy OpenGL (Fallback)");
         }
     }
 }
