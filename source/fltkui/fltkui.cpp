@@ -601,9 +601,11 @@ void FltkUi::nstwin_open(const char *name) {
     menubar->selection_color(NstGreen);
 
     glarea = new NstGlArea(0, UI_MBARHEIGHT, nstwin->w(), nstwin->h() - UI_MBARHEIGHT);
+    glarea->color(FL_BLACK);
+    #ifdef __APPLE__
     glarea->mode(FL_RGB | FL_RGB8 | FL_INDEX | FL_DOUBLE | FL_ACCUM |
                  FL_ALPHA | FL_DEPTH | FL_STENCIL | FL_OPENGL3);
-    glarea->color(FL_BLACK);
+    #endif
 
     nstwin->end();
 }
