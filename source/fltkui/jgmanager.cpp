@@ -266,3 +266,15 @@ jg_audioinfo_t *JGManager::get_audioinfo() {
 void JGManager::set_audio_cb(jg_cb_audio_t cb) {
     jg_set_cb_audio(cb);
 }
+
+void JGManager::data_push(uint32_t type, int port, const void *p, size_t sz) {
+    jg_data_push(type, port, p, sz);
+}
+
+void JGManager::setup_audio() {
+    jg_setup_audio();
+}
+
+void JGManager::setup_video() {
+    jg_setup_video();
+}

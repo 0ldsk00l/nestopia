@@ -36,23 +36,27 @@
 namespace {
 
 jg_audioinfo_t* audinfo{nullptr};
+jg_audioinfo_t micinfo{JG_SAMPFMT_INT16, 48000, 1, 800, NULL};
 
 SDL_AudioSpec spec, obtained;
 SDL_AudioDeviceID dev;
 
+SDL_AudioSpec spec_in, obtained_in;
+SDL_AudioDeviceID dev_in;
+
 SRC_STATE *srcstate{nullptr};
 SRC_DATA srcdata;
-float *fltbuf_in;
-float *fltbuf_out;
+float *fltbuf_in{nullptr};
+float *fltbuf_out{nullptr};
 
-int16_t *buf_in;
-int16_t *buf_out;
+int16_t *buf_in{nullptr};
+int16_t *buf_out{nullptr};
 
 size_t bufstart{0};
 size_t bufend{0};
 size_t bufsamples{0};
 
-size_t spf;
+size_t spf{0};
 int ffspeed{1};
 
 void audio_cb_sdl(void *data, uint8_t *stream, int len) {
@@ -61,6 +65,12 @@ void audio_cb_sdl(void *data, uint8_t *stream, int len) {
     for (int i = 0; i < len / sizeof(int16_t); i++) {
         out[i] = audiomgr->dequeue();
     }
+}
+
+void jgrf_audio_cb_input(void *data, uint8_t *stream, int len) {
+    JGManager *jgm = static_cast<JGManager*>(data);
+    micinfo.buf = (void*)stream;
+    jgm->data_push(JG_DATA_AUDIO, 0, &micinfo, len / sizeof(int16_t));
 }
 
 };
@@ -112,7 +122,29 @@ AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
         LogDriver::log(LogLevel::Error, "Error opening audio device");
     }
 
-    SDL_PauseAudioDevice(dev, 0);  // Setting to 0 unpauses
+    SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
+
+    // Discover any audio recording devices
+    int miccount = SDL_GetNumAudioDevices(1);
+    std::string micname{};
+
+    for (int i = 0; i < miccount; ++i) {
+        micname = std::string{SDL_GetAudioDeviceName(i, 1)};
+    }
+
+    if (miccount) {
+        spec_in.channels = micinfo.channels;
+        spec_in.freq = micinfo.rate;
+        spec_in.silence = 0;
+        spec_in.samples = 512;
+        spec_in.userdata = &jgm;
+        spec_in.format = spec.format;
+        spec_in.callback = jgrf_audio_cb_input;
+        dev_in = SDL_OpenAudioDevice(micname.c_str(), 1, &spec_in, &obtained_in,
+                                     SDL_AUDIO_ALLOW_ANY_CHANGE);
+        SDL_PauseAudioDevice(dev_in, 1); // Start in paused state
+        LogDriver::log(LogLevel::Debug, "Microphone: " + micname);
+    }
 }
 
 AudioManager::~AudioManager() {
@@ -211,8 +243,14 @@ void AudioManager::set_speed(int speed) {
 
 void AudioManager::pause() {
     SDL_PauseAudioDevice(dev, 1);
+    if (dev_in && jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
+        SDL_PauseAudioDevice(dev_in, 1);
+    }
 }
 
 void AudioManager::unpause() {
     SDL_PauseAudioDevice(dev, 0);
+    if (dev_in && jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
+        SDL_PauseAudioDevice(dev_in, 0);
+    }
 }

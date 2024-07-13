@@ -221,9 +221,10 @@ void FltkUi::rom_open(Fl_Widget *w, void *data) {
                     chtwin->refresh();
                     FltkUi::enable_menu();
                     nstwin->label(jgm->get_gamename().c_str());
-                    jg_setup_audio();
-                    jg_setup_video();
+                    jgm->setup_audio();
+                    jgm->setup_video();
                     inputmgr->reassign();
+                    audiomgr->unpause();
                 }
             }
             break;
@@ -551,9 +552,10 @@ int NstGlArea::handle(int e) {
             if (jgm->is_loaded()) {
                 FltkUi::enable_menu();
                 nstwin->label(jgm->get_gamename().c_str());
-                jg_setup_audio();
-                jg_setup_video();
+                jgm->setup_audio();
+                jgm->setup_video();
                 inputmgr->reassign();
+                audiomgr->unpause();
             }
             return 1;
         }
@@ -663,12 +665,13 @@ int main(int argc, char *argv[]) {
     if (!filename.empty()) {
         FltkUi::load_file(filename.c_str());
         if (jgm->is_loaded()) {
-            jg_setup_audio();
-            jg_setup_video();
+            jgm->setup_audio();
+            jgm->setup_video();
             inputmgr->reassign();
             video_fullscreen = setmgr->get_setting("v_fullscreen")->val ||
                                std::find(flags.begin(), flags.end(), "-f") != flags.end() ||
                                std::find(flags.begin(), flags.end(), "--fullscreen") != flags.end();
+            audiomgr->unpause();
         }
     }
 

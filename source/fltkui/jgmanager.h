@@ -46,6 +46,11 @@ public:
 
     void set_audio_cb(jg_cb_audio_t cb);
 
+    void data_push(uint32_t type, int port, const void *p, size_t sz);
+
+    void setup_audio();
+    void setup_video();
+
 private:
     void set_paths();
 
