@@ -67,7 +67,7 @@ void audio_cb_sdl(void *data, uint8_t *stream, int len) {
     }
 }
 
-void jgrf_audio_cb_input(void *data, uint8_t *stream, int len) {
+void audio_cb_input(void *data, uint8_t *stream, int len) {
     JGManager *jgm = static_cast<JGManager*>(data);
     micinfo.buf = (void*)stream;
     jgm->data_push(JG_DATA_AUDIO, 0, &micinfo, len / sizeof(int16_t));
@@ -139,7 +139,7 @@ AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
         spec_in.samples = 512;
         spec_in.userdata = &jgm;
         spec_in.format = spec.format;
-        spec_in.callback = jgrf_audio_cb_input;
+        spec_in.callback = audio_cb_input;
         dev_in = SDL_OpenAudioDevice(micname.c_str(), 1, &spec_in, &obtained_in,
                                      SDL_AUDIO_ALLOW_ANY_CHANGE);
         SDL_PauseAudioDevice(dev_in, 1); // Start in paused state
