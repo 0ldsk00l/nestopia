@@ -8,6 +8,7 @@ Shell:
    - FLTK: Use libsamplerate directly instead of relying on SDL's abstraction
    - FLTK: Better looking theme
    - FLTK: Window is freely resizable and the image scales to the window size
+   - FLTK: Codebase is now ISO C++17
 
   Additions:
    - FLTK: Support for significantly more input devices
@@ -17,6 +18,7 @@ Shell:
    - FLTK: OpenGL 3.1/GLES 3.0 renderer with shaders
    - FLTK: Configurable overscan masking on all edges
    - FLTK: Drag and Drop support
+   - FLTK: Support FDS microphone using a real microphone/headset
 
 ----------------------------------------------------------------
 1.52.1
