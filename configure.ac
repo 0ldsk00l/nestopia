@@ -76,7 +76,7 @@ dnl SAMPLERATE
 PKG_CHECK_MODULES([SAMPLERATE], [samplerate])
 
 dnl SDL2
-PKG_CHECK_MODULES([SDL2], [sdl2])
+PKG_CHECK_MODULES([SDL2], [sdl2 >= 2.0.12])
 
 dnl LibEpoxy
 PKG_CHECK_MODULES([LIBEPOXY], [epoxy])
