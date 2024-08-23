@@ -443,7 +443,9 @@ void FltkUi::about(Fl_Widget *w, void *data) {
     Fl_Box text2(0, 208, 460, UI_SPACING, "Cycle-Accurate Nintendo Entertainment System Emulator");
 
     Fl_Box text3(0, 256, 460, UI_SPACING,
-                 "FLTK Frontend\n(c) 2012-2024, R. Danbrook");
+                 "FLTK Frontend\n(c) 2012-2024, R. Danbrook\n\n"
+                 "Portions derived from The Jolly Good Reference Frontend\n"
+                 "(c) 2020-2024, Rupert Carmichael\n");
     text3.labelsize(10);
 
     Fl_Box text4(0, 320, 460, UI_SPACING,
