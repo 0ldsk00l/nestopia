@@ -279,7 +279,7 @@ static void nst_sample_load(User::File& file, const char *sampgame) {
         int length = is.tellg();
         is.seekg(0, is.beg);
 
-        uint8_t buffer[length];
+        uint8_t *buffer = new uint8_t[length];
         is.read((char*)buffer, length);
         is.close();
 
@@ -292,6 +292,7 @@ static void nst_sample_load(User::File& file, const char *sampgame) {
             buffer[0x19] << 8 | buffer[0x18];
         file.SetSampleContent(&buffer[0x2c], datasize / blockalign,
             numchannels == 2, bitspersample, samplerate);
+        delete[] buffer;
     }
 }
 
