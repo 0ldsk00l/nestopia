@@ -91,6 +91,7 @@ public:
 
     void get_dimensions(int *w, int *h);
     void set_dimensions();
+    void set_dpiscale(float dpiscale);
 
     void get_scaled_coords(int x, int y, int *xcoord, int *ycoord);
 

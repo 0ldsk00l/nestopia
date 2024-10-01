@@ -837,6 +837,10 @@ void VideoManager::set_dimensions() {
     dimensions.dpiscale = 1.0;
 }
 
+void VideoManager::set_dpiscale(float dpiscale) {
+    dimensions.dpiscale = dpiscale;
+}
+
 // FIXME maybe use std::tuple here
 void VideoManager::get_scaled_coords(int x, int y, int *xcoord, int *ycoord) {
     float xscale = dimensions.rw / (vidinfo->aspect * vidinfo->h) / dimensions.dpiscale;
@@ -871,8 +875,8 @@ void VideoManager::resize(int w, int h) {
     if (!renderer) {
         return;
     }
-    dimensions.ww = w;
-    dimensions.wh = h;
+    dimensions.ww = w * dimensions.dpiscale;
+    dimensions.wh = h * dimensions.dpiscale;
     rehash();
 }
 

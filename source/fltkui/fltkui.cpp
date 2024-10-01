@@ -601,6 +601,7 @@ void FltkUi::nstwin_open(const char *name) {
     nstwin->resizable(glarea);
     glarea->color(FL_BLACK);
     #ifdef __APPLE__
+    Fl::use_high_res_GL(1);
     glarea->mode(FL_RGB | FL_RGB8 | FL_INDEX | FL_DOUBLE | FL_ACCUM |
                  FL_ALPHA | FL_DEPTH | FL_STENCIL | FL_OPENGL3);
     #endif
@@ -688,6 +689,10 @@ int main(int argc, char *argv[]) {
     glarea->make_current();
     glarea->show();
     videomgr->renderer_init();
+    #ifdef __APPLE__
+    videomgr->set_dpiscale(2.0);
+    videomgr->resize(glarea->w(), glarea->h());
+    #endif
 
     Fl::check();
 
