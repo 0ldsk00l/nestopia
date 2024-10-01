@@ -20,9 +20,8 @@ private:
     int handle(int e);
 
 public:
-    NstWindow(int w, int h, const char* t = 0) : Fl_Double_Window(w, h, t) { }
-
-    void resize(int x, int y, int w, int h);
+    NstWindow(int w, int h, const char* t = 0) : Fl_Double_Window(w, h, t) {}
+    void resize(int x, int y, int w, int h) FL_OVERRIDE;
 };
 
 class NstGlArea : public Fl_Gl_Window {
@@ -31,11 +30,7 @@ private:
     int handle(int e);
 
 public:
-    NstGlArea(int x, int y, int w, int h, const char *l = 0) : Fl_Gl_Window(x, y, w, h, l) {
-        box(FL_DOWN_FRAME);
-    }
-
-    void resize(int x, int y, int w, int h);
+    NstGlArea(int x, int y, int w, int h, const char *l = 0) : Fl_Gl_Window(x, y, w, h, l) {}
 };
 
 class FltkUi {

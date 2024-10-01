@@ -379,20 +379,16 @@ void FltkUi::reset(Fl_Widget *w, void *data) {
 }
 
 void NstWindow::resize(int x, int y, int w, int h) {
-    Fl_Window::resize(x, y, w, h);
-    menubar->resize(0, 0, w, UI_MBARHEIGHT);
+    Fl_Double_Window::resize(x, y, w, h);
 
     if (video_fullscreen) {
         glarea->resize(0, 0, w, h);
+        videomgr->resize(w, h);
     }
     else {
         glarea->resize(0, UI_MBARHEIGHT, w, h - UI_MBARHEIGHT);
+        videomgr->resize(w, h - UI_MBARHEIGHT);
     }
-}
-
-void NstGlArea::resize(int x, int y, int w, int h) {
-    Fl_Window::resize(x, y, w, h);
-    videomgr->resize(w, h);
 }
 
 void FltkUi::rehash() {
@@ -413,8 +409,8 @@ void FltkUi::fullscreen(Fl_Widget *w, void *data) {
         nstwin->fullscreen();
     }
     else {
-        nstwin->fullscreen_off();
         menubar->show();
+        nstwin->fullscreen_off();
     }
 }
 
@@ -594,9 +590,6 @@ void FltkUi::nstwin_open(const char *name) {
     nstwin = new NstWindow(rw, rh + UI_MBARHEIGHT, name);
     nstwin->color(FL_BLACK);
     nstwin->xclass("nestopia");
-    nstwin->resizable(nstwin);
-
-    nstwin->begin();
 
     // Menu Bar
     menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
@@ -605,11 +598,13 @@ void FltkUi::nstwin_open(const char *name) {
     menubar->selection_color(NstGreen);
 
     glarea = new NstGlArea(0, UI_MBARHEIGHT, nstwin->w(), nstwin->h() - UI_MBARHEIGHT);
+    nstwin->resizable(glarea);
     glarea->color(FL_BLACK);
     #ifdef __APPLE__
     glarea->mode(FL_RGB | FL_RGB8 | FL_INDEX | FL_DOUBLE | FL_ACCUM |
                  FL_ALPHA | FL_DEPTH | FL_STENCIL | FL_OPENGL3);
     #endif
+    glarea->end();
 
     nstwin->end();
 }
