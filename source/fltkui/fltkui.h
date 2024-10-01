@@ -8,7 +8,11 @@ constexpr Fl_Color NstRed = 0xb51e2c00;
 constexpr Fl_Color NstWhite = 0xffffff00;
 constexpr Fl_Color NstBlueGrey = 0x383c4a00;
 constexpr Fl_Color NstLightGrey = 0xd3dae300;
+#ifdef __APPLE__
+constexpr int UI_MBARHEIGHT = 0;
+#else
 constexpr int UI_MBARHEIGHT = 24;
+#endif
 constexpr int UI_SPACING = 24;
 constexpr int UI_ELEMHEIGHT = 25;
 constexpr int UI_ELEMWIDTH = 160;

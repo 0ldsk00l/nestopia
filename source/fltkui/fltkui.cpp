@@ -35,6 +35,9 @@
 #include <FL/Fl_Double_Window.H>
 #include <FL/Fl_Box.H>
 #include <FL/Fl_Menu_Bar.H>
+#ifdef __APPLE__
+#include <FL/Fl_Sys_Menu_Bar.H>
+#endif
 #include <FL/Fl_Native_File_Chooser.H>
 #include <FL/Fl_PNG_Image.H>
 #include <FL/Fl_Gl_Window.H>
@@ -66,7 +69,11 @@ int speed{1};
 int video_fullscreen{0};
 
 NstWindow *nstwin{nullptr};
+#ifdef __APPLE__
+Fl_Sys_Menu_Bar *menubar{nullptr};
+#else
 Fl_Menu_Bar *menubar{nullptr};
+#endif
 NstGlArea *glarea{nullptr};
 NstChtWindow *chtwin{nullptr};
 NstSettingsWindow *setwin{nullptr};
@@ -566,6 +573,9 @@ void FltkUi::enable_menu() {
     for (int i = 0; i < menutable[0].size(); ++i) {
         menutable[i].activate();
     }
+    #ifdef __APPLE__
+    menubar->update();
+    #endif
 }
 
 void FltkUi::show_msgbox(bool show) {
@@ -591,6 +601,13 @@ void FltkUi::nstwin_open(const char *name) {
     nstwin->color(FL_BLACK);
     nstwin->xclass("nestopia");
 
+    #ifdef __APPLE__
+    // Apple style menu bar (top of screen)
+    menubar = new Fl_Sys_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
+    #else
+    // Normal menu bar and window icon
+    menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
+
     // Set up the window icon
     std::string iconpath{"icons/96/nestopia.png"};
     if (!std::filesystem::exists(std::filesystem::path{iconpath})) {
@@ -599,9 +616,8 @@ void FltkUi::nstwin_open(const char *name) {
 
     Fl_PNG_Image nsticon(iconpath.c_str());
     nstwin->default_icon(&nsticon);
+    #endif
 
-    // Menu Bar
-    menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
     menubar->box(FL_FLAT_BOX);
     menubar->menu(menutable);
     menubar->selection_color(NstGreen);
