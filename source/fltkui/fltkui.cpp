@@ -591,6 +591,15 @@ void FltkUi::nstwin_open(const char *name) {
     nstwin->color(FL_BLACK);
     nstwin->xclass("nestopia");
 
+    // Set up the window icon
+    std::string iconpath{"icons/96/nestopia.png"};
+    if (!std::filesystem::exists(std::filesystem::path{iconpath})) {
+        iconpath = std::string(NST_DATAROOTDIR) + "/icons/hicolor/96x96/apps/nestopia.png";
+    }
+
+    Fl_PNG_Image nsticon(iconpath.c_str());
+    nstwin->default_icon(&nsticon);
+
     // Menu Bar
     menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
     menubar->box(FL_FLAT_BOX);
