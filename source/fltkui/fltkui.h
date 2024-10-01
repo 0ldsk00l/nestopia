@@ -17,7 +17,7 @@ constexpr int UI_DIAL_SM = 40;
 
 class NstWindow : public Fl_Double_Window {
 private:
-    int handle(int e);
+    int handle(int e) override;
 
 public:
     NstWindow(int w, int h, const char* t = 0) : Fl_Double_Window(w, h, t) {}
@@ -26,8 +26,8 @@ public:
 
 class NstGlArea : public Fl_Gl_Window {
 private:
-    void draw();
-    int handle(int e);
+    void draw() override;
+    int handle(int e) override;
 
 public:
     NstGlArea(int x, int y, int w, int h, const char *l = 0) : Fl_Gl_Window(x, y, w, h, l) {}
