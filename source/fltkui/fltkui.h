@@ -21,7 +21,7 @@ private:
 
 public:
     NstWindow(int w, int h, const char* t = 0) : Fl_Double_Window(w, h, t) {}
-    void resize(int x, int y, int w, int h) FL_OVERRIDE;
+    void resize(int x, int y, int w, int h) override;
 };
 
 class NstGlArea : public Fl_Gl_Window {
