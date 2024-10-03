@@ -392,6 +392,8 @@ void FltkUi::reset(Fl_Widget *w, void *data) {
 void NstWindow::resize(int x, int y, int w, int h) {
     Fl_Double_Window::resize(x, y, w, h);
 
+    videomgr->set_dpiscale(glarea->pixels_per_unit());
+
     if (video_fullscreen) {
         glarea->resize(0, 0, w, h);
         videomgr->resize(w, h);
@@ -720,10 +722,8 @@ int main(int argc, char *argv[]) {
     glarea->make_current();
     glarea->show();
     videomgr->renderer_init();
-    #ifdef __APPLE__
-    videomgr->set_dpiscale(2.0);
+    videomgr->set_dpiscale(glarea->pixels_per_unit());
     videomgr->resize(glarea->w(), glarea->h());
-    #endif
 
     Fl::check();
 
