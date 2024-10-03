@@ -636,7 +636,8 @@ void FltkUi::nstwin_open(const char *name) {
     #ifdef __APPLE__
     Fl::use_high_res_GL(1);
     glarea->mode(FL_RGB | FL_RGB8 | FL_INDEX | FL_DOUBLE | FL_ACCUM |
-                 FL_ALPHA | FL_DEPTH | FL_STENCIL | FL_OPENGL3);
+                 FL_ALPHA | FL_DEPTH | FL_STENCIL |
+                 (setmgr->get_setting("v_renderer")->val ? 0 : FL_OPENGL3));
     #endif
     glarea->end();
 

@@ -768,6 +768,7 @@ VideoManager::~VideoManager() {
 void VideoManager::renderer_init() {
     if (setmgr.get_setting("v_renderer")->val) {
         renderer = new VideoRendererLegacy(setmgr);
+        LogDriver::log(LogLevel::Debug, "Renderer: Legacy OpenGL");
     }
     else {
         const std::string ver_core{"#version 140\n"};
