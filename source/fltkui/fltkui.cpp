@@ -428,11 +428,11 @@ void FltkUi::fullscreen(Fl_Widget *w, void *data) {
 }
 
 void FltkUi::fds_next(Fl_Widget *w, void *data) {
-    jg_media_select();
+    jgm->media_select();
 }
 
 void FltkUi::fds_insert(Fl_Widget *w, void *data) {
-    jg_media_insert();
+    jgm->media_insert();
 }
 
 void FltkUi::about_close(Fl_Widget *w, void *data) {
