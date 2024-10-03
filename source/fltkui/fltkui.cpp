@@ -108,7 +108,9 @@ Fl_Menu_Item menutable[] = {
             {0},
         {"Open Palette...", 0, FltkUi::palette_open, 0, FL_MENU_DIVIDER},
         {"Screenshot...", 0, FltkUi::screenshot_save, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        #ifndef __APPLE__
         {"&Quit", FL_ALT + 'q', FltkUi::quit, 0, 0},
+        #endif
         {0}, // End File
     {"&Emulator", FL_ALT + 'e', 0, 0, FL_SUBMENU},
         {"Pause", 0, FltkUi::pause, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
@@ -120,9 +122,11 @@ Fl_Menu_Item menutable[] = {
         {"Cheats...", 0, FltkUi::chtwin_open, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
         {"Settings...", 0, FltkUi::setwin_open, 0, 0},
         {0}, // End Emulator
+    #ifndef __APPLE__
     {"&Help", FL_ALT + 'h', 0, 0, FL_SUBMENU},
         {"About", 0, FltkUi::about, 0, 0},
         {0}, // End Help
+    #endif
     {0} // End Menu
 };
 
@@ -604,6 +608,8 @@ void FltkUi::nstwin_open(const char *name) {
     #ifdef __APPLE__
     // Apple style menu bar (top of screen)
     menubar = new Fl_Sys_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
+    // Set the "About" callback
+    Fl_Sys_Menu_Bar::about(about, nullptr);
     #else
     // Normal menu bar and window icon
     menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
