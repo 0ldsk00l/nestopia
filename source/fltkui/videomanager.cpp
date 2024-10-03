@@ -79,6 +79,10 @@ VideoRendererLegacy::VideoRendererLegacy(SettingManager& setmgr)
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, filter);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
+
+    // Ignore the empty alpha channel
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
 }
 
 VideoRendererLegacy::~VideoRendererLegacy() {
@@ -146,6 +150,10 @@ VideoRendererModern::VideoRendererModern(SettingManager& setmgr, const std::stri
 
     glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D,
         tex[1], 0);
+
+    // Ignore the empty alpha channel
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_ONE, GL_ONE);
 
     shader_setup();
 
