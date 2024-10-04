@@ -67,6 +67,8 @@ namespace {
 int paused{0};
 int speed{1};
 int video_fullscreen{0};
+int refreshrate{60};
+int screennum{0};
 
 NstWindow *nstwin{nullptr};
 #ifdef __APPLE__
@@ -141,9 +143,11 @@ Fl_Menu_Item *get_menuitem(std::string label) {
     return nullptr;
 }
 
-int get_refreshrate(void) {
+void update_refreshrate(void) {
     // Get the screen refresh rate using an SDL window
-    int refresh = 60;
+    #ifdef __APPLE__
+    return; // macOS doesn't like the SDL window or refresh rates other than 60
+    #endif
     SDL_Window *sdlwin;
     sdlwin = SDL_CreateWindow(
         "refreshrate",
@@ -151,10 +155,9 @@ int get_refreshrate(void) {
         1, 1, SDL_WINDOW_HIDDEN
     );
     SDL_DisplayMode dm;
-    SDL_GetCurrentDisplayMode(SDL_GetWindowDisplayIndex(sdlwin), &dm);
-    refresh = dm.refresh_rate;
+    SDL_GetCurrentDisplayMode(screennum, &dm);
+    refreshrate = dm.refresh_rate;
     SDL_DestroyWindow(sdlwin);
-    return refresh;
 }
 
 }
@@ -391,6 +394,12 @@ void FltkUi::reset(Fl_Widget *w, void *data) {
 
 void NstWindow::resize(int x, int y, int w, int h) {
     Fl_Double_Window::resize(x, y, w, h);
+
+    int nscreennum = Fl::screen_num(x, y, w, h);
+    if (nscreennum != screennum) { // Window moved to a different screen
+        screennum = nscreennum;
+        update_refreshrate();
+    }
 
     videomgr->set_dpiscale(glarea->pixels_per_unit());
 
@@ -673,12 +682,10 @@ int main(int argc, char *argv[]) {
     setmgr = new SettingManager();
 
     // Initialize SDL Audio and Joystick
-    if (SDL_Init(SDL_INIT_VIDEO | SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
+    if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
         LogDriver::log(LogLevel::Error, "Failed to initialize SDL: " + std::string(SDL_GetError()));
         return 1;
     }
-
-    int refreshrate = get_refreshrate();
 
     jgm = new JGManager();
 
@@ -708,6 +715,7 @@ int main(int argc, char *argv[]) {
     }
 
     FltkUi::nstwin_open(argv[0]);
+    screennum = Fl::screen_num(nstwin->x_root(), nstwin->y_root());
 
     if (jgm->is_loaded()) {
         nstwin->label(jgm->get_gamename().c_str());
@@ -735,6 +743,8 @@ int main(int argc, char *argv[]) {
 
     int frames = 0;
     int framefrags = 0;
+    int fps = jgm->get_frametime();
+    update_refreshrate();
 
     while (true) {
         Fl::check();
@@ -747,7 +757,7 @@ int main(int argc, char *argv[]) {
             inputmgr->event(event);
         }
 
-        int fps = jgm->get_frametime();
+        fps = jgm->get_frametime();
         frames = (fps / refreshrate);
         framefrags += fps % refreshrate;
 
