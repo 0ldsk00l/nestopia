@@ -61,6 +61,9 @@ dist_icon96_DATA = icons/96/nestopia.png
 icon128dir = $(datarootdir)/icons/hicolor/128x128/apps
 dist_icon128_DATA = icons/128/nestopia.png
 
+icon256dir = $(datarootdir)/icons/hicolor/256x256/apps
+dist_icon256_DATA = icons/256/nestopia.png
+
 iconsvgdir = $(datarootdir)/icons/hicolor/scalable/apps
 dist_iconsvg_DATA = icons/svg/nestopia.svg icons/svg/nespad.svg
 
