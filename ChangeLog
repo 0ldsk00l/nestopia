@@ -9,6 +9,7 @@ Shell:
    - FLTK: Better looking theme
    - FLTK: Window is freely resizable and the image scales to the window size
    - FLTK: Codebase is now ISO C++17
+   - FLTK: Far better support for macOS
 
   Additions:
    - FLTK: Support for significantly more input devices

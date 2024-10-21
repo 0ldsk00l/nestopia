@@ -3,8 +3,8 @@ This project is a fork of the original Nestopia source code, plus the
 Linux port. The purpose of the project is to make sure people who want
 a standalone GUI for the Nestopia emulator have this option available.
 
-Current Project Goals:
-* Maintain a functional GUI for the Nestopia emulator on Linux, BSD, and Windows platforms
+Project Goals:
+* Maintain a functional GUI release of the Nestopia emulator on major desktop platforms
 
 Contributing/Issues:
 * Contributions will be reviewed for anything related to the standalone GUI builds
@@ -12,15 +12,10 @@ Contributing/Issues:
 * When not using a tagged release, please understand that the code is volatile and nothing is set in stone.
 
 The following platforms are supported:
-* Linux, BSD, Windows
-
-Libretro notes:
-The libretro port is no longer maintained in this repo, and is now maintained by the
-libretro community. For libretro-specific issues, please use the libretro repository:
-https://github.com/libretro/nestopia
+* Linux, BSD, macOS, Windows
 
 This project depends on the following libraries:
-FLTK 1.3, SDL2, libarchive, libepoxy, libsamplerate, zlib
+FLTK 1.3 (1.4 on macOS), SDL2, libarchive, libepoxy, libsamplerate, zlib
 
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
