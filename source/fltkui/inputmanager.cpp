@@ -51,6 +51,11 @@ const char *defs_ui[NDEFS_UI] = {
     "Fullscreen", "Pause", "FastForward", "Screenshot", "Quit"
 };
 
+const int ui_defaults[NDEFS_UI - 1] = {
+    0xffbd + 1, 0xffbd + 2, 0xffbd + 3, 0xffbd + 4, 0xffbd + 5,
+    0xffbd + 6, 0xffbd + 7, 0xffbd + 8, 'f', 'p', '`', 0xffbd + 9
+};
+
 bool uiprev[NDEFS_UI];
 
 uint8_t undef8;
@@ -93,6 +98,7 @@ void InputManager::reassign() {
 }
 
 void InputManager::assign() {
+    // Allocate memory for input states
     for (size_t i = 0; i < jgm.get_coreinfo()->numinputs; ++i) {
         inputinfo[i] = jgm.get_inputinfo(i);
 
@@ -104,51 +110,9 @@ void InputManager::assign() {
 
         // There is always X and Y relative motion
         coreinput[i].rel = (int32_t*)calloc(2, sizeof(int32_t)); // Magic Number
-
-        if (inputinfo[i]->type == JG_INPUT_POINTER || inputinfo[i]->type == JG_INPUT_GUN) {
-            msmap[0] = &coreinput[i].coord[0];
-            msmap[1] = &coreinput[i].coord[1];
-        }
-
-        if (inputinfo[i]->type == JG_INPUT_GUN) {
-            lightgun = true;
-        }
-
-        for (size_t j = 0; j < inputinfo[i]->numbuttons; ++j) {
-            // Keyboard/Mouse
-            std::string val = setmgr.get_input(inputinfo[i]->name,
-                                               inputinfo[i]->defs[j + inputinfo[i]->numaxes]);
-            if (!val.empty()) {
-                kbmap[std::stoi(val)] = &coreinput[i].button[j];
-            }
-        }
     }
 
-    // Set up UI definitiions
-    int ui_defaults[NDEFS_UI - 1] = {
-        0xffbd + 1, 0xffbd + 2, 0xffbd + 3, 0xffbd + 4, 0xffbd + 5,
-        0xffbd + 6, 0xffbd + 7, 0xffbd + 8, 'f', 'p', '`', 0xffbd + 9
-    };
-
-    // -1 to prevent "Quit" from being defined by default
-    for (size_t i = 0; i < NDEFS_UI - 1; ++i) {
-        // Keyboard/Mouse
-        std::string val = setmgr.get_input("ui", uiinfo.defs[i]);
-        if (val.empty()) {
-            setmgr.set_input("ui", uiinfo.defs[i], std::to_string(ui_defaults[i]));
-            kbmap[ui_defaults[i]] = &uistate.button[i];
-        }
-        else {
-            kbmap[std::stoi(val)] = &uistate.button[i];
-        }
-    }
-
-    // If "Quit" was defined, apply the definition
-    std::string val = setmgr.get_input("ui", uiinfo.defs[NDEFS_UI - 1]);
-    if (!val.empty()) {
-        kbmap[std::stoi(val)] = &uistate.button[NDEFS_UI - 1];
-    }
-
+    remap_kb();
     remap_js();
 }
 
@@ -180,6 +144,63 @@ void InputManager::unassign() {
             coreinput[i].rel = nullptr;
         }
     }
+}
+
+void InputManager::remap_kb() {
+    kbmap.clear();
+    msmap.clear();
+
+    // -1 to prevent "Quit" from being defined by default
+    for (size_t i = 0; i < NDEFS_UI - 1; ++i) {
+        std::string val = setmgr.get_input("ui", uiinfo.defs[i]);
+        if (val.empty()) {
+            setmgr.set_input("ui", uiinfo.defs[i], std::to_string(ui_defaults[i]));
+            kbmap[ui_defaults[i]] = &uistate.button[i];
+        }
+        else {
+            if (kbmap[std::stoi(val)] == nullptr) {
+                kbmap[std::stoi(val)] = &uistate.button[i];
+            }
+            else {
+                printf("Input definition conflict\n");
+            }
+        }
+    }
+
+    // If "Quit" was defined, apply the definition
+    std::string val = setmgr.get_input("ui", uiinfo.defs[NDEFS_UI - 1]);
+    if (!val.empty()) {
+        kbmap[std::stoi(val)] = &uistate.button[NDEFS_UI - 1];
+    }
+
+    for (size_t i = 0; i < jgm.get_coreinfo()->numinputs; ++i) {
+        inputinfo[i] = jgm.get_inputinfo(i);
+
+        if (inputinfo[i]->type == JG_INPUT_POINTER || inputinfo[i]->type == JG_INPUT_GUN) {
+            msmap[0] = &coreinput[i].coord[0];
+            msmap[1] = &coreinput[i].coord[1];
+        }
+
+        if (inputinfo[i]->type == JG_INPUT_GUN) {
+            lightgun = true;
+        }
+
+        for (size_t j = 0; j < inputinfo[i]->numbuttons; ++j) {
+            // Keyboard/Mouse
+            std::string val = setmgr.get_input(inputinfo[i]->name,
+                                               inputinfo[i]->defs[j + inputinfo[i]->numaxes]);
+            if (!val.empty()) {
+                if (kbmap[std::stoi(val)] == nullptr) {
+                    kbmap[std::stoi(val)] = &coreinput[i].button[j];
+                }
+                else {
+                    printf("Input definition conflict\n");
+                }
+            }
+        }
+    }
+
+    UiAdapter::show_msgbox(false);
 }
 
 void InputManager::remap_js() {
@@ -557,27 +578,16 @@ void InputManager::set_inputcfg(std::string name, std::string def, int defnum) {
 }
 
 void InputManager::set_inputdef(int val) {
-    std::string current = setmgr.get_input(cfg_name, cfg_def);
-    setmgr.set_input(cfg_name, cfg_def, std::to_string(val));
-
-    if (!jgm.is_loaded()) {
+    // Check for mapping conflicts to avoid overwriting an active definition
+    if (kbmap[val] != nullptr) {
+        printf("Input definition conflict\n");
         return;
     }
 
-    int cur = std::atoi(current.c_str());
+    setmgr.set_input(cfg_name, cfg_def, std::to_string(val));
 
-    if (kbmap[cur] != nullptr) { // replace it
-        uint8_t *curptr = kbmap[cur];
-        kbmap[cur] = nullptr;
-        kbmap[val] = (uint8_t*)curptr;
-    }
-    else { // freshly place it in the map
-        for (size_t i = 0; i < jgm.get_coreinfo()->numinputs; ++i) {
-            if (std::string(inputinfo[i]->name) == cfg_name) {
-                kbmap[val] = &coreinput[i].button[cfg_defnum];
-            }
-        }
-    }
+    // Remap all keyboard definitions
+    remap_kb();
 }
 
 void InputManager::set_cfg_running(bool running) {

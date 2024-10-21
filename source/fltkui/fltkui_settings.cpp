@@ -130,7 +130,8 @@ std::unordered_map<int, std::string> keycodes = { //FL_Button ??
     { FL_Favorites, "Favorites" }
 };
 
-NstSettingsWindow *win = nullptr;
+NstSettingsWindow *win{nullptr};
+Fl_Box *msgbox{nullptr};
 
 }
 
@@ -165,6 +166,16 @@ NstSettingsWindow::NstSettingsWindow(int w, int h, const char* t, JGManager& j, 
     btn_ok->shortcut(FL_ALT + 'o');
 
     this->end();
+}
+
+void NstSettingsWindow::show_msgbox(bool show) {
+    if (show) {
+        msgbox->label("Press the desired key, ESC to clear");
+        msgbox->show();
+    }
+    else {
+        msgbox->hide();
+    }
 }
 
 void NstSettingsWindow::set_choice_value(std::string tab, std::string label, int val) {
@@ -346,7 +357,6 @@ int InputTable::handle(int e) {
                 else {
                     inputmgr.set_inputdef(Fl::event_key());
                 }
-                win->show_msgbox(false);
                 inputmgr.set_cfg_running(false);
                 redraw();
                 return 1;
@@ -356,7 +366,6 @@ int InputTable::handle(int e) {
         case FL_PUSH: {
             if (inputmgr.get_cfg_running()) {
                 inputmgr.set_inputdef(Fl::event_button() + 1000);
-                win->show_msgbox(false);
                 inputmgr.set_cfg_running(false);
                 redraw();
                 return 1;
@@ -403,7 +412,6 @@ void NstSettingsWindow::populate_input() {
     itable->rows(input_info[0].numaxes + input_info[0].numbuttons);
 
     msgbox = new Fl_Box(200, 450, 240, UI_ELEMHEIGHT);
-    msgbox->label("Press the desired key, ESC to clear");
     msgbox->hide();
 }
 

@@ -41,6 +41,7 @@ private:
 
     void assign();
     void unassign();
+    void remap_kb();
     void remap_js();
 
     void set_inputdef(SDL_Event& evt);

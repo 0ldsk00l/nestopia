@@ -37,7 +37,7 @@ public:
     NstSettingsWindow(int w, int h, const char* t, JGManager& j, SettingManager& m, InputManager& i);
 
     void set_choice_value(std::string tab, std::string label, int val);
-    void show_msgbox(bool show) { if (show) msgbox->show(); else msgbox->hide(); }
+    void show_msgbox(bool show);
 
 private:
     void cb_chooser(Fl_Widget *w, void *data);
@@ -57,8 +57,6 @@ private:
 
     void populate(const std::vector<jg_setting_t*>& settings, bool input_settings = false);
     void populate_input();
-
-    Fl_Box *msgbox;
 
     std::vector<jg_inputinfo_t> input_info;
 
