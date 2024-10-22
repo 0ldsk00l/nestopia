@@ -169,6 +169,10 @@ NstSettingsWindow::NstSettingsWindow(int w, int h, const char* t, JGManager& j, 
 }
 
 void NstSettingsWindow::show_msgbox(bool show) {
+    if (!msgbox) {
+        return;
+    }
+
     if (show) {
         msgbox->label("Press the desired key, ESC to clear");
         msgbox->show();
