@@ -37,7 +37,7 @@ public:
     NstSettingsWindow(int w, int h, const char* t, JGManager& j, SettingManager& m, InputManager& i);
 
     void set_choice_value(std::string tab, std::string label, int val);
-    void show_msgbox(bool show);
+    void show_inputmsg(int show);
 
 private:
     void cb_chooser(Fl_Widget *w, void *data);

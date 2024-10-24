@@ -42,7 +42,7 @@ public:
     static void enable_menu();
     static void rehash();
     static void set_ffspeed(bool on);
-    static void show_msgbox(bool show);
+    static void show_inputmsg(int show);
     static void fullscreen(Fl_Widget *w = nullptr, void *data = nullptr);
     static void quit(Fl_Widget *w = nullptr, void *data = nullptr);
     static void about(Fl_Widget *w = nullptr, void *data = nullptr);

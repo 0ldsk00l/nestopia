@@ -168,18 +168,25 @@ NstSettingsWindow::NstSettingsWindow(int w, int h, const char* t, JGManager& j, 
     this->end();
 }
 
-void NstSettingsWindow::show_msgbox(bool show) {
+void NstSettingsWindow::show_inputmsg(int show) {
     if (!msgbox) {
         return;
     }
 
-    if (show) {
-        msgbox->label("Press the desired key, ESC to clear");
-        msgbox->show();
+    switch (show) {
+        case 0:
+            msgbox->label("");
+            break;
+        case 1:
+            msgbox->label("Press the desired key, ESC to clear");
+            break;
+        case 2:
+            msgbox->label("Input definition conflict");
+            break;
     }
-    else {
-        msgbox->hide();
-    }
+
+    msgbox->show();
+    itable->redraw();
 }
 
 void NstSettingsWindow::set_choice_value(std::string tab, std::string label, int val) {
@@ -340,10 +347,13 @@ void NstSettingsWindow::cb_itable(Fl_Widget *w, void *data) {
     if (Fl::event_clicks() > 0) {
         Fl::event_clicks(0); // Reset double-click counter
         itable->take_focus();
-        show_msgbox(true);
+        show_inputmsg(1);
         inputmgr.set_inputcfg(input_info[t->get_devicenum()].name,
                               input_info[t->get_devicenum()].defs[t->callback_row()],
                               t->callback_row());
+    }
+    else {
+        show_inputmsg(0);
     }
 }
 

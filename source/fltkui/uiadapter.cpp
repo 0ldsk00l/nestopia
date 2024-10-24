@@ -54,6 +54,6 @@ void UiAdapter::quit() {
     FltkUi::quit();
 }
 
-void UiAdapter::show_msgbox(bool show) {
-    FltkUi::show_msgbox(show);
+void UiAdapter::show_inputmsg(int show) {
+    FltkUi::show_inputmsg(show);
 }

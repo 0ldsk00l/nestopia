@@ -593,8 +593,8 @@ void FltkUi::enable_menu() {
     #endif
 }
 
-void FltkUi::show_msgbox(bool show) {
-    setwin->show_msgbox(show);
+void FltkUi::show_inputmsg(int show) {
+    setwin->show_inputmsg(show);
 }
 
 void FltkUi::nstwin_open(const char *name) {

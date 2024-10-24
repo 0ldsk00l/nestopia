@@ -33,6 +33,7 @@
 #include "uiadapter.h"
 
 #include "inputmanager.h"
+#include "logdriver.h"
 
 #include "jg/jg_nes.h"
 
@@ -150,6 +151,8 @@ void InputManager::remap_kb() {
     kbmap.clear();
     msmap.clear();
 
+    bool conflict = false;
+
     // -1 to prevent "Quit" from being defined by default
     for (size_t i = 0; i < NDEFS_UI - 1; ++i) {
         std::string val = setmgr.get_input("ui", uiinfo.defs[i]);
@@ -162,7 +165,7 @@ void InputManager::remap_kb() {
                 kbmap[std::stoi(val)] = &uistate.button[i];
             }
             else {
-                printf("Input definition conflict\n");
+                conflict = true;
             }
         }
     }
@@ -194,13 +197,13 @@ void InputManager::remap_kb() {
                     kbmap[std::stoi(val)] = &coreinput[i].button[j];
                 }
                 else {
-                    printf("Input definition conflict\n");
+                    conflict = true;
                 }
             }
         }
     }
 
-    UiAdapter::show_msgbox(false);
+    UiAdapter::show_inputmsg(conflict ? 2 : 0);
 }
 
 void InputManager::remap_js() {
@@ -228,7 +231,7 @@ void InputManager::remap_js() {
                 jxmap[(port * 100) + (inum / 2)] = &coreinput[i].axis[j];
             }
             else {
-                printf("Malformed input code: %s\n", val.c_str());
+                LogDriver::log(LogLevel::Warn, std::string("Malformed input code: ") + val.c_str());
             }
         }
 
@@ -258,7 +261,7 @@ void InputManager::remap_js() {
                 }
             }
             else {
-                printf("Malformed input code: %s\n", val.c_str());
+                LogDriver::log(LogLevel::Warn, std::string("Malformed input code: ") + val.c_str());
             }
         }
     }
@@ -294,7 +297,7 @@ void InputManager::set_inputdef(SDL_Event& evt) {
     switch (evt.type) {
         case SDL_JOYBUTTONDOWN: {
             if (axis) {
-                printf("Tried to configure an axis as a button\n");
+                LogDriver::log(LogLevel::Warn, "Tried to configure an axis as a button");
                 break;
             }
 
@@ -308,7 +311,7 @@ void InputManager::set_inputdef(SDL_Event& evt) {
         }
         case SDL_JOYHATMOTION: {
             if (axis) {
-                printf("Tried to configure an axis as a hat\n");
+                LogDriver::log(LogLevel::Warn, "Tried to configure an axis as a hat");
                 break;
             }
 
@@ -376,11 +379,10 @@ void InputManager::event(SDL_Event& evt) {
                 }
             }
 
-            printf("Joystick %d Connected: %s (Instance ID: %d)\n",
-                   SDL_JoystickGetPlayerIndex(joystick[port]) + 1,
-                   SDL_JoystickName(joystick[port]),
-                   jsiid[port]);
-
+            LogDriver::log(LogLevel::Info, std::string("Joystick ") +
+                           std::to_string(SDL_JoystickGetPlayerIndex(joystick[port]) + 1) +
+                           " Connected: " + SDL_JoystickName(joystick[port]) +
+                           " (Instance ID: " + std::to_string(jsiid[port]) + ")");
             break;
         }
         case SDL_JOYDEVICEREMOVED: {
@@ -388,8 +390,9 @@ void InputManager::event(SDL_Event& evt) {
             for (int i = 0; i < MAXPORTS; ++i) {
                 if (jsiid[i] == id) {
                     jsports[i] = 0;
-                    printf("Joystick %d Disconnected (Instance ID: %d)\n",
-                           i + 1, id);
+                    LogDriver::log(LogLevel::Info, std::string("Joystick ") +
+                                   std::to_string(i + 1) + "Disconnected (Instance ID: " +
+                                   std::to_string(id) + ")");
                     SDL_JoystickClose(joystick[i]);
                     break;
                 }
@@ -579,8 +582,9 @@ void InputManager::set_inputcfg(std::string name, std::string def, int defnum) {
 
 void InputManager::set_inputdef(int val) {
     // Check for mapping conflicts to avoid overwriting an active definition
-    if (kbmap[val] != nullptr) {
-        printf("Input definition conflict\n");
+    int cur = std::atoi(setmgr.get_input(cfg_name, cfg_def).c_str());
+    if (kbmap[val] != nullptr && val != cur) {
+        UiAdapter::show_inputmsg(2);
         return;
     }
 
@@ -594,6 +598,7 @@ void InputManager::set_cfg_running(bool running) {
     cfg_running = running;
     if (!running) {
         // Turn off the message now
-        UiAdapter::show_msgbox(running);
+        UiAdapter::show_inputmsg(0);
     }
+
 }

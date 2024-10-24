@@ -10,7 +10,7 @@ public:
     static void pause();
     static void screenshot();
     static void quit();
-    static void show_msgbox(bool show);
+    static void show_inputmsg(int show);
 
 private:
 
