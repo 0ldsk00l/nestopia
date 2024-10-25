@@ -127,7 +127,27 @@ std::unordered_map<int, std::string> keycodes = { //FL_Button ??
     { FL_Stop, "Stop" },
     { FL_Refresh, "Refresh" },
     { FL_Sleep, "Sleep" },
-    { FL_Favorites, "Favorites" }
+    { FL_Favorites, "Favorites" },
+    { 1001, "Mouse 1" },
+    { 1002, "Mouse 2" },
+    { 1003, "Mouse 3" },
+    { 1004, "Mouse 4" },
+    { 1005, "Mouse 5" },
+    { 1006, "Mouse 6" },
+    { 1007, "Mouse 7" },
+    { 1008, "Mouse 8" },
+    { 1009, "Mouse 9" },
+    { 1010, "Mouse 10" },
+    { 1011, "Mouse 11" },
+    { 1012, "Mouse 12" },
+    { 1013, "Mouse 13" },
+    { 1014, "Mouse 14" },
+    { 1015, "Mouse 15" },
+    { 1016, "Mouse 16" },
+    { 1017, "Mouse 17" },
+    { 1018, "Mouse 18" },
+    { 1019, "Mouse 19" },
+    { 1020, "Mouse 20" }
 };
 
 NstSettingsWindow *win{nullptr};
@@ -452,7 +472,7 @@ void InputTable::draw_cell(TableContext context, int r, int c, int x, int y, int
                 if (keycodes.count(keynum)) {
                     text = keycodes[keynum].c_str();
                 }
-                else if (keynum >= 33 && keynum <= 126) {
+                else if ((keynum >= 33 && keynum <= 126) || (keynum >= 1001 && keynum <= 1020)) {
                     key = std::string(1, keynum);
                     text = key.c_str();
                 }
