@@ -181,7 +181,7 @@ void NstSettingsWindow::show_inputmsg(int show) {
             msgbox->label("Press the desired key, ESC to clear");
             break;
         case 2:
-            msgbox->label("Input definition conflict");
+            msgbox->label("Input definition already used");
             break;
     }
 

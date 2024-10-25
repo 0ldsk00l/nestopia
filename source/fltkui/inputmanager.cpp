@@ -69,6 +69,8 @@ SDL_Joystick *joystick[MAXPORTS];
 int jsports[MAXPORTS];
 int jsiid[MAXPORTS];
 
+bool conflict{false};
+
 }
 
 InputManager::InputManager(JGManager& jgm, SettingManager& setmgr)
@@ -151,8 +153,6 @@ void InputManager::remap_kb() {
     kbmap.clear();
     msmap.clear();
 
-    bool conflict = false;
-
     // -1 to prevent "Quit" from being defined by default
     for (size_t i = 0; i < NDEFS_UI - 1; ++i) {
         std::string val = setmgr.get_input("ui", uiinfo.defs[i]);
@@ -165,7 +165,9 @@ void InputManager::remap_kb() {
                 kbmap[std::stoi(val)] = &uistate.button[i];
             }
             else {
-                conflict = true;
+                LogDriver::log(LogLevel::Warn,
+                               std::string{"Input configuration conflict: "} +
+                               "ui, " + uiinfo.defs[i]);
             }
         }
     }
@@ -190,20 +192,20 @@ void InputManager::remap_kb() {
 
         for (size_t j = 0; j < inputinfo[i]->numbuttons; ++j) {
             // Keyboard/Mouse
-            std::string val = setmgr.get_input(inputinfo[i]->name,
-                                               inputinfo[i]->defs[j + inputinfo[i]->numaxes]);
+            const char *idef = inputinfo[i]->defs[j + inputinfo[i]->numaxes];
+            std::string val = setmgr.get_input(inputinfo[i]->name, idef);
             if (!val.empty()) {
                 if (kbmap[std::stoi(val)] == nullptr) {
                     kbmap[std::stoi(val)] = &coreinput[i].button[j];
                 }
                 else {
-                    conflict = true;
+                    LogDriver::log(LogLevel::Warn,
+                                   std::string{"Input configuration conflict: "} +
+                                   inputinfo[i]->name + ", " + idef);
                 }
             }
         }
     }
-
-    UiAdapter::show_inputmsg(conflict ? 2 : 0);
 }
 
 void InputManager::remap_js() {
@@ -304,9 +306,14 @@ void InputManager::set_inputdef(SDL_Event& evt) {
             SDL_Joystick *js = SDL_JoystickFromInstanceID(evt.jbutton.which);
             int port = SDL_JoystickGetPlayerIndex(js);
             int btn = evt.jbutton.button;
+            if (jbmap[(port * 100) + btn] == nullptr) {
+                std::string bstr{"j" + std::to_string(port) + "b" + std::to_string(btn)};
+                setmgr.set_input(cfg_name + "j", cfg_def, bstr);
+            }
+            else {
+                conflict = true;
+            }
             set_cfg_running(false);
-            setmgr.set_input(cfg_name + "j", cfg_def,
-                             "j" + std::to_string(port) + "b" + std::to_string(btn));
             break;
         }
         case SDL_JOYHATMOTION: {
@@ -330,19 +337,29 @@ void InputManager::set_inputdef(SDL_Event& evt) {
             else if (evt.jhat.value & SDL_HAT_RIGHT) {
                 hat = 3;
             }
+            if (jhmap[(port * 100) + hat] == nullptr) {
+                std::string hstr{"j" + std::to_string(port) + "h" + std::to_string(hat)};
+                setmgr.set_input(cfg_name + "j", cfg_def, hstr);
+            }
+            else {
+                conflict = true;
+            }
             set_cfg_running(false);
-            setmgr.set_input(cfg_name + "j", cfg_def,
-                             "j" + std::to_string(port) + "h" + std::to_string(hat));
             break;
         }
         case SDL_JOYAXISMOTION: {
             SDL_Joystick *js = SDL_JoystickFromInstanceID(evt.jhat.which);
             int port = SDL_JoystickGetPlayerIndex(js);
-            int axis = evt.jaxis.axis * 2 + (evt.jaxis.value > 0 ? 1 : 0);
+            int jaxis = evt.jaxis.axis * 2 + (evt.jaxis.value > 0 ? 1 : 0);
             if (abs(evt.jaxis.value) >= DEADZONE) {
+                if (jamap[(port * 100) + jaxis] == nullptr) {
+                    std::string astr{"j" + std::to_string(port) + "a" + std::to_string(jaxis)};
+                    setmgr.set_input(cfg_name + "j", cfg_def, astr);
+                }
+                else {
+                    conflict = true;
+                }
                 set_cfg_running(false);
-                setmgr.set_input(cfg_name + "j", cfg_def,
-                                 "j" + std::to_string(port) + "a" + std::to_string(axis));
             }
             break;
         }
@@ -582,9 +599,8 @@ void InputManager::set_inputcfg(std::string name, std::string def, int defnum) {
 
 void InputManager::set_inputdef(int val) {
     // Check for mapping conflicts to avoid overwriting an active definition
-    int cur = std::atoi(setmgr.get_input(cfg_name, cfg_def).c_str());
-    if (kbmap[val] != nullptr && val != cur) {
-        UiAdapter::show_inputmsg(2);
+    if (kbmap[val] != nullptr) {
+        conflict = true;
         return;
     }
 
@@ -597,8 +613,7 @@ void InputManager::set_inputdef(int val) {
 void InputManager::set_cfg_running(bool running) {
     cfg_running = running;
     if (!running) {
-        // Turn off the message now
-        UiAdapter::show_inputmsg(0);
+        UiAdapter::show_inputmsg(conflict ? 2 : 0);
+        conflict = false;
     }
-
 }
