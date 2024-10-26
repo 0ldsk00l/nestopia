@@ -585,8 +585,9 @@ int NstGlArea::handle(int e) {
 }
 
 void FltkUi::enable_menu() {
-    for (int i = 0; i < menutable[0].size(); ++i) {
-        menutable[i].activate();
+    Fl_Menu_Item *mtable = (Fl_Menu_Item*)menubar->menu();
+    for (int i = 0; i < mtable[0].size(); ++i) {
+        mtable[i].activate();
     }
     #ifdef __APPLE__
     menubar->update();
