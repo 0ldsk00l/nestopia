@@ -386,6 +386,9 @@ void FltkUi::pause(Fl_Widget *w, void *data) {
     }
 
     m->label(paused ? "Play" : "Pause");
+    #ifdef __APPLE__
+    menubar->update();
+    #endif
 }
 
 void FltkUi::reset(Fl_Widget *w, void *data) {
