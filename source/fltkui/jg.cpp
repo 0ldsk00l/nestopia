@@ -1169,12 +1169,13 @@ static void nst_params_video(void) {
         }
     }
 
-
     video.EnableUnlimSprites(settings_nst[UNLIMITEDSPRITES].val);
 
     if (NES_FAILED(video.SetRenderState(renderState))) {
         jg_cb_log(JG_LOG_ERR, "Nestopia core rejected render state\n");
     }
+
+    video.Blit(*NstVideo); // Make changes visible if emulation is paused
 }
 
 void jg_set_cb_audio(jg_cb_audio_t func) {
