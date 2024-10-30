@@ -69,6 +69,7 @@ int speed{1};
 int video_fullscreen{0};
 int refreshrate{60};
 int screennum{0};
+bool fdsgame{false};
 
 NstWindow *nstwin{nullptr};
 #ifdef __APPLE__
@@ -191,6 +192,7 @@ void FltkUi::load_file(const char *filename) {
 
             game.clear();
             fltkui_archive_load_file(filename, arcname, game);
+            fileext = std::filesystem::path(arcname).extension().string();
             jgm->load_game(arcname.c_str(), game);
         }
         else {
@@ -211,6 +213,10 @@ void FltkUi::load_file(const char *filename) {
 
         jgm->load_game(filename, game);
     }
+
+    std::transform(fileext.begin(), fileext.end(), fileext.begin(),
+                   [](unsigned char c) { return std::tolower(c); });
+    fdsgame = fileext == ".fds";
 }
 
 void FltkUi::rom_open(Fl_Widget *w, void *data) {
@@ -590,7 +596,13 @@ int NstGlArea::handle(int e) {
 void FltkUi::enable_menu() {
     Fl_Menu_Item *mtable = (Fl_Menu_Item*)menubar->menu();
     for (int i = 0; i < mtable[0].size(); ++i) {
-        mtable[i].activate();
+        if (!fdsgame && mtable[i].label() &&
+            std::string(mtable[i].label()).find("Disk") != std::string::npos) {
+            mtable[i].deactivate();
+        }
+        else {
+            mtable[i].activate();
+        }
     }
     #ifdef __APPLE__
     menubar->update();
