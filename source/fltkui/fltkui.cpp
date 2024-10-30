@@ -614,6 +614,7 @@ void FltkUi::nstwin_open(const char *name) {
 
     // Settings Window
     setwin = new NstSettingsWindow(500, 550, "Settings", *jgm, *setmgr, *inputmgr);
+    setwin->set_crt_active(setmgr->get_setting("v_postproc")->val == 3);
 
     // Main Window
     nstwin = new NstWindow(rw, rh + UI_MBARHEIGHT, name);

@@ -237,6 +237,30 @@ void NstSettingsWindow::set_choice_value(std::string tab, std::string label, int
     }
 }
 
+void NstSettingsWindow::set_crt_active(bool active) {
+    Fl_Group *g = this->as_group()->child(0)->as_group();
+
+    for (int i = 0; i < g->children(); ++i) {
+        if (std::string(g->child(i)->label()) == "Interface") {
+            g = g->child(i)->as_group();
+            break;
+        }
+    }
+
+    for (int i = 0; i < g->children(); ++i) {
+        if (g->child(i)->label()) {
+            if (std::string(g->child(i)->label()).find("CRT") != std::string::npos) {
+                if (active) {
+                    g->child(i)->activate();
+                }
+                else {
+                    g->child(i)->deactivate();
+                }
+            }
+        }
+    }
+}
+
 void NstSettingsWindow::cb_chooser(Fl_Widget *w, void *data) {
     jg_setting_t *setting = (jg_setting_t*)data;
     setting->val = ((Fl_Choice*)w)->value();
@@ -246,6 +270,10 @@ void NstSettingsWindow::cb_chooser(Fl_Widget *w, void *data) {
     }
     else {
         jgm.rehash();
+    }
+
+    if (std::string(setting->name) == "v_postproc") {
+        set_crt_active(setting->val == 3);
     }
 
     if (setting->flags & JG_SETTING_INPUT) {

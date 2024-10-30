@@ -37,6 +37,7 @@ public:
     NstSettingsWindow(int w, int h, const char* t, JGManager& j, SettingManager& m, InputManager& i);
 
     void set_choice_value(std::string tab, std::string label, int val);
+    void set_crt_active(bool active);
     void show_inputmsg(int show);
 
 private:
