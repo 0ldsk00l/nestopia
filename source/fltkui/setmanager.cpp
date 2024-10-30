@@ -83,6 +83,11 @@ jg_setting_t fe_settings[] = {
       "Hide the crosshair when a Zapper is present",
       0, 0, 1, FLAG_FRONTEND
     },
+    { "l_loglevel", "Console Log Level",
+      "0 = Debug, 1 = Info, 2 = Warn, 3 = Error",
+      "Set the level of logs printed to the console. Debug shows all, Error shows only critical errors.",
+      1, 0, 3, FLAG_FRONTEND
+    },
     { "s_crtmasktype", "CRT Mask Type",
       "0 = No Mask, 1 = Aperture Grille Lite, 2 = Aperture Grille, "
       "3 = Shadow Mask",
@@ -119,11 +124,6 @@ jg_setting_t fe_settings[] = {
       "N = CRT Trinitron Curvature",
       "Set the level of Trinitron Curvature, which reduces the curve on the vertical axis",
       10, 0, 10, FLAG_FRONTEND
-    },
-    { "l_loglevel", "Console Log Level",
-      "0 = Debug, 1 = Info, 2 = Warn, 3 = Error",
-      "Set the level of logs printed to the console. Debug shows all, Error shows only critical errors.",
-      1, 0, 3, FLAG_FRONTEND
     },
 };
 
