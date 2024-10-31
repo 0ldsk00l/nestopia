@@ -408,7 +408,7 @@ void InputManager::event(SDL_Event& evt) {
                 if (jsiid[i] == id) {
                     jsports[i] = 0;
                     LogDriver::log(LogLevel::Info, std::string("Joystick ") +
-                                   std::to_string(i + 1) + "Disconnected (Instance ID: " +
+                                   std::to_string(i + 1) + " Disconnected (Instance ID: " +
                                    std::to_string(id) + ")");
                     SDL_JoystickClose(joystick[i]);
                     break;
