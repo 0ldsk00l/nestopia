@@ -613,7 +613,7 @@ void FltkUi::show_inputmsg(int show) {
     setwin->show_inputmsg(show);
 }
 
-void FltkUi::nstwin_open(const char *name) {
+void FltkUi::nstwin_open() {
     int rw, rh;
     videomgr->set_dimensions();
     videomgr->get_dimensions(&rw, &rh);
@@ -629,7 +629,7 @@ void FltkUi::nstwin_open(const char *name) {
     setwin->set_crt_active(setmgr->get_setting("v_postproc")->val == 3);
 
     // Main Window
-    nstwin = new NstWindow(rw, rh + UI_MBARHEIGHT, name);
+    nstwin = new NstWindow(rw, rh + UI_MBARHEIGHT);
     nstwin->color(FL_BLACK);
     nstwin->xclass("nestopia");
 
@@ -731,7 +731,7 @@ int main(int argc, char *argv[]) {
         }
     }
 
-    FltkUi::nstwin_open(argv[0]);
+    FltkUi::nstwin_open();
     screennum = Fl::screen_num(nstwin->x_root(), nstwin->y_root());
 
     if (jgm->is_loaded()) {
@@ -740,6 +740,9 @@ int main(int argc, char *argv[]) {
     }
     else {
         nstwin->label("Nestopia UE");
+        if (!filename.empty()) {
+            LogDriver::log(LogLevel::OSD, "Failed to load file from CLI");
+        }
     }
 
     nstwin->show();

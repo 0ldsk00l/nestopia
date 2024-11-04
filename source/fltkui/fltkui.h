@@ -62,6 +62,6 @@ public:
     static void palette_open(Fl_Widget *w = nullptr, void *data = nullptr);
     static void setwin_open(Fl_Widget *w = nullptr, void *data = nullptr);
     static void chtwin_open(Fl_Widget *w = nullptr, void *data = nullptr);
-    static void nstwin_open(const char *name);
+    static void nstwin_open();
     static int handle(int e);
 };
