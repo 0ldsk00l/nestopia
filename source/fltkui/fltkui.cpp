@@ -636,8 +636,9 @@ void FltkUi::nstwin_open() {
     #ifdef __APPLE__
     // Apple style menu bar (top of screen)
     menubar = new Fl_Sys_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
-    // Set the "About" callback
+    // Set the "About" callback and "Window" menu style
     Fl_Sys_Menu_Bar::about(about, nullptr);
+    Fl_Sys_Menu_Bar::window_menu_style(Fl_Sys_Menu_Bar::tabbing_mode_none);
     #else
     // Normal menu bar and window icon
     menubar = new Fl_Menu_Bar(0, 0, nstwin->w(), UI_MBARHEIGHT);
