@@ -588,6 +588,8 @@ std::string InputManager::get_inputdef(std::string device, std::string def) {
 void InputManager::clear_inputdef() {
     setmgr.set_input(cfg_name, cfg_def, std::string{});
     setmgr.set_input(cfg_name + "j", cfg_def, std::string{});
+    remap_kb();
+    remap_js();
 }
 
 void InputManager::set_inputcfg(std::string name, std::string def, int defnum) {
