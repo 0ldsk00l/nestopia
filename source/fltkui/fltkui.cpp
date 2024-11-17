@@ -700,6 +700,9 @@ int main(int argc, char *argv[]) {
     setmgr = new SettingManager();
 
     // Initialize SDL Audio and Joystick
+    #ifdef _WIN32
+    putenv("SDL_AUDIODRIVER=directsound");
+    #endif
     if (SDL_Init(SDL_INIT_AUDIO | SDL_INIT_JOYSTICK) < 0) {
         LogDriver::log(LogLevel::Error, "Failed to initialize SDL: " + std::string(SDL_GetError()));
         return 1;

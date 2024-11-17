@@ -495,6 +495,9 @@ void InputManager::event(SDL_Event& evt) {
 
 void InputManager::event(int key, bool pressed) {
     if (kbmap[key] != nullptr) {
+        if (*kbmap[key] && pressed) {
+            return;
+        }
         *kbmap[key] = pressed;
     }
 }
