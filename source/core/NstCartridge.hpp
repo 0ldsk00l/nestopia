@@ -83,6 +83,7 @@ namespace Nes
 				bool battery;
 				bool wramAuto;
 				Ram trainer;
+				uchar inputDevice;
 			};
 
 			class VsSystem;

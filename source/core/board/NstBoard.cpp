@@ -1833,7 +1833,7 @@ namespace Nes
 
 					case 23:
 
-						if (submapper == 1) // VRC4f - Unknown, but plausibly World Hero?
+						if (submapper == 1 || chr < SIZE_128K) // VRC4f - Axelay, plausibly World Hero?
 						{
 							Chips::Type& chip = chips.Add(L"Konami VRC IV");
 							chip.Pin(3) = L"PRG A1";

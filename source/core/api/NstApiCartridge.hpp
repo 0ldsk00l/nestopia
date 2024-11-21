@@ -1309,6 +1309,11 @@ namespace Nes
 				* Trainer.
 				*/
 				bool trainer;
+
+				/**
+				* Input Device Type.
+				*/
+				uchar inputType;
 			};
 
 			/**

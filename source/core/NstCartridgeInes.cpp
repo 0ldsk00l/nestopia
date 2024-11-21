@@ -513,6 +513,150 @@ namespace Nes
 						break;
 				}
 
+				switch (setup.inputType)
+				{
+					// Currently unsupported by the NES 2.0 spec or for other reasons:
+					// POWERGLOVE, MOUSE, SUBORKEYBOARD, HORITRACK, CRAZYCLIMBER
+					case 0x01: // Standard Controllers
+					{
+						profile.game.controllers[0] = Api::Input::PAD1;
+						profile.game.controllers[1] = Api::Input::PAD2;
+						break;
+					}
+					case 0x02: // NES Four Score/Satellite
+					{
+						profile.game.controllers[0] = Api::Input::PAD1;
+						profile.game.controllers[1] = Api::Input::PAD2;
+						profile.game.controllers[2] = Api::Input::PAD3;
+						profile.game.controllers[3] = Api::Input::PAD4;
+						break;
+					}
+					case 0x08: // Zapper
+					{
+						profile.game.controllers[1] = Api::Input::ZAPPER;
+						break;
+					}
+					case 0x0A: // Bandai Hyper Shot
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::BANDAIHYPERSHOT;
+						break;
+					}
+					case 0x0B: case 0x0C: // Power Pad (Side A, Side B)
+					{
+						profile.game.controllers[1] = Api::Input::POWERPAD;
+						break;
+					}
+					case 0x0D: case 0x0E: // Family Trainer (Side A, Side B)
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::FAMILYTRAINER;
+						break;
+					}
+					case 0x0F: // Arkanoid Paddle (NES)
+					{
+						profile.game.controllers[1] = Api::Input::PADDLE;
+						break;
+					}
+					case 0x10: // Arkanoid Paddle (Famicom)
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::PADDLE;
+						break;
+					}
+					case 0x12: // Konami Hypershot
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[0] = Api::Input::UNCONNECTED;
+						profile.game.controllers[1] = Api::Input::UNCONNECTED;
+						profile.game.controllers[4] = Api::Input::KONAMIHYPERSHOT;
+						break;
+					}
+					case 0x13: // Coconuts Pachinko Controller
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::PACHINKO;
+						break;
+					}
+					case 0x14: // Exciting Boxing
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::EXCITINGBOXING;
+						break;
+					}
+					case 0x15: // Jissen Mahjong Controller
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[0] = Api::Input::UNCONNECTED;
+						profile.game.controllers[1] = Api::Input::UNCONNECTED;
+						profile.game.controllers[4] = Api::Input::MAHJONG;
+						break;
+					}
+					case 0x16: // Party Tap
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[1] = Api::Input::UNCONNECTED;
+						profile.game.controllers[4] = Api::Input::PARTYTAP;
+						break;
+					}
+					case 0x17: // Oeka Kids Tablet
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[0] = Api::Input::UNCONNECTED;
+						profile.game.controllers[1] = Api::Input::UNCONNECTED;
+						profile.game.controllers[4] = Api::Input::OEKAKIDSTABLET;
+						break;
+					}
+					case 0x18: // Sunsoft Barcode Battler
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::BARCODEWORLD;
+						break;
+					}
+					case 0x1A: // Pokkun Moguraa (Whack-a-Mole Mat and Mallet)
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[1] = Api::Input::UNCONNECTED;
+						profile.game.controllers[4] = Api::Input::POKKUNMOGURAA;
+						break;
+					}
+					case 0x1B: // Top Rider
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[0] = Api::Input::UNCONNECTED;
+						profile.game.controllers[1] = Api::Input::UNCONNECTED;
+						profile.game.controllers[4] = Api::Input::TOPRIDER;
+						break;
+					}
+					case 0x1E: // Doremikko Keyboard
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::DOREMIKKOKEYBOARD;
+						break;
+					}
+					case 0x1F: // R.O.B. Gyro Set
+					{
+						profile.game.controllers[1] = Api::Input::ROB;
+						break;
+					}
+					case 0x21: // Turbo File
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::TURBOFILE;
+						break;
+					}
+					case 0x23: // Family BASIC Keyboard
+					{
+						profile.game.adapter = Api::Input::ADAPTER_FAMICOM;
+						profile.game.controllers[4] = Api::Input::FAMILYKEYBOARD;
+						break;
+					}
+					default:
+					{
+						break;
+					}
+				}
+
 				return trainerSetup;
 			}
 
@@ -752,6 +896,7 @@ namespace Nes
 				setup.prgNvRam = ((header[10]) >>   4) - 1U < 14 ? 64UL << (header[10] >>   4) : 0;
 				setup.chrRam   = ((header[11]) & 0xFU) - 1U < 14 ? 64UL << (header[11] & 0xFU) : 0;
 				setup.chrNvRam = ((header[11]) >>   4) - 1U < 14 ? 64UL << (header[11] >>   4) : 0;
+				setup.inputType = header[15];
 			}
 			else
 			{
