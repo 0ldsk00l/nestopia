@@ -317,7 +317,18 @@ static void NST_CALLBACK nst_cb_event(void *userdata, User::Event event,
 
 static void NST_CALLBACK nst_cb_file(void *userdata, User::File& file) {
     switch (file.GetAction()) {
-        case User::File::LOAD_ROM: {
+        case User::File::LOAD_ROM: { // XML Romset loading
+            std::wstring wfname = std::wstring(file.GetName());
+            std::string fname(wfname.begin(), wfname.end());
+            std::string basedir = std::string(gameinfo.path);
+            basedir = basedir.substr(0, basedir.rfind("/"));
+            fname = basedir + "/" + fname;
+            std::ifstream romfile(fname.c_str(),
+                std::ifstream::in|std::ifstream::binary);
+            if (romfile.is_open()) {
+                file.SetContent(romfile);
+                romfile.close();
+            }
             break;
         }
         case User::File::LOAD_SAMPLE: {
