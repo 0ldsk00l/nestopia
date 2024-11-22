@@ -138,7 +138,7 @@ bool fltkui_archive_select(const char *filename, std::string& arcname) {
 
     romfile = reqfile;
 
-    std::set<std::string> nes_exts = { ".nes", ".fds", ".unf", ".unif", ".bin" };
+    std::set<std::string> nes_exts = { ".nes", ".fds", ".unf", ".unif", ".bin", ".xml" };
 
     // Fill the treestore with the filenames
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
