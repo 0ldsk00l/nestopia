@@ -69,6 +69,10 @@ int speed{1};
 int video_fullscreen{0};
 int refreshrate{60};
 int screennum{0};
+
+int frames{0};
+int framefrags{0};
+
 bool fdsgame{false};
 
 NstWindow *nstwin{nullptr};
@@ -146,9 +150,6 @@ Fl_Menu_Item *get_menuitem(std::string label) {
 
 void update_refreshrate(void) {
     // Get the screen refresh rate using an SDL window
-    #ifdef __APPLE__
-    return; // macOS doesn't like the SDL window or refresh rates other than 60
-    #endif
     SDL_Window *sdlwin;
     sdlwin = SDL_CreateWindow(
         "refreshrate",
@@ -159,6 +160,30 @@ void update_refreshrate(void) {
     SDL_GetCurrentDisplayMode(screennum, &dm);
     refreshrate = dm.refresh_rate;
     SDL_DestroyWindow(sdlwin);
+}
+
+void exec_emu(void*) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        inputmgr->event(event);
+    }
+
+    int fps{jgm->get_frametime()};
+    frames = (fps / refreshrate);
+    framefrags += fps % refreshrate;
+
+    if (framefrags >= refreshrate) {
+        frames++;
+        framefrags -= refreshrate;
+    }
+
+    if (!paused) {
+        for (int i = 0; i < frames * speed; i++) {
+            jgm->exec_frame();
+        }
+    }
+
+    glarea->redraw();
 }
 
 }
@@ -758,45 +783,19 @@ int main(int argc, char *argv[]) {
     videomgr->set_dpiscale(glarea->pixels_per_unit());
     videomgr->resize(glarea->w(), glarea->h());
 
-    Fl::check();
-
     if (video_fullscreen) {
         video_fullscreen = 0;
         FltkUi::fullscreen(NULL, NULL);
     }
 
-    int frames = 0;
-    int framefrags = 0;
-    int fps = jgm->get_frametime();
     update_refreshrate();
 
-    while (true) {
-        Fl::check();
-        if (!nstwin->shown()) {
-            break;
-        }
-
-        SDL_Event event;
-        while (SDL_PollEvent(&event)) {
-            inputmgr->event(event);
-        }
-
-        fps = jgm->get_frametime();
-        frames = (fps / refreshrate);
-        framefrags += fps % refreshrate;
-
-        if (framefrags >= refreshrate) {
-            frames++;
-            framefrags -= refreshrate;
-        }
-
-        if (!paused) {
-            for (int i = 0; i < frames * speed; i++) {
-                jgm->exec_frame();
-            }
-        }
-
-        glarea->redraw();
+    // Execute emulation using an FLTK idle callback. End when the main window
+    // is no longer shown. Using the while loop instead of Fl::run will cleanly
+    // exit the program even when other windows are still shown.
+    Fl::add_idle(exec_emu);
+    while (nstwin->shown()) {
+        Fl::wait();
     }
 
     // Write frontend and emulator settings
