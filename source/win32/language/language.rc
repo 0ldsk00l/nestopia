@@ -18,179 +18,179 @@ IDR_MENU MENU
 {
     POPUP "&File"
     {
-        MENUITEM "&Open...", IDM_FILE_OPEN
-        MENUITEM "&Close", IDM_FILE_CLOSE
+        MENUITEM "&Open...",                        IDM_FILE_OPEN
+        MENUITEM "&Close",                          IDM_FILE_CLOSE
         MENUITEM SEPARATOR
-        MENUITEM "&Load State...", IDM_FILE_LOAD_NST
-        MENUITEM "&Save State...", IDM_FILE_SAVE_NST
+        MENUITEM "&Load State...",                  IDM_FILE_LOAD_NST
+        MENUITEM "&Save State...",                  IDM_FILE_SAVE_NST
         MENUITEM SEPARATOR
         POPUP "Quick Lo&ad State"
         {
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_1
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_2
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_3
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_4
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_5
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_6
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_7
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_8
-            MENUITEM ".", IDM_FILE_QUICK_LOAD_STATE_SLOT_9
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_1
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_2
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_3
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_4
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_5
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_6
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_7
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_8
+            MENUITEM ".",                           IDM_FILE_QUICK_LOAD_STATE_SLOT_9
             MENUITEM SEPARATOR
-            MENUITEM "&Newest Slot", IDM_FILE_QUICK_LOAD_STATE_SLOT_NEWEST
+            MENUITEM "&Newest Slot",                IDM_FILE_QUICK_LOAD_STATE_SLOT_NEWEST
         }
         POPUP "Quick Sa&ve State"
         {
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_1
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_2
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_3
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_4
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_5
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_6
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_7
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_8
-            MENUITEM ".", IDM_FILE_QUICK_SAVE_STATE_SLOT_9
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_1
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_2
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_3
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_4
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_5
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_6
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_7
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_8
+            MENUITEM ".",                           IDM_FILE_QUICK_SAVE_STATE_SLOT_9
             MENUITEM SEPARATOR
-            MENUITEM "&Oldest Slot", IDM_FILE_QUICK_SAVE_STATE_SLOT_OLDEST
+            MENUITEM "&Oldest Slot",                IDM_FILE_QUICK_SAVE_STATE_SLOT_OLDEST
         }
         MENUITEM SEPARATOR
-        MENUITEM "Edit iNES &Header...", IDM_FILE_EDIT_INES_HEADER
+        MENUITEM "Edit iNES &Header...",            IDM_FILE_EDIT_INES_HEADER
         MENUITEM SEPARATOR
-        MENUITEM "Save Scr&eenshot", IDM_FILE_SAVE_SCREENSHOT
+        MENUITEM "Save Scr&eenshot",                IDM_FILE_SAVE_SCREENSHOT
         POPUP "Sound &Recorder"
         {
-            MENUITEM "&File...", IDM_FILE_SOUND_RECORDER_FILE
-            MENUITEM "&Record", IDM_FILE_SOUND_RECORDER_START
-            MENUITEM "&Stop", IDM_FILE_SOUND_RECORDER_STOP
-            MENUITEM "R&ewind", IDM_FILE_SOUND_RECORDER_REWIND
+            MENUITEM "&File...",                    IDM_FILE_SOUND_RECORDER_FILE
+            MENUITEM "&Record",                     IDM_FILE_SOUND_RECORDER_START
+            MENUITEM "&Stop",                       IDM_FILE_SOUND_RECORDER_STOP
+            MENUITEM "R&ewind",                     IDM_FILE_SOUND_RECORDER_REWIND
         }
         POPUP "&Movie Player"
         {
-            MENUITEM "&File...", IDM_FILE_MOVIE_FILE
-            MENUITEM "&Record", IDM_FILE_MOVIE_RECORD
-            MENUITEM "&Play", IDM_FILE_MOVIE_PLAY
-            MENUITEM "&Stop", IDM_FILE_MOVIE_STOP
-            MENUITEM "R&ewind", IDM_FILE_MOVIE_REWIND
-            MENUITEM "F&ast Forward", IDM_FILE_MOVIE_FORWARD
+            MENUITEM "&File...",                    IDM_FILE_MOVIE_FILE
+            MENUITEM "&Record",                     IDM_FILE_MOVIE_RECORD
+            MENUITEM "&Play",                       IDM_FILE_MOVIE_PLAY
+            MENUITEM "&Stop",                       IDM_FILE_MOVIE_STOP
+            MENUITEM "R&ewind",                     IDM_FILE_MOVIE_REWIND
+            MENUITEM "F&ast Forward",               IDM_FILE_MOVIE_FORWARD
             MENUITEM SEPARATOR
-            MENUITEM "Export to &AVI...", IDM_FILE_MOVIE_EXPORT_AVI
+            MENUITEM "Export to &AVI...",           IDM_FILE_MOVIE_EXPORT_AVI
         }
         MENUITEM SEPARATOR
-        MENUITEM "Lau&ncher...", IDM_FILE_LAUNCHER
+        MENUITEM "Lau&ncher...",                    IDM_FILE_LAUNCHER
         MENUITEM SEPARATOR
         POPUP "Recent &Files"
         {
-            MENUITEM ".", IDM_FILE_RECENT_1
-            MENUITEM ".", IDM_FILE_RECENT_2
-            MENUITEM ".", IDM_FILE_RECENT_3
-            MENUITEM ".", IDM_FILE_RECENT_4
-            MENUITEM ".", IDM_FILE_RECENT_5
-            MENUITEM ".", IDM_FILE_RECENT_6
-            MENUITEM ".", IDM_FILE_RECENT_7
-            MENUITEM ".", IDM_FILE_RECENT_8
-            MENUITEM ".", IDM_FILE_RECENT_9
+            MENUITEM ".",                           IDM_FILE_RECENT_1
+            MENUITEM ".",                           IDM_FILE_RECENT_2
+            MENUITEM ".",                           IDM_FILE_RECENT_3
+            MENUITEM ".",                           IDM_FILE_RECENT_4
+            MENUITEM ".",                           IDM_FILE_RECENT_5
+            MENUITEM ".",                           IDM_FILE_RECENT_6
+            MENUITEM ".",                           IDM_FILE_RECENT_7
+            MENUITEM ".",                           IDM_FILE_RECENT_8
+            MENUITEM ".",                           IDM_FILE_RECENT_9
             MENUITEM SEPARATOR
-            MENUITEM "&Lock", IDM_FILE_RECENT_LOCK
-            MENUITEM "&Clear", IDM_FILE_RECENT_CLEAR
+            MENUITEM "&Lock",                       IDM_FILE_RECENT_LOCK
+            MENUITEM "&Clear",                      IDM_FILE_RECENT_CLEAR
         }
         POPUP "Recent &Directories"
         {
-            MENUITEM ".", IDM_FILE_RECENT_DIR_1
-            MENUITEM ".", IDM_FILE_RECENT_DIR_2
-            MENUITEM ".", IDM_FILE_RECENT_DIR_3
-            MENUITEM ".", IDM_FILE_RECENT_DIR_4
-            MENUITEM ".", IDM_FILE_RECENT_DIR_5
+            MENUITEM ".",                           IDM_FILE_RECENT_DIR_1
+            MENUITEM ".",                           IDM_FILE_RECENT_DIR_2
+            MENUITEM ".",                           IDM_FILE_RECENT_DIR_3
+            MENUITEM ".",                           IDM_FILE_RECENT_DIR_4
+            MENUITEM ".",                           IDM_FILE_RECENT_DIR_5
             MENUITEM SEPARATOR
-            MENUITEM "&Lock", IDM_FILE_RECENT_DIR_LOCK
-            MENUITEM "&Clear", IDM_FILE_RECENT_DIR_CLEAR
+            MENUITEM "&Lock",                       IDM_FILE_RECENT_DIR_LOCK
+            MENUITEM "&Clear",                      IDM_FILE_RECENT_DIR_CLEAR
         }
         MENUITEM SEPARATOR
-        MENUITEM "E&xit", IDM_FILE_QUIT
+        MENUITEM "E&xit",                           IDM_FILE_QUIT
     }
     POPUP "&Machine"
     {
-        MENUITEM ".", IDM_MACHINE_POWER
+        MENUITEM ".",                               IDM_MACHINE_POWER
         POPUP "&Reset"
         {
-            MENUITEM "&Soft", IDM_MACHINE_RESET_SOFT
-            MENUITEM "&Hard", IDM_MACHINE_RESET_HARD
+            MENUITEM "&Soft",                       IDM_MACHINE_RESET_SOFT
+            MENUITEM "&Hard",                       IDM_MACHINE_RESET_HARD
         }
         MENUITEM SEPARATOR
         POPUP "&Input"
         {
-            MENUITEM "&Auto Select", IDM_MACHINE_INPUT_AUTOSELECT
+            MENUITEM "&Auto Select",                IDM_MACHINE_INPUT_AUTOSELECT
             MENUITEM SEPARATOR
             POPUP "Port &1"
             {
-                MENUITEM "&Unconnected", IDM_MACHINE_INPUT_PORT1_UNCONNECTED
-                MENUITEM "Pad &1", IDM_MACHINE_INPUT_PORT1_PAD1
-                MENUITEM "Pad &2", IDM_MACHINE_INPUT_PORT1_PAD2
-                MENUITEM "Pad &3", IDM_MACHINE_INPUT_PORT1_PAD3
-                MENUITEM "Pad &4", IDM_MACHINE_INPUT_PORT1_PAD4
-                MENUITEM "&Arkanoid", IDM_MACHINE_INPUT_PORT1_PADDLE
-                MENUITEM "&Mouse", IDM_MACHINE_INPUT_PORT1_MOUSE
-                MENUITEM "Power &Glove", IDM_MACHINE_INPUT_PORT1_POWERGLOVE
-                MENUITEM "Power &Pad", IDM_MACHINE_INPUT_PORT1_POWERPAD
-                MENUITEM "&R.O.B.", IDM_MACHINE_INPUT_PORT1_ROB
-                MENUITEM "&Zapper", IDM_MACHINE_INPUT_PORT1_ZAPPER
+                MENUITEM "&Unconnected",            IDM_MACHINE_INPUT_PORT1_UNCONNECTED
+                MENUITEM "Pad &1",                  IDM_MACHINE_INPUT_PORT1_PAD1
+                MENUITEM "Pad &2",                  IDM_MACHINE_INPUT_PORT1_PAD2
+                MENUITEM "Pad &3",                  IDM_MACHINE_INPUT_PORT1_PAD3
+                MENUITEM "Pad &4",                  IDM_MACHINE_INPUT_PORT1_PAD4
+                MENUITEM "&Arkanoid",               IDM_MACHINE_INPUT_PORT1_PADDLE
+                MENUITEM "&Mouse",                  IDM_MACHINE_INPUT_PORT1_MOUSE
+                MENUITEM "Power &Glove",            IDM_MACHINE_INPUT_PORT1_POWERGLOVE
+                MENUITEM "Power &Pad",              IDM_MACHINE_INPUT_PORT1_POWERPAD
+                MENUITEM "&R.O.B.",                 IDM_MACHINE_INPUT_PORT1_ROB
+                MENUITEM "&Zapper",                 IDM_MACHINE_INPUT_PORT1_ZAPPER
             }
             POPUP "Port &2"
             {
-                MENUITEM "&Unconnected", IDM_MACHINE_INPUT_PORT2_UNCONNECTED
-                MENUITEM "Pad &1", IDM_MACHINE_INPUT_PORT2_PAD1
-                MENUITEM "Pad &2", IDM_MACHINE_INPUT_PORT2_PAD2
-                MENUITEM "Pad &3", IDM_MACHINE_INPUT_PORT2_PAD3
-                MENUITEM "Pad &4", IDM_MACHINE_INPUT_PORT2_PAD4
-                MENUITEM "&Arkanoid", IDM_MACHINE_INPUT_PORT2_PADDLE
-                MENUITEM "&Mouse", IDM_MACHINE_INPUT_PORT2_MOUSE
-                MENUITEM "Power &Glove", IDM_MACHINE_INPUT_PORT2_POWERGLOVE
-                MENUITEM "Power &Pad", IDM_MACHINE_INPUT_PORT2_POWERPAD
-                MENUITEM "&R.O.B.", IDM_MACHINE_INPUT_PORT2_ROB
-                MENUITEM "&Zapper", IDM_MACHINE_INPUT_PORT2_ZAPPER
+                MENUITEM "&Unconnected",            IDM_MACHINE_INPUT_PORT2_UNCONNECTED
+                MENUITEM "Pad &1",                  IDM_MACHINE_INPUT_PORT2_PAD1
+                MENUITEM "Pad &2",                  IDM_MACHINE_INPUT_PORT2_PAD2
+                MENUITEM "Pad &3",                  IDM_MACHINE_INPUT_PORT2_PAD3
+                MENUITEM "Pad &4",                  IDM_MACHINE_INPUT_PORT2_PAD4
+                MENUITEM "&Arkanoid",               IDM_MACHINE_INPUT_PORT2_PADDLE
+                MENUITEM "&Mouse",                  IDM_MACHINE_INPUT_PORT2_MOUSE
+                MENUITEM "Power &Glove",            IDM_MACHINE_INPUT_PORT2_POWERGLOVE
+                MENUITEM "Power &Pad",              IDM_MACHINE_INPUT_PORT2_POWERPAD
+                MENUITEM "&R.O.B.",                 IDM_MACHINE_INPUT_PORT2_ROB
+                MENUITEM "&Zapper",                 IDM_MACHINE_INPUT_PORT2_ZAPPER
             }
             POPUP "Port &3"
             {
-                MENUITEM "&Unconnected", IDM_MACHINE_INPUT_PORT3_UNCONNECTED
-                MENUITEM "Pad &1", IDM_MACHINE_INPUT_PORT3_PAD1
-                MENUITEM "Pad &2", IDM_MACHINE_INPUT_PORT3_PAD2
-                MENUITEM "Pad &3", IDM_MACHINE_INPUT_PORT3_PAD3
-                MENUITEM "Pad &4", IDM_MACHINE_INPUT_PORT3_PAD4
+                MENUITEM "&Unconnected",            IDM_MACHINE_INPUT_PORT3_UNCONNECTED
+                MENUITEM "Pad &1",                  IDM_MACHINE_INPUT_PORT3_PAD1
+                MENUITEM "Pad &2",                  IDM_MACHINE_INPUT_PORT3_PAD2
+                MENUITEM "Pad &3",                  IDM_MACHINE_INPUT_PORT3_PAD3
+                MENUITEM "Pad &4",                  IDM_MACHINE_INPUT_PORT3_PAD4
             }
             POPUP "Port &4"
             {
-                MENUITEM "&Unconnected", IDM_MACHINE_INPUT_PORT4_UNCONNECTED
-                MENUITEM "Pad &1", IDM_MACHINE_INPUT_PORT4_PAD1
-                MENUITEM "Pad &2", IDM_MACHINE_INPUT_PORT4_PAD2
-                MENUITEM "Pad &3", IDM_MACHINE_INPUT_PORT4_PAD3
-                MENUITEM "Pad &4", IDM_MACHINE_INPUT_PORT4_PAD4
+                MENUITEM "&Unconnected",            IDM_MACHINE_INPUT_PORT4_UNCONNECTED
+                MENUITEM "Pad &1",                  IDM_MACHINE_INPUT_PORT4_PAD1
+                MENUITEM "Pad &2",                  IDM_MACHINE_INPUT_PORT4_PAD2
+                MENUITEM "Pad &3",                  IDM_MACHINE_INPUT_PORT4_PAD3
+                MENUITEM "Pad &4",                  IDM_MACHINE_INPUT_PORT4_PAD4
             }
             POPUP "&Expansion Port"
             {
-                MENUITEM "&Unconnected", IDM_MACHINE_INPUT_EXP_UNCONNECTED
-                MENUITEM "&Arkanoid", IDM_MACHINE_INPUT_EXP_PADDLE
-                MENUITEM "&Bandai Hyper Shot", IDM_MACHINE_INPUT_EXP_BANDAIHYPERSHOT
-                MENUITEM "B&arcode World", IDM_MACHINE_INPUT_EXP_BARCODEWORLD
-                MENUITEM "&Crazy Climber", IDM_MACHINE_INPUT_EXP_CRAZYCLIMBER
-                MENUITEM "&Doremikko", IDM_MACHINE_INPUT_EXP_DOREMIKKOKEYBOARD
-                MENUITEM "&Exciting Boxing", IDM_MACHINE_INPUT_EXP_EXCITINGBOXING
-                MENUITEM "Family &BASIC", IDM_MACHINE_INPUT_EXP_FAMILYBASICKEYBOARD
-                MENUITEM "Family &Trainer", IDM_MACHINE_INPUT_EXP_FAMILYTRAINER
-                MENUITEM "&Hori Track", IDM_MACHINE_INPUT_EXP_HORITRACK
-                MENUITEM "&Konami Hyper Shot", IDM_MACHINE_INPUT_EXP_KONAMIHYPERSHOT
-                MENUITEM "&Mahjong", IDM_MACHINE_INPUT_EXP_MAHJONG
-                MENUITEM "&Oeka Kids", IDM_MACHINE_INPUT_EXP_OEKAKIDSTABLET
-                MENUITEM "&Pachinko", IDM_MACHINE_INPUT_EXP_PACHINKO
-                MENUITEM "Pa&rty Tap", IDM_MACHINE_INPUT_EXP_PARTYTAP
-                MENUITEM "Pokku&n Moguraa", IDM_MACHINE_INPUT_EXP_POKKUNMOGURAA
-                MENUITEM "&Subor", IDM_MACHINE_INPUT_EXP_SUBORKEYBOARD
-                MENUITEM "&Top Rider", IDM_MACHINE_INPUT_EXP_TOPRIDER
-                MENUITEM "T&urbo File", IDM_MACHINE_INPUT_EXP_TURBOFILE
+                MENUITEM "&Unconnected",            IDM_MACHINE_INPUT_EXP_UNCONNECTED
+                MENUITEM "&Arkanoid",               IDM_MACHINE_INPUT_EXP_PADDLE
+                MENUITEM "&Bandai Hyper Shot",      IDM_MACHINE_INPUT_EXP_BANDAIHYPERSHOT
+                MENUITEM "B&arcode World",          IDM_MACHINE_INPUT_EXP_BARCODEWORLD
+                MENUITEM "&Crazy Climber",          IDM_MACHINE_INPUT_EXP_CRAZYCLIMBER
+                MENUITEM "&Doremikko",              IDM_MACHINE_INPUT_EXP_DOREMIKKOKEYBOARD
+                MENUITEM "&Exciting Boxing",        IDM_MACHINE_INPUT_EXP_EXCITINGBOXING
+                MENUITEM "Family &BASIC",           IDM_MACHINE_INPUT_EXP_FAMILYBASICKEYBOARD
+                MENUITEM "Family &Trainer",         IDM_MACHINE_INPUT_EXP_FAMILYTRAINER
+                MENUITEM "&Hori Track",             IDM_MACHINE_INPUT_EXP_HORITRACK
+                MENUITEM "&Konami Hyper Shot",      IDM_MACHINE_INPUT_EXP_KONAMIHYPERSHOT
+                MENUITEM "&Mahjong",                IDM_MACHINE_INPUT_EXP_MAHJONG
+                MENUITEM "&Oeka Kids",              IDM_MACHINE_INPUT_EXP_OEKAKIDSTABLET
+                MENUITEM "&Pachinko",               IDM_MACHINE_INPUT_EXP_PACHINKO
+                MENUITEM "Pa&rty Tap",              IDM_MACHINE_INPUT_EXP_PARTYTAP
+                MENUITEM "Pokku&n Moguraa",         IDM_MACHINE_INPUT_EXP_POKKUNMOGURAA
+                MENUITEM "&Subor",                  IDM_MACHINE_INPUT_EXP_SUBORKEYBOARD
+                MENUITEM "&Top Rider",              IDM_MACHINE_INPUT_EXP_TOPRIDER
+                MENUITEM "T&urbo File",             IDM_MACHINE_INPUT_EXP_TURBOFILE
             }
             MENUITEM SEPARATOR
             POPUP "&Four Player Adapter"
             {
-                MENUITEM "&Auto", IDM_MACHINE_INPUT_ADAPTER_AUTO
-                MENUITEM "&NES", IDM_MACHINE_INPUT_ADAPTER_NES
-                MENUITEM "&Famicom", IDM_MACHINE_INPUT_ADAPTER_FAMICOM
+                MENUITEM "&Auto",                   IDM_MACHINE_INPUT_ADAPTER_AUTO
+                MENUITEM "&NES",                    IDM_MACHINE_INPUT_ADAPTER_NES
+                MENUITEM "&Famicom",                IDM_MACHINE_INPUT_ADAPTER_FAMICOM
             }
         }
         POPUP "&External"
@@ -199,125 +199,125 @@ IDR_MENU MENU
             {
                 POPUP "&Insert"
                 {
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_1_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_1_SIDE_B
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_2_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_2_SIDE_B
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_3_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_3_SIDE_B
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_4_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_4_SIDE_B
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_5_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_5_SIDE_B
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_6_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_6_SIDE_B
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_7_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_7_SIDE_B
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_8_SIDE_A
-                    MENUITEM ".", IDM_MACHINE_EXT_FDS_INSERT_DISK_8_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_1_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_1_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_2_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_2_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_3_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_3_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_4_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_4_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_5_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_5_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_6_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_6_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_7_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_7_SIDE_B
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_8_SIDE_A
+                    MENUITEM ".",                   IDM_MACHINE_EXT_FDS_INSERT_DISK_8_SIDE_B
                 }
-                MENUITEM "&Change Side", IDM_MACHINE_EXT_FDS_CHANGE_SIDE
-                MENUITEM "&Eject", IDM_MACHINE_EXT_FDS_EJECT_DISK
+                MENUITEM "&Change Side",            IDM_MACHINE_EXT_FDS_CHANGE_SIDE
+                MENUITEM "&Eject",                  IDM_MACHINE_EXT_FDS_EJECT_DISK
                 MENUITEM SEPARATOR
-                MENUITEM "&Options...", IDM_MACHINE_EXT_FDS_OPTIONS
+                MENUITEM "&Options...",             IDM_MACHINE_EXT_FDS_OPTIONS
             }
             POPUP "&Keyboard"
             {
-                MENUITEM "&Paste Text", IDM_MACHINE_EXT_KEYBOARD_PASTE
+                MENUITEM "&Paste Text",             IDM_MACHINE_EXT_KEYBOARD_PASTE
             }
             POPUP "&Tape Recorder"
             {
-                MENUITEM "&File...", IDM_MACHINE_EXT_TAPE_FILE
-                MENUITEM "&Record", IDM_MACHINE_EXT_TAPE_RECORD
-                MENUITEM "&Play", IDM_MACHINE_EXT_TAPE_PLAY
-                MENUITEM "&Stop", IDM_MACHINE_EXT_TAPE_STOP
+                MENUITEM "&File...",                IDM_MACHINE_EXT_TAPE_FILE
+                MENUITEM "&Record",                 IDM_MACHINE_EXT_TAPE_RECORD
+                MENUITEM "&Play",                   IDM_MACHINE_EXT_TAPE_PLAY
+                MENUITEM "&Stop",                   IDM_MACHINE_EXT_TAPE_STOP
             }
             MENUITEM SEPARATOR
-            MENUITEM "&Barcode Reader...", IDM_MACHINE_EXT_BARCODE
-            MENUITEM "DIP &Switches...", IDM_MACHINE_EXT_DIPSWITCHES
+            MENUITEM "&Barcode Reader...",          IDM_MACHINE_EXT_BARCODE
+            MENUITEM "DIP &Switches...",            IDM_MACHINE_EXT_DIPSWITCHES
         }
         POPUP "&NSF Player"
         {
-            MENUITEM "&Play", IDM_MACHINE_NSF_PLAY
-            MENUITEM "&Stop", IDM_MACHINE_NSF_STOP
-            MENUITEM "&Next Song", IDM_MACHINE_NSF_NEXT
-            MENUITEM "P&revious Song", IDM_MACHINE_NSF_PREV
+            MENUITEM "&Play",                       IDM_MACHINE_NSF_PLAY
+            MENUITEM "&Stop",                       IDM_MACHINE_NSF_STOP
+            MENUITEM "&Next Song",                  IDM_MACHINE_NSF_NEXT
+            MENUITEM "P&revious Song",              IDM_MACHINE_NSF_PREV
             MENUITEM SEPARATOR
-            MENUITEM "Play in &Background", IDM_MACHINE_NSF_OPTIONS_PLAYINBACKGROUND
+            MENUITEM "Play in &Background",         IDM_MACHINE_NSF_OPTIONS_PLAYINBACKGROUND
         }
         POPUP "Re&gion"
         {
-            MENUITEM "&Auto", IDM_MACHINE_SYSTEM_AUTO
-            MENUITEM "&NTSC", IDM_MACHINE_SYSTEM_NTSC
-            MENUITEM "&PAL", IDM_MACHINE_SYSTEM_PAL
+            MENUITEM "&Auto",                       IDM_MACHINE_SYSTEM_AUTO
+            MENUITEM "&NTSC",                       IDM_MACHINE_SYSTEM_NTSC
+            MENUITEM "&PAL",                        IDM_MACHINE_SYSTEM_PAL
         }
         POPUP "&Options"
         {
-            MENUITEM "No &Sprite Limit", IDM_MACHINE_OPTIONS_UNLIMITEDSPRITES
-            MENUITEM "&DIP Switches on Load", IDM_MACHINE_OPTIONS_DIPSWITCHESONLOAD
+            MENUITEM "No &Sprite Limit",            IDM_MACHINE_OPTIONS_UNLIMITEDSPRITES
+            MENUITEM "&DIP Switches on Load",       IDM_MACHINE_OPTIONS_DIPSWITCHESONLOAD
         }
         MENUITEM SEPARATOR
-        MENUITEM "P&ause", IDM_MACHINE_PAUSE
+        MENUITEM "P&ause",                          IDM_MACHINE_PAUSE
     }
     POPUP "&Netplay"
     {
-        MENUITEM ".", IDM_NETPLAY_CONNECTION
-        MENUITEM "&Chat...", IDM_NETPLAY_CHAT
+        MENUITEM ".",                               IDM_NETPLAY_CONNECTION
+        MENUITEM "&Chat...",                        IDM_NETPLAY_CHAT
     }
     POPUP "&View"
     {
-        MENUITEM "&Image Info...", IDM_VIEW_IMAGE_INFO
-        MENUITEM "&Log File...", IDM_VIEW_LOGFILE
+        MENUITEM "&Image Info...",                  IDM_VIEW_IMAGE_INFO
+        MENUITEM "&Log File...",                    IDM_VIEW_LOGFILE
         MENUITEM SEPARATOR
         POPUP "&Screen Size"
         {
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_1X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_2X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_3X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_4X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_5X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_6X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_7X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_8X
-            MENUITEM ".", IDM_VIEW_WINDOWSIZE_9X
-            MENUITEM "&Max", IDM_VIEW_WINDOWSIZE_MAX
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_1X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_2X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_3X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_4X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_5X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_6X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_7X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_8X
+            MENUITEM ".",                           IDM_VIEW_WINDOWSIZE_9X
+            MENUITEM "&Max",                        IDM_VIEW_WINDOWSIZE_MAX
             MENUITEM SEPARATOR
-            MENUITEM "TV &Aspect", IDM_VIEW_WINDOWSIZE_TVASPECT
+            MENUITEM "TV &Aspect",                  IDM_VIEW_WINDOWSIZE_TVASPECT
         }
         POPUP "S&how"
         {
-            MENUITEM "&Menu / Dialogs", IDM_VIEW_MENU
-            MENUITEM "&Status Bar", IDM_VIEW_STATUSBAR
-            MENUITEM "On &Top", IDM_VIEW_ON_TOP
-            MENUITEM "&FPS", IDM_VIEW_FPS
+            MENUITEM "&Menu / Dialogs",             IDM_VIEW_MENU
+            MENUITEM "&Status Bar",                 IDM_VIEW_STATUSBAR
+            MENUITEM "On &Top",                     IDM_VIEW_ON_TOP
+            MENUITEM "&FPS",                        IDM_VIEW_FPS
         }
         MENUITEM SEPARATOR
-        MENUITEM ".", IDM_VIEW_SWITCH_SCREEN
+        MENUITEM ".",                               IDM_VIEW_SWITCH_SCREEN
     }
     POPUP "&Options"
     {
-        MENUITEM "&Video...", IDM_OPTIONS_VIDEO
-        MENUITEM "&Sound...", IDM_OPTIONS_SOUND
-        MENUITEM "&Input...", IDM_OPTIONS_INPUT
-        MENUITEM "&Timing...", IDM_OPTIONS_TIMING
-        MENUITEM "&Paths...", IDM_OPTIONS_PATHS
-        MENUITEM "P&references...", IDM_OPTIONS_PREFERENCES
-        MENUITEM "&Cheats...", IDM_OPTIONS_CHEATS
-        MENUITEM "&Database...", IDM_OPTIONS_IMAGEDATABASE
-        MENUITEM "&Language...", IDM_OPTIONS_LANGUAGE
+        MENUITEM "&Video...",                       IDM_OPTIONS_VIDEO
+        MENUITEM "&Sound...",                       IDM_OPTIONS_SOUND
+        MENUITEM "&Input...",                       IDM_OPTIONS_INPUT
+        MENUITEM "&Timing...",                      IDM_OPTIONS_TIMING
+        MENUITEM "&Paths...",                       IDM_OPTIONS_PATHS
+        MENUITEM "P&references...",                 IDM_OPTIONS_PREFERENCES
+        MENUITEM "&Cheats...",                      IDM_OPTIONS_CHEATS
+        MENUITEM "&Database...",                    IDM_OPTIONS_IMAGEDATABASE
+        MENUITEM "&Language...",                    IDM_OPTIONS_LANGUAGE
         MENUITEM SEPARATOR
         POPUP "&Auto Saver"
         {
-            MENUITEM "&Options...", IDM_OPTIONS_AUTOSAVER
-            MENUITEM ".", IDM_OPTIONS_AUTOSAVER_START
+            MENUITEM "&Options...",                 IDM_OPTIONS_AUTOSAVER
+            MENUITEM ".",                           IDM_OPTIONS_AUTOSAVER_START
         }
     }
     POPUP "&Help"
     {
-        MENUITEM "&Help...", IDM_HELP_HELP
-        MENUITEM "&License...", IDM_HELP_LICENSE
+        MENUITEM "&Help...",                        IDM_HELP_HELP
+        MENUITEM "&License...",                     IDM_HELP_LICENSE
         MENUITEM SEPARATOR
-        MENUITEM "&About...", IDM_HELP_ABOUT
+        MENUITEM "&About...",                       IDM_HELP_ABOUT
     }
 }
 
@@ -328,35 +328,35 @@ IDR_MENU_LAUNCHER MENU
 {
     POPUP "&File"
     {
-        MENUITEM "&Run", IDM_LAUNCHER_FILE_RUN
+        MENUITEM "&Run",                            IDM_LAUNCHER_FILE_RUN
         MENUITEM SEPARATOR
-        MENUITEM "&Edit iNES Header...", IDM_LAUNCHER_FILE_EDITHEADER
+        MENUITEM "&Edit iNES Header...",            IDM_LAUNCHER_FILE_EDITHEADER
         MENUITEM SEPARATOR
-        MENUITEM "Re&fresh", IDM_LAUNCHER_FILE_REFRESH
+        MENUITEM "Re&fresh",                        IDM_LAUNCHER_FILE_REFRESH
     }
     POPUP "&Edit"
     {
-        MENUITEM "&Find", IDM_LAUNCHER_EDIT_FIND
+        MENUITEM "&Find",                           IDM_LAUNCHER_EDIT_FIND
         MENUITEM SEPARATOR
-        MENUITEM "&Insert...", IDM_LAUNCHER_EDIT_INSERT
-        MENUITEM "&Delete", IDM_LAUNCHER_EDIT_REMOVE
+        MENUITEM "&Insert...",                      IDM_LAUNCHER_EDIT_INSERT
+        MENUITEM "&Delete",                         IDM_LAUNCHER_EDIT_REMOVE
         MENUITEM SEPARATOR
-        MENUITEM "&Clear", IDM_LAUNCHER_EDIT_CLEAR
+        MENUITEM "&Clear",                          IDM_LAUNCHER_EDIT_CLEAR
     }
     POPUP "&View"
     {
-        MENUITEM "&Gridlines", IDM_LAUNCHER_VIEW_SHOWGRIDS
-        MENUITEM "&Database Adjusted", IDM_LAUNCHER_VIEW_SHOWDATABASECORRECTED
+        MENUITEM "&Gridlines",                      IDM_LAUNCHER_VIEW_SHOWGRIDS
+        MENUITEM "&Database Adjusted",              IDM_LAUNCHER_VIEW_SHOWDATABASECORRECTED
         MENUITEM SEPARATOR
-        MENUITEM "On &Top", IDM_LAUNCHER_VIEW_ONTOP
+        MENUITEM "On &Top",                         IDM_LAUNCHER_VIEW_ONTOP
         MENUITEM SEPARATOR
-        MENUITEM "&Align Columns", IDM_LAUNCHER_VIEW_ALIGNCOLUMNS
+        MENUITEM "&Align Columns",                  IDM_LAUNCHER_VIEW_ALIGNCOLUMNS
     }
     POPUP "&Options"
     {
-        MENUITEM "&Paths...", IDM_LAUNCHER_OPTIONS_PATHS
-        MENUITEM "&Columns...", IDM_LAUNCHER_OPTIONS_COLUMNS
-        MENUITEM "C&olors...", IDM_LAUNCHER_OPTIONS_COLORS
+        MENUITEM "&Paths...",                       IDM_LAUNCHER_OPTIONS_PATHS
+        MENUITEM "&Columns...",                     IDM_LAUNCHER_OPTIONS_COLUMNS
+        MENUITEM "C&olors...",                      IDM_LAUNCHER_OPTIONS_COLORS
     }
 }
 
@@ -374,7 +374,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 1
     GROUPBOX        "", IDC_STATIC, 7, 7, 147, 141, 0, WS_EX_LEFT
     LTEXT           "Nestopia UE 1.52.1", IDC_ABOUT_NAMEVERSION, 47, 14, 63, 9, SS_LEFT, WS_EX_LEFT
     ICON            "", IDC_ABOUT_ICON, 70, 36, 21, 20, SS_ICON, WS_EX_LEFT
-    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2024 R. Danbrook\nCopyright © 2020-2024 Rupert Carmichael", IDC_STATIC, 12, 69, 139, 25, SS_CENTER, WS_EX_LEFT
+    CTEXT           "Copyright Â© 2003-2008 Martin Freij\nCopyright Â© 2012-2024 R. Danbrook\nCopyright Â© 2020-2024 Rupert Carmichael", IDC_STATIC, 12, 69, 139, 25, SS_CENTER, WS_EX_LEFT
     LTEXT           "Homepage", IDC_STATIC, 13, 124, 8, 1, SS_LEFT, WS_EX_LEFT
     CTEXT           "0ldsk00l.ca/nestopia", IDC_ABOUT_URL, 46, 107, 67, 8, SS_CENTER | SS_NOTIFY, WS_EX_LEFT
     DEFPUSHBUTTON   "OK", IDOK, 62, 125, 37, 13, 0, WS_EX_LEFT
@@ -1283,7 +1283,7 @@ FONT 8, "MS Shell Dlg", 400, 0, 1
     CTEXT           "0", IDC_VIDEO_DECODER_BY_NUM, 123, 65, 19, 14, NOT WS_GROUP | SS_CENTER | SS_SUNKEN, WS_EX_LEFT
     LTEXT           "Gain", IDC_STATIC, 151, 68, 16, 9, SS_LEFT, WS_EX_LEFT
     EDITTEXT        IDC_VIDEO_DECODER_BY_GAIN, 171, 65, 32, 14, ES_AUTOHSCROLL, WS_EX_LEFT
-    PUSHBUTTON      "15° Canonical", IDC_VIDEO_DECODER_CANONICAL, 14, 88, 61, 13, WS_GROUP, WS_EX_LEFT
+    PUSHBUTTON      "15Â° Canonical", IDC_VIDEO_DECODER_CANONICAL, 14, 88, 61, 13, WS_GROUP, WS_EX_LEFT
     PUSHBUTTON      "Consumer", IDC_VIDEO_DECODER_CONSUMER, 78, 88, 61, 13, 0, WS_EX_LEFT
     PUSHBUTTON      "Alternative", IDC_VIDEO_DECODER_ALTERNATIVE, 142, 88, 61, 13, 0, WS_EX_LEFT
     AUTOCHECKBOX    "Boost yellow", IDC_VIDEO_DECODER_BOOST_YELLOW, 14, 115, 51, 9, WS_GROUP, WS_EX_LEFT
@@ -1438,473 +1438,473 @@ FONT 8, "Ms Shell Dlg"
 LANGUAGE LANG_ENGLISH, SUBLANG_ENGLISH_US
 STRINGTABLE
 {
-    IDS_TITLE_NESTOPIA            "Nestopia"
-    IDS_TITLE_ERROR               "Nestopia Error"
-    IDS_TITLE_WARNING             "Nestopia Warning"
-    IDS_TITLE_EXIT                "Exit Nestopia"
-    IDS_ARE_YOU_SURE              "Are you sure?"
-    IDS_ERR_SYNTAX                "Syntax error!"
-    IDS_ERR_GENERIC               "Unhandled error! Call the Ghostbusters!"
-    IDS_ERR_OUT_OF_MEMORY         "Not enough memory!"
-    IDS_ERR_BAD_BPP               "Unsupported color BPP mode! Try changing it to 16bit or 32bit in your display configuration."
-    IDS_ERR_D3D_FAILED            "Direct3DCreate9() failed! DirectX 9.0c or newer is required to run this application!"
-    IDS_ERR_D3D_DEVICE_FAILED     "IDirect3D9::CreateDevice() failed! Try updating your video drivers!"
-    IDS_ERR_INVALID_SIZE          "Invalid Size!"
-    IDS_ERR_FAILED                "% failed! Exiting application."
-    IDS_ERR_SOUND_FAILED          "% failed! Sound will be disabled."
-    IDS_TEXT_NONE                 "None"
-    IDS_TEXT_DISK                 "Disk %"
-    IDS_TEXT_START                "Start"
-    IDS_TEXT_STOP                 "Stop"
-    IDS_TEXT_FIND                 "Find"
-    IDS_TEXT_SEARCH_NOT_FOUND     "The specified text was not found!"
-    IDS_TEXT_ENABLED              "Enabled"
-    IDS_TEXT_DISABLED             "Disabled"
-    IDS_TEXT_OTHER                "Other.."
-    IDS_TEXT_OK                   "OK"
-    IDS_TEXT_SYSTEM               "System"
-    IDS_TEXT_YES                  "Yes"
-    IDS_TEXT_NO                   "No"
-    IDS_TEXT_UNKNOWN              "Unknown"
-    IDS_TEXT_REPAIRABLE           "Repairable"
-    IDS_TEXT_BAD                  "Bad"
-    IDS_TEXT_FILE                 "File"
-    IDS_TEXT_DIRECTORY            "Directory"
-    IDS_TEXT_NAME                 "Name"
-    IDS_TEXT_COPYRIGHT            "Copyright"
-    IDS_TEXT_REGION               "Region"
-    IDS_TEXT_FPS                  "FPS"
-    IDS_TEXT_BOARD                "Board"
-    IDS_TEXT_MAPPER               "Mapper"
-    IDS_TEXT_HORIZONTAL           "Horizontal"
-    IDS_INPUT_NSF_KEY_PREV        "Previous Song"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_1X "Screen Size 1x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_2X "Screen Size 2x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_3X "Screen Size 3x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_4X "Screen Size 4x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_5X "Screen Size 5x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_6X "Screen Size 6x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_7X "Screen Size 7x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_8X "Screen Size 8x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_9X "Screen Size 9x"
-    IDS_INPUT_VIEW_KEY_SCREENSIZE_MAX "Screen Size Max"
-    IDS_INPUT_VIEW_KEY_SHOW_MENU  "Toggle Menu"
-    IDS_INPUT_VIEW_KEY_SHOW_STATUSBAR "Toggle Status Bar"
-    IDS_INPUT_VIEW_KEY_SHOW_ONTOP "Toggle Window On-Top"
-    IDS_INPUT_VIEW_KEY_SHOW_FPS   "Toggle FPS"
-    IDS_INPUT_VIEW_KEY_FULLSCREEN "Fullscreen"
-    IDS_INPUT_HELP_KEY_HELP       "Help"
-    IDS_MENU_NETPLAY_CONNECT      "&Connect..."
-    IDS_MENU_NETPLAY_DISCONNECT   "&Disconnect"
-    IDS_TEXT_DEFAULT              "Default"
-    IDS_TEXT_ALTNAME              "Alt. Name"
-    IDS_FILE_ERR_READONLY         "File is read-only!"
-    IDS_VIDEO_FILTER_2XSAI        "2xSaI"
-    IDS_VIDEO_FILTER_XBR          "xBR"
-    IDS_TEXT_SOFTPATCHED          "Soft-patched"
-    IDS_EMU_WARN_PATCH_LOAD_ERR   "Couldn't load patch file ""%""!"
-    IDS_INCOMPATIBLE_RESOURCE     "The current language plugin file may not be compatible with this version of Nestopia. Continue anyway?"
-    IDS_CHEAT_COMPARE             "Compare"
-    IDS_CHEAT_GAME                "Game"
-    IDS_CHEAT_DESCRIPTION         "Description"
-    IDS_DIALOG_INPUT_PRESS_ANY_KEY_MENU "Press any key, Alt/Shift/Ctrl optional (%)"
-    IDS_DIALOG_INPUT_PRESS_ANY_KEY_INVALID "Invalid key!"
-    IDS_DIALOG_INPUT_PRESS_ANY_KEY_EMU "Press any key or joystick button.. (%)"
-    IDS_DIALOG_INPUT_DUPLICATE_KEYS "Key already assigned!"
-    IDS_DIALOG_VIDEO_INVALID_PALETTE "Invalid palette file! Must be at least 192 bytes long!"
-    IDS_DIALOG_VIDEO_ADAPTER_INDEX_SUFFIX "[%]"
-    IDS_DIALOG_PREFERENCES_REGISTRYUPDATED "The registry was successfully updated. If you wish to remove Nestopia from your system make sure you have all the file association buttons unchecked before deleting the files."
-    IDS_DIALOG_PREFERENCES_REGISTRYUPDATED_TITLE "Registry Updated"
-    IDS_MACHINE_POWER_OFF_TITLE   "Power off Machine"
-    IDS_MACHINE_RESET_TITLE       "Reset Machine"
-    IDS_CARTRIDGE_LOAD_FAILED     "Couldn't load image data from ""%""!"
-    IDS_CARTRIDGE_SAVE_FAILED     "Couldn't save image data to ""%""!"
-    IDS_EMU_WARN_BAD_PROM         "Possibly corrupt PRG-ROM! Emulation of this image may not work properly!"
-    IDS_EMU_WARN_BAD_CROM         "Possibly corrupt CHR-ROM! Emulation of this Image may not work properly!"
-    IDS_TEXT_DENDY                "Dendy"
-    IDS_EMU_WARN_ENCRYPTED        "ROM image is encrypted and will not run properly!"
-    IDS_EMU_CRC_MISSMATCH_CONTINUE "The file may not work on this particular image, continue?"
-    IDS_EMU_CRC_MISSMATCH         "CRC mismatch"
-    IDS_EMU_FDS_NO_FILE           "Changes to this FDS image won't be saved unless you select patch saving in the options dialog."
-    IDS_EMU_FDS_SUPPLY_BIOS       "Can't proceed without a valid FDS BIOS-ROM file! Set one up now?"
-    IDS_EMU_SAMPLES_UNAVAILABLE   "Sample package file not found. Some game sounds will be missing."
-    IDS_TEXT_ABORT                "Abort"
-    IDS_EMU_MOVIE_SAVE_IMAGEDATA  "Do you want to update the save data file?"
-    IDS_EMU_MOVIE_SAVE_FDS        "Do you want to update the FDS/patch file?"
-    IDS_EMU_MOVIE_SAVE_TURBOFILE  "Do you want to update the turbo file?"
-    IDS_EMU_MOVIE_SAVE_TAPE       "Do you want to update the tape file?"
-    IDS_EMU_MOVIE_SAVE_EEPROM     "Do you want to update the EEPROM file?"
-    IDS_ERR_INVALID_CHECKSUM      "Invalid checksum!"
-    IDS_TEXT_TRAINER              "Trainer"
-    IDS_TEXT_DUMP                 "Dump"
-    IDS_TEXT_FILES                "Files"
-    IDS_TEXT_SAYS                 "says"
-    IDS_TEXT_DROPPEDOUT           "dropped out..."
-    IDS_TEXT_PLAYER               "Player"
-    IDS_TEXT_IN_FILES             "in % files"
-    IDS_TEXT_SOLDERPAD            "Solder Pad"
-    IDS_TEXT_CHIPS                "Chips"
-    IDS_TEXT_PLAYERS              "Players"
-    IDS_TEXT_DEVELOPER            "Developer"
-    IDS_TEXT_PUBLISHER            "Publisher"
-    IDS_TEXT_VSDUALSYSTEM         "VS. Dualsystem"
-    IDS_TEXT_VSUNISYSTEM          "VS. Unisystem"
-    IDS_TEXT_FAMICOM              "Famicom"
-    IDS_TEXT_NES_PAL              "NES-PAL"
-    IDS_TEXT_NES_NTSC             "NES-NTSC"
-    IDS_TEXT_PLAYCHOICE10         "PlayChoice-10"
-    IDS_TEXT_ANY                  "Any"
-    IDS_FILE_ERR_READ             "Couldn't read from file!"
-    IDS_FILE_ERR_WRITE            "Couldn't write to file!"
-    IDS_FILE_ERR_OPEN             "Couldn't open file!"
-    IDS_FILE_ERR_NOTFOUND         "File not found!"
-    IDS_FILE_ERR_ALREADYEXISTS    "File already exists!"
-    IDS_FILE_ERR_TOOBIG           "File is too big!"
-    IDS_FILE_ERR_INVALID          "Invalid file!"
-    IDS_FILE_ERR_EMPTY            "File is empty!"
-    IDS_FILE_ERR_CORRUPT          "Corrupt file!"
-    IDS_FILE_ERR_NOTHING_IN_ARCHIVE "No valid file in archive!"
-    IDS_FILE_ERR_CANT_USE_IN_ARCHIVE "Can't use this file while it's in an archive!"
-    IDS_FILE_ERR_CREATE_DIR       "Couldn't create directory!"
-    IDS_FILE_ASK_CREATE_DIR       "Directory ""%"" doesn't exist. Create it?"
-    IDS_TEXT_VERTICAL             "Vertical"
-    IDS_TEXT_FOURSCREEN           "Four-screen"
-    IDS_TEXT_SINGLESCREEN         "Single-screen"
-    IDS_TEXT_MAPPERCONTROLLED     "Mapper-controlled"
-    IDS_TEXT_BATTERY              "Battery"
-    IDS_TEXT_MIRRORING            "Mirroring"
-    IDS_TEXT_TRAILING_DATA        "%b trailing data"
-    IDS_TEXT_HEADER               "Header"
-    IDS_TEXT_ARTIST               "Artist"
-    IDS_TEXT_SONGS                "Songs"
-    IDS_TEXT_STARTINGSONG         "Starting Song"
-    IDS_TEXT_EXTRACHIPS           "Extra Chips"
-    IDS_TEXT_BANKSWITCHING        "Bank Switching"
-    IDS_TEXT_LOADADDRESS          "Load Address"
-    IDS_TEXT_INITADDRESS          "Init Address"
-    IDS_TEXT_PLAYADDRESS          "Play Address"
-    IDS_AUTOSAVER_START           "Autosaving started"
-    IDS_AUTOSAVER_STOP            "Autosaving stopped"
-    IDS_SCREEN_LOADED             "Loaded ""%"""
-    IDS_SCREEN_UNLOADED           "Unloaded ""%"""
-    IDS_SCREEN_POWER_ON           "Power on.."
-    IDS_SCREEN_POWER_OFF          "Power off.."
-    IDS_SCREEN_RESET_HARD         "Hard reset.."
-    IDS_SCREEN_RESET_SOFT         "Soft reset.."
-    IDS_SCREEN_NTSC               "Switched to NTSC.."
-    IDS_SCREEN_PAL                "Switched to PAL.."
-    IDS_SCREEN_PAUSE              "Emulation paused.."
-    IDS_SCREEN_RESUME             "Emulation resumed.."
-    IDS_SCREEN_SCREENSHOT_SAVED_TO "Screenshot saved to ""%"""
-    IDS_SCREEN_DISK_SIDE_A_INSERTED "Disk %, Side A inserted.."
-    IDS_SCREEN_DISK_SIDE_B_INSERTED "Disk %, Side B inserted.."
-    IDS_SCREEN_DISK_EJECTED       "Disk % ejected.."
-    IDS_SCREEN_SAVE_STATE_TO      "Saved state to ""%"""
-    IDS_SCREEN_LOAD_STATE_FROM    "Loaded state from ""%"""
-    IDS_SCREEN_SAVE_STATE_TO_SLOT "Saved state to slot %"
-    IDS_SCREEN_LOAD_STATE_FROM_SLOT "Loaded state from slot %"
-    IDS_SCREEN_CPU_JAM            "CPU jam!"
-    IDS_SCREEN_FDS_READING        "Reading from disk.."
-    IDS_SCREEN_FDS_WRITING        "Writing to disk.."
-    IDS_SCREEN_SOUND_RECORDER_RESUME "Sound recording resumed.."
-    IDS_SCREEN_SOUND_RECORDER_START "Sound recording started.."
-    IDS_SCREEN_SOUND_RECORDER_STOP "Sound recording stopped.."
-    IDS_SCREEN_SOUND_RECORDER_WRITTEN "% MB written to WAVE file.."
-    IDS_SCREEN_MOVIE_PLAY_STARTED "Movie started.."
-    IDS_SCREEN_MOVIE_PLAY_STOPPED "Movie stopped.."
-    IDS_SCREEN_MOVIE_REC_STARTED  "Movie recording started.."
-    IDS_SCREEN_MOVIE_REC_STOPPED  "Movie recording stopped.."
-    IDS_SCREEN_MOVIE_REWOUND      "Movie rewound.."
-    IDS_FILE_ERR_WRITE_PROTECTED  "File is write-protected!"
-    IDS_EMU_ERR_GENERIC           "Generic emulation error!"
-    IDS_EMU_ERR_UNSUPPORTED_MAPPER "Unsupported or malformed mapper!"
-    IDS_EMU_ERR_UNSUPPORTED_VSSYSTEM "VS Dual System emulation not supported!"
-    IDS_EMU_ERR_BIOS_FILE_MISSING "Can't proceed without a valid FDS BIOS-ROM file!"
-    IDS_EMU_ERR_SAVE_STATE        "Save state error!"
-    IDS_EMU_ERR_LOAD_STATE        "Load state error!"
-    IDS_EMU_ERR_UNSUPPORTED_FILE_VERSION "Unsupported file version!"
-    IDS_EMU_ERR_MOVIE_REC         "Movie recording error!"
-    IDS_EMU_ERR_MOVIE_PLAY        "Movie playing error!"
-    IDS_EMU_ERR_CANT_REWIND       "Error, can't rewind right now!"
-    IDS_EMU_ERR_LOAD_SAMPLES      "Sample package file loading failed. Some game sounds will be missing."
-    IDS_EMU_ERR_WRONG_MODE        "You must change the region mode before continuing!"
-    IDS_EMU_WARN_PATCHING_FAILED  "Image couldn't be patched!"
-    IDS_EMU_WARN_BAD_INES         "File header has unknown/garbage data!"
-    IDS_EMU_WARN_BAD_DUMP         "Possibly bad dump! Emulation of this image may not work properly!"
-    IDS_MENU_FULLSCREEN           "&Fullscreen"
-    IDS_MENU_DESKTOP              "&Desktop"
-    IDS_MENU_POWER_ON             "&Power on"
-    IDS_MENU_POWER_OFF            "&Power off"
-    IDS_MENU_X                    "&%X"
-    IDS_FDS_PATCHDATALOAD_FAILED  "Couldn't patch the disk image from ""%""!"
-    IDS_FDS_PATCHDATASAVE_FAILED  "Couldn't save disk image patch to ""%""!"
-    IDS_FDS_SAVE_FAILED           "Couldn't write to the disk image file! "
-    IDS_FDS_DISK_SIDE_A           "Disk % Side A"
-    IDS_FDS_DISK_SIDE_B           "Disk % Side B"
-    IDS_FDS_ERR_INVALIDBIOS       "Invalid FDS BIOS file!"
-    IDS_FDS_NONSTANDARD           "Bad copy or non-standard disk format! Emulation may fail due to limitations in the FDS file format. All disks will be write-protected."
-    IDS_SCREENSHOT_SAVE_FAILED    "Screenshot saving failed!"
-    IDS_SCREENSHOT_UNSUPPORTED_FORMAT "Unsupported bitmap format!"
-    IDS_WAVE_ERR_OPEN             "Couldn't open WAVE file!"
-    IDS_WAVE_ERR_WRITE            "Couldn't write to WAVE file!"
-    IDS_WAVE_ERR_READ             "Couldn't read from WAVE file!"
-    IDS_WAVE_ERR_FINALIZE         "Couldn't finalize WAVE file!"
-    IDS_WAVE_WARN_FILE_BIG        "Just a reminder, the wave file currently being recorded has become pretty big!"
-    IDS_VIDEO_FILTER_STD          "Standard"
-    IDS_VIDEO_FILTER_NTSC         "NTSC"
-    IDS_VIDEO_FILTER_SCALEX       "ScaleX"
-    IDS_VIDEO_FILTER_HQX          "Hqx"
-    IDS_VIDEO_PALETTE_SAVE_EMPH   "Include the emphasis colors?"
-    IDS_INES_HEADER_INVALID       "One or more fields are invalid!"
-    IDS_INES_HEADER_UNSAFE        "Image may not work with the current header data. Save anyway?"
-    IDS_INES_HEADER_REMOVE_RESERVED "Reserved or unknown data found in the header. Do you want to remove it?"
-    IDS_AVI_WRITE_ERR             "AVI conversion error!"
-    IDS_AVI_WRITE_INFO            "AVI conversion will now begin. This may take several minutes. Press ESC at any time to abort."
-    IDS_AVI_WRITE_ABORT           "AVI conversion aborted!"
-    IDS_AVI_WRITE_FINISHED        "AVI conversion finished!"
-    IDS_LANGUAGE_UPDATE           "Nestopia must be restarted for the language settings to take effect. Exit Now?"
-    IDS_INPUT_JOY_GUID_MISMATCH   "One or more joystick device IDs were not recognized. Do you want to remap the affected keys to the new devices?"
-    IDS_INPUT_KEY_SECTION_PAD1    "Pad 1"
-    IDS_INPUT_KEY_SECTION_PAD2    "Pad 2"
-    IDS_INPUT_KEY_SECTION_PAD3    "Pad 3"
-    IDS_INPUT_KEY_SECTION_PAD4    "Pad 4"
-    IDS_INPUT_KEY_SECTION_POWERPAD "Power Pad"
-    IDS_INPUT_KEY_SECTION_POWERGLOVE "Power Glove"
-    IDS_INPUT_KEY_SECTION_HORITRACK "Hori Track"
-    IDS_INPUT_KEY_SECTION_PACHINKO "Pachinko"
-    IDS_INPUT_KEY_SECTION_CRAZYCLIMBER "Crazy Climber"
-    IDS_INPUT_KEY_SECTION_MAHJONG "Mahjong"
-    IDS_INPUT_KEY_SECTION_EXCITINGBOXING "Exciting Boxing"
-    IDS_INPUT_KEY_SECTION_POKKUNMOGURAA "Pokkun Moguraa"
-    IDS_INPUT_KEY_SECTION_PARTYTAP "Party Tap"
-    IDS_INPUT_KEY_SECTION_KARAOKESTUDIO "Karaoke Studio"
-    IDS_SCREEN_MOVIE_FORWARDED    "Movie fast forwarded.."
-    IDS_SCREEN_NOSPRITELIMIT_ON   "No Sprite Limit: ON"
-    IDS_SCREEN_NOSPRITELIMIT_OFF  "No Sprite Limit: OFF"
-    IDS_SCREEN_TEXT_PASTE         "Pasting % characters.."
-    IDS_SCREEN_TAPE_RECORDING     "Recording to tape.."
-    IDS_SCREEN_TAPE_PLAYING       "Playing tape.."
-    IDS_SCREEN_TAPE_STOPPED       "Tape stopped.."
-    IDS_SCREEN_HORITRACK_SPEED_LOW "Hori Track Speed Mode: Low"
-    IDS_SCREEN_HORITRACK_SPEED_HIGH "Hori Track Speed Mode: High"
-    IDS_SCREEN_HORITRACK_ORIENTATION_LEFT "Hori Track Orientation: Left"
-    IDS_SCREEN_HORITRACK_ORIENTATION_RIGHT "Hori Track Orientation: Right"
-    IDS_FILES_SUPPORTED           "All supported files"
-    IDS_FILES_XML                 "NES XML files"
-    IDS_FILES_INES                "iNES ROM Images"
-    IDS_FILES_UNIF                "UNIF ROM Images"
-    IDS_FILES_FDS                 "Famicom Disk System Images"
-    IDS_FILES_NSF                 "NES Sound Files"
-    IDS_FILES_ROM                 "ROM Images"
-    IDS_EXT_DATABASE_LOAD_FAILED  "External database load error! Invalid content!"
-    IDS_FILES_BATTERY             "Battery RAM files"
-    IDS_FILES_TAPE                "Tape files"
-    IDS_FILES_STATE               "Nestopia State Files"
-    IDS_FILES_STATE_SLOTS         "Nestopia State Slot Files"
-    IDS_FILES_MOVIE               "Nestopia Movie Files"
-    IDS_FILES_PATCHES             "Patches"
-    IDS_FILES_PALETTE             "NES Palette Files"
-    IDS_FILES_WAVE                "WAVE Files"
-    IDS_FILES_AVI                 "AVI Files"
-    IDS_FILES_ARCHIVE             "Archives"
-    IDS_FILES_ALL                 "All files"
-    IDS_LAUNCHER_ERR_LOAD_DB      "Launcher database file is either damaged or not compatible with this version of Nestopia!"
-    IDS_LAUNCHER_ERR_SAVE_DB      "Couldn't save the launcher database!"
-    IDS_LAUNCHER_COLUMN_FILE      "File"
-    IDS_LAUNCHER_COLUMN_SYSTEM    "System"
-    IDS_LAUNCHER_COLUMN_MAPPER    "Mapper"
-    IDS_LAUNCHER_COLUMN_PRG       "PRG"
-    IDS_LAUNCHER_COLUMN_CHR       "CHR"
-    IDS_LAUNCHER_COLUMN_WRAM      "WRAM"
-    IDS_LAUNCHER_COLUMN_VRAM      "VRAM"
-    IDS_LAUNCHER_COLUMN_BATTERY   "Battery"
-    IDS_LAUNCHER_COLUMN_DUMP      "Dump"
-    IDS_LAUNCHER_COLUMN_NAME      "Name"
-    IDS_LAUNCHER_COLUMN_FOLDER    "Folder"
-    IDS_TEXT_NES_PAL_A            "PAL-A"
-    IDS_LAUNCHER_SECTION_ALL      "All Files"
-    IDS_LAUNCHER_SECTION_XML      "XML Files"
-    IDS_LAUNCHER_SECTION_NES      "NES Files"
-    IDS_LAUNCHER_SECTION_UNIF     "UNIF Files"
-    IDS_LAUNCHER_SECTION_FDS      "FDS Files"
-    IDS_LAUNCHER_SECTION_NSF      "NSF Files"
-    IDS_LAUNCHER_SECTION_PATCH    "Patch Files"
-    IDS_TEXT_NES_PAL_B            "PAL-B"
-    IDS_LAUNCHER_SECTION_ARCHIVE  "Archive Files"
-    IDS_LOAD_APPLY_CURRENT_GAME   "Apply file to the current game? If so, game will be reloaded."
-    IDS_LOAD_SPECIFY_FILE         "Couldn't find a matching image file. Perform a manual search?"
-    IDS_CHEATS                    "Cheats"
-    IDS_CHEATS_EXPORTEXISTING     "File already exists. Do you want to combine the data?"
-    IDS_CHEATS_EXPORTEXISTING_ERROR "Couldn't read the file, old data will be replaced!"
-    IDS_CHEATS_INVALID_CODE       "Invalid code!"
-    IDS_CHEATS_RESULT_VALID       "VALID"
-    IDS_CHEATS_RESULT_INVALID     "INVALID"
-    IDS_CHEAT_CODE                "Code"
-    IDS_CHEAT_ADDRESS             "Address"
-    IDS_CHEAT_VALUE               "Value"
-    IDS_INPUT_KEY_SECTION_EMULATION "Emulation"
-    IDS_INPUT_KEY_SECTION_FILE    "File"
-    IDS_INPUT_KEY_SECTION_MACHINE "Machine"
-    IDS_INPUT_KEY_SECTION_NSF     "NSF"
-    IDS_INPUT_KEY_SECTION_VIEW    "View"
-    IDS_INPUT_KEY_SECTION_HELP    "Help"
-    IDS_INPUT_PAD_KEY_LEFT        "Left"
-    IDS_INPUT_PAD_KEY_UP          "Up"
-    IDS_INPUT_PAD_KEY_RIGHT       "Right"
-    IDS_INPUT_PAD_KEY_DOWN        "Down"
-    IDS_INPUT_PAD_KEY_SELECT      "Select"
-    IDS_INPUT_PAD_KEY_START       "Start"
-    IDS_INPUT_PAD_KEY_B           "B"
-    IDS_INPUT_PAD_KEY_A           "A"
-    IDS_INPUT_PAD_KEY_AUTOFIRE_B  "Auto-Fire B"
-    IDS_INPUT_PAD_KEY_AUTOFIRE_A  "Auto-Fire A"
-    IDS_INPUT_PARTYTAP_UNIT_3     "Unit 3"
-    IDS_INPUT_PARTYTAP_UNIT_4     "Unit 4"
-    IDS_INPUT_PARTYTAP_UNIT_5     "Unit 5"
-    IDS_INPUT_PARTYTAP_UNIT_6     "Unit 6"
-    IDS_INPUT_KARAOKESTUDIO_MIC   "Mic"
-    IDS_INPUT_KARAOKESTUDIO_A     "A"
-    IDS_INPUT_KARAOKESTUDIO_B     "B"
-    IDS_INPUT_EMULATION_KEY_ALT_SPEED "Alternative Speed"
-    IDS_INPUT_EMULATION_KEY_REWIND "Rewind"
-    IDS_INPUT_EMULATION_KEY_INSERT_COIN_1 "Insert Coin 1"
-    IDS_INPUT_EMULATION_KEY_INSERT_COIN_2 "Insert Coin 2"
-    IDS_INPUT_FILE_KEY_OPEN       "Open"
-    IDS_INPUT_FILE_KEY_SAVE_STATE "Save State"
-    IDS_CHOOSE_GAME               "Choose Game"
-    IDS_INPUT_FILE_KEY_LOAD_STATE "Load State"
-    IDS_CHOOSE_FILE               "Choose File"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_1 "Quick Load State 1"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_2 "Quick Load State 2"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_3 "Quick Load State 3"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_4 "Quick Load State 4"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_5 "Quick Load State 5"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_6 "Quick Load State 6"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_7 "Quick Load State 7"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_8 "Quick Load State 8"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_9 "Quick Load State 9"
-    IDS_INPUT_FILE_KEY_QUICK_LOAD_LAST_STATE "Quick Load State Newest"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_1 "Quick Save State 1"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_2 "Quick Save State 2"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_3 "Quick Save State 3"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_4 "Quick Save State 4"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_5 "Quick Save State 5"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_6 "Quick Save State 6"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_7 "Quick Save State 7"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_8 "Quick Save State 8"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_9 "Quick Save State 9"
-    IDS_INPUT_FILE_KEY_QUICK_SAVE_NEXT_STATE "Quick Save State Oldest"
-    IDS_INPUT_FILE_KEY_SAVE_SCREENSHOT "Save Screenshot"
-    IDS_INPUT_FILE_KEY_LAUNCHER   "Launcher"
-    IDS_INPUT_FILE_KEY_EXIT       "Exit"
-    IDS_INPUT_MACHINE_KEY_POWER   "Power"
-    IDS_INPUT_MACHINE_KEY_RESET_SOFT "Soft Reset"
-    IDS_INPUT_MACHINE_KEY_RESET_HARD "Hard Reset"
-    IDS_INPUT_MACHINE_KEY_PAUSE   "Pause"
-    IDS_INPUT_MACHINE_KEY_UNLIMITED_SPRITES "Unlimited Sprites Toggle"
-    IDS_INPUT_MACHINE_KEY_CHANGE_DISK_SIDE "Change Disk Side"
-    IDS_INPUT_NSF_KEY_PLAY        "Play Song"
-    IDS_INPUT_NSF_KEY_STOP        "Stop Song"
-    IDS_INPUT_NSF_KEY_NEXT        "Next Song"
-    IDS_INPUT_PAD_KEY_MIC         "Mic"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_1 "Side A 1"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_2 "Side A 2"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_3 "Side A 3"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_4 "Side A 4"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_5 "Side A 5"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_6 "Side A 6"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_7 "Side A 7"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_8 "Side A 8"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_9 "Side A 9"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_10 "Side A 10"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_11 "Side A 11"
-    IDS_INPUT_POWERPAD_KEY_SIDE_A_12 "Side A 12"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_3 "Side B 3"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_2 "Side B 2"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_8 "Side B 8"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_7 "Side B 7"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_6 "Side B 6"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_5 "Side B 5"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_11 "Side B 11"
-    IDS_INPUT_POWERPAD_KEY_SIDE_B_10 "Side B 10"
-    IDS_INPUT_POWERGLOVE_KEY_SELECT "Select"
-    IDS_INPUT_POWERGLOVE_KEY_START "Start"
-    IDS_INPUT_POWERGLOVE_KEY_MOVE_IN "Move In"
-    IDS_INPUT_POWERGLOVE_KEY_MOVE_OUT "Move Out"
-    IDS_INPUT_POWERGLOVE_KEY_ROLL_LEFT "Roll Left"
-    IDS_INPUT_POWERGLOVE_KEY_ROLL_RIGHT "Roll Right"
-    IDS_INPUT_HORITRACK_KEY_LEFT  "Left"
-    IDS_INPUT_HORITRACK_KEY_UP    "Up"
-    IDS_INPUT_HORITRACK_KEY_RIGHT "Right"
-    IDS_INPUT_HORITRACK_KEY_DOWN  "Down"
-    IDS_INPUT_HORITRACK_KEY_SELECT "Select"
-    IDS_INPUT_HORITRACK_KEY_START "Start"
-    IDS_INPUT_HORITRACK_KEY_B     "B"
-    IDS_INPUT_HORITRACK_KEY_A     "A"
-    IDS_INPUT_HORITRACK_KEY_SPEED "Speed"
-    IDS_INPUT_HORITRACK_KEY_ORIENTATION "Orientation"
-    IDS_INPUT_PACHINKO_KEY_LEFT   "Left"
-    IDS_INPUT_PACHINKO_KEY_UP     "Up"
-    IDS_INPUT_PACHINKO_KEY_RIGHT  "Right"
-    IDS_INPUT_PACHINKO_KEY_DOWN   "Down"
-    IDS_INPUT_PACHINKO_KEY_SELECT "Select"
-    IDS_INPUT_PACHINKO_KEY_START  "Start"
-    IDS_INPUT_PACHINKO_KEY_B      "B"
-    IDS_INPUT_PACHINKO_KEY_A      "A"
-    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_UP "Left Up"
-    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_RIGHT "Left Right"
-    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_DOWN "Left Down"
-    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_LEFT "Left Left"
-    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_UP "Right Up"
-    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_RIGHT "Right Right"
-    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_DOWN "Right Down"
-    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_LEFT "Right Left"
-    IDS_INPUT_MAHJONG_KEY_A       "A"
-    IDS_INPUT_MAHJONG_KEY_B       "B"
-    IDS_INPUT_MAHJONG_KEY_C       "C"
-    IDS_INPUT_MAHJONG_KEY_D       "D"
-    IDS_INPUT_MAHJONG_KEY_E       "E"
-    IDS_INPUT_MAHJONG_KEY_F       "F"
-    IDS_INPUT_MAHJONG_KEY_G       "G"
-    IDS_INPUT_MAHJONG_KEY_H       "H"
-    IDS_INPUT_MAHJONG_KEY_I       "I"
-    IDS_INPUT_MAHJONG_KEY_J       "J"
-    IDS_INPUT_MAHJONG_KEY_K       "K"
-    IDS_INPUT_MAHJONG_KEY_L       "L"
-    IDS_INPUT_MAHJONG_KEY_M       "M"
-    IDS_INPUT_MAHJONG_KEY_N       "N"
-    IDS_INPUT_MAHJONG_KEY_START   "Start"
-    IDS_INPUT_MAHJONG_KEY_SELECT  "Select"
-    IDS_INPUT_MAHJONG_KEY_KAN     "Kan"
-    IDS_INPUT_MAHJONG_KEY_PON     "Pon"
-    IDS_INPUT_MAHJONG_KEY_CHI     "Chi"
-    IDS_INPUT_MAHJONG_KEY_REACH   "Reach"
-    IDS_INPUT_MAHJONG_KEY_RON     "Ron"
-    IDS_INPUT_EXCITINGBOXING_KEY_LEFT_HOOK "Left Hook"
-    IDS_INPUT_EXCITINGBOXING_KEY_RIGHT_HOOK "Right Hook"
-    IDS_INPUT_EXCITINGBOXING_KEY_LEFT_JAB "Left Jab"
-    IDS_INPUT_EXCITINGBOXING_KEY_RIGHT_JAB "Right Jab"
-    IDS_INPUT_EXCITINGBOXING_KEY_STRAIGHT "Straight"
-    IDS_INPUT_EXCITINGBOXING_KEY_BODY "Body"
-    IDS_INPUT_EXCITINGBOXING_KEY_LEFT_MOVE "Left Move"
-    IDS_INPUT_EXCITINGBOXING_KEY_RIGHT_MOVE "Right Move"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_1 "Row 1 button 1"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_2 "Row 1 button 2"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_3 "Row 1 button 3"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_4 "Row 1 button 4"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_1 "Row 2 button 1"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_2 "Row 2 button 2"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_3 "Row 2 button 3"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_4 "Row 2 button 4"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_1 "Row 3 button 1"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_2 "Row 3 button 2"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_3 "Row 3 button 3"
-    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_4 "Default"
-    IDS_INPUT_PARTYTAP_UNIT_1     "Unit 1"
-    IDS_INPUT_PARTYTAP_UNIT_2     "Unit 2"
-    IDS_PRIORITY_NORMAL           "Normal"
-    IDS_PRIORITY_ABOVE_NORMAL     "Above Normal"
-    IDS_PRIORITY_HIGH             "High"
+    IDS_TITLE_NESTOPIA                            "Nestopia"
+    IDS_TITLE_ERROR                               "Nestopia Error"
+    IDS_TITLE_WARNING                             "Nestopia Warning"
+    IDS_TITLE_EXIT                                "Exit Nestopia"
+    IDS_ARE_YOU_SURE                              "Are you sure?"
+    IDS_ERR_SYNTAX                                "Syntax error!"
+    IDS_ERR_GENERIC                               "Unhandled error! Call the Ghostbusters!"
+    IDS_ERR_OUT_OF_MEMORY                         "Not enough memory!"
+    IDS_ERR_BAD_BPP                               "Unsupported color BPP mode! Try changing it to 16bit or 32bit in your display configuration."
+    IDS_ERR_D3D_FAILED                            "Direct3DCreate9() failed! DirectX 9.0c or newer is required to run this application!"
+    IDS_ERR_D3D_DEVICE_FAILED                     "IDirect3D9::CreateDevice() failed! Try updating your video drivers!"
+    IDS_ERR_INVALID_SIZE                          "Invalid Size!"
+    IDS_ERR_FAILED                                "% failed! Exiting application."
+    IDS_ERR_SOUND_FAILED                          "% failed! Sound will be disabled."
+    IDS_TEXT_NONE                                 "None"
+    IDS_TEXT_DISK                                 "Disk %"
+    IDS_TEXT_START                                "Start"
+    IDS_TEXT_STOP                                 "Stop"
+    IDS_TEXT_FIND                                 "Find"
+    IDS_TEXT_SEARCH_NOT_FOUND                     "The specified text was not found!"
+    IDS_TEXT_ENABLED                              "Enabled"
+    IDS_TEXT_DISABLED                             "Disabled"
+    IDS_TEXT_OTHER                                "Other.."
+    IDS_TEXT_OK                                   "OK"
+    IDS_TEXT_SYSTEM                               "System"
+    IDS_TEXT_YES                                  "Yes"
+    IDS_TEXT_NO                                   "No"
+    IDS_TEXT_UNKNOWN                              "Unknown"
+    IDS_TEXT_REPAIRABLE                           "Repairable"
+    IDS_TEXT_BAD                                  "Bad"
+    IDS_TEXT_FILE                                 "File"
+    IDS_TEXT_DIRECTORY                            "Directory"
+    IDS_TEXT_NAME                                 "Name"
+    IDS_TEXT_COPYRIGHT                            "Copyright"
+    IDS_TEXT_REGION                               "Region"
+    IDS_TEXT_FPS                                  "FPS"
+    IDS_TEXT_BOARD                                "Board"
+    IDS_TEXT_MAPPER                               "Mapper"
+    IDS_TEXT_HORIZONTAL                           "Horizontal"
+    IDS_INPUT_NSF_KEY_PREV                        "Previous Song"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_1X              "Screen Size 1x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_2X              "Screen Size 2x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_3X              "Screen Size 3x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_4X              "Screen Size 4x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_5X              "Screen Size 5x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_6X              "Screen Size 6x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_7X              "Screen Size 7x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_8X              "Screen Size 8x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_9X              "Screen Size 9x"
+    IDS_INPUT_VIEW_KEY_SCREENSIZE_MAX             "Screen Size Max"
+    IDS_INPUT_VIEW_KEY_SHOW_MENU                  "Toggle Menu"
+    IDS_INPUT_VIEW_KEY_SHOW_STATUSBAR             "Toggle Status Bar"
+    IDS_INPUT_VIEW_KEY_SHOW_ONTOP                 "Toggle Window On-Top"
+    IDS_INPUT_VIEW_KEY_SHOW_FPS                   "Toggle FPS"
+    IDS_INPUT_VIEW_KEY_FULLSCREEN                 "Fullscreen"
+    IDS_INPUT_HELP_KEY_HELP                       "Help"
+    IDS_MENU_NETPLAY_CONNECT                      "&Connect..."
+    IDS_MENU_NETPLAY_DISCONNECT                   "&Disconnect"
+    IDS_TEXT_DEFAULT                              "Default"
+    IDS_TEXT_ALTNAME                              "Alt. Name"
+    IDS_FILE_ERR_READONLY                         "File is read-only!"
+    IDS_VIDEO_FILTER_2XSAI                        "2xSaI"
+    IDS_VIDEO_FILTER_XBR                          "xBR"
+    IDS_TEXT_SOFTPATCHED                          "Soft-patched"
+    IDS_EMU_WARN_PATCH_LOAD_ERR                   "Couldn't load patch file ""%""!"
+    IDS_INCOMPATIBLE_RESOURCE                     "The current language plugin file may not be compatible with this version of Nestopia. Continue anyway?"
+    IDS_CHEAT_COMPARE                             "Compare"
+    IDS_CHEAT_GAME                                "Game"
+    IDS_CHEAT_DESCRIPTION                         "Description"
+    IDS_DIALOG_INPUT_PRESS_ANY_KEY_MENU           "Press any key, Alt/Shift/Ctrl optional (%)"
+    IDS_DIALOG_INPUT_PRESS_ANY_KEY_INVALID        "Invalid key!"
+    IDS_DIALOG_INPUT_PRESS_ANY_KEY_EMU            "Press any key or joystick button.. (%)"
+    IDS_DIALOG_INPUT_DUPLICATE_KEYS               "Key already assigned!"
+    IDS_DIALOG_VIDEO_INVALID_PALETTE              "Invalid palette file! Must be at least 192 bytes long!"
+    IDS_DIALOG_VIDEO_ADAPTER_INDEX_SUFFIX         "[%]"
+    IDS_DIALOG_PREFERENCES_REGISTRYUPDATED        "The registry was successfully updated. If you wish to remove Nestopia from your system make sure you have all the file association buttons unchecked before deleting the files."
+    IDS_DIALOG_PREFERENCES_REGISTRYUPDATED_TITLE  "Registry Updated"
+    IDS_MACHINE_POWER_OFF_TITLE                   "Power off Machine"
+    IDS_MACHINE_RESET_TITLE                       "Reset Machine"
+    IDS_CARTRIDGE_LOAD_FAILED                     "Couldn't load image data from ""%""!"
+    IDS_CARTRIDGE_SAVE_FAILED                     "Couldn't save image data to ""%""!"
+    IDS_EMU_WARN_BAD_PROM                         "Possibly corrupt PRG-ROM! Emulation of this image may not work properly!"
+    IDS_EMU_WARN_BAD_CROM                         "Possibly corrupt CHR-ROM! Emulation of this Image may not work properly!"
+    IDS_TEXT_DENDY                                "Dendy"
+    IDS_EMU_WARN_ENCRYPTED                        "ROM image is encrypted and will not run properly!"
+    IDS_EMU_CRC_MISSMATCH_CONTINUE                "The file may not work on this particular image, continue?"
+    IDS_EMU_CRC_MISSMATCH                         "CRC mismatch"
+    IDS_EMU_FDS_NO_FILE                           "Changes to this FDS image won't be saved unless you select patch saving in the options dialog."
+    IDS_EMU_FDS_SUPPLY_BIOS                       "Can't proceed without a valid FDS BIOS-ROM file! Set one up now?"
+    IDS_EMU_SAMPLES_UNAVAILABLE                   "Sample package file not found. Some game sounds will be missing."
+    IDS_TEXT_ABORT                                "Abort"
+    IDS_EMU_MOVIE_SAVE_IMAGEDATA                  "Do you want to update the save data file?"
+    IDS_EMU_MOVIE_SAVE_FDS                        "Do you want to update the FDS/patch file?"
+    IDS_EMU_MOVIE_SAVE_TURBOFILE                  "Do you want to update the turbo file?"
+    IDS_EMU_MOVIE_SAVE_TAPE                       "Do you want to update the tape file?"
+    IDS_EMU_MOVIE_SAVE_EEPROM                     "Do you want to update the EEPROM file?"
+    IDS_ERR_INVALID_CHECKSUM                      "Invalid checksum!"
+    IDS_TEXT_TRAINER                              "Trainer"
+    IDS_TEXT_DUMP                                 "Dump"
+    IDS_TEXT_FILES                                "Files"
+    IDS_TEXT_SAYS                                 "says"
+    IDS_TEXT_DROPPEDOUT                           "dropped out..."
+    IDS_TEXT_PLAYER                               "Player"
+    IDS_TEXT_IN_FILES                             "in % files"
+    IDS_TEXT_SOLDERPAD                            "Solder Pad"
+    IDS_TEXT_CHIPS                                "Chips"
+    IDS_TEXT_PLAYERS                              "Players"
+    IDS_TEXT_DEVELOPER                            "Developer"
+    IDS_TEXT_PUBLISHER                            "Publisher"
+    IDS_TEXT_VSDUALSYSTEM                         "VS. Dualsystem"
+    IDS_TEXT_VSUNISYSTEM                          "VS. Unisystem"
+    IDS_TEXT_FAMICOM                              "Famicom"
+    IDS_TEXT_NES_PAL                              "NES-PAL"
+    IDS_TEXT_NES_NTSC                             "NES-NTSC"
+    IDS_TEXT_PLAYCHOICE10                         "PlayChoice-10"
+    IDS_TEXT_ANY                                  "Any"
+    IDS_FILE_ERR_READ                             "Couldn't read from file!"
+    IDS_FILE_ERR_WRITE                            "Couldn't write to file!"
+    IDS_FILE_ERR_OPEN                             "Couldn't open file!"
+    IDS_FILE_ERR_NOTFOUND                         "File not found!"
+    IDS_FILE_ERR_ALREADYEXISTS                    "File already exists!"
+    IDS_FILE_ERR_TOOBIG                           "File is too big!"
+    IDS_FILE_ERR_INVALID                          "Invalid file!"
+    IDS_FILE_ERR_EMPTY                            "File is empty!"
+    IDS_FILE_ERR_CORRUPT                          "Corrupt file!"
+    IDS_FILE_ERR_NOTHING_IN_ARCHIVE               "No valid file in archive!"
+    IDS_FILE_ERR_CANT_USE_IN_ARCHIVE              "Can't use this file while it's in an archive!"
+    IDS_FILE_ERR_CREATE_DIR                       "Couldn't create directory!"
+    IDS_FILE_ASK_CREATE_DIR                       "Directory ""%"" doesn't exist. Create it?"
+    IDS_TEXT_VERTICAL                             "Vertical"
+    IDS_TEXT_FOURSCREEN                           "Four-screen"
+    IDS_TEXT_SINGLESCREEN                         "Single-screen"
+    IDS_TEXT_MAPPERCONTROLLED                     "Mapper-controlled"
+    IDS_TEXT_BATTERY                              "Battery"
+    IDS_TEXT_MIRRORING                            "Mirroring"
+    IDS_TEXT_TRAILING_DATA                        "%b trailing data"
+    IDS_TEXT_HEADER                               "Header"
+    IDS_TEXT_ARTIST                               "Artist"
+    IDS_TEXT_SONGS                                "Songs"
+    IDS_TEXT_STARTINGSONG                         "Starting Song"
+    IDS_TEXT_EXTRACHIPS                           "Extra Chips"
+    IDS_TEXT_BANKSWITCHING                        "Bank Switching"
+    IDS_TEXT_LOADADDRESS                          "Load Address"
+    IDS_TEXT_INITADDRESS                          "Init Address"
+    IDS_TEXT_PLAYADDRESS                          "Play Address"
+    IDS_AUTOSAVER_START                           "Autosaving started"
+    IDS_AUTOSAVER_STOP                            "Autosaving stopped"
+    IDS_SCREEN_LOADED                             "Loaded ""%"""
+    IDS_SCREEN_UNLOADED                           "Unloaded ""%"""
+    IDS_SCREEN_POWER_ON                           "Power on.."
+    IDS_SCREEN_POWER_OFF                          "Power off.."
+    IDS_SCREEN_RESET_HARD                         "Hard reset.."
+    IDS_SCREEN_RESET_SOFT                         "Soft reset.."
+    IDS_SCREEN_NTSC                               "Switched to NTSC.."
+    IDS_SCREEN_PAL                                "Switched to PAL.."
+    IDS_SCREEN_PAUSE                              "Emulation paused.."
+    IDS_SCREEN_RESUME                             "Emulation resumed.."
+    IDS_SCREEN_SCREENSHOT_SAVED_TO                "Screenshot saved to ""%"""
+    IDS_SCREEN_DISK_SIDE_A_INSERTED               "Disk %, Side A inserted.."
+    IDS_SCREEN_DISK_SIDE_B_INSERTED               "Disk %, Side B inserted.."
+    IDS_SCREEN_DISK_EJECTED                       "Disk % ejected.."
+    IDS_SCREEN_SAVE_STATE_TO                      "Saved state to ""%"""
+    IDS_SCREEN_LOAD_STATE_FROM                    "Loaded state from ""%"""
+    IDS_SCREEN_SAVE_STATE_TO_SLOT                 "Saved state to slot %"
+    IDS_SCREEN_LOAD_STATE_FROM_SLOT               "Loaded state from slot %"
+    IDS_SCREEN_CPU_JAM                            "CPU jam!"
+    IDS_SCREEN_FDS_READING                        "Reading from disk.."
+    IDS_SCREEN_FDS_WRITING                        "Writing to disk.."
+    IDS_SCREEN_SOUND_RECORDER_RESUME              "Sound recording resumed.."
+    IDS_SCREEN_SOUND_RECORDER_START               "Sound recording started.."
+    IDS_SCREEN_SOUND_RECORDER_STOP                "Sound recording stopped.."
+    IDS_SCREEN_SOUND_RECORDER_WRITTEN             "% MB written to WAVE file.."
+    IDS_SCREEN_MOVIE_PLAY_STARTED                 "Movie started.."
+    IDS_SCREEN_MOVIE_PLAY_STOPPED                 "Movie stopped.."
+    IDS_SCREEN_MOVIE_REC_STARTED                  "Movie recording started.."
+    IDS_SCREEN_MOVIE_REC_STOPPED                  "Movie recording stopped.."
+    IDS_SCREEN_MOVIE_REWOUND                      "Movie rewound.."
+    IDS_FILE_ERR_WRITE_PROTECTED                  "File is write-protected!"
+    IDS_EMU_ERR_GENERIC                           "Generic emulation error!"
+    IDS_EMU_ERR_UNSUPPORTED_MAPPER                "Unsupported or malformed mapper!"
+    IDS_EMU_ERR_UNSUPPORTED_VSSYSTEM              "VS Dual System emulation not supported!"
+    IDS_EMU_ERR_BIOS_FILE_MISSING                 "Can't proceed without a valid FDS BIOS-ROM file!"
+    IDS_EMU_ERR_SAVE_STATE                        "Save state error!"
+    IDS_EMU_ERR_LOAD_STATE                        "Load state error!"
+    IDS_EMU_ERR_UNSUPPORTED_FILE_VERSION          "Unsupported file version!"
+    IDS_EMU_ERR_MOVIE_REC                         "Movie recording error!"
+    IDS_EMU_ERR_MOVIE_PLAY                        "Movie playing error!"
+    IDS_EMU_ERR_CANT_REWIND                       "Error, can't rewind right now!"
+    IDS_EMU_ERR_LOAD_SAMPLES                      "Sample package file loading failed. Some game sounds will be missing."
+    IDS_EMU_ERR_WRONG_MODE                        "You must change the region mode before continuing!"
+    IDS_EMU_WARN_PATCHING_FAILED                  "Image couldn't be patched!"
+    IDS_EMU_WARN_BAD_INES                         "File header has unknown/garbage data!"
+    IDS_EMU_WARN_BAD_DUMP                         "Possibly bad dump! Emulation of this image may not work properly!"
+    IDS_MENU_FULLSCREEN                           "&Fullscreen"
+    IDS_MENU_DESKTOP                              "&Desktop"
+    IDS_MENU_POWER_ON                             "&Power on"
+    IDS_MENU_POWER_OFF                            "&Power off"
+    IDS_MENU_X                                    "&%X"
+    IDS_FDS_PATCHDATALOAD_FAILED                  "Couldn't patch the disk image from ""%""!"
+    IDS_FDS_PATCHDATASAVE_FAILED                  "Couldn't save disk image patch to ""%""!"
+    IDS_FDS_SAVE_FAILED                           "Couldn't write to the disk image file! "
+    IDS_FDS_DISK_SIDE_A                           "Disk % Side A"
+    IDS_FDS_DISK_SIDE_B                           "Disk % Side B"
+    IDS_FDS_ERR_INVALIDBIOS                       "Invalid FDS BIOS file!"
+    IDS_FDS_NONSTANDARD                           "Bad copy or non-standard disk format! Emulation may fail due to limitations in the FDS file format. All disks will be write-protected."
+    IDS_SCREENSHOT_SAVE_FAILED                    "Screenshot saving failed!"
+    IDS_SCREENSHOT_UNSUPPORTED_FORMAT             "Unsupported bitmap format!"
+    IDS_WAVE_ERR_OPEN                             "Couldn't open WAVE file!"
+    IDS_WAVE_ERR_WRITE                            "Couldn't write to WAVE file!"
+    IDS_WAVE_ERR_READ                             "Couldn't read from WAVE file!"
+    IDS_WAVE_ERR_FINALIZE                         "Couldn't finalize WAVE file!"
+    IDS_WAVE_WARN_FILE_BIG                        "Just a reminder, the wave file currently being recorded has become pretty big!"
+    IDS_VIDEO_FILTER_STD                          "Standard"
+    IDS_VIDEO_FILTER_NTSC                         "NTSC"
+    IDS_VIDEO_FILTER_SCALEX                       "ScaleX"
+    IDS_VIDEO_FILTER_HQX                          "Hqx"
+    IDS_VIDEO_PALETTE_SAVE_EMPH                   "Include the emphasis colors?"
+    IDS_INES_HEADER_INVALID                       "One or more fields are invalid!"
+    IDS_INES_HEADER_UNSAFE                        "Image may not work with the current header data. Save anyway?"
+    IDS_INES_HEADER_REMOVE_RESERVED               "Reserved or unknown data found in the header. Do you want to remove it?"
+    IDS_AVI_WRITE_ERR                             "AVI conversion error!"
+    IDS_AVI_WRITE_INFO                            "AVI conversion will now begin. This may take several minutes. Press ESC at any time to abort."
+    IDS_AVI_WRITE_ABORT                           "AVI conversion aborted!"
+    IDS_AVI_WRITE_FINISHED                        "AVI conversion finished!"
+    IDS_LANGUAGE_UPDATE                           "Nestopia must be restarted for the language settings to take effect. Exit Now?"
+    IDS_INPUT_JOY_GUID_MISMATCH                   "One or more joystick device IDs were not recognized. Do you want to remap the affected keys to the new devices?"
+    IDS_INPUT_KEY_SECTION_PAD1                    "Pad 1"
+    IDS_INPUT_KEY_SECTION_PAD2                    "Pad 2"
+    IDS_INPUT_KEY_SECTION_PAD3                    "Pad 3"
+    IDS_INPUT_KEY_SECTION_PAD4                    "Pad 4"
+    IDS_INPUT_KEY_SECTION_POWERPAD                "Power Pad"
+    IDS_INPUT_KEY_SECTION_POWERGLOVE              "Power Glove"
+    IDS_INPUT_KEY_SECTION_HORITRACK               "Hori Track"
+    IDS_INPUT_KEY_SECTION_PACHINKO                "Pachinko"
+    IDS_INPUT_KEY_SECTION_CRAZYCLIMBER            "Crazy Climber"
+    IDS_INPUT_KEY_SECTION_MAHJONG                 "Mahjong"
+    IDS_INPUT_KEY_SECTION_EXCITINGBOXING          "Exciting Boxing"
+    IDS_INPUT_KEY_SECTION_POKKUNMOGURAA           "Pokkun Moguraa"
+    IDS_INPUT_KEY_SECTION_PARTYTAP                "Party Tap"
+    IDS_INPUT_KEY_SECTION_KARAOKESTUDIO           "Karaoke Studio"
+    IDS_SCREEN_MOVIE_FORWARDED                    "Movie fast forwarded.."
+    IDS_SCREEN_NOSPRITELIMIT_ON                   "No Sprite Limit: ON"
+    IDS_SCREEN_NOSPRITELIMIT_OFF                  "No Sprite Limit: OFF"
+    IDS_SCREEN_TEXT_PASTE                         "Pasting % characters.."
+    IDS_SCREEN_TAPE_RECORDING                     "Recording to tape.."
+    IDS_SCREEN_TAPE_PLAYING                       "Playing tape.."
+    IDS_SCREEN_TAPE_STOPPED                       "Tape stopped.."
+    IDS_SCREEN_HORITRACK_SPEED_LOW                "Hori Track Speed Mode: Low"
+    IDS_SCREEN_HORITRACK_SPEED_HIGH               "Hori Track Speed Mode: High"
+    IDS_SCREEN_HORITRACK_ORIENTATION_LEFT         "Hori Track Orientation: Left"
+    IDS_SCREEN_HORITRACK_ORIENTATION_RIGHT        "Hori Track Orientation: Right"
+    IDS_FILES_SUPPORTED                           "All supported files"
+    IDS_FILES_XML                                 "NES XML files"
+    IDS_FILES_INES                                "iNES ROM Images"
+    IDS_FILES_UNIF                                "UNIF ROM Images"
+    IDS_FILES_FDS                                 "Famicom Disk System Images"
+    IDS_FILES_NSF                                 "NES Sound Files"
+    IDS_FILES_ROM                                 "ROM Images"
+    IDS_EXT_DATABASE_LOAD_FAILED                  "External database load error! Invalid content!"
+    IDS_FILES_BATTERY                             "Battery RAM files"
+    IDS_FILES_TAPE                                "Tape files"
+    IDS_FILES_STATE                               "Nestopia State Files"
+    IDS_FILES_STATE_SLOTS                         "Nestopia State Slot Files"
+    IDS_FILES_MOVIE                               "Nestopia Movie Files"
+    IDS_FILES_PATCHES                             "Patches"
+    IDS_FILES_PALETTE                             "NES Palette Files"
+    IDS_FILES_WAVE                                "WAVE Files"
+    IDS_FILES_AVI                                 "AVI Files"
+    IDS_FILES_ARCHIVE                             "Archives"
+    IDS_FILES_ALL                                 "All files"
+    IDS_LAUNCHER_ERR_LOAD_DB                      "Launcher database file is either damaged or not compatible with this version of Nestopia!"
+    IDS_LAUNCHER_ERR_SAVE_DB                      "Couldn't save the launcher database!"
+    IDS_LAUNCHER_COLUMN_FILE                      "File"
+    IDS_LAUNCHER_COLUMN_SYSTEM                    "System"
+    IDS_LAUNCHER_COLUMN_MAPPER                    "Mapper"
+    IDS_LAUNCHER_COLUMN_PRG                       "PRG"
+    IDS_LAUNCHER_COLUMN_CHR                       "CHR"
+    IDS_LAUNCHER_COLUMN_WRAM                      "WRAM"
+    IDS_LAUNCHER_COLUMN_VRAM                      "VRAM"
+    IDS_LAUNCHER_COLUMN_BATTERY                   "Battery"
+    IDS_LAUNCHER_COLUMN_DUMP                      "Dump"
+    IDS_LAUNCHER_COLUMN_NAME                      "Name"
+    IDS_LAUNCHER_COLUMN_FOLDER                    "Folder"
+    IDS_TEXT_NES_PAL_A                            "PAL-A"
+    IDS_LAUNCHER_SECTION_ALL                      "All Files"
+    IDS_LAUNCHER_SECTION_XML                      "XML Files"
+    IDS_LAUNCHER_SECTION_NES                      "NES Files"
+    IDS_LAUNCHER_SECTION_UNIF                     "UNIF Files"
+    IDS_LAUNCHER_SECTION_FDS                      "FDS Files"
+    IDS_LAUNCHER_SECTION_NSF                      "NSF Files"
+    IDS_LAUNCHER_SECTION_PATCH                    "Patch Files"
+    IDS_TEXT_NES_PAL_B                            "PAL-B"
+    IDS_LAUNCHER_SECTION_ARCHIVE                  "Archive Files"
+    IDS_LOAD_APPLY_CURRENT_GAME                   "Apply file to the current game? If so, game will be reloaded."
+    IDS_LOAD_SPECIFY_FILE                         "Couldn't find a matching image file. Perform a manual search?"
+    IDS_CHEATS                                    "Cheats"
+    IDS_CHEATS_EXPORTEXISTING                     "File already exists. Do you want to combine the data?"
+    IDS_CHEATS_EXPORTEXISTING_ERROR               "Couldn't read the file, old data will be replaced!"
+    IDS_CHEATS_INVALID_CODE                       "Invalid code!"
+    IDS_CHEATS_RESULT_VALID                       "VALID"
+    IDS_CHEATS_RESULT_INVALID                     "INVALID"
+    IDS_CHEAT_CODE                                "Code"
+    IDS_CHEAT_ADDRESS                             "Address"
+    IDS_CHEAT_VALUE                               "Value"
+    IDS_INPUT_KEY_SECTION_EMULATION               "Emulation"
+    IDS_INPUT_KEY_SECTION_FILE                    "File"
+    IDS_INPUT_KEY_SECTION_MACHINE                 "Machine"
+    IDS_INPUT_KEY_SECTION_NSF                     "NSF"
+    IDS_INPUT_KEY_SECTION_VIEW                    "View"
+    IDS_INPUT_KEY_SECTION_HELP                    "Help"
+    IDS_INPUT_PAD_KEY_LEFT                        "Left"
+    IDS_INPUT_PAD_KEY_UP                          "Up"
+    IDS_INPUT_PAD_KEY_RIGHT                       "Right"
+    IDS_INPUT_PAD_KEY_DOWN                        "Down"
+    IDS_INPUT_PAD_KEY_SELECT                      "Select"
+    IDS_INPUT_PAD_KEY_START                       "Start"
+    IDS_INPUT_PAD_KEY_B                           "B"
+    IDS_INPUT_PAD_KEY_A                           "A"
+    IDS_INPUT_PAD_KEY_AUTOFIRE_B                  "Auto-Fire B"
+    IDS_INPUT_PAD_KEY_AUTOFIRE_A                  "Auto-Fire A"
+    IDS_INPUT_PARTYTAP_UNIT_3                     "Unit 3"
+    IDS_INPUT_PARTYTAP_UNIT_4                     "Unit 4"
+    IDS_INPUT_PARTYTAP_UNIT_5                     "Unit 5"
+    IDS_INPUT_PARTYTAP_UNIT_6                     "Unit 6"
+    IDS_INPUT_KARAOKESTUDIO_MIC                   "Mic"
+    IDS_INPUT_KARAOKESTUDIO_A                     "A"
+    IDS_INPUT_KARAOKESTUDIO_B                     "B"
+    IDS_INPUT_EMULATION_KEY_ALT_SPEED             "Alternative Speed"
+    IDS_INPUT_EMULATION_KEY_REWIND                "Rewind"
+    IDS_INPUT_EMULATION_KEY_INSERT_COIN_1         "Insert Coin 1"
+    IDS_INPUT_EMULATION_KEY_INSERT_COIN_2         "Insert Coin 2"
+    IDS_INPUT_FILE_KEY_OPEN                       "Open"
+    IDS_INPUT_FILE_KEY_SAVE_STATE                 "Save State"
+    IDS_CHOOSE_GAME                               "Choose Game"
+    IDS_INPUT_FILE_KEY_LOAD_STATE                 "Load State"
+    IDS_CHOOSE_FILE                               "Choose File"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_1         "Quick Load State 1"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_2         "Quick Load State 2"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_3         "Quick Load State 3"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_4         "Quick Load State 4"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_5         "Quick Load State 5"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_6         "Quick Load State 6"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_7         "Quick Load State 7"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_8         "Quick Load State 8"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_STATE_9         "Quick Load State 9"
+    IDS_INPUT_FILE_KEY_QUICK_LOAD_LAST_STATE      "Quick Load State Newest"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_1         "Quick Save State 1"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_2         "Quick Save State 2"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_3         "Quick Save State 3"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_4         "Quick Save State 4"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_5         "Quick Save State 5"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_6         "Quick Save State 6"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_7         "Quick Save State 7"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_8         "Quick Save State 8"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_STATE_9         "Quick Save State 9"
+    IDS_INPUT_FILE_KEY_QUICK_SAVE_NEXT_STATE      "Quick Save State Oldest"
+    IDS_INPUT_FILE_KEY_SAVE_SCREENSHOT            "Save Screenshot"
+    IDS_INPUT_FILE_KEY_LAUNCHER                   "Launcher"
+    IDS_INPUT_FILE_KEY_EXIT                       "Exit"
+    IDS_INPUT_MACHINE_KEY_POWER                   "Power"
+    IDS_INPUT_MACHINE_KEY_RESET_SOFT              "Soft Reset"
+    IDS_INPUT_MACHINE_KEY_RESET_HARD              "Hard Reset"
+    IDS_INPUT_MACHINE_KEY_PAUSE                   "Pause"
+    IDS_INPUT_MACHINE_KEY_UNLIMITED_SPRITES       "Unlimited Sprites Toggle"
+    IDS_INPUT_MACHINE_KEY_CHANGE_DISK_SIDE        "Change Disk Side"
+    IDS_INPUT_NSF_KEY_PLAY                        "Play Song"
+    IDS_INPUT_NSF_KEY_STOP                        "Stop Song"
+    IDS_INPUT_NSF_KEY_NEXT                        "Next Song"
+    IDS_INPUT_PAD_KEY_MIC                         "Mic"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_1               "Side A 1"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_2               "Side A 2"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_3               "Side A 3"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_4               "Side A 4"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_5               "Side A 5"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_6               "Side A 6"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_7               "Side A 7"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_8               "Side A 8"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_9               "Side A 9"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_10              "Side A 10"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_11              "Side A 11"
+    IDS_INPUT_POWERPAD_KEY_SIDE_A_12              "Side A 12"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_3               "Side B 3"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_2               "Side B 2"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_8               "Side B 8"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_7               "Side B 7"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_6               "Side B 6"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_5               "Side B 5"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_11              "Side B 11"
+    IDS_INPUT_POWERPAD_KEY_SIDE_B_10              "Side B 10"
+    IDS_INPUT_POWERGLOVE_KEY_SELECT               "Select"
+    IDS_INPUT_POWERGLOVE_KEY_START                "Start"
+    IDS_INPUT_POWERGLOVE_KEY_MOVE_IN              "Move In"
+    IDS_INPUT_POWERGLOVE_KEY_MOVE_OUT             "Move Out"
+    IDS_INPUT_POWERGLOVE_KEY_ROLL_LEFT            "Roll Left"
+    IDS_INPUT_POWERGLOVE_KEY_ROLL_RIGHT           "Roll Right"
+    IDS_INPUT_HORITRACK_KEY_LEFT                  "Left"
+    IDS_INPUT_HORITRACK_KEY_UP                    "Up"
+    IDS_INPUT_HORITRACK_KEY_RIGHT                 "Right"
+    IDS_INPUT_HORITRACK_KEY_DOWN                  "Down"
+    IDS_INPUT_HORITRACK_KEY_SELECT                "Select"
+    IDS_INPUT_HORITRACK_KEY_START                 "Start"
+    IDS_INPUT_HORITRACK_KEY_B                     "B"
+    IDS_INPUT_HORITRACK_KEY_A                     "A"
+    IDS_INPUT_HORITRACK_KEY_SPEED                 "Speed"
+    IDS_INPUT_HORITRACK_KEY_ORIENTATION           "Orientation"
+    IDS_INPUT_PACHINKO_KEY_LEFT                   "Left"
+    IDS_INPUT_PACHINKO_KEY_UP                     "Up"
+    IDS_INPUT_PACHINKO_KEY_RIGHT                  "Right"
+    IDS_INPUT_PACHINKO_KEY_DOWN                   "Down"
+    IDS_INPUT_PACHINKO_KEY_SELECT                 "Select"
+    IDS_INPUT_PACHINKO_KEY_START                  "Start"
+    IDS_INPUT_PACHINKO_KEY_B                      "B"
+    IDS_INPUT_PACHINKO_KEY_A                      "A"
+    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_UP            "Left Up"
+    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_RIGHT         "Left Right"
+    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_DOWN          "Left Down"
+    IDS_INPUT_CRAZYCLIMBER_KEY_LEFT_LEFT          "Left Left"
+    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_UP           "Right Up"
+    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_RIGHT        "Right Right"
+    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_DOWN         "Right Down"
+    IDS_INPUT_CRAZYCLIMBER_KEY_RIGHT_LEFT         "Right Left"
+    IDS_INPUT_MAHJONG_KEY_A                       "A"
+    IDS_INPUT_MAHJONG_KEY_B                       "B"
+    IDS_INPUT_MAHJONG_KEY_C                       "C"
+    IDS_INPUT_MAHJONG_KEY_D                       "D"
+    IDS_INPUT_MAHJONG_KEY_E                       "E"
+    IDS_INPUT_MAHJONG_KEY_F                       "F"
+    IDS_INPUT_MAHJONG_KEY_G                       "G"
+    IDS_INPUT_MAHJONG_KEY_H                       "H"
+    IDS_INPUT_MAHJONG_KEY_I                       "I"
+    IDS_INPUT_MAHJONG_KEY_J                       "J"
+    IDS_INPUT_MAHJONG_KEY_K                       "K"
+    IDS_INPUT_MAHJONG_KEY_L                       "L"
+    IDS_INPUT_MAHJONG_KEY_M                       "M"
+    IDS_INPUT_MAHJONG_KEY_N                       "N"
+    IDS_INPUT_MAHJONG_KEY_START                   "Start"
+    IDS_INPUT_MAHJONG_KEY_SELECT                  "Select"
+    IDS_INPUT_MAHJONG_KEY_KAN                     "Kan"
+    IDS_INPUT_MAHJONG_KEY_PON                     "Pon"
+    IDS_INPUT_MAHJONG_KEY_CHI                     "Chi"
+    IDS_INPUT_MAHJONG_KEY_REACH                   "Reach"
+    IDS_INPUT_MAHJONG_KEY_RON                     "Ron"
+    IDS_INPUT_EXCITINGBOXING_KEY_LEFT_HOOK        "Left Hook"
+    IDS_INPUT_EXCITINGBOXING_KEY_RIGHT_HOOK       "Right Hook"
+    IDS_INPUT_EXCITINGBOXING_KEY_LEFT_JAB         "Left Jab"
+    IDS_INPUT_EXCITINGBOXING_KEY_RIGHT_JAB        "Right Jab"
+    IDS_INPUT_EXCITINGBOXING_KEY_STRAIGHT         "Straight"
+    IDS_INPUT_EXCITINGBOXING_KEY_BODY             "Body"
+    IDS_INPUT_EXCITINGBOXING_KEY_LEFT_MOVE        "Left Move"
+    IDS_INPUT_EXCITINGBOXING_KEY_RIGHT_MOVE       "Right Move"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_1           "Row 1 button 1"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_2           "Row 1 button 2"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_3           "Row 1 button 3"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_1_4           "Row 1 button 4"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_1           "Row 2 button 1"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_2           "Row 2 button 2"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_3           "Row 2 button 3"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_2_4           "Row 2 button 4"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_1           "Row 3 button 1"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_2           "Row 3 button 2"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_3           "Row 3 button 3"
+    IDS_INPUT_POKKUNMOGURAA_KEY_ROW_3_4           "Default"
+    IDS_INPUT_PARTYTAP_UNIT_1                     "Unit 1"
+    IDS_INPUT_PARTYTAP_UNIT_2                     "Unit 2"
+    IDS_PRIORITY_NORMAL                           "Normal"
+    IDS_PRIORITY_ABOVE_NORMAL                     "Above Normal"
+    IDS_PRIORITY_HIGH                             "High"
 }
 
 
@@ -1926,13 +1926,13 @@ VS_VERSION_INFO VERSIONINFO
     {
         BLOCK "040904B0"
         {
-            VALUE "FileDescription", "Nestopia Language Plugin - English (US)"
-            VALUE "FileVersion", "0.0.1"
-            VALUE "InternalName", "English (US)"
-            VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
-            VALUE "OriginalFilename", "English.nlg"
-            VALUE "ProductName", "Nestopia Language Plugin - English (US)"
-            VALUE "ProductVersion", "1.52.1"
+            VALUE "FileDescription",    "Nestopia Language Plugin - English (US)"
+            VALUE "FileVersion",        "0.0.1"
+            VALUE "InternalName",       "English (US)"
+            VALUE "LegalCopyright",     "Copyright Â© 2003-2008 Martin Freij"
+            VALUE "OriginalFilename",   "English.nlg"
+            VALUE "ProductName",        "Nestopia Language Plugin - English (US)"
+            VALUE "ProductVersion",     "1.52.1"
         }
     }
     BLOCK "VarFileInfo"
