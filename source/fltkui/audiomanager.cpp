@@ -124,28 +124,6 @@ AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
     }
 
     SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses
-
-    // Discover any audio recording devices
-    int miccount = SDL_GetNumAudioDevices(1);
-    std::string micname{};
-
-    for (int i = 0; i < miccount; ++i) {
-        micname = std::string{SDL_GetAudioDeviceName(i, 1)};
-    }
-
-    if (miccount) {
-        spec_in.channels = micinfo.channels;
-        spec_in.freq = micinfo.rate;
-        spec_in.silence = 0;
-        spec_in.samples = 512;
-        spec_in.userdata = &jgm;
-        spec_in.format = spec.format;
-        spec_in.callback = audio_cb_input;
-        dev_in = SDL_OpenAudioDevice(micname.c_str(), 1, &spec_in, &obtained_in,
-                                     SDL_AUDIO_ALLOW_ANY_CHANGE);
-        SDL_PauseAudioDevice(dev_in, 1); // Start in paused state
-        LogDriver::log(LogLevel::Debug, "Microphone: " + micname);
-    }
 }
 
 AudioManager::~AudioManager() {
@@ -253,5 +231,28 @@ void AudioManager::unpause() {
     SDL_PauseAudioDevice(dev, 0);
     if (dev_in && jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
         SDL_PauseAudioDevice(dev_in, 0);
+    }
+    else if (jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
+        // Discover any audio recording devices
+        int miccount = SDL_GetNumAudioDevices(1);
+        std::string micname{};
+
+        for (int i = 0; i < miccount; ++i) {
+            micname = std::string{SDL_GetAudioDeviceName(i, 1)};
+        }
+
+        if (miccount) {
+            spec_in.channels = micinfo.channels;
+            spec_in.freq = micinfo.rate;
+            spec_in.silence = 0;
+            spec_in.samples = 512;
+            spec_in.userdata = &jgm;
+            spec_in.format = spec.format;
+            spec_in.callback = audio_cb_input;
+            dev_in = SDL_OpenAudioDevice(micname.c_str(), 1, &spec_in, &obtained_in,
+                                         SDL_AUDIO_ALLOW_ANY_CHANGE);
+            SDL_PauseAudioDevice(dev_in, 0); // Unpause
+            LogDriver::log(LogLevel::Debug, "Microphone: " + micname);
+        }
     }
 }
