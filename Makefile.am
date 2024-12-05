@@ -10,7 +10,8 @@ nestopia_CPPFLAGS = \
 	-I$(top_srcdir)/source/fltkui \
 	-DNST_DATADIR=\"$(datadir)/nestopia\" \
 	-DNST_DATAROOTDIR=\"$(datarootdir)\" \
-	-DNST_PRAGMA_ONCE \
+	-DNST_PRAGMA_ONCE
+nestopia_CXXFLAGS = \
 	$(ZLIB_CFLAGS) \
 	$(LIBARCHIVE_CFLAGS) \
 	$(SAMPLERATE_CFLAGS) \
