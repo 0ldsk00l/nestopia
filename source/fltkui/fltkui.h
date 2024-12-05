@@ -63,5 +63,6 @@ public:
     static void setwin_open(Fl_Widget *w = nullptr, void *data = nullptr);
     static void chtwin_open(Fl_Widget *w = nullptr, void *data = nullptr);
     static void nstwin_open();
+    static void run_emulation(bool run = true);
     static int handle(int e);
 };

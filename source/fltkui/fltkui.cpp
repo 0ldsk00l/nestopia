@@ -67,6 +67,7 @@ namespace {
 int paused{0};
 int speed{1};
 int video_fullscreen{0};
+int syncmode{0};
 int refreshrate{60};
 int screennum{0};
 
@@ -150,6 +151,13 @@ Fl_Menu_Item *get_menuitem(std::string label) {
 
 void update_refreshrate(void) {
     // Get the screen refresh rate using an SDL window
+    if (syncmode) { // Don't use this in "Timer" sync mode
+        return;
+    }
+    #ifdef __APPLE__
+    refreshrate = 120; // Dirty hack for modern macOS
+    return;
+    #endif
     SDL_Window *sdlwin;
     sdlwin = SDL_CreateWindow(
         "refreshrate",
@@ -162,7 +170,7 @@ void update_refreshrate(void) {
     SDL_DestroyWindow(sdlwin);
 }
 
-void exec_emu(void*) {
+void exec_emu_vsync(void*) {
     SDL_Event event;
     while (SDL_PollEvent(&event)) {
         inputmgr->event(event);
@@ -183,6 +191,22 @@ void exec_emu(void*) {
         }
     }
 
+    glarea->redraw();
+}
+
+void exec_emu_timer(void*) {
+    SDL_Event event;
+    while (SDL_PollEvent(&event)) {
+        inputmgr->event(event);
+    }
+
+    if (!paused) {
+        for (int i = 0; i < speed; i++) {
+            jgm->exec_frame();
+        }
+    }
+
+    Fl::repeat_timeout(1.0 / jgm->get_frametime(), exec_emu_timer);
     glarea->redraw();
 }
 
@@ -251,6 +275,8 @@ void FltkUi::rom_open(Fl_Widget *w, void *data) {
     fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
     fc.filter("NES Games\t*.{nes,unf,fds,bin,zip,7z,gz,bz2,xz,xml,zst}");
 
+    run_emulation(false);
+
     // Show file chooser
     switch (fc.show()) {
         case -1:
@@ -274,6 +300,8 @@ void FltkUi::rom_open(Fl_Widget *w, void *data) {
             }
             break;
     }
+
+    run_emulation();
 }
 
 void FltkUi::screenshot(std::string filename) {
@@ -295,6 +323,8 @@ void FltkUi::screenshot_save(Fl_Widget *w, void *data) {
         return;
     }
 
+    run_emulation(false);
+
     Fl_Native_File_Chooser fc;
     fc.title("Save Screenshot");
     fc.type(Fl_Native_File_Chooser::BROWSE_SAVE_FILE);
@@ -307,6 +337,7 @@ void FltkUi::screenshot_save(Fl_Widget *w, void *data) {
     }
 
     screenshot(fc.filename());
+    run_emulation();
 }
 
 void FltkUi::state_load(Fl_Widget *w, void *userdata) {
@@ -314,6 +345,8 @@ void FltkUi::state_load(Fl_Widget *w, void *userdata) {
     if (!jgm->is_loaded()) {
         return;
     }
+
+    run_emulation(false);
 
     Fl_Native_File_Chooser fc;
     fc.title("Load State");
@@ -334,6 +367,8 @@ void FltkUi::state_load(Fl_Widget *w, void *userdata) {
             }
             break;
     }
+
+    run_emulation();
 }
 
 void FltkUi::state_save(Fl_Widget *w, void *data) {
@@ -341,6 +376,8 @@ void FltkUi::state_save(Fl_Widget *w, void *data) {
     if (!jgm->is_loaded()) {
         return;
     }
+
+    run_emulation(false);
 
     Fl_Native_File_Chooser fc;
     fc.title("Save State");
@@ -350,11 +387,13 @@ void FltkUi::state_save(Fl_Widget *w, void *data) {
 
     // Show file chooser
     if (fc.show()) {
+        run_emulation();
         return;
     }
 
     std::string statefile{fc.filename()};
     jgm->state_save(statefile);
+    run_emulation();
 }
 
 void FltkUi::palette_open(Fl_Widget *w, void *data) {
@@ -481,6 +520,7 @@ void FltkUi::fds_insert(Fl_Widget *w, void *data) {
 void FltkUi::about_close(Fl_Widget *w, void *data) {
     Fl_Window *about = (Fl_Window*)data;
     about->hide();
+    run_emulation();
 }
 
 void FltkUi::about(Fl_Widget *w, void *data) {
@@ -524,6 +564,7 @@ void FltkUi::about(Fl_Widget *w, void *data) {
     close.callback(FltkUi::about_close, (void*)&about);
 
     about.set_modal();
+    run_emulation(false);
     about.show();
     while (about.shown()) {
         Fl::wait();
@@ -610,6 +651,9 @@ int NstGlArea::handle(int e) {
                 jgm->setup_video();
                 inputmgr->reassign();
                 audiomgr->unpause();
+                // Restart if in timer sync mode
+                FltkUi::run_emulation(false);
+                FltkUi::run_emulation();
             }
             return 1;
         }
@@ -707,6 +751,25 @@ void FltkUi::set_ffspeed(bool on) {
     audiomgr->set_speed(speed);
 }
 
+void FltkUi::run_emulation(bool run) {
+    if (run) {
+        if (syncmode) {
+            Fl::add_timeout(0.001, exec_emu_timer);
+        }
+        else {
+            Fl::add_idle(exec_emu_vsync);
+        }
+    }
+    else {
+        if (syncmode) {
+            Fl::remove_timeout(exec_emu_timer);
+        }
+        else {
+            Fl::remove_idle(exec_emu_vsync);
+        }
+    }
+}
+
 int main(int argc, char *argv[]) {
     // Parse command line arguments
     std::string filename{};
@@ -788,12 +851,14 @@ int main(int argc, char *argv[]) {
         FltkUi::fullscreen(NULL, NULL);
     }
 
+    syncmode = setmgr->get_setting("m_syncmode")->val;
+    LogDriver::log(LogLevel::Debug, syncmode ?
+                   "Synchronization Mode: Timer" :
+                   "Synchronization Mode: VSync");
+
     update_refreshrate();
 
-    // Execute emulation using an FLTK idle callback. End when the main window
-    // is no longer shown. Using the while loop instead of Fl::run will cleanly
-    // exit the program even when other windows are still shown.
-    Fl::add_idle(exec_emu);
+    FltkUi::run_emulation();
     while (nstwin->shown()) {
         Fl::wait();
     }
