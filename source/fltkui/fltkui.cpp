@@ -765,18 +765,18 @@ void FltkUi::set_ffspeed(bool on) {
 void FltkUi::run_emulation(bool run) {
     if (run) {
         if (syncmode) {
-            Fl::add_timeout(0.001, exec_emu_timer);
+            Fl::add_idle(exec_emu_vsync);
         }
         else {
-            Fl::add_idle(exec_emu_vsync);
+            Fl::add_timeout(0.001, exec_emu_timer);
         }
     }
     else {
         if (syncmode) {
-            Fl::remove_timeout(exec_emu_timer);
+            Fl::remove_idle(exec_emu_vsync);
         }
         else {
-            Fl::remove_idle(exec_emu_vsync);
+            Fl::remove_timeout(exec_emu_timer);
         }
     }
 }
@@ -865,8 +865,8 @@ int main(int argc, char *argv[]) {
 
     syncmode = setmgr->get_setting("m_syncmode")->val;
     LogDriver::log(LogLevel::Debug, syncmode ?
-                   "Synchronization Mode: Timer" :
-                   "Synchronization Mode: VSync");
+                   "Synchronization Mode: VSync" :
+                   "Synchronization Mode: Timer");
 
     update_refreshrate();
 

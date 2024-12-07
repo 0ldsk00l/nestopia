@@ -92,7 +92,7 @@ jg_setting_t fe_settings[] = {
       0, 0, 1, FLAG_FRONTEND
     },
     { "m_syncmode", "Synchronization Mode (Restart)",
-      "0 = VSync, 1 = Timer",
+      "0 = Timer, 1 = VSync",
       "Set the Synchronization Mode: VSync to sync to VBLANK, Timer in cases where VSync is unreliable",
       0, 0, 1, FLAG_FRONTEND | JG_SETTING_RESTART
     },
