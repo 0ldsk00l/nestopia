@@ -296,6 +296,7 @@ void FltkUi::rom_open(Fl_Widget *w, void *data) {
                     jgm->setup_video();
                     inputmgr->reassign();
                     audiomgr->unpause();
+                    jgm->reset(2);
                 }
             }
             break;
@@ -333,6 +334,7 @@ void FltkUi::screenshot_save(Fl_Widget *w, void *data) {
 
     // Show file chooser
     if (fc.show()) {
+        run_emulation();
         return;
     }
 
@@ -651,6 +653,7 @@ int NstGlArea::handle(int e) {
                 jgm->setup_video();
                 inputmgr->reassign();
                 audiomgr->unpause();
+                jgm->reset(2);
                 // Restart if in timer sync mode
                 FltkUi::run_emulation(false);
                 FltkUi::run_emulation();
@@ -820,6 +823,7 @@ int main(int argc, char *argv[]) {
                                std::find(flags.begin(), flags.end(), "-f") != flags.end() ||
                                std::find(flags.begin(), flags.end(), "--fullscreen") != flags.end();
             audiomgr->unpause();
+            jgm->reset(2);
         }
     }
 
