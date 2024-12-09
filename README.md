@@ -12,10 +12,10 @@ Contributing/Issues:
 * When not using a tagged release, please understand that the code is volatile and nothing is set in stone.
 
 The following platforms are supported:
-* Linux, BSD, macOS, Windows
+* Linux, BSD, Windows
 
 This project depends on the following libraries:
-FLTK 1.3 (1.4 on macOS), SDL2, libarchive, libepoxy, libsamplerate, zlib
+FLTK 1.3 (1.4 preferred), SDL2, libarchive, libepoxy, libsamplerate, zlib
 
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
@@ -35,7 +35,7 @@ Optionally:
 make install
 ```
 
-## macOS Build
+## macOS Build (Experimental)
 ```
 # Install dependencies
 brew install autoconf automake autoconf-archive pkg-config libarchive libepoxy libsamplerate fltk sdl2
