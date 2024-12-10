@@ -254,6 +254,16 @@ namespace Nes
 							<< (setup.chrNvRam % SIZE_1K ? " bytes" : "k")
 							<< " non-volatile CHR-RAM set" NST_LINEBREAK;
 					}
+
+					// Special case for Mapper 30 - Mapper is flashable, no bus conflicts
+					// when the battery flag is set. This can also be used to signify no bus
+					// conflicts even in cases where there is no flashable PRG.
+					if (setup.mapper == 30 && header[6] & 0x2U)
+					{
+						profileEx.battery = true;
+						log << title
+							<< "battery flag set (no bus conflicts)" NST_LINEBREAK;
+					}
 				}
 				else
 				{
