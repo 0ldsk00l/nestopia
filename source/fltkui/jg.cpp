@@ -264,16 +264,23 @@ static int nst_db_load(void) {
     return 0;
 }
 
-static void nst_sample_load(User::File& file, const char *sampgame) {
-    char wavfile[] = "xx.wav";
-    unsigned id = file.GetId();
-    if (id > 99) { return; }
-    wavfile[0] = '0' + id / 10;
-    wavfile[1] = '0' + id % 10;
-    std::string filepath = std::string(pathinfo.user) + "/" +
-        std::string(sampgame) + "/" + std::string(wavfile);
-    std::ifstream is(filepath.c_str(), std::ifstream::binary);
+static void nst_sample_load(User::File& file, const char *path, bool rel) {
+    std::string filepath;
+    if (rel) {
+        filepath = std::string(path);
+    }
+    else {
+        char wavfile[] = "xx.wav";
+        unsigned id = file.GetId();
+        if (id > 99) {
+            return;
+        }
+        wavfile[0] = '0' + id / 10;
+        wavfile[1] = '0' + id % 10;
+        filepath = std::string(pathinfo.user) + "/" + path + "/" + wavfile;
+    }
 
+    std::ifstream is(filepath.c_str(), std::ifstream::binary);
     if (is) {
         is.seekg(0, is.end);
         int length = is.tellg();
@@ -332,26 +339,32 @@ static void NST_CALLBACK nst_cb_file(void *userdata, User::File& file) {
             break;
         }
         case User::File::LOAD_SAMPLE: {
+            std::wstring wfname = std::wstring(file.GetName());
+            std::string fname(wfname.begin(), wfname.end());
+            std::string basedir = std::string(gameinfo.path);
+            basedir = basedir.substr(0, basedir.rfind("/"));
+            fname = basedir + "/" + fname;
+            nst_sample_load(file, fname.c_str(), true);
             break;
         }
         case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU: {
-            nst_sample_load(file, "moepro");
+            nst_sample_load(file, "moepro", false);
             break;
         }
         case User::File::LOAD_SAMPLE_MOERO_PRO_YAKYUU_88: {
-            nst_sample_load(file, "moepro88");
+            nst_sample_load(file, "moepro88", false);
             break;
         }
         case User::File::LOAD_SAMPLE_MOERO_PRO_TENNIS: {
-            nst_sample_load(file, "mptennis");
+            nst_sample_load(file, "mptennis", false);
             break;
         }
         case User::File::LOAD_SAMPLE_TERAO_NO_DOSUKOI_OOZUMOU: {
-            nst_sample_load(file, "terao");
+            nst_sample_load(file, "terao", false);
             break;
         }
         case User::File::LOAD_SAMPLE_AEROBICS_STUDIO: {
-            nst_sample_load(file, "ftaerobi");
+            nst_sample_load(file, "ftaerobi", false);
             break;
         }
         case User::File::LOAD_BATTERY:
