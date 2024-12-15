@@ -41,8 +41,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace {
 
-jg_videoinfo_t *vidinfo;
-uint32_t *videobuf;
+jg_videoinfo_t *vidinfo{nullptr};
+uint32_t *videobuf{nullptr};
 
 struct osdtext {
     int xpos;

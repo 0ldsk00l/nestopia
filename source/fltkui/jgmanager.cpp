@@ -41,7 +41,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace {
 
-int frametime = 0;
+int frametime{60};
 
 void jg_frametime(double interval) {
     frametime = interval + 0.5;

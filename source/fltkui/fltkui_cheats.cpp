@@ -45,11 +45,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace {
 
-NstChtWindow *chtwin = nullptr;
+NstChtWindow *chtwin{nullptr};
 
-Fl_Input *input_desc;
-Fl_Input *input_gg;
-Fl_Input *input_par;
+Fl_Input *input_desc{nullptr};
+Fl_Input *input_gg{nullptr};
+Fl_Input *input_par{nullptr};
 
 }
 

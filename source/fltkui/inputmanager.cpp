@@ -47,8 +47,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace {
 
-jg_inputstate_t coreinput[5];
-jg_inputinfo_t *inputinfo[5];
+jg_inputstate_t coreinput[5]{};
+jg_inputinfo_t *inputinfo[5]{nullptr};
 
 jg_inputstate_t uistate;
 jg_inputinfo_t uiinfo;
@@ -65,18 +65,18 @@ const int ui_defaults[NDEFS_UI - 1] = {
     0xffbd + 6, 0xffbd + 7, 0xffbd + 8, 'f', 'p', '`', 0xffbd + 9
 };
 
-bool uiprev[NDEFS_UI];
+bool uiprev[NDEFS_UI]{};
 
-uint8_t undef8;
-uint16_t undef16;
+uint8_t undef8{};
+uint16_t undef16{};
 
 constexpr int DEADZONE = 5120;
 constexpr size_t MAXPORTS = 4;
 
-SDL_Joystick *joystick[MAXPORTS];
-int jsports[MAXPORTS];
-int jsiid[MAXPORTS];
-int jstrig[MAXPORTS]{{0}};
+SDL_Joystick *joystick[MAXPORTS]{nullptr};
+int jsports[MAXPORTS]{};
+int jsiid[MAXPORTS]{};
+int jstrig[MAXPORTS]{};
 
 bool conflict{false};
 

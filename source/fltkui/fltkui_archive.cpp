@@ -47,9 +47,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "fltkui.h"
 #include "fltkui_archive.h"
 
-static Fl_Double_Window *window;
-static Fl_Select_Browser *browser;
-static char *romfile = NULL;
+static Fl_Double_Window *window{nullptr};
+static Fl_Select_Browser *browser{nullptr};
+static char *romfile{nullptr};
 
 static void fltkui_archive_ok(Fl_Widget *w, long) {
     window->hide();
