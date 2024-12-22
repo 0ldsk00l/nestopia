@@ -35,7 +35,7 @@ Optionally:
 make install
 ```
 
-## macOS Build (Experimental)
+### macOS Build (Experimental)
 ```
 # Install dependencies
 brew install autoconf automake autoconf-archive pkg-config libarchive libepoxy libsamplerate fltk sdl2

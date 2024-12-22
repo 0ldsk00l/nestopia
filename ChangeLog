@@ -1,5 +1,5 @@
 ----------------------------------------------------------------
-Upcoming
+1.53.0
 ----------------------------------------------------------------
 Shell:
 
@@ -20,6 +20,18 @@ Shell:
    - FLTK: Configurable overscan masking on all edges
    - FLTK: Drag and Drop support
    - FLTK: Support FDS microphone using a real microphone/headset
+
+Core:
+
+  Additions:
+   - Support for loading Virtual Console/NES Remix format ROMs
+   - Support NES 2.0 Default Expansion Device field
+   - Add support for Mapper 555 (EVENT2)
+
+  Fixes:
+   - Better support for MMC3 hacks with large WRAM, CHR RAM, or PRG ROM sizes
+   - VRC heuristics improvement to help with VRC hacks and homebrew
+   - Handle NES 2.0 Mapper 30 special battery flag case
 
 ----------------------------------------------------------------
 1.52.1
