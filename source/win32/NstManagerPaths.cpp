@@ -691,6 +691,11 @@ namespace Nestopia
 
 							break;
 
+						case FourCC<'b','i','n'>::V:
+							// If it's a .bin, just assume it's a VC ROM and fail elsewhere if not
+							type = File::ROM;
+							break;
+
 						default:
 
 							// extension is unknown, but the file may still be valid,
