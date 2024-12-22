@@ -219,6 +219,7 @@ namespace Nes
 						CUSTOM_B4                  = MakeId<    4,  128,  128,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						CUSTOM_BTR                 = MakeId<   69,  512,  256,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						CUSTOM_EVENT               = MakeId<  105,  256,    0,  8,  0, CRM_8,  NMT_H,  0 >::ID,
+						CUSTOM_EVENT2              = MakeId<  555,  512,  256, 16,  0, CRM_8,  NMT_H,  0 >::ID,
 						CUSTOM_FFE3                = MakeId<    8,  256,  256,  8,  0, CRM_0,  NMT_X,  0 >::ID,
 						CUSTOM_FFE4                = MakeId<    6,  256,  256,  8,  0, CRM_32, NMT_X,  0 >::ID,
 						CUSTOM_FFE8                = MakeId<   17,  256,  256,  8,  0, CRM_0,  NMT_X,  0 >::ID,

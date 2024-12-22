@@ -1007,6 +1007,7 @@ namespace Nes
 					{ "NES-ELROM",                   Type::STD_ELROM                },
 					{ "NES-ETROM",                   Type::STD_ETROM                },
 					{ "NES-EVENT",                   Type::CUSTOM_EVENT             },
+					{ "NES-EVENT2",                  Type::CUSTOM_EVENT2            },
 					{ "NES-EWROM",                   Type::STD_EWROM                },
 					{ "NES-FJROM",                   Type::STD_FJROM                },
 					{ "NES-FKROM",                   Type::STD_FKROM                },
@@ -3523,6 +3524,12 @@ namespace Nes
 						id = Type::KAISER_KS7010;
 						break;
 
+					case 555:
+
+						name = "EVENT2";
+						id = Type::CUSTOM_EVENT2;
+						break;
+
 					default:
 
 						return false;
@@ -3618,6 +3625,7 @@ namespace Nes
 					case Type::CUSTOM_B4                  : return new TxRom(c);
 					case Type::CUSTOM_BTR                 : return new JxRom(c);
 					case Type::CUSTOM_EVENT               : return new Boards::Event(c);
+					case Type::CUSTOM_EVENT2              : return new Boards::Event2(c);
 					case Type::CUSTOM_FFE3                :
 					case Type::CUSTOM_FFE4                :
 					case Type::CUSTOM_FFE8                : return new Ffe(c);

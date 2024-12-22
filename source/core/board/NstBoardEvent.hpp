@@ -99,6 +99,73 @@ namespace Nes
 				CartSwitches cartSwitches;
 				char text[16];
 			};
+
+			class Event2 : public Mmc3
+			{
+			public:
+
+				explicit Event2(const Context&);
+
+			private:
+
+				void NST_FASTCALL UpdatePrg(uint,uint);
+				void NST_FASTCALL UpdateChr(uint,uint) const;
+
+				void SubReset(bool);
+
+				class CartSwitches : public DipSwitches
+				{
+				public:
+
+					CartSwitches();
+
+					inline bool ShowTime() const;
+					inline dword GetTime() const;
+
+				private:
+
+					enum
+					{
+						DEFAULT_DIP = 4,
+						BASE_TIME = 0x2000000
+					};
+
+					uint NumDips() const;
+					uint NumValues(uint) const;
+					cstring GetDipName(uint) const;
+					cstring GetValueName(uint,uint) const;
+					uint GetValue(uint) const;
+					void SetValue(uint,uint);
+
+					uint time;
+					ibool showTime;
+				};
+
+				void SubSave(State::Saver&) const;
+				void SubLoad(State::Loader&,dword);
+				Device QueryDevice(DeviceType);
+				void Sync(Board::Event,Input::Controllers*);
+
+				enum
+				{
+					TIME_TEXT_MIN_OFFSET = 11,
+					TIME_TEXT_SEC_OFFSET = 13
+				};
+
+				dword time;
+				CartSwitches cartSwitches;
+				char text[16];
+
+			protected:
+
+				NES_DECL_PEEK( 5000 );
+				NES_DECL_POKE( 5000 );
+
+				bool ev2_expired;
+				byte ev2_reg[2];
+				dword ev2_countdown;
+			};
+
 		}
 	}
 }
