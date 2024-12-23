@@ -20,6 +20,8 @@ Shell:
    - FLTK: Configurable overscan masking on all edges
    - FLTK: Drag and Drop support
    - FLTK: Support FDS microphone using a real microphone/headset
+   - FLTK: Support for loading XML Romsets
+   - win32: Support for loading VC/NES Remix ROMs
 
 Core:
 
