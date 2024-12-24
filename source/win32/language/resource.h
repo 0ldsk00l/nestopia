@@ -249,8 +249,6 @@
 #define IDM_LAUNCHER_OPTIONS_COLORS             1015
 #define IDC_SOUND_DEVICE                        2001
 #define IDC_SOUND_SAMPLE_RATE                   2002
-#define IDC_SOUND_8_BIT                         2003
-#define IDC_SOUND_16_BIT                        2004
 #define IDC_SOUND_LATENCY                       2005
 #define IDC_SOUND_LATENCY_ONE                   2006
 #define IDC_SOUND_LATENCY_TEN                   2007

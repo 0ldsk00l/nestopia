@@ -2,7 +2,7 @@ dnl Initialise Autoconf
 AC_PREREQ([2.69])
 AC_INIT(
 	[nestopia],
-	[1.52.1])
+	[1.53.0])
 AC_CONFIG_SRCDIR([source])
 AC_LANG([C++])
 
