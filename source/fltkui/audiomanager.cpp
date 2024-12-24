@@ -128,7 +128,7 @@ AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
 
     dev = SDL_OpenAudioDevice(NULL, 0, &spec, &obtained, SDL_AUDIO_ALLOW_ANY_CHANGE);
     if (!dev) {
-        LogDriver::log(LogLevel::Error, "Error opening audio device");
+        LogDriver::log(LogLevel::Warn, "Error opening audio device");
     }
 
     SDL_PauseAudioDevice(dev, 1);  // Setting to 0 unpauses

@@ -795,6 +795,13 @@ int main(int argc, char *argv[]) {
         }
     }
 
+    if (std::find(flags.begin(), flags.end(), "-v") != flags.end() ||
+        std::find(flags.begin(), flags.end(), "--version") != flags.end() ||
+        std::find(flags.begin(), flags.end(), "--help") != flags.end()) {
+        std::cout << "Nestopia UE " << JG_VERSION << std::endl;
+        return 0;
+    }
+
     // Set default config options
     setmgr = new SettingManager();
 
