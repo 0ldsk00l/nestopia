@@ -53,16 +53,16 @@ jg_inputinfo_t *inputinfo[5]{nullptr};
 jg_inputstate_t uistate;
 jg_inputinfo_t uiinfo;
 
-constexpr size_t NDEFS_UI = 13;
+constexpr size_t NDEFS_UI = 14;
 const char *defs_ui[NDEFS_UI] = {
     "ResetSoft", "ResetHard", "FDSNextSide", "FDSInsertEject",
     "QuickSave1", "QuickSave2", "QuickLoad1", "QuickLoad2",
-    "Fullscreen", "Pause", "FastForward", "Screenshot", "Quit"
+    "Fullscreen", "Pause", "Mute", "FastForward", "Screenshot", "Quit"
 };
 
 const int ui_defaults[NDEFS_UI - 1] = {
     0xffbd + 1, 0xffbd + 2, 0xffbd + 3, 0xffbd + 4, 0xffbd + 5,
-    0xffbd + 6, 0xffbd + 7, 0xffbd + 8, 'f', 'p', '`', 0xffbd + 9
+    0xffbd + 6, 0xffbd + 7, 0xffbd + 8, 'f', 'p', 'm', '`', 0xffbd + 9
 };
 
 bool uiprev[NDEFS_UI]{};
@@ -493,7 +493,7 @@ void InputManager::event(SDL_Event& evt) {
             if (jxmap[axis] != nullptr) {
                 *jxmap[axis] = abs(evt.jaxis.value) > DEADZONE ? evt.jaxis.value : 0;
             }
-            
+
             break;
         }
     }
@@ -553,13 +553,16 @@ void InputManager::ui_events() {
                 case 9: // Pause
                     UiAdapter::pause();
                     break;
-                case 10: // FastForward
+                case 10: // Mute
+                    UiAdapter::mute();
+                    break;
+                case 11: // FastForward
                     UiAdapter::fastforward(false);
                     break;
-                case 11: // Screenshot
+                case 12: // Screenshot
                     UiAdapter::screenshot();
                     break;
-                case 12: // Quit
+                case 13: // Quit
                     UiAdapter::quit();
                     break;
             }
@@ -568,7 +571,7 @@ void InputManager::ui_events() {
         uiprev[i] = uistate.button[i];
     }
 
-    if (uistate.button[10]) {
+    if (uistate.button[11]) {
         UiAdapter::fastforward(true);
     }
 }

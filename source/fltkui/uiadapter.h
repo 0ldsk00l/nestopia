@@ -8,6 +8,7 @@ public:
     static void fullscreen();
     static void fastforward(bool ff);
     static void pause();
+    static void mute();
     static void screenshot();
     static void quit();
     static void show_inputmsg(int show);

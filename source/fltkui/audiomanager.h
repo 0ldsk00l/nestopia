@@ -14,9 +14,11 @@ public:
     void set_speed(int speed);
     void pause();
     void unpause();
+    void mute(bool m);
 
     inline int16_t dequeue();
     static void queue(size_t in_size);
+    static void null_queue(size_t in_size);
 
     void rehash();
 

@@ -58,6 +58,7 @@ public:
     static void state_qload(Fl_Widget *w = nullptr, void *data = nullptr);
     static void state_qsave(Fl_Widget *w = nullptr, void *data = nullptr);
     static void pause(Fl_Widget *w = nullptr, void *data = nullptr);
+    static void mute(Fl_Widget *w = nullptr, void *data = nullptr);
     static void reset(Fl_Widget *w = nullptr, void *data = nullptr);
     static void palette_open(Fl_Widget *w = nullptr, void *data = nullptr);
     static void setwin_open(Fl_Widget *w = nullptr, void *data = nullptr);

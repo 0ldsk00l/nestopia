@@ -52,9 +52,9 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace {
 
-constexpr int UI_TABHEIGHT = 500;
+constexpr int UI_TABHEIGHT = 550;
 constexpr int UI_TABWIDTH = 480;
-constexpr unsigned UI_SETTINGS_PER_COL = 9;
+constexpr unsigned UI_SETTINGS_PER_COL = 10;
 
 std::unordered_map<int, std::string> keycodes = { //FL_Button ??
     { ' ', "Space" },

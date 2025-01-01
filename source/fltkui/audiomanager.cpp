@@ -86,7 +86,12 @@ void audio_cb_input(void *data, uint8_t *stream, int len) {
 
 AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
         : jgm(jgm), setmgr(setmgr) {
-    jgm.set_audio_cb(AudioManager::queue);
+    if (setmgr.get_setting("a_mute")->val) {
+        jgm.set_audio_cb(AudioManager::null_queue);
+    }
+    else {
+        jgm.set_audio_cb(AudioManager::queue);
+    }
 
     // Initialize audio buffers
     buf_in = new int16_t[BUFSIZE];
@@ -215,6 +220,10 @@ void AudioManager::queue(size_t in_size) {
     SDL_UnlockAudioDevice(dev);
 }
 
+void AudioManager::null_queue(size_t in_size) {
+    return;
+}
+
 void AudioManager::rehash() {
     if (srcstate) {
         srcstate = src_delete(srcstate);
@@ -263,4 +272,8 @@ void AudioManager::unpause() {
             LogDriver::log(LogLevel::Debug, "Microphone: " + micname);
         }
     }
+}
+
+void AudioManager::mute(bool m) {
+    jgm.set_audio_cb(m ? AudioManager::null_queue : AudioManager::queue);
 }
