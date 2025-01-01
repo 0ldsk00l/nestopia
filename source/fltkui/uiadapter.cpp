@@ -54,6 +54,10 @@ void UiAdapter::pause() {
     FltkUi::pause();
 }
 
+void UiAdapter::mute() {
+    FltkUi::mute();
+}
+
 void UiAdapter::screenshot() {
     FltkUi::screenshot();
 }

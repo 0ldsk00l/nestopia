@@ -73,6 +73,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 namespace {
 
 int paused{0};
+int muted{0};
 int speed{1};
 int video_fullscreen{0};
 int syncmode{0};
@@ -130,6 +131,7 @@ Fl_Menu_Item menutable[] = {
         {0}, // End File
     {"&Emulator", FL_ALT + 'e', 0, 0, FL_SUBMENU},
         {"Pause", 0, FltkUi::pause, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
+        {"Mute", 0, FltkUi::mute, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
         {"Reset (Soft)", 0, FltkUi::reset, (void*)"0", FL_MENU_INACTIVE},
         {"Reset (Hard)", 0, FltkUi::reset, (void*)"1", FL_MENU_DIVIDER|FL_MENU_INACTIVE},
         {"Fullscreen", 0, FltkUi::fullscreen, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
@@ -471,6 +473,23 @@ void FltkUi::pause(Fl_Widget *w, void *data) {
     #endif
 }
 
+void FltkUi::mute(Fl_Widget *w, void *data) {
+    Fl_Menu_Item* m = nullptr;
+    m = w ? const_cast<Fl_Menu_Item*>(((Fl_Menu_Bar*)w)->mvalue()) :
+            get_menuitem(muted ? "Unmute" : "Mute");
+
+    if (muted) {
+        audiomgr-> mute(false);
+    }
+    else {
+        audiomgr-> mute(true);
+    }
+
+    muted ^= 1;
+
+    m->label(muted ? "Unmute" : "Mute");
+}
+
 void FltkUi::reset(Fl_Widget *w, void *data) {
     jgm->reset(atoi((const char*)data));
 }
@@ -705,7 +724,7 @@ void FltkUi::nstwin_open() {
     chtwin->populate();
 
     // Settings Window
-    setwin = new NstSettingsWindow(500, 550, "Settings", *jgm, *setmgr, *inputmgr);
+    setwin = new NstSettingsWindow(500, 600, "Settings", *jgm, *setmgr, *inputmgr);
     setwin->set_crt_active(setmgr->get_setting("v_postproc")->val == 3);
 
     // Main Window
@@ -820,6 +839,14 @@ int main(int argc, char *argv[]) {
     setmgr->read(*jgm);
     LogDriver::set_level(setmgr->get_setting("l_loglevel")->val);
 
+    // Change "Mute" menubar label based on whether audio is muted at
+    // startup
+    Fl_Menu_Item *m = get_menuitem("Mute");
+    if (setmgr->get_setting("a_mute")->val) {
+        m->label("Unmute");
+        muted = 1;
+    }
+
     // Bring up Audio/Video managers
     audiomgr = new AudioManager(*jgm, *setmgr);
     videomgr = new VideoManager(*jgm, *setmgr);
@@ -868,6 +895,11 @@ int main(int argc, char *argv[]) {
     if (video_fullscreen) {
         video_fullscreen = 0;
         FltkUi::fullscreen(NULL, NULL);
+    }
+
+    if (std::find(flags.begin(), flags.end(), "-m") != flags.end() ||
+        std::find(flags.begin(), flags.end(), "--mute") != flags.end()) {
+        FltkUi::mute();
     }
 
     syncmode = setmgr->get_setting("m_syncmode")->val;

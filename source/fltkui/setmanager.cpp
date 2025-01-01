@@ -71,6 +71,11 @@ jg_setting_t fe_settings[] = {
       "Set the window's initial scale factor (multiple of NES resolution)",
       3, 1, 16, FLAG_FRONTEND | JG_SETTING_RESTART
     },
+    { "a_mute", "Start with Audio Muted",
+      "0 = Disabled, 1 = Enabled",
+      "Start the emulator with audio muted",
+      0, 0, 1, FLAG_FRONTEND
+    },
     { "a_rsqual", "Audio Resampler",
       "0 = Sinc (Best), 1 = Sinc (Medium), 2 = Sinc (Fast), 3 = Zero Order Hold, 4 = Linear",
       "Set the frontend's audio resampling quality. Use Sinc unless you are on extremely weak hardware.",
