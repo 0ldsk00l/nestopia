@@ -22749,7 +22749,7 @@
         </cartridge>
     </game>
     <game>
-        <cartridge system="NES-PAL-B" dump="ok" crc="D67FD6A6" sha1="85DE67A28E01EF680F2FF6AAE80E4315491CEEE9">
+        <cartridge system="NES-NTSC" dump="ok" crc="D67FD6A6" sha1="85DE67A28E01EF680F2FF6AAE80E4315491CEEE9">
             <board type="NES-SNROM" mapper="1">
                 <prg size="128k" />
                 <vram size="8k" />
