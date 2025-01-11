@@ -86,12 +86,8 @@ void audio_cb_input(void *data, uint8_t *stream, int len) {
 
 AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
         : jgm(jgm), setmgr(setmgr) {
-    if (setmgr.get_setting("a_mute")->val) {
-        jgm.set_audio_cb(AudioManager::null_queue);
-    }
-    else {
-        jgm.set_audio_cb(AudioManager::queue);
-    }
+    jgm.set_audio_cb(setmgr.get_setting("a_mute")->val ?
+                     AudioManager::null_queue : AudioManager::queue);
 
     // Initialize audio buffers
     buf_in = new int16_t[BUFSIZE];

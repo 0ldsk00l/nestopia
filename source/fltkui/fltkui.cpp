@@ -473,14 +473,9 @@ void FltkUi::mute(Fl_Widget *w, void *data) {
     m = w ? const_cast<Fl_Menu_Item*>(((Fl_Menu_Bar*)w)->mvalue()) :
             get_menuitem(muted ? "Unmute" : "Mute");
 
-    if (muted) {
-        audiomgr-> mute(false);
-    }
-    else {
-        audiomgr-> mute(true);
-    }
-
     muted ^= 1;
+
+    audiomgr->mute(muted);
 
     m->label(muted ? "Unmute" : "Mute");
 }
