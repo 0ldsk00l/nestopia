@@ -305,7 +305,7 @@ void FltkUi::rom_open(Fl_Widget *w, void *data) {
                     jgm->setup_audio();
                     jgm->setup_video();
                     inputmgr->reassign();
-                    audiomgr->unpause();
+                    audiomgr->pause(false);
                     jgm->reset(2);
                 }
             }
@@ -460,12 +460,7 @@ void FltkUi::pause(Fl_Widget *w, void *data) {
 
     paused ^= 1;
 
-    if (paused) {
-        audiomgr->pause();
-    }
-    else {
-        audiomgr->unpause();
-    }
+    audiomgr->pause(paused);
 
     m->label(paused ? "Play" : "Pause");
     #ifdef __APPLE__
@@ -679,7 +674,7 @@ int NstGlArea::handle(int e) {
                 jgm->setup_audio();
                 jgm->setup_video();
                 inputmgr->reassign();
-                audiomgr->unpause();
+                audiomgr->pause(false);
                 jgm->reset(2);
                 // Restart if in timer sync mode
                 FltkUi::run_emulation(false);
@@ -864,7 +859,7 @@ int main(int argc, char *argv[]) {
             video_fullscreen = setmgr->get_setting("v_fullscreen")->val ||
                                std::find(flags.begin(), flags.end(), "-f") != flags.end() ||
                                std::find(flags.begin(), flags.end(), "--fullscreen") != flags.end();
-            audiomgr->unpause();
+            audiomgr->pause(false);
             jgm->reset(2);
         }
     }

@@ -12,8 +12,7 @@ public:
     ~AudioManager();
 
     void set_speed(int speed);
-    void pause();
-    void unpause();
+    void pause(bool p);
     void mute(bool m);
 
     inline int16_t dequeue();

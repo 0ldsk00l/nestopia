@@ -237,19 +237,12 @@ void AudioManager::set_speed(int speed) {
     ffspeed = speed;
 }
 
-void AudioManager::pause() {
-    SDL_PauseAudioDevice(dev, 1);
+void AudioManager::pause(bool p) {
+    SDL_PauseAudioDevice(dev, p);
     if (dev_in && jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
-        SDL_PauseAudioDevice(dev_in, 1);
+        SDL_PauseAudioDevice(dev_in, p);
     }
-}
-
-void AudioManager::unpause() {
-    SDL_PauseAudioDevice(dev, 0);
-    if (dev_in && jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
-        SDL_PauseAudioDevice(dev_in, 0);
-    }
-    else if (jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
+    else if (!p && jgm.get_coreinfo()->hints & JG_HINT_INPUT_AUDIO) {
         // Discover any audio recording devices
         int miccount = SDL_GetNumAudioDevices(1);
         std::string micname{};
