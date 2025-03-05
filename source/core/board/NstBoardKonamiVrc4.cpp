@@ -165,11 +165,11 @@ namespace Nes
 				{
 					const byte data[5] =
 					{
-						unit.ctrl | (Connected() ? BaseIrq::ENABLE_0 : 0),
-						unit.latch,
-						unit.count[0] & 0xFF,
-						unit.count[0] >> 8,
-						unit.count[1]
+						static_cast<byte>(unit.ctrl | (Connected() ? BaseIrq::ENABLE_0 : 0)),
+						static_cast<byte>(unit.latch),
+						static_cast<byte>(unit.count[0] & 0xFF),
+						static_cast<byte>(unit.count[0] >> 8),
+						static_cast<byte>(unit.count[1])
 					};
 
 					state.Begin( chunk ).Write( data ).End();

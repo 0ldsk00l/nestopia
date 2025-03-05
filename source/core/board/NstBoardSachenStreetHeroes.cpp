@@ -129,8 +129,8 @@ namespace Nes
 
 					const byte data[2] =
 					{
-						cartSwitches.GetRegion() ? 0x1 : 0x0,
-						exReg
+						static_cast<byte>(cartSwitches.GetRegion() ? 0x1 : 0x0),
+						static_cast<byte>(exReg)
 					};
 
 					state.Begin( AsciiId<'S','S','H'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

@@ -65,9 +65,9 @@ namespace Nes
 
 				const byte data[3] =
 				{
-					pos & 0xFF,
-					pos >> 8,
-					count | (old << 1) | (out << 2)
+					static_cast<byte>(pos & 0xFF),
+					static_cast<byte>(pos >> 8),
+					static_cast<byte>(count | (old << 1) | (out << 2))
 				};
 
 				saver.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();

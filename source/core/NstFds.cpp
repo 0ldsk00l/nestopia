@@ -487,10 +487,10 @@ namespace Nes
 			{
 				const byte data[4] =
 				{
-					disks.sides.count,
-					(disks.current != Disks::EJECTED) | (disks.writeProtected ? 0x2U : 0x0U),
-					disks.current != Disks::EJECTED ? disks.current : 0xFF,
-					disks.current != Disks::EJECTED ? disks.mounting : 0
+					static_cast<byte>(disks.sides.count),
+					static_cast<byte>((disks.current != Disks::EJECTED) | (disks.writeProtected ? 0x2U : 0x0U)),
+					static_cast<byte>(disks.current != Disks::EJECTED ? disks.current : 0xFF),
+					static_cast<byte>(disks.current != Disks::EJECTED ? disks.mounting : 0)
 				};
 
 				state.Begin( AsciiId<'D','S','K'>::V ).Write( data ).End();
@@ -1255,12 +1255,12 @@ namespace Nes
 			{
 				const byte data[7] =
 				{
-					unit.timer.ctrl,
-					unit.status,
-					unit.timer.latch & 0xFFU,
-					unit.timer.latch >> 8,
-					unit.timer.count & 0xFFU,
-					unit.timer.count >> 8,
+					static_cast<byte>(unit.timer.ctrl),
+					static_cast<byte>(unit.status),
+					static_cast<byte>(unit.timer.latch & 0xFFU),
+					static_cast<byte>(unit.timer.latch >> 8),
+					static_cast<byte>(unit.timer.count & 0xFFU),
+					static_cast<byte>(unit.timer.count >> 8),
 					0
 				};
 
@@ -1274,20 +1274,20 @@ namespace Nes
 				{
 					unit.drive.ctrl,
 					unit.drive.status,
-					unit.drive.in & 0xFFU,
+					static_cast<byte>(unit.drive.in & 0xFFU),
 					unit.drive.out,
-					unit.drive.count ? headPos & 0xFF             : 0,
-					unit.drive.count ? headPos >> 8               : 0,
-					unit.drive.count ? unit.drive.dataPos & 0xFFU : 0,
-					unit.drive.count ? unit.drive.dataPos >> 8    : 0,
-					unit.drive.count ? unit.drive.gap & 0xFFU     : 0,
-					unit.drive.count ? unit.drive.gap >> 8        : 0,
-					unit.drive.count ? unit.drive.length & 0xFFU  : 0,
-					unit.drive.count ? unit.drive.length >> 8     : 0,
-					unit.drive.count >> 0 & 0xFF,
-					unit.drive.count >> 8 & 0xFF,
-					unit.drive.count >> 16,
-					unit.drive.in >> 8
+					static_cast<byte>(unit.drive.count ? headPos & 0xFF             : 0),
+					static_cast<byte>(unit.drive.count ? headPos >> 8               : 0),
+					static_cast<byte>(unit.drive.count ? unit.drive.dataPos & 0xFFU : 0),
+					static_cast<byte>(unit.drive.count ? unit.drive.dataPos >> 8    : 0),
+					static_cast<byte>(unit.drive.count ? unit.drive.gap & 0xFFU     : 0),
+					static_cast<byte>(unit.drive.count ? unit.drive.gap >> 8        : 0),
+					static_cast<byte>(unit.drive.count ? unit.drive.length & 0xFFU  : 0),
+					static_cast<byte>(unit.drive.count ? unit.drive.length >> 8     : 0),
+					static_cast<byte>(unit.drive.count >> 0 & 0xFF),
+					static_cast<byte>(unit.drive.count >> 8 & 0xFF),
+					static_cast<byte>(unit.drive.count >> 16),
+					static_cast<byte>(unit.drive.in >> 8)
 				};
 
 				state.Begin( AsciiId<'D','R','V'>::V ).Write( data ).End();
@@ -1695,11 +1695,11 @@ namespace Nes
 				{
 					byte data[6] =
 					{
-						((status & STATUS_OUTPUT_ENABLED) ? 0U : uint(REG3_OUTPUT_DISABLE)) |
-						((status & STATUS_ENVELOPES_ENABLED) ? 0U : uint(REG3_ENVELOPE_DISABLE)),
-						wave.writing ? REG9_WRITE_MODE : 0,
-						wave.length & 0xFFU,
-						wave.length >> 8,
+						static_cast<byte>(((status & STATUS_OUTPUT_ENABLED) ? 0U : uint(REG3_OUTPUT_DISABLE)) |
+							((status & STATUS_ENVELOPES_ENABLED) ? 0U : uint(REG3_ENVELOPE_DISABLE))),
+						static_cast<byte>(wave.writing ? REG9_WRITE_MODE : 0),
+						static_cast<byte>(wave.length & 0xFFU),
+						static_cast<byte>(wave.length >> 8),
 						envelopes.length,
 						envelopes.counter
 					};
@@ -1729,8 +1729,8 @@ namespace Nes
 				{
 					const byte data[4] =
 					{
-						modulator.length & 0xFF,
-						modulator.length >> 8 | (modulator.writing ? REG7_MOD_WRITE_MODE : 0),
+						static_cast<byte>(modulator.length & 0xFF),
+						static_cast<byte>(modulator.length >> 8 | (modulator.writing ? REG7_MOD_WRITE_MODE : 0)),
 						modulator.sweep,
 						modulator.pos
 					};

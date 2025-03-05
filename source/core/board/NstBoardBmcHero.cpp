@@ -80,11 +80,11 @@ namespace Nes
 
 					const byte data[5] =
 					{
-						exRegs[0],
-						exRegs[1],
-						exRegs[2],
-						exRegs[3],
-						exRegs[4]
+						static_cast<byte>(exRegs[0]),
+						static_cast<byte>(exRegs[1]),
+						static_cast<byte>(exRegs[2]),
+						static_cast<byte>(exRegs[3]),
+						static_cast<byte>(exRegs[4])
 					};
 
 					state.Begin( AsciiId<'B','H','R'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

@@ -112,7 +112,7 @@ namespace Nes
 					}
 
 					{
-						const byte data[3] = { strobe, trigger ? 0x1 : 0x0, security };
+						const byte data[3] = { strobe, static_cast<byte>(trigger ? 0x1 : 0x0), static_cast<byte>(security) };
 						state.Begin( AsciiId<'S','E','C'>::V ).Write( data ).End();
 					}
 

@@ -55,12 +55,12 @@ namespace Nes
 			{
 				byte data[6] =
 				{
-					strobe,
-					stream ^ 0xFF,
-					state,
+					static_cast<byte>(strobe),
+					static_cast<byte>(stream ^ 0xFF),
+					static_cast<byte>(state),
 					0,
-					code & 0xFF,
-					code >> 8
+					static_cast<byte>(code & 0xFF),
+					static_cast<byte>(code >> 8)
 				};
 
 				while (!(shifter & 1U << data[3]))

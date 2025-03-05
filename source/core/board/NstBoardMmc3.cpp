@@ -115,9 +115,9 @@ namespace Nes
 			{
 				const byte data[3] =
 				{
-					(enabled ? 0x1U : 0x0U) | (reload ? 0x2U : 0x0U),
-					count,
-					latch
+					static_cast<byte>((enabled ? 0x1U : 0x0U) | (reload ? 0x2U : 0x0U)),
+					static_cast<byte>(count),
+					static_cast<byte>(latch)
 				};
 
 				state.Begin( chunk ).Write( data ).End();
@@ -169,14 +169,14 @@ namespace Nes
 
 				const byte data[12] =
 				{
-					regs.ctrl0,
-					regs.ctrl1,
+					static_cast<byte>(regs.ctrl0),
+					static_cast<byte>(regs.ctrl1),
 					banks.prg[0],
 					banks.prg[1],
 					0x3E,
 					0x3F,
-					banks.chr[0] >> 1,
-					banks.chr[2] >> 1,
+					static_cast<byte>(banks.chr[0] >> 1),
+					static_cast<byte>(banks.chr[2] >> 1),
 					banks.chr[4],
 					banks.chr[5],
 					banks.chr[6],

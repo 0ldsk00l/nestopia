@@ -76,8 +76,8 @@ namespace Nes
 			{
 				const byte data[4] =
 				{
-					latch,
-					stream == ~0U ? 0xFF : stream,
+					static_cast<byte>(latch),
+					static_cast<byte>(stream == ~0U ? 0xFF : stream),
 					output,
 					counter
 				};

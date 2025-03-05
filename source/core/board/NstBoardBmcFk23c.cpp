@@ -272,7 +272,7 @@ namespace Nes
 						exRegs[5],
 						exRegs[6],
 						exRegs[7],
-						unromChr | (cartSwitches ? cartSwitches->GetMode() << 2 : 0)
+						static_cast<byte>(unromChr | (cartSwitches ? cartSwitches->GetMode() << 2 : 0))
 					};
 
 					state.Begin( AsciiId<'B','F','K'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

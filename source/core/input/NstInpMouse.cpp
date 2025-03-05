@@ -52,7 +52,7 @@ namespace Nes
 			{
 				const byte data[2] =
 				{
-					strobe, stream ^ 0xFF
+					static_cast<byte>(strobe), static_cast<byte>(stream ^ 0xFF)
 				};
 
 				saver.Begin( AsciiId<'M','S'>::R(0,0,id) ).Write( data ).End();

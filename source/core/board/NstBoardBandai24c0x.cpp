@@ -62,12 +62,12 @@ namespace Nes
 
 					const byte data[6] =
 					{
-						line.scl | line.sda,
-						uint(mode << 0) | uint(next << 4),
-						latch.address,
-						latch.data,
-						latch.bit,
-						output | (rw ? 0x80 : 0x00)
+						static_cast<byte>(line.scl | line.sda),
+						static_cast<byte>(uint(mode << 0) | uint(next << 4)),
+						static_cast<byte>(latch.address),
+						static_cast<byte>(latch.data),
+						static_cast<byte>(latch.bit),
+						static_cast<byte>(output | (rw ? 0x80 : 0x00))
 					};
 
 					state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();

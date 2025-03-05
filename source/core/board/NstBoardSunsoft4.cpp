@@ -87,9 +87,9 @@ namespace Nes
 				{
 					const byte data[3] =
 					{
-						regs.ctrl,
-						regs.nmt[0] & ~uint(Regs::BANK_OFFSET),
-						regs.nmt[1] & ~uint(Regs::BANK_OFFSET)
+						static_cast<byte>(regs.ctrl),
+						static_cast<byte>(regs.nmt[0] & ~uint(Regs::BANK_OFFSET)),
+						static_cast<byte>(regs.nmt[1] & ~uint(Regs::BANK_OFFSET))
 					};
 
 					state.Begin( AsciiId<'S','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

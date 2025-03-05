@@ -312,17 +312,17 @@ namespace Nes
 			{
 				const byte data[11] =
 				{
-					regs.ctrl[0],
-					regs.ctrl[1],
-					regs.status,
-					scroll.address & 0xFF,
-					scroll.address >> 8,
-					scroll.latch & 0xFF,
-					scroll.latch >> 8,
-					scroll.xFine | scroll.toggle << 3,
-					regs.oam,
-					io.buffer,
-					io.latch
+					static_cast<byte>(regs.ctrl[0]),
+					static_cast<byte>(regs.ctrl[1]),
+					static_cast<byte>(regs.status),
+					static_cast<byte>(scroll.address & 0xFF),
+					static_cast<byte>(scroll.address >> 8),
+					static_cast<byte>(scroll.latch & 0xFF),
+					static_cast<byte>(scroll.latch >> 8),
+					static_cast<byte>(scroll.xFine | scroll.toggle << 3),
+					static_cast<byte>(regs.oam),
+					static_cast<byte>(io.buffer),
+					static_cast<byte>(io.latch)
 				};
 
 				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();

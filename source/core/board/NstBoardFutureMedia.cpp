@@ -98,9 +98,9 @@ namespace Nes
 				{
 					const byte data[3] =
 					{
-						irq.unit.enabled ? 0x1 : 0x0,
-						irq.unit.latch,
-						irq.unit.count
+						static_cast<byte>(irq.unit.enabled ? 0x1 : 0x0),
+						static_cast<byte>(irq.unit.latch),
+						static_cast<byte>(irq.unit.count)
 					};
 
 					state.Begin( AsciiId<'F','D','A'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End().End();

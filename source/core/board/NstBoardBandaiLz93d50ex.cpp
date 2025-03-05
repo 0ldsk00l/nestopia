@@ -90,8 +90,8 @@ namespace Nes
 				{
 					const File::LoadBlock block[] =
 					{
-						{ x24c02 ? x24c02->GetData() : NULL, x24c02 ? X24C02::SIZE : 0 },
-						{ x24c01 ? x24c01->GetData() : NULL, x24c01 ? X24C01::SIZE : 0 }
+						{ x24c02 ? x24c02->GetData() : NULL, static_cast<dword>(x24c02 ? X24C02::SIZE : 0) },
+						{ x24c01 ? x24c01->GetData() : NULL, static_cast<dword>(x24c01 ? X24C01::SIZE : 0) }
 					};
 
 					file.Load( File::EEPROM, block );
@@ -101,8 +101,8 @@ namespace Nes
 				{
 					const File::SaveBlock block[] =
 					{
-						{ x24c02 ? x24c02->GetData() : NULL, x24c02 ? X24C02::SIZE : 0 },
-						{ x24c01 ? x24c01->GetData() : NULL, x24c01 ? X24C01::SIZE : 0 }
+						{ x24c02 ? x24c02->GetData() : NULL, static_cast<dword>(x24c02 ? X24C02::SIZE : 0) },
+						{ x24c01 ? x24c01->GetData() : NULL, static_cast<dword>(x24c01 ? X24C01::SIZE : 0) }
 					};
 
 					file.Save( File::EEPROM, block );

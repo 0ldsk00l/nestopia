@@ -168,17 +168,17 @@ namespace Nes
 
 					const byte data[5] =
 					{
-						(irq.Connected() ? 0x1U : 0x0U) |
+						static_cast<byte>((irq.Connected() ? 0x1U : 0x0U) |
 						(
 							irq.unit.mask == 0x000F ? 0x8U :
 							irq.unit.mask == 0x00FF ? 0x4U :
 							irq.unit.mask == 0x0FFF ? 0x2U :
                                                       0x0U
-						),
-						irq.unit.latch & 0xFF,
-						irq.unit.latch >> 8,
-						irq.unit.count & 0xFF,
-						irq.unit.count >> 8
+						)),
+						static_cast<byte>(irq.unit.latch & 0xFF),
+						static_cast<byte>(irq.unit.latch >> 8),
+						static_cast<byte>(irq.unit.count & 0xFF),
+						static_cast<byte>(irq.unit.count >> 8)
 					};
 
 					state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();

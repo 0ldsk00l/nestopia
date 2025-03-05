@@ -137,8 +137,8 @@ namespace Nes
 			{
 				const byte data[2] =
 				{
-					arcade ? shifter ? 0x1 : 0x3 : 0x0,
-					arcade ? stream : 0x00
+					static_cast<byte>(arcade ? shifter ? 0x1 : 0x3 : 0x0),
+					static_cast<byte>(arcade ? stream : 0x00)
 				};
 
 				saver.Begin( AsciiId<'Z','P'>::R(0,0,id) ).Write( data ).End();

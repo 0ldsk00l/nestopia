@@ -431,9 +431,9 @@ namespace Nes
 						patch.custom[5],
 						patch.custom[6],
 						patch.custom[7],
-						frequency & REG8_FRQ_LO,
-						(frequency >> 8) | (block << 1) | (sustain ? REG9_SUSTAIN : 0) | (key ? REG9_KEY : 0),
-						(volume >> 2) | (patch.instrument << 4)
+						static_cast<byte>(frequency & REG8_FRQ_LO),
+						static_cast<byte>((frequency >> 8) | (block << 1) | (sustain ? REG9_SUSTAIN : 0) | (key ? REG9_KEY : 0)),
+						static_cast<byte>((volume >> 2) | (patch.instrument << 4))
 					};
 
 					state.Begin( chunk ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

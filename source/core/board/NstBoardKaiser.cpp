@@ -353,11 +353,11 @@ namespace Nes
 
 					const byte data[5] =
 					{
-						irq.unit.ctrl,
-						irq.unit.count & 0xFF,
-						irq.unit.count >> 8,
-						irq.unit.latch & 0xFF,
-						irq.unit.latch >> 8
+						static_cast<byte>(irq.unit.ctrl),
+						static_cast<byte>(irq.unit.count & 0xFF),
+						static_cast<byte>(irq.unit.count >> 8),
+						static_cast<byte>(irq.unit.latch & 0xFF),
+						static_cast<byte>(irq.unit.latch >> 8)
 					};
 
 					state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();

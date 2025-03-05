@@ -470,10 +470,10 @@ namespace Nes
 
 				const byte data[4] =
 				{
-					ctrl,
-					clock & 0xFF,
-					clock >> 8,
-					cycles.frameDivider
+					static_cast<byte>(ctrl),
+					static_cast<byte>(clock & 0xFF),
+					static_cast<byte>(clock >> 8),
+					static_cast<byte>(cycles.frameDivider)
 				};
 
 				state.Begin( AsciiId<'F','R','M'>::V ).Write( data ).End();
@@ -494,9 +494,9 @@ namespace Nes
 
 				const byte data[3] =
 				{
-					clock & 0xFF,
-					clock >> 8,
-					cycles.frameIrqRepeat % 3
+					static_cast<byte>(clock & 0xFF),
+					static_cast<byte>(clock >> 8),
+					static_cast<byte>(cycles.frameIrqRepeat % 3)
 				};
 
 				state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();
@@ -532,10 +532,10 @@ namespace Nes
 			{
 				const byte data[4] =
 				{
-					cycles.rateCounter & 0xFFU,
-					cycles.rateCounter >> 8,
-					cycles.rateCounter >> 16,
-					cycles.rateCounter >> 24,
+					static_cast<byte>(cycles.rateCounter & 0xFFU),
+					static_cast<byte>(cycles.rateCounter >> 8),
+					static_cast<byte>(cycles.rateCounter >> 16),
+					static_cast<byte>(cycles.rateCounter >> 24),
 				};
 
 				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
@@ -1065,7 +1065,7 @@ namespace Nes
 			const byte data[3] =
 			{
 				count,
-				regs[0] | (reset ? 0x80U : 0x00U),
+				static_cast<byte>(regs[0] | (reset ? 0x80U : 0x00U)),
 				regs[1]
 			};
 
@@ -1158,18 +1158,18 @@ namespace Nes
 			{
 				const byte data[12] =
 				{
-					acc & 0xFFU,
-					acc >> 8,
-					acc >> 16,
-					acc >> 24,
-					prev & 0xFFU,
-					prev >> 8,
-					prev >> 16,
-					prev >> 24,
-					next & 0xFFU,
-					next >> 8,
-					next >> 16,
-					next >> 24,
+					static_cast<byte>(acc & 0xFFU),
+					static_cast<byte>(acc >> 8),
+					static_cast<byte>(acc >> 16),
+					static_cast<byte>(acc >> 24),
+					static_cast<byte>(prev & 0xFFU),
+					static_cast<byte>(prev >> 8),
+					static_cast<byte>(prev >> 16),
+					static_cast<byte>(prev >> 24),
+					static_cast<byte>(next & 0xFFU),
+					static_cast<byte>(next >> 8),
+					static_cast<byte>(next >> 16),
+					static_cast<byte>(next >> 24),
 				};
 
 				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
@@ -1380,19 +1380,19 @@ namespace Nes
 			{
 				const byte data[13] = 
 				{
-					step,
-					timer & 0xFFU,
-					timer >> 8,
-					timer >> 16,
-					timer >> 24,
-					frequency & 0xFFU,
-					frequency >> 8,
-					frequency >> 16,
-					frequency >> 24,
-					amp & 0xFFU,
-					amp >> 8,
-					amp >> 16,
-					amp >> 24,
+					static_cast<byte>(step),
+					static_cast<byte>(timer & 0xFFU),
+					static_cast<byte>(timer >> 8),
+					static_cast<byte>(timer >> 16),
+					static_cast<byte>(timer >> 24),
+					static_cast<byte>(frequency & 0xFFU),
+					static_cast<byte>(frequency >> 8),
+					static_cast<byte>(frequency >> 16),
+					static_cast<byte>(frequency >> 24),
+					static_cast<byte>(amp & 0xFFU),
+					static_cast<byte>(amp >> 8),
+					static_cast<byte>(amp >> 16),
+					static_cast<byte>(amp >> 24),
 				};
 
 				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
@@ -1682,10 +1682,10 @@ namespace Nes
 			{
 				const byte data[4] =
 				{
-					waveLength & 0xFFU,
-					waveLength >> 8,
-					linearCounter | (uint(status) << 7),
-					linearCtrl
+					static_cast<byte>(waveLength & 0xFFU),
+					static_cast<byte>(waveLength >> 8),
+					static_cast<byte>(linearCounter | (uint(status) << 7)),
+					static_cast<byte>(linearCtrl)
 				};
 
 				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
@@ -1696,15 +1696,15 @@ namespace Nes
 			{
 				const byte data[9] =
 				{
-					step,
-					timer & 0xFFU,
-					timer >> 8,
-					timer >> 16,
-					timer >> 24,
-					amp & 0xFFU,
-					amp >> 8,
-					amp >> 16,
-					amp >> 24,
+					static_cast<byte>(step),
+					static_cast<byte>(timer & 0xFFU),
+					static_cast<byte>(timer >> 8),
+					static_cast<byte>(timer >> 16),
+					static_cast<byte>(timer >> 24),
+					static_cast<byte>(amp & 0xFFU),
+					static_cast<byte>(amp >> 8),
+					static_cast<byte>(amp >> 16),
+					static_cast<byte>(amp >> 24),
 				};
 
 				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
@@ -1925,12 +1925,12 @@ namespace Nes
 			{
 				const byte data[6] =
 				{
-					bits & 0xFFU,
-					bits >> 8,
-					timer & 0xFFU,
-					timer >> 8,
-					timer >> 16,
-					timer >> 24
+					static_cast<byte>(bits & 0xFFU),
+					static_cast<byte>(bits >> 8),
+					static_cast<byte>(timer & 0xFFU),
+					static_cast<byte>(timer >> 8),
+					static_cast<byte>(timer >> 16),
+					static_cast<byte>(timer >> 24)
 				};
 
 				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();
@@ -2147,21 +2147,21 @@ namespace Nes
 			{
 				const byte data[12] =
 				{
-					dmcClock & 0xFF,
-					dmcClock >> 8,
-					(
+					static_cast<byte>(dmcClock & 0xFF),
+					static_cast<byte>(dmcClock >> 8),
+					static_cast<byte>((
 						( ( regs.ctrl & REG0_FREQUENCY  )              ) |
 						( ( regs.ctrl & REG0_LOOP       ) ? 0x10U : 0U ) |
 						( ( regs.ctrl & REG0_IRQ_ENABLE ) ? 0x20U : 0U ) |
 						( ( dma.lengthCounter           ) ? 0x40U : 0U )
-					),
-					(regs.address - 0xC000U) >> 6,
-					(regs.lengthCounter - 1U) >> 4,
-					(dma.address >> 0 & 0xFFU),
-					(dma.address >> 8 & 0x7FU) | (dma.buffered ? 0x80 : 0x00),
-					dma.lengthCounter ? (dma.lengthCounter - 1U) >> 4 : 0,
-					dma.buffer,
-					7 - out.shifter,
+					)),
+					static_cast<byte>((regs.address - 0xC000U) >> 6),
+					static_cast<byte>((regs.lengthCounter - 1U) >> 4),
+					static_cast<byte>((dma.address >> 0 & 0xFFU)),
+					static_cast<byte>((dma.address >> 8 & 0x7FU) | (dma.buffered ? 0x80 : 0x00)),
+					static_cast<byte>(dma.lengthCounter ? (dma.lengthCounter - 1U) >> 4 : 0),
+					static_cast<byte>(dma.buffer),
+					static_cast<byte>(7 - out.shifter),
 					out.buffer,
 					out.dac,
 				};
@@ -2172,10 +2172,10 @@ namespace Nes
 			{
 				const byte data[4] =
 				{
-					linSample & 0xFFU,
-					linSample >> 8,
-					dma.lengthCounter & 0xFFU,
-					dma.lengthCounter >> 8,
+					static_cast<byte>(linSample & 0xFFU),
+					static_cast<byte>(linSample >> 8),
+					static_cast<byte>(dma.lengthCounter & 0xFFU),
+					static_cast<byte>(dma.lengthCounter >> 8),
 				};
 
 				state.Begin( AsciiId<'S','0','0'>::V ).Write( data ).End();

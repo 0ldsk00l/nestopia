@@ -343,13 +343,13 @@ namespace Nes
 			{
 				const byte data[7] =
 				{
-					pc & 0xFF,
-					pc >> 8,
-					sp,
-					a,
-					x,
-					y,
-					flags.Pack()
+					static_cast<byte>(pc & 0xFF),
+					static_cast<byte>(pc >> 8),
+					static_cast<byte>(sp),
+					static_cast<byte>(a),
+					static_cast<byte>(x),
+					static_cast<byte>(y),
+					static_cast<byte>(flags.Pack())
 				};
 
 				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
@@ -360,16 +360,16 @@ namespace Nes
 			{
 				const byte data[5] =
 				{
-					((interrupt.nmiClock != CYCLE_MAX) ? 0x01U : 0x00U) |
-					((interrupt.low & IRQ_FRAME)       ? 0x02U : 0x00U) |
-					((interrupt.low & IRQ_DMC)         ? 0x04U : 0x00U) |
-					((interrupt.low & IRQ_EXT)         ? 0x08U : 0x00U) |
-					(jammed                            ? 0x40U : 0x00U) |
-					(model == CPU_RP2A07 ? 0x80U : model == CPU_DENDY ? 0x20U : 0x00U),
-					cycles.count & 0xFF,
-					cycles.count >> 8,
-					(interrupt.nmiClock != CYCLE_MAX) ? interrupt.nmiClock+1 : 0,
-					(interrupt.irqClock != CYCLE_MAX) ? interrupt.irqClock+1 : 0
+					static_cast<byte>(((interrupt.nmiClock != CYCLE_MAX) ? 0x01U : 0x00U) |
+						((interrupt.low & IRQ_FRAME)       ? 0x02U : 0x00U) |
+						((interrupt.low & IRQ_DMC)         ? 0x04U : 0x00U) |
+						((interrupt.low & IRQ_EXT)         ? 0x08U : 0x00U) |
+						(jammed                            ? 0x40U : 0x00U) |
+						(model == CPU_RP2A07 ? 0x80U : model == CPU_DENDY ? 0x20U : 0x00U)),
+					static_cast<byte>(cycles.count & 0xFF),
+					static_cast<byte>(cycles.count >> 8),
+					static_cast<byte>((interrupt.nmiClock != CYCLE_MAX) ? interrupt.nmiClock+1 : 0),
+					static_cast<byte>((interrupt.irqClock != CYCLE_MAX) ? interrupt.irqClock+1 : 0)
 				};
 
 				state.Begin( AsciiId<'F','R','M'>::V ).Write( data ).End();

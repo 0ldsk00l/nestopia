@@ -251,7 +251,7 @@ namespace Nes
 					{
 						const byte data[1+5] =
 						{
-							regs.ctrl,
+							static_cast<byte>(regs.ctrl),
 							regs.prg[0],
 							regs.prg[1],
 							regs.prg[2],
@@ -267,10 +267,9 @@ namespace Nes
 					{
 						const byte data[3] =
 						{
-							(irq.unit.enabled ? 0x1U : 0x0U) |
-							(irq.unit.step == 1  ? 0x0U : 0x2U),
-							irq.unit.count & 0xFF,
-							irq.unit.count >> 8
+							static_cast<byte>((irq.unit.enabled ? 0x1U : 0x0U) | (irq.unit.step == 1  ? 0x0U : 0x2U)),
+							static_cast<byte>(irq.unit.count & 0xFF),
+							static_cast<byte>(irq.unit.count >> 8)
 						};
 
 						state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();

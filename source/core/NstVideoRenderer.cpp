@@ -28,7 +28,6 @@
 #include "NstCore.hpp"
 #include "NstAssert.hpp"
 #include "NstFpuPrecision.hpp"
-#include "api/NstApiVideo.hpp"
 #include "NstVideoRenderer.hpp"
 #include "NstVideoFilterNone.hpp"
 

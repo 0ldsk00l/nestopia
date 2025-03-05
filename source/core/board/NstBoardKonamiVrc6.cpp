@@ -261,10 +261,10 @@ namespace Nes
 				{
 					const byte data[4] =
 					{
-						(enabled ? 0x1U : 0x0U) | (digitized ? 0x2U : 0x0U),
-						waveLength & 0xFF,
-						waveLength >> 8,
-						(duty - 1) | ((volume / VOLUME) << 3)
+						static_cast<byte>((enabled ? 0x1U : 0x0U) | (digitized ? 0x2U : 0x0U)),
+						static_cast<byte>(waveLength & 0xFF),
+						static_cast<byte>(waveLength >> 8),
+						static_cast<byte>((duty - 1) | ((volume / VOLUME) << 3))
 					};
 
 					state.Begin( chunk ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
@@ -298,9 +298,9 @@ namespace Nes
 				{
 					const byte data[3] =
 					{
-						(enabled != 0) | (phase << 1),
-						waveLength & 0xFF,
-						waveLength >> 8
+						static_cast<byte>((enabled != 0) | (phase << 1)),
+						static_cast<byte>(waveLength & 0xFF),
+						static_cast<byte>(waveLength >> 8)
 					};
 
 					state.Begin( chunk ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

@@ -91,7 +91,7 @@ namespace Nes
 					banks[1],
 					banks[2],
 					banks[3],
-					selector[0] | (selector[1] - 2) << 1
+					static_cast<byte>(selector[0] | (selector[1] - 2) << 1)
 				};
 
 				state.Begin( AsciiId<'M','M','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

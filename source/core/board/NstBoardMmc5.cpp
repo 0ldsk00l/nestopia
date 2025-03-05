@@ -272,53 +272,53 @@ namespace Nes
 				{
 					const byte data[32] =
 					{
-						regs.prgMode | (regs.chrMode << 2) | (regs.exRamMode << 4),
+						static_cast<byte>(regs.prgMode | (regs.chrMode << 2) | (regs.exRamMode << 4)),
 						banks.prg[0],
 						banks.prg[1],
 						banks.prg[2],
 						banks.prg[3],
-						banks.security & (Banks::READABLE_6|Banks::WRITABLE_6|Regs::WRK_WRITABLE_A|Regs::WRK_WRITABLE_B),
-						banks.nmt,
-						banks.chrA[0] & 0xFFU,
-						banks.chrA[1] & 0xFFU,
-						banks.chrA[2] & 0xFFU,
-						banks.chrA[3] & 0xFFU,
-						banks.chrA[4] & 0xFFU,
-						banks.chrA[5] & 0xFFU,
-						banks.chrA[6] & 0xFFU,
-						banks.chrA[7] & 0xFFU,
-						banks.chrB[0] & 0xFFU,
-						banks.chrB[1] & 0xFFU,
-						banks.chrB[2] & 0xFFU,
-						banks.chrB[3] & 0xFFU,
-						uint(banks.chrA[0]) >> 8 | uint(banks.chrA[1]) >> 8 << 2 | uint(banks.chrA[2]) >> 8 << 4 | uint(banks.chrA[3]) >> 8 << 6,
-						uint(banks.chrA[4]) >> 8 | uint(banks.chrA[5]) >> 8 << 2 | uint(banks.chrA[6]) >> 8 << 4 | uint(banks.chrA[7]) >> 8 << 6,
-						uint(banks.chrB[0]) >> 8 | uint(banks.chrB[1]) >> 8 << 2 | uint(banks.chrB[2]) >> 8 << 4 | uint(banks.chrB[3]) >> 8 << 6,
-						(banks.chrHigh >> 6) | (banks.lastChr != Banks::LAST_CHR_A ? 0x80 : 0x00),
-						filler.tile,
-						(filler.attribute & 0x3) | (spliter.tile >> 2 & 0xF8),
-						exRam.tile,
-						spliter.ctrl,
-						spliter.yStart,
-						spliter.chrBank >> 12,
-						spliter.tile & 0x1F,
-						spliter.x,
-						spliter.y
+						static_cast<byte>(banks.security & (Banks::READABLE_6|Banks::WRITABLE_6|Regs::WRK_WRITABLE_A|Regs::WRK_WRITABLE_B)),
+						static_cast<byte>(banks.nmt),
+						static_cast<byte>(banks.chrA[0] & 0xFFU),
+						static_cast<byte>(banks.chrA[1] & 0xFFU),
+						static_cast<byte>(banks.chrA[2] & 0xFFU),
+						static_cast<byte>(banks.chrA[3] & 0xFFU),
+						static_cast<byte>(banks.chrA[4] & 0xFFU),
+						static_cast<byte>(banks.chrA[5] & 0xFFU),
+						static_cast<byte>(banks.chrA[6] & 0xFFU),
+						static_cast<byte>(banks.chrA[7] & 0xFFU),
+						static_cast<byte>(banks.chrB[0] & 0xFFU),
+						static_cast<byte>(banks.chrB[1] & 0xFFU),
+						static_cast<byte>(banks.chrB[2] & 0xFFU),
+						static_cast<byte>(banks.chrB[3] & 0xFFU),
+						static_cast<byte>(uint(banks.chrA[0]) >> 8 | uint(banks.chrA[1]) >> 8 << 2 | uint(banks.chrA[2]) >> 8 << 4 | uint(banks.chrA[3]) >> 8 << 6),
+						static_cast<byte>(uint(banks.chrA[4]) >> 8 | uint(banks.chrA[5]) >> 8 << 2 | uint(banks.chrA[6]) >> 8 << 4 | uint(banks.chrA[7]) >> 8 << 6),
+						static_cast<byte>(uint(banks.chrB[0]) >> 8 | uint(banks.chrB[1]) >> 8 << 2 | uint(banks.chrB[2]) >> 8 << 4 | uint(banks.chrB[3]) >> 8 << 6),
+						static_cast<byte>((banks.chrHigh >> 6) | (banks.lastChr != Banks::LAST_CHR_A ? 0x80 : 0x00)),
+						static_cast<byte>(filler.tile),
+						static_cast<byte>((filler.attribute & 0x3) | (spliter.tile >> 2 & 0xF8)),
+						static_cast<byte>(exRam.tile),
+						static_cast<byte>(spliter.ctrl),
+						static_cast<byte>(spliter.yStart),
+						static_cast<byte>(spliter.chrBank >> 12),
+						static_cast<byte>(spliter.tile & 0x1F),
+						static_cast<byte>(spliter.x),
+						static_cast<byte>(spliter.y)
 					};
 
 					state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
 				}
 
 				{
-					const byte data[2] = { regs.mul[0], regs.mul[1] };
+					const byte data[2] = { static_cast<byte>(regs.mul[0]), static_cast<byte>(regs.mul[1]) };
 					state.Begin( AsciiId<'M','U','L'>::V ).Write( data ).End();
 				}
 
 				{
 					const byte data[2] =
 					{
-						irq.state,
-						irq.target
+						static_cast<byte>(irq.state),
+						static_cast<byte>(irq.target)
 					};
 
 					state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();
@@ -474,9 +474,9 @@ namespace Nes
 				{
 					const byte data[3] =
 					{
-						waveLength & 0xFF,
-						waveLength >> 8,
-						duty
+						static_cast<byte>(waveLength & 0xFF),
+						static_cast<byte>(waveLength >> 8),
+						static_cast<byte>(duty)
 					};
 
 					state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();

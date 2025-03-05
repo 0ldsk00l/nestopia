@@ -43,14 +43,14 @@ namespace Nes
 
 			const byte codes[8] =
 			{
-				(code.value   >>  0 & 0x7U) | (code.value   >> 4 & 0x8U),
-				(code.value   >>  4 & 0x7U) | (code.address >> 4 & 0x8U),
-				(code.address >>  4 & 0x7U) | (code.useCompare   ? 0x8U : 0x0U),
-				(code.address >> 12 & 0x7U) | (code.address >> 0 & 0x8U),
-				(code.address >>  0 & 0x7U) | (code.address >> 8 & 0x8U),
-				(code.address >>  8 & 0x7U) | ((code.useCompare ? code.compare : code.value) & 0x8U),
-				(code.useCompare ? ((code.compare >> 0 & 0x7U) | (code.compare >> 4 & 0x8U)) : 0),
-				(code.useCompare ? ((code.compare >> 4 & 0x7U) | (code.value   >> 0 & 0x8U)) : 0)
+				static_cast<byte>((code.value   >>  0 & 0x7U) | (code.value   >> 4 & 0x8U)),
+				static_cast<byte>((code.value   >>  4 & 0x7U) | (code.address >> 4 & 0x8U)),
+				static_cast<byte>((code.address >>  4 & 0x7U) | (code.useCompare   ? 0x8U : 0x0U)),
+				static_cast<byte>((code.address >> 12 & 0x7U) | (code.address >> 0 & 0x8U)),
+				static_cast<byte>((code.address >>  0 & 0x7U) | (code.address >> 8 & 0x8U)),
+				static_cast<byte>((code.address >>  8 & 0x7U) | ((code.useCompare ? code.compare : code.value) & 0x8U)),
+				static_cast<byte>((code.useCompare ? ((code.compare >> 0 & 0x7U) | (code.compare >> 4 & 0x8U)) : 0)),
+				static_cast<byte>((code.useCompare ? ((code.compare >> 4 & 0x7U) | (code.value   >> 0 & 0x8U)) : 0))
 			};
 
 			uint i = (code.useCompare ? 8 : 6);

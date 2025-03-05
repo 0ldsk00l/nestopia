@@ -181,7 +181,9 @@ namespace Nes
 				{
 					const byte data[3] =
 					{
-						increaser ^ 1, count[0], count[1]
+						static_cast<byte>(increaser ^ 1),
+						static_cast<byte>(count[0]),
+						static_cast<byte>(count[1])
 					};
 
 					state.Begin( chunk ).Write( data ).End();

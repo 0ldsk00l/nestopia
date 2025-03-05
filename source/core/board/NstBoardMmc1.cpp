@@ -109,8 +109,8 @@ namespace Nes
 					regs[1],
 					regs[2],
 					regs[3],
-					serial.buffer,
-					serial.shifter
+					static_cast<byte>(serial.buffer),
+					static_cast<byte>(serial.shifter)
 				};
 
 				state.Begin( AsciiId<'M','M','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();

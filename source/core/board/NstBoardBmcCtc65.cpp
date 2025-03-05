@@ -76,7 +76,7 @@ namespace Nes
 
 				void Ctc65::SubSave(State::Saver& state) const
 				{
-					const byte data[2] = {regs[0],regs[1]};
+					const byte data[2] = { static_cast<byte>(regs[0]), static_cast<byte>(regs[1]) };
 					state.Begin( AsciiId<'B','C','T'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
 

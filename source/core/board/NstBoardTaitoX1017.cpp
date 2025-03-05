@@ -137,7 +137,7 @@ namespace Nes
 
 					const byte data[7] =
 					{
-						regs.ctrl,
+						static_cast<byte>(regs.ctrl),
 						regs.security[0],
 						regs.security[1],
 						regs.security[2],

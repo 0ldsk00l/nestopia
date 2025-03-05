@@ -50,7 +50,12 @@ namespace Nes
 
 				void Fs304::SubSave(State::Saver& state) const
 				{
-					const byte data[4] = { regs[0], regs[1], regs[2], regs[3] };
+					const byte data[4] = {
+						static_cast<byte>(regs[0]),
+						static_cast<byte>(regs[1]),
+						static_cast<byte>(regs[2]),
+						static_cast<byte>(regs[3])
+					};
 					state.Begin( AsciiId<'3','0','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
 
