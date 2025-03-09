@@ -37,7 +37,7 @@ namespace Nes
 		{
 		protected:
 
-			~DipSwitches() {}
+			virtual ~DipSwitches() {}
 
 		public:
 

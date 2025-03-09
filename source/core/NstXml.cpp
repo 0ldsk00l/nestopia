@@ -414,6 +414,7 @@ namespace Nes
 
 								if (stream != file)
 									throw 1;
+								// fallthrough
 
 							case TAG_COMMENT:
 							case TAG_INSTRUCTION:
@@ -429,6 +430,7 @@ namespace Nes
 									stream = ReadNode( stream, tag, root );
 									break;
 								}
+								// fallthrough
 
 							default:
 

@@ -118,6 +118,7 @@ namespace Nes
 
 							ppu.SetMirroring( lut[(data & 0x1) ? 0 : (data >> 1 & 0x3)] );
 						}
+						// fallthrough
 
 						default:
 

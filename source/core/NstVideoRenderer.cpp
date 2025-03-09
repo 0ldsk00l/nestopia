@@ -470,6 +470,7 @@ namespace Nes
 			void Renderer::Palette::Update(int brightness,int saturation,int contrast,int hue)
 			{
 				FpuPrecision precision;
+				(void)precision;
 				(*this.*(type == PALETTE_YUV ? &Palette::Generate : &Palette::Build))( brightness, saturation, contrast, hue );
 			}
 

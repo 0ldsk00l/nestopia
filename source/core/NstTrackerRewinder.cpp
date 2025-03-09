@@ -157,6 +157,7 @@ namespace Nes
 		ppu          (p)
 		{
 			Reset( true );
+			(void)ppu;
 		}
 
 		Tracker::Rewinder::ReverseVideo::~ReverseVideo()

@@ -48,7 +48,7 @@ namespace Nes
 
 			~Pointer()
 			{
-				typedef char TypeComplete[sizeof(T)];
+				NST_UNUSED typedef char TypeComplete[sizeof(T)];
 				delete ptr;
 			}
 

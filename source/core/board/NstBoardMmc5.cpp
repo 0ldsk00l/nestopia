@@ -1448,10 +1448,12 @@ namespace Nes
 
 						if (!(irq.state & Irq::FRAME))
 							data = 0;
+						// fallthrough
 
 					case Regs::EXRAM_MODE_CPU_RAM:
 
 						exRam.mem[address - 0x5C00] = data;
+						// fallthrough
 
 					case Regs::EXRAM_MODE_CPU_ROM:
 						break;

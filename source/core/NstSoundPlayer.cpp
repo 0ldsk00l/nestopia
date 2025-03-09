@@ -128,7 +128,7 @@ namespace Nes
 									{
 										for (; src != end; src += 2)
 										{
-											const idword sample = (idword(uint(src[0]) << 8) - 32768) + (idword(uint(src[1]) << 8) - 32768);
+											const idword sample = (idword(static_cast<uint>(src[0]) << 8) - 32768) + (idword(static_cast<uint>(src[1]) << 8) - 32768);
 											*dst++ = Clamp<Apu::Channel::OUTPUT_MIN,Apu::Channel::OUTPUT_MAX>(sample);
 										}
 									}

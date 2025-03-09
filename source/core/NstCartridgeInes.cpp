@@ -503,6 +503,7 @@ namespace Nes
 									profile.system.type = Profile::System::NES_NTSC;
 									break;
 								}
+								// fallthrough
 
 							case Header::REGION_PAL:
 

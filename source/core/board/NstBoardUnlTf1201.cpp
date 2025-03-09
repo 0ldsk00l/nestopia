@@ -93,7 +93,7 @@ namespace Nes
 									State::Loader::Data<2> data( state );
 
 									irq.unit.enabled = data[0] & 0x1;
-									irq.unit.count = data[2];
+									irq.unit.count = data[1];
 									break;
 								}
 							}

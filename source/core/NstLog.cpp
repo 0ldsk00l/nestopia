@@ -102,50 +102,6 @@ namespace Nes
 			return *this;
 		}
 
-		Log& Log::operator << (long long value)
-		{
-			if (enabled && object)
-			{
-				char buffer[24];
-
-            // Windows CRT does not support C99/C++11 llu/lli/lld.
-#ifdef _WIN32
-				const int length = std::sprintf( buffer, "%I64d", value );
-#else
-				const int length = std::sprintf( buffer, "%lli", value );
-#endif
-
-				NST_VERIFY( length > 0 );
-
-				if (length > 0)
-					Append( buffer, length );
-			}
-
-			return *this;
-		}
-
-		Log& Log::operator << (unsigned long long value)
-		{
-			if (enabled && object)
-			{
-				char buffer[24];
-
-#ifdef _WIN32
-				const int length = std::sprintf( buffer, "%I64u", value );
-#else
-				const int length = std::sprintf( buffer, "%llu", value );
-#endif
-
-				NST_VERIFY( length > 0 );
-
-				if (length > 0)
-					Append( buffer, length );
-			}
-
-			return *this;
-		}
-
-
 		Log& Log::operator << (cstring c)
 		{
 			if (enabled && object)

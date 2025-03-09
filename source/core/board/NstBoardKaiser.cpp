@@ -561,7 +561,7 @@ namespace Nes
 							break;
 
 						case 0xD903:
-							reg = mode ? 0x8 | ((address >> 2) & 0x3) : reg = 0xB;
+							reg = mode ? 0x8 | ((address >> 2) & 0x3) : 0xB;
 							break;
 					}
 				}

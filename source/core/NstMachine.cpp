@@ -458,6 +458,7 @@ namespace Nes
 
 										if (extPort->NumPorts() != 4)
 											break;
+										// fallthrough
 
 									case Ascii<'0'>::V:
 									case Ascii<'1'>::V:

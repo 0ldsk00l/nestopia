@@ -272,6 +272,7 @@ namespace Nes
 									break;
 								}
 							}
+							// fallthrough
 
 							default:
 
@@ -385,6 +386,7 @@ namespace Nes
 							profile.system.type = Profile::System::NES_NTSC;
 							break;
 						}
+						// fallthrough
 
 					case Context::SYSTEM_PAL:
 

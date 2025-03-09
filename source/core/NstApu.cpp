@@ -1603,7 +1603,7 @@ namespace Nes
 
 					do
 					{
-						sum += NST_MIN(-timer,frequency) >> form[step = (step + 1) & 0x7];
+						sum += NST_MIN(-timer,idword(frequency)) >> form[step = (step + 1) & 0x7];
 						timer += idword(frequency);
 					}
 					while (timer < 0);
@@ -1839,7 +1839,7 @@ namespace Nes
 
 					do
 					{
-						sum += NST_MIN(-timer,frequency) * pyramid[step = (step + 1) & 0x1F];
+						sum += NST_MIN(-timer,idword(frequency)) * pyramid[step = (step + 1) & 0x1F];
 						timer += idword(frequency);
 					}
 					while (timer < 0);
@@ -2048,7 +2048,7 @@ namespace Nes
 						bits = (bits << 1) | ((bits >> 14 ^ bits >> shifter) & 0x1);
 
 						if (!(bits & 0x4000))
-							sum += NST_MIN(-timer,frequency);
+							sum += NST_MIN(-timer,idword(frequency));
 
 						timer += idword(frequency);
 					}

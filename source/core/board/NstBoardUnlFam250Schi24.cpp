@@ -81,7 +81,7 @@ namespace Nes
 
 				NES_POKE_AD(Fam250Schi24,F000)
 				{
-					const uint bank = data & 0x3F | address << 2 & 0x40 | address >> 5 & 0x80;
+					const uint bank = (data & 0x3F) | ((address << 2) & 0x40) | ((address >> 5) & 0x80);
 
 					ppu.SetMirroring( (data & 0x40) ? Ppu::NMT_H : Ppu::NMT_V );
 					chr.Source().WriteEnable( !(address & 0x08) );

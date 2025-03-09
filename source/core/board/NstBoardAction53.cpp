@@ -97,14 +97,14 @@ namespace Nes
 				switch (index) {
 				case 0:
 					if (!(mirroring & 2)) {
-						mirroring = (mirroring & 0x2) | (data >> 4) & 0x1;
+						mirroring = (mirroring & 0x2) | ((data >> 4) & 0x1);
 						set_nmt_mirroring();
 					}
 					chr.SwapBank<SIZE_8K, 0x0000>( data & 0x3 );
 					break;
 				case 1:
 					if (!(mirroring & 2)) {
-						mirroring = (mirroring & 0x2) | (data >> 4) & 0x1;
+						mirroring = (mirroring & 0x2) | ((data >> 4) & 0x1);
 						set_nmt_mirroring();
 					}
 					preg[1] = data & 0xf;
@@ -125,7 +125,7 @@ namespace Nes
 
 			void Action53::set_prg(void)
 			{
-				byte prglo, prghi;
+				byte prglo = 0, prghi = 0;
 				byte prg_inner_b = preg[1];
 				byte prg_outer_b = (preg[3] << 1);
 

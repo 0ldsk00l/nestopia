@@ -450,6 +450,7 @@ namespace Nes
 
 					if (favoredSystem == FAVORED_DENDY)
 						return REGION_PAL;
+					// fallthrough
 
 				default:
 

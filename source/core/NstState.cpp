@@ -276,6 +276,7 @@ namespace Nes
 							if (Zlib::Uncompress( buffer.Begin(), buffer.Size(), data, length ))
 								break;
 						}
+						// fallthrough
 
 					default:
 

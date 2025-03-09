@@ -79,7 +79,7 @@ namespace Nes
 			protected:
 
 				explicit Channel(Apu&);
-				~Channel();
+				virtual ~Channel();
 
 				void  Update() const;
 				void  Connect(bool);

@@ -76,6 +76,7 @@ namespace Nes
 				Vrc7::Sound::Tables::Tables()
 				{
 					FpuPrecision precision;
+					(void)precision;
 
 					const double pi2 = 6.2831853071795863;
 
@@ -946,6 +947,7 @@ namespace Nes
 									break;
 
 								slots[i].eg.mode = EG_FINISH;
+								// fallthrough
 
 							default:
 

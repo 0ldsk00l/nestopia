@@ -151,6 +151,7 @@ namespace Nes
 			black          (GetBlack(palette))
 			{
 				FpuPrecision precision;
+				(void)precision;
 
 				nes_ntsc_setup_t setup;
 

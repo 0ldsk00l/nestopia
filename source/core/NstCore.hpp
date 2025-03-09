@@ -145,6 +145,12 @@
 
 #endif
 
+#if NST_MSVC
+#define NST_UNUSED
+#else
+#define NST_UNUSED __attribute__ ((unused))
+#endif
+
 #define NST_NOP() ((void)0)
 
 #ifndef NST_FORCE_INLINE
@@ -191,7 +197,7 @@
 #define NST_CAT_NEXT(x_,y_) x_##y_
 #define NST_CAT(x_,y_) NST_CAT_NEXT(x_,y_)
 
-#define NST_COMPILE_ASSERT(expr_) typedef char NST_CAT(Nestopia_assertion_at_line_,__LINE__)[(expr_) ? 1 : -1]
+#define NST_COMPILE_ASSERT(expr_) NST_UNUSED typedef char NST_CAT(Nestopia_assertion_at_line_,__LINE__)[(expr_) ? 1 : -1]
 
 namespace Nes
 {

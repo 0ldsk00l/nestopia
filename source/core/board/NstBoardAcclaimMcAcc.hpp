@@ -89,7 +89,7 @@ namespace Nes
 				private:
 					enum {
 						A12_FILTER = 39,
-						IRQ_DELAY = 0,
+						IRQ_DELAY = 0
 					};
 
 					// FIXME: IRQ_DELAY should be 4 ppu clocks

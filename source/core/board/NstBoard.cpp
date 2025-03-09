@@ -1299,6 +1299,7 @@ namespace Nes
 					case 155:
 
 						chips.Add(L"MMC1A");
+						// fallthrough
 
 					case 1:
 
@@ -1435,6 +1436,7 @@ namespace Nes
 
 						if (!this->prg.PinsDefined())
 							return false;
+						// fallthrough
 
 					case 3:
 
@@ -1710,6 +1712,7 @@ namespace Nes
 							id = Type::BANDAI_LZ93D50_24C02;
 							break;
 						}
+						// fallthrough
 
 					case 153:
 

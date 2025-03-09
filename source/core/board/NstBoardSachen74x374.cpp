@@ -245,30 +245,25 @@ namespace Nes
 				{
 					switch (ctrl & 0x7)
 					{
-						case 0x0:
-
-							UpdatePrg( 0x0 );
-							UpdateChr( 0x3 );
-							break;
-
 						case 0x2:
 
-							UpdateChr( (chr.GetBank<SIZE_8K,0x0000>() & ~0x8U) | (data << 3 & 0x8) );
+							UpdatePrg( (prg.GetBank<SIZE_32K,0x0000>() & ~0x1) | (data & 0x1) );
+							UpdateChr( (chr.GetBank<SIZE_8K,0x0000>() & ~0x1) | (data & 0x1) );
 							break;
 
 						case 0x4:
 
-							UpdateChr( (chr.GetBank<SIZE_8K,0x0000>() & ~0x1U) | (data << 0 & 0x1) );
+							UpdateChr( (chr.GetBank<SIZE_8K,0x0000>() & ~0x2) | ((data & 0x1) << 1) );
 							break;
 
 						case 0x5:
 
-							UpdatePrg( data & 0x1 );
+							UpdatePrg( (prg.GetBank<SIZE_32K,0x0000>() & 0x1) | (data & 0x6) );
 							break;
 
 						case 0x6:
 
-							UpdateChr( (chr.GetBank<SIZE_8K,0x0000>() & ~0x6U) | (data << 1 & 0x6) );
+							UpdateChr( (chr.GetBank<SIZE_8K,0x0000>() & 0x3) | ((data & 0x3) << 2) );
 							break;
 
 						case 0x7:

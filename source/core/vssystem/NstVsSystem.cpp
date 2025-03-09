@@ -52,7 +52,6 @@ namespace Nes
 			Setting* settings;
 			uint size;
 			uint selection;
-			uint mask;
 			cstring name;
 
 		public:
@@ -1154,6 +1153,7 @@ namespace Nes
 					case 0x86167220: // Lady Golf
 
 						context.ppuModel = PPU_RP2C04_0002;
+						// fallthrough
 
 					case 0xA93A5AEE: // Golf
 

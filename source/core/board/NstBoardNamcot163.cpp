@@ -414,6 +414,7 @@ namespace Nes
 							case 0x4:
 
 								channel.SetWaveLength( data );
+								// fallthrough
 
 							case 0x0:
 							case 0x2:
