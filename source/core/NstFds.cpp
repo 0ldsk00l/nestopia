@@ -744,7 +744,7 @@ namespace Nes
 							<< (i % 2 ? " Side B: " : " Side A: ")
 							<< (disksize / SIZE_1K)
 							<< "k in "
-							<< data.files.size()
+							<< static_cast<dword>(data.files.size())
 							<< " files";
 
 						if (const uint raw = data.raw.size())
@@ -756,7 +756,7 @@ namespace Nes
 						{
 							log << "Fds: file: \"" << it->name
 								<< "\", id: "      << it->id
-								<< ", size: "      << it->data.size()
+								<< ", size: "      << static_cast<dword>(it->data.size())
 								<< ", index: "     << it->index
 								<< ", address: "   << Log::Hex( 16, it->address )
 								<< ", type: "
