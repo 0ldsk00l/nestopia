@@ -1611,7 +1611,7 @@ namespace Nes
 			}
 
 			Log() << "Database: "
-                  << (items.end - items.begin)
+                  << static_cast<dword>(items.end - items.begin)
                   << " items imported from "
                   << (overrideStream ? "internal & external" : "internal")
                   <<  " DB" NST_LINEBREAK;
