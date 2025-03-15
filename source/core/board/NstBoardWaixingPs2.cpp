@@ -52,29 +52,36 @@ namespace Nes
 				{
 					ppu.SetMirroring( (data & 0x40) ? Ppu::NMT_H : Ppu::NMT_V );
 
-					const uint flip = data >> 7;
-					data = data << 1 & 0xFE;
-
-					switch (address & 0xFFF)
+					uint preg[4];
+					uint bank = (data & 0x3F) << 1;
+					switch (address & 0x03)
 					{
-						case 0x000:
+						case 0x00:
 
-							prg.SwapBanks<SIZE_8K,0x0000>( (data+0) ^ flip, (data+1) ^ flip, (data+2) ^ flip, (data+3) ^ flip );
+							for (uint i = 0; i < 4; ++i)
+								preg[i] = bank + i;
+
 							break;
 
-						case 0x002:
+						case 0x02:
 
-							data |= flip;
-							prg.SwapBanks<SIZE_8K,0x0000>( data, data, data, data );
+							bank = bank | (data >> 7);
+							for (uint i = 0; i < 4; ++i)
+								preg[i] = bank;
+
 							break;
 
-						case 0x001:
-						case 0x003:
+						case 0x01:
+						case 0x03:
 
-							data |= flip;
-							prg.SwapBanks<SIZE_8K,0x0000>( data, data+1, data + (~address >> 1 & 1), data+1 );
+							preg[0] = bank + 0;
+							preg[1] = bank + 1;
+							preg[2] = ((address & 0x02) ? bank : (bank | 0x0E)) + 0;
+							preg[3] = ((address & 0x02) ? bank : (bank | 0x0E)) + 1;
 							break;
 					}
+
+					prg.SwapBanks<SIZE_8K,0x0000>( preg[0], preg[1], preg[2], preg[3] );
 				}
 			}
 		}
