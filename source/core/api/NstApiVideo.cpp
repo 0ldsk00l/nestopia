@@ -252,6 +252,28 @@ namespace Nes
 					boostYellow   = true;
 					break;
 
+				case DECODER_CXA2025AS_JP:
+
+					axes[0].angle = 95;
+					axes[0].gain  = 0.78f;
+					axes[1].angle = 240;
+					axes[1].gain  = 0.3f;
+					axes[2].angle = 0;
+					axes[2].gain  = 1.0f;
+					boostYellow   = false;
+					break;
+
+				case DECODER_CXA2025AS_US:
+
+					axes[0].angle = 112;
+					axes[0].gain  = 0.83f;
+					axes[1].angle = 252;
+					axes[1].gain  = 0.3f;
+					axes[2].angle = 0;
+					axes[2].gain  = 1.0f;
+					boostYellow   = false;
+					break;
+
 				default:
 
 					axes[0].angle = 105;

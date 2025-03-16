@@ -431,7 +431,15 @@ namespace Nes
 				/**
 				* Alternative
 				*/
-				DECODER_ALTERNATIVE
+				DECODER_ALTERNATIVE,
+				/**
+				* Sony CXA2025AS (JP)
+				*/
+				DECODER_CXA2025AS_JP,
+				/**
+				* Sony CXA2025AS (US)
+				*/
+				DECODER_CXA2025AS_US
 			};
 
 			/**
