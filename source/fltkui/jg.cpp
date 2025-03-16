@@ -135,12 +135,12 @@ static jg_setting_t settings_nst[] = {
       3, 2, 9, JG_SETTING_INPUT
     },
     { "palette", "Palette",
-      "0 = Canonical, 1 = Consumer, 2 = Alternative, 3 = RGB, 4 = CXA2025AS, "
-      "5 = Royaltea, 6 = Nobilitea, 7 = Digital Prime (FBX), "
-      "8 = Magnum (FBX), 9 = PVM Style D93 (FBX), 10 = Smooth V2 (FBX), "
-      "11 = Custom",
+      "0 = Canonical, 1 = Consumer, 2 = Alternative, 3 = CXA2025AS (JP), "
+      "4 = CXA2025AS (US), 5 = Royaltea, 6 = Nobilitea, "
+      "7 = Digital Prime (FBX), 8 = Magnum (FBX), 9 = PVM Style D93 (FBX), "
+      "10 = Smooth V2 (FBX), 11 = RGB, 12 = Custom",
       "Set the colour palette",
-      Video::DECODER_CONSUMER, 0, 11, 0
+      Video::DECODER_CONSUMER, 0, 12, 0
     },
     { "ntsc_filter", "NTSC Filter",
       "0 = Disable, 1 = Enable",
@@ -1121,17 +1121,10 @@ static void nst_params_video(void) {
     std::string palpath = std::string(pathinfo.core) + "/palettes/";
 
     switch (settings_nst[PALETTE].val) {
-        case 0: case 1: case 2: // YUV Palettes
+        case 0: case 1: case 2: case 3: case 4: // YUV Palettes
             video.GetPalette().SetMode(Video::Palette::MODE_YUV);
             video.SetDecoder((Video::DecoderPreset)settings_nst[PALETTE].val);
             break;
-        case 3: // RGB Palette
-            video.GetPalette().SetMode(Video::Palette::MODE_RGB);
-            break;
-        case 4: { // Sony CXA2025AS
-            palpath += "SONY_CXA2025AS_US.pal";
-            break;
-        }
         case 5: { // Royaltea
             palpath += "Royaltea.pal";
             break;
@@ -1156,7 +1149,10 @@ static void nst_params_video(void) {
             palpath += "Smooth_V2_FBX.pal";
             break;
         }
-        case 11: { // Custom
+        case 11: // RGB Palette
+            video.GetPalette().SetMode(Video::Palette::MODE_RGB);
+            break;
+        case 12: { // Custom
             palpath = std::string(pathinfo.user) + "/custom.pal";
             break;
         }
@@ -1164,7 +1160,7 @@ static void nst_params_video(void) {
     }
 
     // Load the palette from an external file
-    if (settings_nst[PALETTE].val > 3) {
+    if (settings_nst[PALETTE].val > 4 && settings_nst[PALETTE].val != 11) {
         std::ifstream ifs(palpath.c_str(), std::ifstream::binary);
         if (ifs.is_open()) {
             std::filebuf *pbuf = ifs.rdbuf();
@@ -1436,8 +1432,7 @@ int jg_state_load(const char *filename) {
     return 0;
 }
 
-void jg_state_load_raw(const void *data) {
-    if (data) { }
+void jg_state_load_raw(const void*) {
 }
 
 int jg_state_save(const char *filename) {
@@ -1537,9 +1532,7 @@ void jg_rehash(void) {
     nst_params_input();
 }
 
-void jg_data_push(uint32_t type, int port, const void *ptr, size_t size) {
-    if (port) { }
-
+void jg_data_push(uint32_t type, int, const void *ptr, size_t size) {
     if (type == JG_DATA_AUDIO) {
         int16_t *buf = (int16_t*)(((jg_audioinfo_t*)ptr)->buf);
         size_t total = 0;
