@@ -1432,7 +1432,7 @@ namespace Nes
 
 			ClearIRQ();
 
-			return status;
+			return status | (unit.drive.ctrl & uint(CTRL1_NMT_HORIZONTAL));
 		}
 
 		NES_PEEK(Fds::Adapter,4032)
