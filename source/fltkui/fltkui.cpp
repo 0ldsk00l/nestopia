@@ -429,9 +429,9 @@ void FltkUi::palette_open(Fl_Widget *w, void *data) {
                 std::filesystem::copy_file(src, dst, std::filesystem::copy_options::overwrite_existing);
 
                 // Force custom palette
-                jgm->get_setting("palette")->val = 11;
+                jgm->get_setting("palette")->val = 12;
                 jgm->rehash();
-                setwin->set_choice_value("Emulator", "Palette", 11);
+                setwin->set_choice_value("Emulator", "Palette", 12);
             }
             break;
     }
