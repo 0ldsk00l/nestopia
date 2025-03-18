@@ -692,6 +692,8 @@ nestopia_SOURCES = \
 	source/core/board/NstBoardUnlFam250Schi24.hpp \
 	source/core/board/NstBoardBmc120in1.cpp \
 	source/core/board/NstBoardBmc120in1.hpp \
+	source/core/board/NstBoardBmc60311c.cpp \
+	source/core/board/NstBoardBmc60311c.hpp \
 	source/core/NstPins.hpp \
 	source/core/NstNsf.hpp \
 	source/core/NstTrackerRewinder.hpp \
