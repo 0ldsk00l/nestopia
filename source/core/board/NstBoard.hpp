@@ -272,6 +272,7 @@ namespace Nes
 						BMC_31IN1                  = MakeId<  229,  512,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_35IN1                  = MakeId<  203,  128,   64,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_36IN1                  = MakeId<  200,  128,   64,  0,  0, CRM_0,  NMT_V,  0 >::ID,
+						BMC_60311C                 = MakeId<  289, 4096, 2048,  0,  0, CRM_32, NMT_X,  0 >::ID,
 						BMC_64IN1                  = MakeId<  204,  128,   64,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_72IN1                  = MakeId<  225, 1024,  512,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_76IN1                  = MakeId<  226, 2048,    0,  0,  0, CRM_8,  NMT_H,  0 >::ID,
