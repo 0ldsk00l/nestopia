@@ -43,12 +43,10 @@ namespace Nes
 					Map( 0x6001U, &B60311c::Poke_6001 );
 					Map( 0x8000U, 0xFFFFU, &B60311c::Poke_8000 );
 
-					if (hard)
-					{
-						regs[0] = 0;
-						regs[1] = 0;
-						latch = 0;
-					}
+					regs[0] = 0;
+					regs[1] = 0;
+					latch = 0;
+					UpdatePrg();
 				}
 
 				void B60311c::SubLoad(State::Loader& state,const dword baseChunk)
