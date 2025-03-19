@@ -10,7 +10,11 @@ nestopia_CPPFLAGS = \
 	-I$(top_srcdir)/source/fltkui \
 	-DNST_DATADIR=\"$(datadir)/nestopia\" \
 	-DNST_DATAROOTDIR=\"$(datarootdir)\" \
-	-DNST_PRAGMA_ONCE
+	-DNST_PRAGMA_ONCE \
+	-DNST_NO_SCALEX \
+	-DNST_NO_HQ2X \
+	-DNST_NO_2XSAI \
+	-DNST_NO_XBR
 nestopia_CXXFLAGS = \
 	$(ZLIB_CFLAGS) \
 	$(LIBARCHIVE_CFLAGS) \
@@ -76,9 +80,6 @@ dist_html_DATA = readme.html
 # Source code files #
 #####################
 EXTRA_DIST += \
-	source/core/NstVideoFilterHq3x.inl \
-	source/core/NstVideoFilterHq4x.inl \
-	source/core/NstVideoFilterHq2x.inl \
 	source/core/NstSoundRenderer.inl \
 	source/nes_ntsc/nes_ntsc.inl
 
@@ -91,7 +92,6 @@ nestopia_SOURCES = \
 	source/core/NstSoundRenderer.hpp \
 	source/core/NstMachine.hpp \
 	source/core/NstFile.cpp \
-	source/core/NstVideoFilterxBR.cpp \
 	source/core/NstChecksum.hpp \
 	source/core/NstVideoFilterNone.cpp \
 	source/core/NstPatcherUps.cpp \
@@ -162,15 +162,12 @@ nestopia_SOURCES = \
 	source/core/NstTracker.cpp \
 	source/core/NstChips.hpp \
 	source/core/NstIoMap.hpp \
-	source/core/NstVideoFilterxBR.hpp \
 	source/core/NstXml.cpp \
 	source/core/NstProperties.cpp \
 	source/core/NstCpu.cpp \
 	source/core/NstXml.hpp \
-	source/core/NstVideoFilterHqX.hpp \
 	source/core/NstVideoRenderer.cpp \
 	source/core/NstPatcherIps.cpp \
-	source/core/NstVideoFilterScaleX.hpp \
 	source/core/NstImageDatabase.hpp \
 	source/core/NstVideoRenderer.hpp \
 	source/core/NstImage.hpp \
@@ -187,8 +184,6 @@ nestopia_SOURCES = \
 	source/core/NstApu.cpp \
 	source/core/NstState.hpp \
 	source/core/NstSha1.hpp \
-	source/core/NstVideoFilter2xSaI.hpp \
-	source/core/NstVideoFilterHqX.cpp \
 	source/core/NstPatcherUps.hpp \
 	source/core/NstCore.hpp \
 	source/core/NstSha1.cpp \
@@ -246,7 +241,6 @@ nestopia_SOURCES = \
 	source/core/NstImage.cpp \
 	source/core/NstPatcherIps.hpp \
 	source/core/NstLog.hpp \
-	source/core/NstVideoFilter2xSaI.cpp \
 	source/core/NstMemory.cpp \
 	source/core/NstImageDatabase.cpp \
 	source/core/NstMachine.cpp \
@@ -700,7 +694,6 @@ nestopia_SOURCES = \
 	source/core/NstFds.cpp \
 	source/core/NstVector.hpp \
 	source/core/NstPatcher.hpp \
-	source/core/NstVideoFilterScaleX.cpp \
 	source/core/NstCartridgeInes.hpp \
 	source/core/NstNsf.cpp \
 	source/core/NstSoundPcm.cpp \
