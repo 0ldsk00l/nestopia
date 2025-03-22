@@ -136,6 +136,7 @@
     <ClInclude Include="..\source\core\board\NstBoardAcclaimMcAcc.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardAction53.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardBmc120in1.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmc60311c.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardInlNsf.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardMagicKidGoogoo.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardUnl158b.hpp" />
@@ -472,6 +473,7 @@
     <ClCompile Include="..\source\core\board\NstBoardAcclaimMcAcc.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardAction53.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardBmc120in1.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmc60311c.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardInlNsf.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardMagicKidGoogoo.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardUnl158b.cpp" />
