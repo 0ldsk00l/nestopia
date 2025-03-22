@@ -161,7 +161,7 @@ Fl_Menu_Item *get_menuitem(std::string label) {
 
 void update_refreshrate(void) {
     // Get the screen refresh rate using an SDL window
-    if (syncmode) { // Don't use this in "Timer" sync mode
+    if (!syncmode) { // Don't use this in "Timer" sync mode
         return;
     }
     #ifdef __APPLE__
