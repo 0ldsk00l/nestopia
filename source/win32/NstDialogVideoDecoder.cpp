@@ -70,6 +70,8 @@ namespace Nestopia
 			{ IDC_VIDEO_DECODER_CANONICAL ,   &VideoDecoder::OnCmdPreset      },
 			{ IDC_VIDEO_DECODER_CONSUMER,     &VideoDecoder::OnCmdPreset      },
 			{ IDC_VIDEO_DECODER_ALTERNATIVE,  &VideoDecoder::OnCmdPreset      },
+			{ IDC_VIDEO_DECODER_CXA2025AS_JP, &VideoDecoder::OnCmdPreset      },
+			{ IDC_VIDEO_DECODER_CXA2025AS_US, &VideoDecoder::OnCmdPreset      },
 			{ IDOK,                           &VideoDecoder::OnCmdOk          }
 		};
 
@@ -216,9 +218,11 @@ namespace Nestopia
 
 				switch (param.Button().GetId())
 				{
-					case IDC_VIDEO_DECODER_CONSUMER:    preset = Nes::Video::DECODER_CONSUMER;    break;
-					case IDC_VIDEO_DECODER_ALTERNATIVE: preset = Nes::Video::DECODER_ALTERNATIVE; break;
-					default:                            preset = Nes::Video::DECODER_CANONICAL;   break;
+					case IDC_VIDEO_DECODER_CONSUMER:     preset = Nes::Video::DECODER_CONSUMER;     break;
+					case IDC_VIDEO_DECODER_ALTERNATIVE:  preset = Nes::Video::DECODER_ALTERNATIVE;  break;
+					case IDC_VIDEO_DECODER_CXA2025AS_JP: preset = Nes::Video::DECODER_CXA2025AS_JP; break;
+					case IDC_VIDEO_DECODER_CXA2025AS_US: preset = Nes::Video::DECODER_CXA2025AS_US; break;
+					default:                             preset = Nes::Video::DECODER_CANONICAL;    break;
 				}
 
 				nes.SetDecoder( preset );

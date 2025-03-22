@@ -684,8 +684,10 @@
 #define IDC_IMAGEDATABASE_EXTERNAL              4625
 #define IDC_CHOOSE_LIST                         4630
 #define IDC_DIPSWITCHES_DONTSHOWAGAIN           5244
+#define IDC_VIDEO_DECODER_CXA2025AS_US          40000
 #define IDS_TITLE_NESTOPIA                      40000
 #define IDS_TITLE_ERROR                         40001
+#define IDC_VIDEO_DECODER_CXA2025AS_JP          40002
 #define IDS_TITLE_WARNING                       40002
 #define IDS_TITLE_EXIT                          40003
 #define IDS_ARE_YOU_SURE                        40004
