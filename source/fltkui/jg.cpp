@@ -42,6 +42,9 @@
 #include "core/api/NstApiFds.hpp"
 #include "version.h"
 
+#define AFILT_IMPL
+#include "afilt.h"
+
 #define SAMPLERATE 48000
 #define FRAMERATE 60.098814
 #define FRAMERATE_PAL 50.006978
@@ -140,7 +143,7 @@ static jg_setting_t settings_nst[] = {
       "7 = Digital Prime (FBX), 8 = Magnum (FBX), 9 = PVM Style D93 (FBX), "
       "10 = Smooth V2 (FBX), 11 = RGB, 12 = Custom",
       "Set the colour palette",
-      Video::DECODER_CONSUMER, 0, 12, 0
+      Video::DECODER_CXA2025AS_US, 0, 12, 0
     },
     { "ntsc_filter", "NTSC Filter",
       "0 = Disable, 1 = Enable",
@@ -171,6 +174,12 @@ static jg_setting_t settings_nst[] = {
       "N = Hide N pixels of Overscan (Right)",
       "Hide N pixels of Overscan (Right)",
       0, 0, 12, 0
+    },
+    { "audio_filter", "Audio Output Filter",
+      "0 = Disable, 1 = Enable",
+      "Enable or Disable the audio output filter, which includes First Order "
+      "High Pass and First Order Low Pass filtering similar to real hardware",
+      0, 0, 1, 0
     },
     { "favored_system", "Favored/System",
       "0 = NTSC, 1 = PAL, 2 = Famicom, 3 = Dendy",
@@ -220,6 +229,7 @@ enum {
     OVERSCAN_B,
     OVERSCAN_L,
     OVERSCAN_R,
+    AUDIOFILTER,
     FAVSYSTEM,
     FORCEREGION,
     RAMPOWERSTATE,
@@ -439,6 +449,10 @@ static void NST_CALLBACK nst_cb_videounlock(void *udata, Video::Output& video) {
 }
 
 static bool NST_CALLBACK nst_cb_soundlock(void* udata, Sound::Output& sound) {
+    if (settings_nst[AUDIOFILTER].val) {
+        afilt(&afilter[FILTER_FO_HPF], (int16_t*)audinfo.buf, audinfo.spf);
+        afilt(&afilter[FILTER_FO_LPF], (int16_t*)audinfo.buf, audinfo.spf);
+    }
     jg_cb_audio(audinfo.spf);
     return true;
 }
@@ -1230,6 +1244,10 @@ int jg_init(void) {
     User::eventCallback.Set(nst_cb_event, 0);
     User::fileIoCallback.Set(nst_cb_file, 0);
     User::logCallback.Set(nst_cb_log, 0);
+
+    // Initialize the audio filters
+    afilter[FILTER_FO_LPF] = afilt_init(FILTER_FO_LPF, 14000, SAMPLERATE);
+    afilter[FILTER_FO_HPF] = afilt_init(FILTER_FO_HPF, 220, SAMPLERATE);
 
     return 1;
 }
