@@ -478,6 +478,9 @@ void FltkUi::mute(Fl_Widget *w, void *data) {
     audiomgr->mute(muted);
 
     m->label(muted ? "Unmute" : "Mute");
+    #ifdef __APPLE__
+    menubar->update();
+    #endif
 }
 
 void FltkUi::reset(Fl_Widget *w, void *data) {
