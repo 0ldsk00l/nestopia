@@ -1,4 +1,33 @@
 ----------------------------------------------------------------
+1.53.1
+----------------------------------------------------------------
+Shell:
+
+  Changes:
+   - FLTK: Restored the --version command line option
+
+  Additions:
+   - FLTK: Add option to mute audio (HWXLR8)
+   - FLTK: Optional High/Low Pass Filtering for audio output
+   - win32: Add Sony CXA2025AS palette presets to the settings dialog
+
+  Fixes:
+   - FLTK: Remove unused code from the build
+
+Core:
+
+  Additions:
+   - Sony CXA2025AS (JP/US) internal palettes based on datasheet
+   - Add support for Mapper 289
+
+  Fixes:
+   - Kid Icarus (USA, Europe) (Rev 1) now defaults to NTSC region
+   - Fix CHR mapping in Mapper 243
+   - Fix PRG mapping in Mapper 15
+   - FDS accuracy improvement based on new research
+   - Code robustness fixes
+
+----------------------------------------------------------------
 1.53.0
 ----------------------------------------------------------------
 Shell:
