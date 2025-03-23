@@ -2,7 +2,7 @@
  * Nestopia JG
  *
  * Copyright (C) 2008-2018 Nestopia UE Contributors
- * Copyright (C) 2020-2024 Rupert Carmichael
+ * Copyright (C) 2020-2025 Rupert Carmichael
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

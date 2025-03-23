@@ -1,5 +1,5 @@
 /*
-Copyright (c) 2012-2024 R. Danbrook
+Copyright (c) 2012-2025 R. Danbrook
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -557,14 +557,14 @@ void FltkUi::about(Fl_Widget *w, void *data) {
     Fl_Box text2(0, 208, 460, UI_SPACING, "Cycle-Accurate Nintendo Entertainment System Emulator");
 
     Fl_Box text3(0, 256, 460, UI_SPACING,
-                 "FLTK Frontend\n(c) 2012-2024, R. Danbrook\n\n"
+                 "FLTK Frontend\n(c) 2012-2025, R. Danbrook\n\n"
                  "Portions derived from The Jolly Good Reference Frontend\n"
-                 "(c) 2020-2024, Rupert Carmichael\n");
+                 "(c) 2020-2025, Rupert Carmichael\n");
     text3.labelsize(10);
 
     Fl_Box text4(0, 320, 460, UI_SPACING,
                  "Nestopia Emulator\n"
-                 "(c) 2020-2024, Rupert Carmichael\n"
+                 "(c) 2020-2025, Rupert Carmichael\n"
                  "(c) 2012-2020, Nestopia UE Contributors\n"
                  "(c) 2003-2008, Martin Freij");
     text4.labelsize(10);
