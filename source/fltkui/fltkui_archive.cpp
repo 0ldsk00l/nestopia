@@ -93,7 +93,12 @@ void fltkui_archive_load_file(const char *filename, std::string& arcname, std::v
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
         const char *currentfile = archive_entry_pathname(entry);
         if (std::string(currentfile) == arcname) { // Found the file
-            la_int64_t entrysize = archive_entry_size(entry);
+            // directly compressed files have no entry size
+            la_int64_t entrysize = 2*1024*1024;
+            if (archive_entry_size_is_set(entry)) {
+                entrysize = archive_entry_size(entry);
+            }
+
             char *rombuf = (char*)calloc(1, entrysize);
             archive_read_data(a, rombuf, entrysize);
             archive_read_data_skip(a);
@@ -151,6 +156,15 @@ bool fltkui_archive_select(const char *filename, std::string& arcname) {
     // Fill the treestore with the filenames
     while (archive_read_next_header(a, &entry) == ARCHIVE_OK) {
         const char *currentfile = archive_entry_pathname(entry);
+
+        // directly compressed files have single stream named "data" and no entry size
+        if (std::string(currentfile) == "data" && !archive_entry_size_is_set(entry)) {
+            browser->add(currentfile);
+            numfiles++;
+            snprintf(reqfile, reqsize, "%s", currentfile);
+            break;
+        }
+
         std::string fileext = std::filesystem::path(currentfile).extension().string();
         std::transform(fileext.begin(), fileext.end(), fileext.begin(),
                        [](unsigned char c) { return std::tolower(c); });
