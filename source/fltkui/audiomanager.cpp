@@ -181,7 +181,7 @@ void AudioManager::queue(size_t in_size) {
     size_t numsamples = in_size / ffspeed;
 
     src_short_to_float_array(buf_in, fltbuf_in, numsamples);
-    srcdata.input_frames = numsamples;
+    srcdata.input_frames = numsamples / audinfo->channels;
     srcdata.end_of_input = 0;
 
     SDL_LockAudioDevice(dev);
@@ -201,7 +201,7 @@ void AudioManager::queue(size_t in_size) {
 
     src_process(srcstate, &srcdata);
 
-    for (int i = 0; i < srcdata.output_frames_gen; i++) {
+    for (int i = 0; i < srcdata.output_frames_gen * audinfo->channels; i++) {
         fltbuf_out[i] *= 32768;
         buf_out[bufend] = fltbuf_out[i] >= 32767.0 ? 32767 :
                           fltbuf_out[i] <= -32768.0 ? -32768 :

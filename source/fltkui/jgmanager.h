@@ -17,6 +17,8 @@ public:
 
     void rehash();
 
+    int init();
+
     void unload_game();
     void load_game(const char *filename, std::vector<uint8_t>& game);
     bool is_loaded();

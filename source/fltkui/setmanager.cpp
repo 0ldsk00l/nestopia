@@ -93,7 +93,7 @@ jg_setting_t fe_settings[] = {
     },
     { "m_hidecrosshair", "Hide Crosshair",
       "0 = Disabled, 1 = Enabled",
-      "Hide the crosshair when a Zapper is present",
+      "Hide the crosshair when a lightgun is present",
       0, 0, 1, FLAG_FRONTEND
     },
     { "m_syncmode", "Synchronization Mode (Restart)",
@@ -152,7 +152,7 @@ mINI::INIStructure inputini;
 
 }
 
-SettingManager::SettingManager() {
+SettingManager::SettingManager(JGManager& jgm) : jgm(jgm) {
     // Set defaults
     size_t numsettings = sizeof(fe_settings) / sizeof(jg_setting_t);
     for (size_t i = 0; i < numsettings; ++i ) {
@@ -161,10 +161,11 @@ SettingManager::SettingManager() {
 
     // Create config directory
     if (const char *env_xdg_config = std::getenv("XDG_CONFIG_HOME")) {
-        confpath = std::string(env_xdg_config) + "/nestopia";
+        confpath = std::string(env_xdg_config) + "/" + jgm.get_coreinfo()->name;
     }
     else {
-        confpath = std::string(std::getenv("HOME")) + "/.config/nestopia";
+        confpath = std::string(std::getenv("HOME")) + "/.config/" +
+                   jgm.get_coreinfo()->name;
     }
 
     // Create the directory if it does not exist
@@ -173,7 +174,7 @@ SettingManager::SettingManager() {
 
 void SettingManager::read(JGManager& jgm) {
     // Read in any settings
-    mINI::INIFile file(confpath + "/nestopia.conf");
+    mINI::INIFile file(confpath + "/" + jgm.get_coreinfo()->name + ".conf");
     mINI::INIStructure ini;
     file.read(ini);
 
@@ -191,7 +192,7 @@ void SettingManager::read(JGManager& jgm) {
     }
 
     for (const auto& setting : *jgm.get_settings()) {
-        std::string& strval = ini["nestopia"][setting->name];
+        std::string& strval = ini[jgm.get_coreinfo()->name][setting->name];
 
         if (strval.empty()) {
             continue;
@@ -211,7 +212,7 @@ void SettingManager::read(JGManager& jgm) {
 }
 
 void SettingManager::write(JGManager& jgm) {
-    std::string filepath(confpath + "/nestopia.conf");
+    std::string filepath(confpath + "/" + jgm.get_coreinfo()->name + ".conf");
     std::ofstream os(filepath);
 
     if (!os.is_open()) {
@@ -229,7 +230,7 @@ void SettingManager::write(JGManager& jgm) {
     }
 
     // Write out emulator core settings
-    os << "[nestopia]\n";
+    os << "[" << jgm.get_coreinfo()->name << "]\n";
     for (const auto& setting : *jgm.get_settings()) {
         os << "; " << setting->desc << "\n";
         os << "; " << setting->opts << "\n";

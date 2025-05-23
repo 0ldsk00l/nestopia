@@ -11,7 +11,8 @@ constexpr unsigned FLAG_FRONTEND = 0x8000000;
 
 class SettingManager {
 public:
-    SettingManager();
+    SettingManager() = delete;
+    SettingManager(JGManager& jgm);
     ~SettingManager() {}
 
     void read(JGManager& jgm);
@@ -24,8 +25,8 @@ public:
     void set_input(std::string name, std::string def, std::string val);
 
 private:
+    JGManager &jgm;
 
     std::string confpath;
-
     std::vector<jg_setting_t*> settings;
 };

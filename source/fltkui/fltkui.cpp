@@ -814,8 +814,18 @@ int main(int argc, char *argv[]) {
         return 0;
     }
 
+    jgm = new JGManager();
+
     // Set default config options
-    setmgr = new SettingManager();
+    setmgr = new SettingManager(*jgm);
+
+    // Read frontend and emulator settings
+    setmgr->read(*jgm);
+    LogDriver::set_level(setmgr->get_setting("l_loglevel")->val);
+
+    if (!jgm->init()) {
+        return 1;
+    }
 
     // Initialize SDL Audio and Joystick
     #ifdef _WIN32
@@ -825,12 +835,6 @@ int main(int argc, char *argv[]) {
         LogDriver::log(LogLevel::Error, "Failed to initialize SDL: " + std::string(SDL_GetError()));
         return 1;
     }
-
-    jgm = new JGManager();
-
-    // Read frontend and emulator settings
-    setmgr->read(*jgm);
-    LogDriver::set_level(setmgr->get_setting("l_loglevel")->val);
 
     // Change "Mute" menubar label based on whether audio is muted at
     // startup

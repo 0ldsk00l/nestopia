@@ -68,6 +68,10 @@ JGManager::~JGManager() {
     unload_game();
 }
 
+int JGManager::init() {
+    return jg_init();
+}
+
 void JGManager::unload_game() {
     if (loaded) {
         jg_game_unload();
