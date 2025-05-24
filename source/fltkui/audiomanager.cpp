@@ -103,7 +103,14 @@ AudioManager::AudioManager(JGManager& jgm, SettingManager& setmgr)
     bufend = bufstart = bufsamples = 0;
 
     audinfo = jgm.get_audioinfo();
-    audinfo->buf = &buf_in[0];
+
+    if (audinfo->sampfmt == JG_SAMPFMT_INT16) {
+        audinfo->buf = &buf_in[0];
+    }
+    else {
+        audinfo->buf = &fltbuf_in[0];
+    }
+
     spf = audinfo->spf;
 
     // Resampler
@@ -180,7 +187,10 @@ void AudioManager::queue(size_t in_size) {
 
     size_t numsamples = in_size / ffspeed;
 
-    src_short_to_float_array(buf_in, fltbuf_in, numsamples);
+    if (audinfo->sampfmt == JG_SAMPFMT_INT16) {
+        src_short_to_float_array(buf_in, fltbuf_in, numsamples);
+    }
+
     srcdata.input_frames = numsamples / audinfo->channels;
     srcdata.end_of_input = 0;
 

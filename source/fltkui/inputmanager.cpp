@@ -47,8 +47,11 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace {
 
-jg_inputstate_t coreinput[5]{};
-jg_inputinfo_t *inputinfo[5]{nullptr};
+constexpr int DEADZONE = 5120;
+constexpr size_t MAXPORTS = 12;
+
+jg_inputstate_t coreinput[MAXPORTS]{};
+jg_inputinfo_t *inputinfo[MAXPORTS]{nullptr};
 
 jg_inputstate_t uistate;
 jg_inputinfo_t uiinfo;
@@ -69,9 +72,6 @@ bool uiprev[NDEFS_UI]{};
 
 uint8_t undef8{};
 uint16_t undef16{};
-
-constexpr int DEADZONE = 5120;
-constexpr size_t MAXPORTS = 4;
 
 SDL_Joystick *joystick[MAXPORTS]{nullptr};
 int jsports[MAXPORTS]{};

@@ -552,7 +552,7 @@ void FltkUi::about(Fl_Widget *w, void *data) {
     Fl_Box text0(0, 144, 460, UI_SPACING, "Nestopia UE");
     text0.labelfont(FL_BOLD);
 
-    Fl_Box text1(0, 166, 460, UI_SPACING, JG_VERSION);
+    Fl_Box text1(0, 166, 460, UI_SPACING, jgm->get_coreinfo()->version);
 
     Fl_Box text2(0, 208, 460, UI_SPACING, "Cycle-Accurate Nintendo Entertainment System Emulator");
 
