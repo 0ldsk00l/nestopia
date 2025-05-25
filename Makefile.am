@@ -724,6 +724,12 @@ nestopia_SOURCES += \
 	source/fltkui/inputmanager.cpp \
 	source/fltkui/inputmanager.h \
 	source/fltkui/font.h \
+	source/fltkui/crc32.cpp \
+	source/fltkui/crc32.h \
+	source/fltkui/md5.cpp \
+	source/fltkui/md5.h \
+	source/fltkui/hasher.cpp \
+	source/fltkui/hasher.h \
 	source/fltkui/lodepng.cpp \
 	source/fltkui/lodepng.h \
 	source/fltkui/logdriver.cpp \

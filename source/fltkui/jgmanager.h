@@ -68,6 +68,7 @@ private:
     std::string gamepath;
     std::string gamename;
     std::string gamefname;
+    std::string gamemd5;
 
     std::vector<jg_setting_t*> settings;
 };

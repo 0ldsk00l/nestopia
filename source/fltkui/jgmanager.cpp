@@ -37,6 +37,7 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "jgmanager.h"
 
+#include "hasher.h"
 #include "logdriver.h"
 
 namespace {
@@ -86,6 +87,9 @@ void JGManager::load_game(const char *filename, std::vector<uint8_t>& game) {
     // Set game data and size
     gameinfo.data = game.data();
     gameinfo.size = game.size();
+    gameinfo.crc = Hasher::crc(game.data(), game.size());
+    gamemd5 = Hasher::md5(game.data(), game.size());
+    gameinfo.md5 = gamemd5.c_str();
 
     // Set path and name information
     gamepath = std::string(filename);
