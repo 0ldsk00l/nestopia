@@ -13393,6 +13393,18 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="Famicom" dump="unknown" crc="8281C50F" sha1="DDAB9E627E9F7B7DB068B120CF857D51B2A935C9">
+            <board type="KONAMI-VRC-4" mapper="23">
+                <prg size="128k" />
+                <chr size="128k" />
+                <chip type="Konami VRC IV">
+                    <pin number="3" function="PRG A3" />
+                    <pin number="4" function="PRG A2" />
+                </chip>
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="828F8F1F" sha1="9DC376442DB43C7786230AEEB54D5D643A4104E6">
             <board mapper="1">
                 <prg size="128k" />
