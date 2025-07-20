@@ -8779,6 +8779,15 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="Famicom" dump="ok" crc="54C6FE75" sha1="7C30C244C36C9D1556C79458F06FC46C786028C6">
+            <board type="JALECO-JF-22-SRAM" mapper="75">
+                <prg size="256k" />
+                <chr size="128k" />
+                <wram size="8k" battery="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-PAL-B" dump="ok" crc="54E43C57" sha1="1F6072AE901F3D3530ADCD3C136178E3C7354990">
             <board type="NES-TLROM" mapper="4">
                 <prg size="256k" />
