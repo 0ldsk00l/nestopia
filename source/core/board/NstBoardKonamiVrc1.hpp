@@ -48,6 +48,8 @@ namespace Nes
 
 					void SubReset(bool);
 
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_POKE( 6000 );
 					NES_DECL_POKE( 9000 );
 					NES_DECL_POKE( E000 );
 					NES_DECL_POKE( F000 );

@@ -935,6 +935,7 @@ namespace Nes
 					{ "JALECO-JF-20",                Type::JALECO_JF20              },
 					{ "JALECO-JF-21",                Type::JALECO_JF21              },
 					{ "JALECO-JF-22",                Type::JALECO_JF22              },
+					{ "JALECO-JF-22-SRAM",           Type::JALECO_JF22_SRAM         },
 					{ "JALECO-JF-23",                Type::JALECO_JF23              },
 					{ "JALECO-JF-24",                Type::JALECO_JF24              },
 					{ "JALECO-JF-25",                Type::JALECO_JF25              },
@@ -2306,8 +2307,16 @@ namespace Nes
 
 					case 75:
 
-						name = "KONAMI VRC1 / JALECO JF-22";
-						id = Type::KONAMI_VRC1;
+						if (wram && wramBattery)
+						{
+							name = "JALECO JF-22-SRAM";
+							id = Type::JALECO_JF22_SRAM;
+						}
+						else
+						{
+							name = "KONAMI VRC1 / JALECO JF-22";
+							id = Type::KONAMI_VRC1;
+						}
 						break;
 
 					case 76:
@@ -3788,6 +3797,7 @@ namespace Nes
 					case Type::JALECO_JF20                : return new Jaleco::Jf20(c);
 					case Type::JALECO_JF21                : return new Jaleco::Jf21(c);
 					case Type::JALECO_JF22                : return new Jaleco::Jf22(c);
+					case Type::JALECO_JF22_SRAM           : return new Jaleco::Jf22(c);
 					case Type::JALECO_JF23                : return new Jaleco::Jf23(c);
 					case Type::JALECO_JF24                : return new Jaleco::Jf24(c);
 					case Type::JALECO_JF25                : return new Jaleco::Jf25(c);

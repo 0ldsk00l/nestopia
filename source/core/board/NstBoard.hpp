@@ -395,6 +395,7 @@ namespace Nes
 						JALECO_JF20                = MakeId<   75,  128,  128,  0,  0, CRM_0,  NMT_V,  1 >::ID,
 						JALECO_JF21                = MakeId<   92,  256,  128,  0,  0, CRM_0,  NMT_X,  1 >::ID,
 						JALECO_JF22                = MakeId<   75,  128,  128,  0,  0, CRM_0,  NMT_V,  2 >::ID,
+						JALECO_JF22_SRAM           = MakeId<   75,  256,  128,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						JALECO_JF23                = MakeId<   18,  256,  128,  0,  0, CRM_0,  NMT_H,  0 >::ID,
 						JALECO_JF24                = MakeId<   18,  128,  128,  0,  0, CRM_0,  NMT_H,  0 >::ID,
 						JALECO_JF25                = MakeId<   18,  128,  128,  0,  0, CRM_0,  NMT_H,  1 >::ID,

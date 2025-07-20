@@ -39,6 +39,11 @@ namespace Nes
 
 				void Vrc1::SubReset(bool)
 				{
+					if (board.HasBattery() && board.GetSavableWram())
+					{
+						Map( 0x6000U, 0x7FFFU, &Vrc1::Peek_6000 );
+						Map( 0x6000U, 0x7FFFU, &Vrc1::Poke_6000 );
+					}
 					Map( 0x8000U, 0x8FFFU, PRG_SWAP_8K_0    );
 					Map( 0x9000U, 0x9FFFU, &Vrc1::Poke_9000 );
 					Map( 0xA000U, 0xAFFFU, PRG_SWAP_8K_1    );
@@ -50,6 +55,16 @@ namespace Nes
 				#ifdef NST_MSVC_OPTIMIZE
 				#pragma optimize("", on)
 				#endif
+
+				NES_PEEK_A(Vrc1,6000)
+				{
+					return *wrk.Source().Mem(address & 0x1FFFU);
+				}
+
+				NES_POKE_AD(Vrc1,6000)
+				{
+					*wrk.Source().Mem(address & 0x1FFFU) = data;
+				}
 
 				NES_POKE_D(Vrc1,9000)
 				{
