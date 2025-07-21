@@ -10423,6 +10423,19 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="Famicom" dump="unknown" crc="64AFD592" sha1="618AC6835B96BB5EBFC57DD3B828FAFBB0E0FC7D">
+            <board type="KONAMI-VRC-4" mapper="23">
+                <prg size="128k" />
+                <chr size="128k" />
+                <wram size="8k" battery="1" />
+                <chip type="Konami VRC IV">
+                    <pin number="3" function="PRG A3" />
+                    <pin number="4" function="PRG A2" />
+                </chip>
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="64B710D2" sha1="2875F130DAC4C13FFB1D2FDB655A89AED7FEB44A">
             <board type="NES-UNROM" mapper="2">
                 <prg size="128k" />
