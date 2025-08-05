@@ -40,7 +40,11 @@
 #include "core/api/NstApiCartridge.hpp"
 #include "core/api/NstApiUser.hpp"
 #include "core/api/NstApiFds.hpp"
+#include "core/api/NstApiNsf.hpp"
 #include "version.h"
+
+// NES style upper/lower case ASCII characters
+#include "nesfont.h"
 
 #define AFILT_IMPL
 #include "afilt.h"
@@ -54,6 +58,7 @@
 #define ASPECT_NTSC 8.0 / 7.0
 #define ASPECT_PAL 7375000.0 / 5320342.5
 #define NTSC_FILTER_RATIO 2.3515625 // 602 / 256
+#define JGORANGE 0x00d45500 // Jolly Good Orange
 
 using namespace Nes::Api;
 
@@ -313,6 +318,35 @@ static void nst_sample_load(User::File& file, const char *path, bool rel) {
     }
 }
 
+void nst_osd_render(int xo, int yo, const char *text) {
+    unsigned xoffset = xo;
+    unsigned yoffset = yo;
+    unsigned set = 0;
+    uint32_t *vbuf = (uint32_t*)vidinfo.buf;
+
+    for (size_t c = 0; c < strlen(text); ++c) {
+        if (text[c] == '\n') {
+            yoffset += 8;
+            xoffset = xo;
+            continue;
+        }
+
+        if ((xoffset - xo) + 8 > vidinfo.w)
+            continue;
+
+        uint8_t *bitmap = &nesfont[text[c] << 3];
+
+        for (unsigned x = 0; x < 8; ++x) {
+            for (unsigned y = 0; y < 8; ++y) {
+                set = bitmap[y] & (1 << x);
+                unsigned offset = ((y + yoffset) * vidinfo.wmax) + x + xoffset;
+                vbuf[offset] = set ? JGORANGE : 0x00000000;
+            }
+        }
+        xoffset += 8;
+    }
+}
+
 // Nestopia Callbacks
 static void NST_CALLBACK nst_cb_event(void *userdata, User::Event event,
     const void *data) {
@@ -458,6 +492,50 @@ static bool NST_CALLBACK nst_cb_soundlock(void* udata, Sound::Output& sound) {
 }
 
 static void NST_CALLBACK nst_cb_soundunlock(void* udata, Sound::Output& sound) {
+}
+
+static bool NST_CALLBACK nst_cb_nsfctrl(void* udata, Sound::Output& sound) {
+    if (input_device[0]->button[6] == 1) {
+        Nsf(emulator).PlaySong();
+        input_device[0]->button[6] = 2;
+    }
+    else if (input_device[0]->button[7] == 1) {
+        Nsf(emulator).StopSong();
+        input_device[0]->button[7] = 2;
+    }
+    else if (input_device[0]->button[2] == 1) {
+        Nsf(emulator).SelectPrevSong();
+        input_device[0]->button[2] = 2;
+    }
+    else if (input_device[0]->button[3] == 1) {
+        Nsf(emulator).SelectNextSong();
+        input_device[0]->button[3] = 2;
+    }
+
+    return nst_cb_soundlock(udata, sound);
+}
+
+static void NST_CALLBACK nst_cb_nsf(Nsf::UserData data, Nsf::Event evt) {
+    // Clear screen
+    memset(vidinfo.buf, 0x00, vidinfo.wmax * vidinfo.hmax * sizeof(uint32_t));
+
+    Nsf nsf(emulator);
+
+    nst_osd_render(8, 16, nsf.GetName());
+    nst_osd_render(8, 32, nsf.GetCopyright());
+    nst_osd_render(8, 48, nsf.GetArtist());
+
+    std::ostringstream oss;
+    oss << nsf.GetCurrentSong() + 1 << " / " << nsf.GetNumSongs();
+    nst_osd_render(8, 64, oss.str().c_str());
+
+    nst_osd_render(8, 192,
+        "Play: A Button\nStop: B Button\nPrev: Left\nNext: Right");
+
+    if (evt == Nsf::EVENT_PLAY_SONG)
+        Sound(emulator).Mute(false);
+    else if (evt == Nsf::EVENT_STOP_SONG)
+        Sound(emulator).Mute(true);
 }
 
 // Input Poll Callbacks
@@ -1079,6 +1157,9 @@ static void nst_params_video(void) {
     bool pal = Machine(emulator).GetMode() == Machine::PAL;
     vidinfo.aspect = (aspect_w * (pal ? ASPECT_PAL : ASPECT_NTSC)) / (double)h;
 
+    if (Machine(emulator).Is(Machine::SOUND))
+        return;
+
     Video video(emulator);
     Video::RenderState renderState;
 
@@ -1244,6 +1325,7 @@ int jg_init(void) {
     User::eventCallback.Set(nst_cb_event, 0);
     User::fileIoCallback.Set(nst_cb_file, 0);
     User::logCallback.Set(nst_cb_log, 0);
+    Nsf::eventCallback.Set(nst_cb_nsf, 0);
 
     // Initialize the audio filters
     afilter[FILTER_FO_LPF] = afilt_init(FILTER_FO_LPF, 14000, SAMPLERATE);
@@ -1393,6 +1475,9 @@ int jg_game_load(void) {
         coreinfo.hints |= JG_HINT_INPUT_AUDIO;
         Fds fds(emulator);
         fds.InsertDisk(0, 0);
+    }
+    else if (machine.Is(Machine::SOUND)) {
+        Nsf(emulator).StopSong();
     }
     else { // Famicom and VS. System
         const Cartridge::Profile *profile = Cartridge(emulator).GetProfile();
@@ -1586,6 +1671,8 @@ jg_setting_t* jg_get_settings(size_t *numsettings) {
 
 void jg_setup_video(void) {
     nst_params_video();
+    if (Machine(emulator).Is(Machine::SOUND))
+        nst_cb_nsf(NULL, Nsf::EVENT_SELECT_SONG);
 }
 
 void jg_setup_audio(void) {
@@ -1596,13 +1683,15 @@ void jg_setup_audio(void) {
 
     // Set up sound parameters
     Sound sound(emulator);
+    sound.Mute(false);
     sound.SetSampleRate(audinfo.rate);
     sound.SetSpeaker(Sound::SPEAKER_MONO);
     sound.SetSpeed(Sound::DEFAULT_SPEED);
     sound.SetVolume(Sound::ALL_CHANNELS, 100);
     sound.SetGenie(settings_nst[GENIEDISTORTION].val);
 
-    Sound::Output::lockCallback.Set(nst_cb_soundlock, 0);
+    Sound::Output::lockCallback.Set(Machine(emulator).Is(Machine::SOUND) ?
+        nst_cb_nsfctrl : nst_cb_soundlock, 0);
     Sound::Output::unlockCallback.Set(nst_cb_soundunlock, 0);
 }
 
