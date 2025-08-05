@@ -283,7 +283,7 @@ void FltkUi::rom_open(Fl_Widget *w, void *data) {
     Fl_Native_File_Chooser fc;
     fc.title("Select a ROM");
     fc.type(Fl_Native_File_Chooser::BROWSE_FILE);
-    fc.filter("NES Games\t*.{nes,unf,fds,bin,zip,7z,gz,bz2,xz,xml,zst}");
+    fc.filter("NES Games\t*.{nes,unf,fds,bin,zip,7z,gz,bz2,xz,xml,zst,nsf}");
 
     run_emulation(false);
 
@@ -914,6 +914,10 @@ int main(int argc, char *argv[]) {
     // Write frontend and emulator settings
     setmgr->write(*jgm);
 
+    if (jgm) {
+        delete jgm;
+    }
+
     if (audiomgr) {
         delete audiomgr;
     }
@@ -924,10 +928,6 @@ int main(int argc, char *argv[]) {
 
     if (inputmgr) {
         delete inputmgr;
-    }
-
-    if (jgm) {
-        delete jgm;
     }
 
     if (setmgr) {
