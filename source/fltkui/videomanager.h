@@ -18,14 +18,15 @@ public:
 
     virtual void rehash(bool reset_shaders = false) = 0;
 
-    static void text_print(const char *text, int xpos, int ypos, int seconds, bool bg);
+    inline void osd_drawpix(unsigned drawoffset, unsigned set);
+    void osd_render(int xo, int yo, const char *text);
+    static void text_print(const char *text, int xpos, int ypos, int seconds);
 
     void get_pixeldata(std::vector<uint8_t>& pixeldata);
 
+    static constexpr uint32_t NstLightGreen = 0x00358570;
+
 protected:
-    static void text_draw(const char *text, int xpos, int ypos, bool bg);
-    static void text_print_time(const char *timebuf, bool drawtime);
-    static void text_match(const char *text, int *xpos, int *ypos, int strpos);
 
     SettingManager &setmgr;
 

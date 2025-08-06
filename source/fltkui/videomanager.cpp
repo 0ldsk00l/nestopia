@@ -36,7 +36,8 @@ OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "videomanager.h"
 #include "logdriver.h"
 
-#include "font.h"
+#include "nesfont.h"
+
 #include "lodepng.h"
 
 namespace {
@@ -50,8 +51,6 @@ struct osdtext {
     char textbuf[32];
     char timebuf[6];
     int drawtext;
-    bool drawtime;
-    bool bg;
 } osdtext;
 
 // Dimensions
@@ -214,12 +213,8 @@ void VideoRendererLegacy::ogl_refresh() {
 void VideoRendererLegacy::ogl_render() {
     // OSD Text
     if (osdtext.drawtext) {
-        text_draw(osdtext.textbuf, osdtext.xpos, osdtext.ypos, osdtext.bg);
+        osd_render(osdtext.xpos, osdtext.ypos, osdtext.textbuf);
         osdtext.drawtext--;
-    }
-
-    if (osdtext.drawtime) {
-        text_draw(osdtext.timebuf, 208, 218, false);
     }
 
     ogl_refresh(); // Check for changes
@@ -458,12 +453,8 @@ void VideoRendererModern::shader_setup(void) {
 void VideoRendererModern::ogl_render() {
     // OSD Text
     if (osdtext.drawtext) {
-        text_draw(osdtext.textbuf, osdtext.xpos, osdtext.ypos, osdtext.bg);
+        osd_render(osdtext.xpos, osdtext.ypos, osdtext.textbuf);
         osdtext.drawtext--;
-    }
-
-    if (osdtext.drawtime) {
-        text_draw(osdtext.timebuf, 208, 218, false);
     }
 
     ogl_refresh(); // Check for changes
@@ -570,168 +561,52 @@ void VideoRendererModern::ogl_refresh() {
         1.0/dimensions.rw, 1.0/dimensions.rh);
 }
 
-void VideoRenderer::text_print(const char *text, int xpos, int ypos, int seconds, bool bg) {
+void VideoRenderer::osd_drawpix(unsigned drawoffset, unsigned set) {
+    uint32_t *vbuf = (uint32_t*)vidinfo->buf;
+    if (set) {
+        vbuf[drawoffset] = NstLightGreen;
+    }
+    else {
+        uint8_t r = (vbuf[drawoffset] & 0xff0000) >> 18;
+        uint8_t g = (vbuf[drawoffset] & 0xff00) >> 10;
+        uint8_t b = (vbuf[drawoffset] & 0xff) >> 2;
+        vbuf[drawoffset] = (unsigned)((r << 16) | (g << 8) | b);
+    }
+}
+
+void VideoRenderer::osd_render(int xo, int yo, const char *text) {
+    unsigned xoffset = xo;
+    unsigned yoffset = yo;
+    unsigned set = 0;
+
+    for (size_t c = 0; c < strlen(text); ++c) {
+        if (text[c] == '\n') {
+            yoffset += 8;
+            xoffset = xo;
+            continue;
+        }
+
+        if ((xoffset - xo) + 8 > vidinfo->w)
+            continue;
+
+        uint8_t *bitmap = &nesfont[text[c] << 3];
+
+        for (unsigned x = 0; x < 8; ++x) {
+            for (unsigned y = 0; y < 8; ++y) {
+                set = bitmap[y] & (1 << x);
+                unsigned drawoffset = ((y + yoffset) * vidinfo->wmax) + x + xoffset;
+                osd_drawpix(drawoffset, set);
+            }
+        }
+        xoffset += 8;
+    }
+}
+
+void VideoRenderer::text_print(const char *text, int xpos, int ypos, int seconds) {
     snprintf(osdtext.textbuf, sizeof(osdtext.textbuf), "%s", text);
     osdtext.xpos = xpos;
     osdtext.ypos = ypos;
     osdtext.drawtext = seconds * 60; // FIXME frametime
-    osdtext.bg = bg;
-}
-
-void VideoRenderer::text_print_time(const char *timebuf, bool drawtime) {
-    snprintf(osdtext.timebuf, sizeof(osdtext.timebuf), "%s", timebuf);
-    osdtext.drawtime = drawtime;
-}
-
-void VideoRenderer::text_draw(const char *text, int xpos, int ypos, bool bg) {
-    // Draw text on screen
-    uint32_t w = 0xc0c0c0c0; // "White", actually Grey
-    uint32_t b = 0x00000000; // Black
-    uint32_t g = 0x00358570; // Nestopia UE Green
-    uint32_t d = 0x00255f65; // Nestopia UE Dark Green
-
-    int numchars = strlen(text);
-
-    int letterypos;
-    int letterxpos;
-    int letternum = 0;
-
-    if (bg) { // Draw background borders
-        for (int i = 0; i < numchars * 8; i++) { // Rows above and below
-            videobuf[(xpos + i) + ((ypos - 1) * vidinfo->wmax)] = g;
-            videobuf[(xpos + i) + ((ypos + 8) * vidinfo->wmax)] = g;
-        }
-        for (int i = 0; i < 8; i++) { // Columns on both sides
-            videobuf[(xpos - 1) + ((ypos + i) * vidinfo->wmax)] = g;
-            videobuf[(xpos + (numchars * 8)) + ((ypos + i) * vidinfo->wmax)] = g;
-        }
-    }
-
-    // FIXME this code is terrible
-    for (int tpos = 0; tpos < (8 * numchars); tpos+=8) {
-        text_match(text, &letterxpos, &letterypos, letternum);
-        for (int row = 0; row < 8; row++) { // Draw Rows
-            for (int col = 0; col < 8; col++) { // Draw Columns
-                switch (nesfont[row + letterypos][col + letterxpos]) {
-                    case '.':
-                        videobuf[xpos + ((ypos + row) * vidinfo->wmax) + (col + tpos)] = w;
-                        break;
-
-                    case '+':
-                        videobuf[xpos + ((ypos + row) * vidinfo->wmax) + (col + tpos)] = g;
-                        break;
-
-                    default:
-                        if (bg) { videobuf[xpos + ((ypos + row) * vidinfo->wmax) + (col + tpos)] = d; }
-                        break;
-                }
-            }
-        }
-        letternum++;
-    }
-}
-
-void VideoRenderer::text_match(const char *text, int *xpos, int *ypos, int strpos) {
-    // Match letters to draw on screen
-    switch (text[strpos]) {
-        case ' ': *xpos = 0; *ypos = 0; break;
-        case '!': *xpos = 8; *ypos = 0; break;
-        case '"': *xpos = 16; *ypos = 0; break;
-        case '#': *xpos = 24; *ypos = 0; break;
-        case '$': *xpos = 32; *ypos = 0; break;
-        case '%': *xpos = 40; *ypos = 0; break;
-        case '&': *xpos = 48; *ypos = 0; break;
-        case '\'': *xpos = 56; *ypos = 0; break;
-        case '(': *xpos = 64; *ypos = 0; break;
-        case ')': *xpos = 72; *ypos = 0; break;
-        case '*': *xpos = 80; *ypos = 0; break;
-        case '+': *xpos = 88; *ypos = 0; break;
-        case ',': *xpos = 96; *ypos = 0; break;
-        case '-': *xpos = 104; *ypos = 0; break;
-        case '.': *xpos = 112; *ypos = 0; break;
-        case '/': *xpos = 120; *ypos = 0; break;
-        case '0': *xpos = 0; *ypos = 8; break;
-        case '1': *xpos = 8; *ypos = 8; break;
-        case '2': *xpos = 16; *ypos = 8; break;
-        case '3': *xpos = 24; *ypos = 8; break;
-        case '4': *xpos = 32; *ypos = 8; break;
-        case '5': *xpos = 40; *ypos = 8; break;
-        case '6': *xpos = 48; *ypos = 8; break;
-        case '7': *xpos = 56; *ypos = 8; break;
-        case '8': *xpos = 64; *ypos = 8; break;
-        case '9': *xpos = 72; *ypos = 8; break;
-        case ':': *xpos = 80; *ypos = 8; break;
-        case ';': *xpos = 88; *ypos = 8; break;
-        case '<': *xpos = 96; *ypos = 8; break;
-        case '=': *xpos = 104; *ypos = 8; break;
-        case '>': *xpos = 112; *ypos = 8; break;
-        case '?': *xpos = 120; *ypos = 8; break;
-        case '@': *xpos = 0; *ypos = 16; break;
-        case 'A': *xpos = 8; *ypos = 16; break;
-        case 'B': *xpos = 16; *ypos = 16; break;
-        case 'C': *xpos = 24; *ypos = 16; break;
-        case 'D': *xpos = 32; *ypos = 16; break;
-        case 'E': *xpos = 40; *ypos = 16; break;
-        case 'F': *xpos = 48; *ypos = 16; break;
-        case 'G': *xpos = 56; *ypos = 16; break;
-        case 'H': *xpos = 64; *ypos = 16; break;
-        case 'I': *xpos = 72; *ypos = 16; break;
-        case 'J': *xpos = 80; *ypos = 16; break;
-        case 'K': *xpos = 88; *ypos = 16; break;
-        case 'L': *xpos = 96; *ypos = 16; break;
-        case 'M': *xpos = 104; *ypos = 16; break;
-        case 'N': *xpos = 112; *ypos = 16; break;
-        case 'O': *xpos = 120; *ypos = 16; break;
-        case 'P': *xpos = 0; *ypos = 24; break;
-        case 'Q': *xpos = 8; *ypos = 24; break;
-        case 'R': *xpos = 16; *ypos = 24; break;
-        case 'S': *xpos = 24; *ypos = 24; break;
-        case 'T': *xpos = 32; *ypos = 24; break;
-        case 'U': *xpos = 40; *ypos = 24; break;
-        case 'V': *xpos = 48; *ypos = 24; break;
-        case 'W': *xpos = 56; *ypos = 24; break;
-        case 'X': *xpos = 64; *ypos = 24; break;
-        case 'Y': *xpos = 72; *ypos = 24; break;
-        case 'Z': *xpos = 80; *ypos = 24; break;
-        case '[': *xpos = 88; *ypos = 24; break;
-        case '\\': *xpos = 96; *ypos = 24; break;
-        case ']': *xpos = 104; *ypos = 24; break;
-        case '^': *xpos = 112; *ypos = 24; break;
-        case '_': *xpos = 120; *ypos = 24; break;
-        case '`': *xpos = 0; *ypos = 32; break;
-        case 'a': *xpos = 8; *ypos = 32; break;
-        case 'b': *xpos = 16; *ypos = 32; break;
-        case 'c': *xpos = 24; *ypos = 32; break;
-        case 'd': *xpos = 32; *ypos = 32; break;
-        case 'e': *xpos = 40; *ypos = 32; break;
-        case 'f': *xpos = 48; *ypos = 32; break;
-        case 'g': *xpos = 56; *ypos = 32; break;
-        case 'h': *xpos = 64; *ypos = 32; break;
-        case 'i': *xpos = 72; *ypos = 32; break;
-        case 'j': *xpos = 80; *ypos = 32; break;
-        case 'k': *xpos = 88; *ypos = 32; break;
-        case 'l': *xpos = 96; *ypos = 32; break;
-        case 'm': *xpos = 104; *ypos = 32; break;
-        case 'n': *xpos = 112; *ypos = 32; break;
-        case 'o': *xpos = 120; *ypos = 32; break;
-        case 'p': *xpos = 0; *ypos = 40; break;
-        case 'q': *xpos = 8; *ypos = 40; break;
-        case 'r': *xpos = 16; *ypos = 40; break;
-        case 's': *xpos = 24; *ypos = 40; break;
-        case 't': *xpos = 32; *ypos = 40; break;
-        case 'u': *xpos = 40; *ypos = 40; break;
-        case 'v': *xpos = 48; *ypos = 40; break;
-        case 'w': *xpos = 56; *ypos = 40; break;
-        case 'x': *xpos = 64; *ypos = 40; break;
-        case 'y': *xpos = 72; *ypos = 40; break;
-        case 'z': *xpos = 80; *ypos = 40; break;
-        case '{': *xpos = 88; *ypos = 40; break;
-        case '|': *xpos = 96; *ypos = 40; break;
-        case '}': *xpos = 104; *ypos = 40; break;
-        case '~': *xpos = 112; *ypos = 40; break;
-        //case ' ': *xpos = 120; *ypos = 40; break; // Triangle
-        default: *xpos = 0; *ypos = 0; break;
-    }
 }
 
 void VideoRenderer::get_pixeldata(std::vector<uint8_t>& pixels) {
@@ -740,15 +615,12 @@ void VideoRenderer::get_pixeldata(std::vector<uint8_t>& pixels) {
 
     // Remove any on-screen text before grabbing pixel data
     int drawtext = osdtext.drawtext;
-    bool drawtime = osdtext.drawtime;
-    osdtext.drawtext = osdtext.drawtime = 0;
+    osdtext.drawtext = 0;
     ogl_render();
     glReadPixels(0, 0, w, h, GL_RGBA, GL_UNSIGNED_BYTE, pixels.data());
 
     // Put any text back on screen
     osdtext.drawtext = drawtext;
-    osdtext.drawtime = drawtime;
-
 
     // Flip the image
     for (int line = 0; line != h / 2; ++line) {
@@ -762,7 +634,6 @@ VideoManager::VideoManager(JGManager& jgm, SettingManager& setmgr)
         : jgm(jgm), setmgr(setmgr) {
     // Initialize video
     vidinfo = jg_get_videoinfo();
-
     videobuf = (uint32_t*)calloc(1, vidinfo->hmax * vidinfo->wmax * sizeof(uint32_t));
     vidinfo->buf = (void*)&videobuf[0];
 }

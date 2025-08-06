@@ -44,7 +44,7 @@ void LogDriver::log(LogLevel level, std::string text) {
     }
 
     if (level == LogLevel::OSD) {
-        VideoRenderer::text_print(text.c_str(), 16, 212, 2, true);
+        VideoRenderer::text_print(text.c_str(), 16, 212, 2);
     }
     else if (level == LogLevel::Info) {
         std::cout << text << std::endl;
@@ -72,7 +72,7 @@ void LogDriver::jg_log(int level, const char *fmt, ...) {
     FILE *fout = level == 1 ? stdout : stderr;
 
     if (level == JG_LOG_SCR) {
-        VideoRenderer::text_print(buffer, 16, 212, 2, true);
+        VideoRenderer::text_print(buffer, 16, 212, 2);
         return;
     }
 
@@ -80,7 +80,7 @@ void LogDriver::jg_log(int level, const char *fmt, ...) {
     fflush(fout);
 
     if (level == JG_LOG_ERR) {
-        VideoRenderer::text_print(buffer, 16, 212, 2, true);
+        VideoRenderer::text_print(buffer, 16, 212, 2);
     }
 }
 
