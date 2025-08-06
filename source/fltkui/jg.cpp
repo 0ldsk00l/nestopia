@@ -512,6 +512,19 @@ static bool NST_CALLBACK nst_cb_nsfctrl(void* udata, Sound::Output& sound) {
         input_device[0]->button[3] = 2;
     }
 
+    // Draw the visualizer background starting at line 80, ending at line 180
+    void *vbuf = ((uint32_t*)vidinfo.buf) + (Video::Output::NTSC_WIDTH * 80);
+    memset(vbuf, 0x0f, Video::Output::NTSC_WIDTH * 100 * sizeof(uint32_t));
+
+    // Draw the waveform using the latest chunk of samples
+    int16_t *abuf = (int16_t*)audinfo.buf;
+    uint32_t *visbuf = (uint32_t*)vbuf;
+    for (size_t i = 0; i < Video::Output::WIDTH; ++i) {
+        int avg = (abuf[i * 3] + abuf[i * 3 + 1] + abuf[i * 3 + 2]) / 3;
+        unsigned val = ((avg + 32767) * 100) / 65535;
+        visbuf[i + (Video::Output::NTSC_WIDTH * val)] = 0x00ffffff;
+    }
+
     return nst_cb_soundlock(udata, sound);
 }
 
