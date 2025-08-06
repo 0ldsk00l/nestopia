@@ -102,12 +102,11 @@ namespace Nes
 		Ppu::Ppu(Cpu& c)
 		:
 		cpu    (c),
-		output (NULL),
 		model  (PPU_RP2C02),
 		rgbMap (NULL),
-		yuvMap (NULL)
+		yuvMap (NULL),
+		output (screen.pixels)
 		{
-			output = Output(screen.pixels);
 			cycles.one = PPU_RP2C02_CC;
 			PowerOff();
 		}
