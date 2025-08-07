@@ -1152,7 +1152,8 @@ static void nst_params_input(void) {
 
 static void nst_params_video(void) {
     // Set up video parameters
-    int renderwidth = settings_nst[NTSC].val ?
+    int renderwidth =
+        settings_nst[NTSC].val && !Machine(emulator).Is(Machine::SOUND) ?
         Video::Output::NTSC_WIDTH : Video::Output::WIDTH;
 
     unsigned aspect_w = Video::Output::WIDTH - (settings_nst[OVERSCAN_L].val +
