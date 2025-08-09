@@ -17,6 +17,10 @@ The following platforms are supported:
 This project depends on the following libraries:
 FLTK 1.3 (1.4 preferred), SDL2, libarchive, libepoxy, libsamplerate, zlib
 
+## Cheats
+If you want the best database of cheats available in Nestopia format, make sure you check out
+[Mighty Mo's Cheat Code Pack](https://github.com/mightymo77/MightyMos-Cheat-Code-Pack/releases).
+
 ## Installing Dependencies
 Install dependencies required for building on Debian-based Linux distributions:
 ```
