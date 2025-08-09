@@ -495,20 +495,30 @@ static void NST_CALLBACK nst_cb_soundunlock(void* udata, Sound::Output& sound) {
 }
 
 static bool NST_CALLBACK nst_cb_nsfctrl(void* udata, Sound::Output& sound) {
+    Nsf nsf = Nsf(emulator);
+    unsigned numsongs = nsf.GetNumSongs();
+    unsigned cursong = nsf.GetCurrentSong();
+
     if (input_device[0]->button[6] == 1) {
-        Nsf(emulator).PlaySong();
+        nsf.PlaySong();
         input_device[0]->button[6] = 2;
     }
     else if (input_device[0]->button[7] == 1) {
-        Nsf(emulator).StopSong();
+        nsf.StopSong();
         input_device[0]->button[7] = 2;
     }
     else if (input_device[0]->button[2] == 1) {
-        Nsf(emulator).SelectPrevSong();
+        if (cursong == 0)
+            nsf.SelectSong(numsongs - 1);
+        else
+            nsf.SelectPrevSong();
         input_device[0]->button[2] = 2;
     }
     else if (input_device[0]->button[3] == 1) {
-        Nsf(emulator).SelectNextSong();
+        if (cursong == numsongs - 1)
+            nsf.SelectSong(0);
+        else
+            nsf.SelectNextSong();
         input_device[0]->button[3] = 2;
     }
 
