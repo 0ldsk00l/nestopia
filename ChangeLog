@@ -1,4 +1,17 @@
 ----------------------------------------------------------------
+1.53.2
+----------------------------------------------------------------
+Shell:
+  Additions:
+   - FLTK: NSF player with visualizer
+
+Core:
+  Additions:
+   - New database entries for Castlevania Anniversary Collection releases
+   - Support for Jaleco JF-22 boards with SRAM
+   - Fix regression in PPU constructor when using blargg's NTSC filter
+
+----------------------------------------------------------------
 1.53.1
 ----------------------------------------------------------------
 Shell:
