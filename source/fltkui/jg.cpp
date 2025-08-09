@@ -521,7 +521,7 @@ static bool NST_CALLBACK nst_cb_nsfctrl(void* udata, Sound::Output& sound) {
     uint32_t *visbuf = (uint32_t*)vbuf;
     for (size_t i = 0; i < Video::Output::WIDTH; ++i) {
         int avg = (abuf[i * 3] + abuf[i * 3 + 1] + abuf[i * 3 + 2]) / 3;
-        unsigned val = ((avg + 32767) * 100) / 65535;
+        unsigned val = 100 - (((avg + 32767) * 100) / 65535);
         visbuf[i + (Video::Output::NTSC_WIDTH * val)] = 0x00ffffff;
     }
 
