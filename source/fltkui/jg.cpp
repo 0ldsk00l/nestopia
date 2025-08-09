@@ -530,6 +530,7 @@ static bool NST_CALLBACK nst_cb_nsfctrl(void* udata, Sound::Output& sound) {
     int16_t *abuf = (int16_t*)audinfo.buf;
     uint32_t *visbuf = (uint32_t*)vbuf;
     double step = (double)audinfo.spf / Video::Output::WIDTH;
+    int lastval = 0;
 
     for (size_t i = 0; i < Video::Output::WIDTH; i++) {
         double pos = i * step;
@@ -540,8 +541,38 @@ static bool NST_CALLBACK nst_cb_nsfctrl(void* udata, Sound::Output& sound) {
             abuf[Video::Output::WIDTH] :
             abuf[idx] * (1.0 - frac) + abuf[idx + 1] * frac;
 
-        unsigned val = 100 - (((samp + 32767) * 100) / 65535);
+        int val = 100 - (((samp + 32767) * 100) / 65535);
         visbuf[i + (Video::Output::NTSC_WIDTH * val)] = 0x00ffffff;
+
+        // Connect the dots with Bresenham's line generation algorithm
+        if (i) {
+            int x0 = i - 1, x1 = i;
+            int y0 = lastval, y1 = val;
+            int dx = abs(x1 - x0), sx = x0 < x1 ? 1 : -1;
+            int dy = -abs(y1 - y0), sy = y0 < y1 ? 1 : -1;
+            int err = dx + dy;
+            int e2 = 0;
+
+            while (1) {
+                visbuf[(Video::Output::NTSC_WIDTH * y0) + x0] = 0x00ffffff;
+                if (x0 == x1 && y0 == y1)
+                    break;
+
+                e2 = 2 * err;
+
+                if (e2 >= dy) {
+                    err += dy;
+                    x0 += sx;
+                }
+
+                if (e2 <= dx) {
+                    err += dx;
+                    y0 += sy;
+                }
+            }
+        }
+
+        lastval = val;
     }
 
     return nst_cb_soundlock(udata, sound);
