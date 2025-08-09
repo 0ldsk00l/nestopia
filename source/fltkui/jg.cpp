@@ -529,9 +529,18 @@ static bool NST_CALLBACK nst_cb_nsfctrl(void* udata, Sound::Output& sound) {
     // Draw the waveform using the latest chunk of samples
     int16_t *abuf = (int16_t*)audinfo.buf;
     uint32_t *visbuf = (uint32_t*)vbuf;
-    for (size_t i = 0; i < Video::Output::WIDTH; ++i) {
-        int avg = (abuf[i * 3] + abuf[i * 3 + 1] + abuf[i * 3 + 2]) / 3;
-        unsigned val = 100 - (((avg + 32767) * 100) / 65535);
+    double step = (double)audinfo.spf / Video::Output::WIDTH;
+
+    for (size_t i = 0; i < Video::Output::WIDTH; i++) {
+        double pos = i * step;
+        unsigned idx = pos;
+        double frac = pos - idx;
+
+        int samp = idx >= audinfo.spf - 1 ?
+            abuf[Video::Output::WIDTH] :
+            abuf[idx] * (1.0 - frac) + abuf[idx + 1] * frac;
+
+        unsigned val = 100 - (((samp + 32767) * 100) / 65535);
         visbuf[i + (Video::Output::NTSC_WIDTH * val)] = 0x00ffffff;
     }
 
