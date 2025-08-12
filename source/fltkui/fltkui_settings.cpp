@@ -517,7 +517,8 @@ void InputTable::draw_cell(TableContext context, int r, int c, int x, int y, int
                 }
             }
             else if (c == 2) {
-                text = inputmgr.get_inputdef(std::string(input_info[devicenum].name) + "j", defname).c_str();
+                key = inputmgr.get_inputdef(std::string(input_info[devicenum].name) + "j", defname);
+                text = key.c_str();
             }
 
             fl_draw(text,
