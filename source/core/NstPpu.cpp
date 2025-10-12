@@ -1030,20 +1030,21 @@ namespace Nes
 
 			if ((address & 0x3F00) == 0x3F00) // Palette
 			{
+				if (fastread)
+				{
+					io.latch = fastread ? cache : io.buffer;
+				}
 				io.latch = (io.latch & 0xC0) | (palette.ram[address & 0x1F] & Coloring());
 				mask = 0x3F;
 			}
 			else // Non-Palette
 			{
-				io.latch = io.buffer;
+				io.latch = fastread ? cache : io.buffer;
 			}
 
 			UpdateDecay(mask);
 
 			io.buffer = (address >= 0x2000 ? nmt.FetchName( address ) : chr.FetchPattern( address ));
-
-			if (fastread)
-				io.latch = cache;
 
 			return io.latch;
 		}
