@@ -842,7 +842,7 @@ namespace Nes
 			Cycle curCyc = cpu.GetCycles();
 			for (uint i = 0; i < 5; ++i)
 			{
-				if ((curCyc - decay.timestamp[i]) < 24576)
+				if ((curCyc - decay.timestamp[i]) < 6144)
 					mask |= (1 << i);
 			}
 
@@ -1056,7 +1056,7 @@ namespace Nes
 
 		NES_PEEK(Ppu,2xxx)
 		{
-			if ((cpu.GetCycles() - decay.timestamp[0]) > 24576)
+			if ((cpu.GetCycles() - decay.timestamp[0]) > 6144)
 				return 0;
 
 			return io.latch;
