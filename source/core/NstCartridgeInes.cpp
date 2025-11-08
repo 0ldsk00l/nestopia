@@ -822,12 +822,32 @@ namespace Nes
 
 			if (setup.version)
 			{
-				setup.prgRom |= uint(header[9]) << 8 & 0xF00;
-				setup.chrRom |= uint(header[9]) << 4 & 0xF00;
-			}
+				if ((header[9] & 0x0F) == 0x0F)
+				{
+					uint mult = ((header[4] & 0x03) << 1) + 1;
+					uint exp = header[4] >> 2;
+					setup.prgRom = mult << exp;
+				}
+				else {
+					setup.prgRom |= uint(header[9]) << 8 & 0xF00;
+					setup.prgRom *= SIZE_16K;
+				}
 
-			setup.prgRom *= SIZE_16K;
-			setup.chrRom *= SIZE_8K;
+				if ((header[9] & 0xF0) == 0xF0)
+				{
+					uint mult = ((header[5] & 0x03) << 1) + 1;
+					uint exp = header[5] >> 2;
+					setup.chrRom = mult << exp;
+				}
+				else {
+					setup.chrRom |= uint(header[9]) << 4 & 0xF00;
+					setup.chrRom *= SIZE_8K;
+				}
+			}
+			else {
+				setup.prgRom *= SIZE_16K;
+				setup.chrRom *= SIZE_8K;
+			}
 
 			setup.trainer = bool(header[6] & 0x4U);
 
