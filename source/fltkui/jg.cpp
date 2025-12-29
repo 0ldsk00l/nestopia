@@ -1431,7 +1431,7 @@ int jg_game_load(void) {
     std::istringstream file(rombuf);
 
     // Check if it's an FDS game
-    if (strstr(gameinfo.fname, ".fds") || strstr(gameinfo.fname, ".FDS")) {
+    if (rombuf.substr(0, 3) == "FDS" && rombuf[3] == 0x1a) {
         Fds fds(emulator);
 
         // Load the FDS BIOS as an auxiliary file if one was specified
