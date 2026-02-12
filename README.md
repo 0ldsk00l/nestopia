@@ -40,17 +40,17 @@ make install
 ```
 
 ### macOS Build
+Make sure that [brew](https://brew.sh/) is installed
 ```
 # Install dependencies
 brew install autoconf automake autoconf-archive pkg-config libarchive libepoxy libsamplerate fltk sdl2
 
-# Build
-autoreconf -vif
-
-# Set pkg-config to find Homebrew-installed libraries (works on both Intel and Apple Silicon Macs)
+# Set pkg-config to find Homebrew-installed libraries
 export PKG_CONFIG_PATH="$(brew --prefix)/lib/pkgconfig:$(brew --prefix libarchive)/lib/pkgconfig:$PKG_CONFIG_PATH"
 
-c[--enable-doc]
+# Build
+autoreconf -vif
+./configure [--enable-doc]
 make [install]
 ```
 
