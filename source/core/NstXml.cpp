@@ -710,6 +710,7 @@ namespace Nes
 			if (*string)
 			{
 				wchar_t* endptr = NULL;
+				errno = 0;
 				value = std::wcstol( string, end ? &endptr : NULL, base );
 
 				if (end)
@@ -731,6 +732,7 @@ namespace Nes
 			if (*string)
 			{
 				wchar_t* endptr = NULL;
+				errno = 0;
 				value = std::wcstoul( string, end ? &endptr : NULL, base );
 
 				if (end)
