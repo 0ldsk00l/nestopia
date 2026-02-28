@@ -183,7 +183,8 @@ namespace Nes
 			NST_ASSERT( bool(mem) == bool(size) );
 			NST_VERIFY( value <= 0xFF );
 
-			std::memset( mem, value & 0xFF, size );
+			if (mem)
+				std::memset( mem, value & 0xFF, size );
 		}
 
 		void Ram::Mirror(dword block)
