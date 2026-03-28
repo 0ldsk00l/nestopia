@@ -298,7 +298,7 @@ namespace Nes
 
 						int xm1 = x - 1, xm2 = x - 2;
 						if (xm1 < 0) xm1 = 0;
-						if (xm2 < 0) xm1 = 0;
+						if (xm2 < 0) xm2 = 0;
 						int x1 = x + 1, x2 = x + 2;
 						if (x1 >= WIDTH) x1 = WIDTH - 1;
 						if (x2 >= WIDTH) x2 = WIDTH - 1;
@@ -435,7 +435,7 @@ namespace Nes
 
 						int xm1 = x - 1, xm2 = x - 2;
 						if (xm1 < 0) xm1 = 0;
-						if (xm2 < 0) xm1 = 0;
+						if (xm2 < 0) xm2 = 0;
 						int x1 = x + 1, x2 = x + 2;
 						if (x1 >= WIDTH) x1 = WIDTH - 1;
 						if (x2 >= WIDTH) x2 = WIDTH - 1;
@@ -567,7 +567,7 @@ namespace Nes
 						//Clamps x coords
 						int xm1 = x - 1, xm2 = x - 2;
 						if (xm1 < 0) xm1 = 0;
-						if (xm2 < 0) xm1 = 0;
+						if (xm2 < 0) xm2 = 0;
 						int x1 = x + 1, x2 = x + 2;
 						if (x1 >= WIDTH) x1 = WIDTH - 1;
 						if (x2 >= WIDTH) x2 = WIDTH - 1;
