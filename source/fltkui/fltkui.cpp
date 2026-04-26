@@ -125,7 +125,9 @@ Fl_Menu_Item menutable[] = {
             {0},
         {"Open Palette...", 0, FltkUi::palette_open, 0, FL_MENU_DIVIDER},
         {"Screenshot...", 0, FltkUi::screenshot_save, 0, FL_MENU_DIVIDER|FL_MENU_INACTIVE},
-        #ifndef __APPLE__
+        #ifdef __APPLE__
+        {"&Quit", FL_COMMAND + 'q', FltkUi::quit, 0, 0},
+        #else
         {"&Quit", FL_ALT + 'q', FltkUi::quit, 0, 0},
         #endif
         {0}, // End File
