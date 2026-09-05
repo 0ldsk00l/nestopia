@@ -1032,7 +1032,7 @@ namespace Nes
 			{
 				if (fastread)
 				{
-					io.latch = fastread ? cache : io.buffer;
+					io.latch = cache;
 				}
 				io.latch = (io.latch & 0xC0) | (palette.ram[address & 0x1F] & Coloring());
 				mask = 0x3F;
