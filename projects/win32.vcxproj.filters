@@ -822,12 +822,6 @@
     <None Include="..\source\win32\resource\nsf_j.ico">
       <Filter>Resource\Icons</Filter>
     </None>
-    <None Include="..\source\win32\resource\nsp.ico">
-      <Filter>Resource\Icons</Filter>
-    </None>
-    <None Include="..\source\win32\resource\nsp_j.ico">
-      <Filter>Resource\Icons</Filter>
-    </None>
     <None Include="..\source\win32\resource\unf.ico">
       <Filter>Resource\Icons</Filter>
     </None>
@@ -856,17 +850,5 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <CustomBuild Include="..\dll\7zxa.dll">
-      <Filter>Resource\Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\dll\kailleraclient.dll">
-      <Filter>Resource\Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\doc\releasenotes.txt">
-      <Filter>Resource\Files</Filter>
-    </CustomBuild>
-    <CustomBuild Include="..\dll\unrar.dll">
-      <Filter>Resource\Files</Filter>
-    </CustomBuild>
   </ItemGroup>
 </Project>
