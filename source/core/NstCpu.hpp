@@ -136,7 +136,7 @@ namespace Nes
 			inline void ExecuteOp();
 			inline uint FetchPc8();
 			inline uint FetchPc16();
-			inline uint FetchZpg16(uint) const;
+			inline uint FetchZpg16(uint);
 
 			inline void Push8(uint);
 			NST_FORCE_INLINE void Push16(uint);
@@ -150,6 +150,8 @@ namespace Nes
 			uint AbsReg_R  (uint);
 			uint AbsReg_RW (uint&,uint);
 			NST_FORCE_INLINE uint AbsReg_W (uint);
+
+			NST_FORCE_INLINE void ImpliedDummyRead();
 
 			template<bool STATE>
 			NST_FORCE_INLINE void Branch(uint);
@@ -259,7 +261,7 @@ namespace Nes
 			NST_SINGLE_CALL void Las (uint);
 			NST_SINGLE_CALL void Lxa (uint);
 			NST_SINGLE_CALL void Sbx (uint);
-			NST_SINGLE_CALL uint Shs (uint);
+			NST_SINGLE_CALL void Shs (uint);
 			NST_SINGLE_CALL void Shx (uint);
 			NST_SINGLE_CALL void Shy (uint);
 
@@ -270,11 +272,12 @@ namespace Nes
 			NST_NO_INLINE uint Rla (uint);
 			NST_NO_INLINE uint Rra (uint);
 			NST_NO_INLINE uint Sax ();
-			NST_NO_INLINE uint Sha (uint);
+			NST_SINGLE_CALL bool ShDummyRead(uint);
+			NST_NO_INLINE void Sha (uint,uint);
 			NST_NO_INLINE uint Slo (uint);
 			NST_NO_INLINE uint Sre (uint);
 
-			void Dop ();
+			void Dop (uint);
 			void Top (uint);
 
 			NST_SINGLE_CALL void Brk ();
@@ -393,6 +396,7 @@ namespace Nes
 
 				Cycle nmiClock;
 				Cycle irqClock;
+				Cycle pollLimit;
 				uint low;
 			};
 
@@ -490,6 +494,11 @@ namespace Nes
 
 			bool dmaOam;
 			uint dmaOamCycle;
+			uint busData;
+			uint busDataInternal;
+
+			uint PeekBus16(uint);
+			void PokeBus(uint,uint);
 
 			static dword logged;
 			static void (Cpu::*const opcodes[0x100])();
@@ -508,11 +517,65 @@ namespace Nes
 				return cycles.count;
 			}
 
+			/* The APU registers only drive the bus while the 6502 address
+			 * bus is inside $4000-$401F. While a DMA has the CPU halted, the
+			 * CPU sits re-reading the address it was halted on, which is the
+			 * next opcode fetch, so pc is that address bus.
+			*/
+			bool AreApuRegsActive() const
+			{
+				return (pc & 0xFFE0) == 0x4000;
+			}
+
+			/* cycles.count is rebased by the frame length every frame, so
+			 * it cannot measure anything longer than a frame. ticks
+			 * accumulates the frames already subtracted, so this is a
+			 * monotonic master-clock counter.
+			*/
+			qaword GetMonotonicCycles() const
+			{
+				return ticks + cycles.count;
+			}
+
+			uint GetBusData() const
+			{
+				return busData;
+			}
+
+			// The internal bus follows every CPU access including a $4015 read,
+			// which the external bus does not; nothing a DMA fetches reaches it.
+			uint GetInternalBusData() const
+			{
+				return busDataInternal;
+			}
+
+			void SetBusDataAll(uint data)
+			{
+				busData = busDataInternal = data;
+			}
+
+			void SetBusData(uint data)
+			{
+				busData = data & 0xFF;
+			}
+
+			// Emulation-time read that drives the external data bus.
+			// ($4015 reads use the CPU's internal bus and leave the external bus unchanged.)
+			uint PeekBus(uint address);
+			inline uint PeekRam(uint);
+			inline void PokeRam(uint,uint);
+
 			void SetOamDMA(bool dma)
 			{
-				if (dma && !dmaOam && IsOddCycle())
+				if (dma && !dmaOam)
 				{
-					StealCycles( GetClock() );
+					/* OAM DMA reads must land on get cycles: add the alignment
+					 * cycle when the transfer would start misphased. Parity is
+					 * taken from the DMC clock grid, keeping OAM and DMC DMA on
+					 * one consistent get/put pattern.
+					*/
+					if (!apu.IsDmaPutCycle( cycles.count ))
+						StealCycles( GetClock() );
 				}
 				dmaOam = dma;
 			}
@@ -578,6 +641,19 @@ namespace Nes
 				cycles.count += count;
 			}
 
+			/* The CPU is about to be halted for a sprite DMA. The transfer is
+			 * started by the write cycle of the instruction, which is after that
+			 * instruction has already polled for interrupts - so the hundreds of
+			 * cycles that follow must not extend the window. An interrupt
+			 * asserted during the transfer is not taken when it ends; it waits
+			 * for the end of the instruction after.
+			*/
+			void HaltForDma()
+			{
+				if (interrupt.pollLimit == CYCLE_MAX)
+					interrupt.pollLimit = cycles.count + cycles.clock[0];
+			}
+
 			Cycle GetFrameCycles() const
 			{
 				return cycles.frame;
@@ -587,6 +663,11 @@ namespace Nes
 			{
 				cycles.frame = count;
 				cycles.NextRound( count );
+			}
+
+			void WakeAt(Cycle clock)
+			{
+				cycles.NextRound( clock );
 			}
 
 			Ram::Ref GetRam()

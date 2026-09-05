@@ -28,6 +28,13 @@
 #include "api/NstApiSound.hpp"
 #include "NstSoundRenderer.inl"
 
+// CPU cycles between a write to $4015 that enables the DMC and the enable
+// reaching the DMA unit. The ROM states this outright in its own test:
+// "The Delta Modulation Channel will be enabled in 3 CPU cycles."
+#ifndef DMC_ENABLE_DELAY
+#define DMC_ENABLE_DELAY 3
+#endif
+
 namespace Nes
 {
 	namespace Core
@@ -409,12 +416,20 @@ namespace Nes
 			Cycle rate; uint fixed;
 			CalculateOscillatorClock( rate, fixed );
 
-			square[0].UpdateSettings ( settings.muted ? 0 : settings.volumes[ Channel::APU_SQUARE1  ], rate, fixed );
-			square[1].UpdateSettings ( settings.muted ? 0 : settings.volumes[ Channel::APU_SQUARE2  ], rate, fixed );
-			triangle.UpdateSettings  ( settings.muted ? 0 : settings.volumes[ Channel::APU_TRIANGLE ], rate, fixed );
-			noise.UpdateSettings     ( settings.muted ? 0 : settings.volumes[ Channel::APU_NOISE    ], rate, fixed );
-			dmc.UpdateSettings       ( settings.muted ? 0 : settings.volumes[ Channel::APU_DPCM     ] );
+			/* The DAC index is a sum of channel levels, so a channel has to
+			 * contribute a whole number of them. Volume is mute or nothing.
+			*/
+			#define NST_APU_VOL(c_) ((settings.muted || !settings.volumes[ Channel::c_ ]) ? 0U : uint(Channel::DEFAULT_VOLUME))
 
+			square[0].UpdateSettings ( NST_APU_VOL( APU_SQUARE1  ), rate, fixed );
+			square[1].UpdateSettings ( NST_APU_VOL( APU_SQUARE2  ), rate, fixed );
+			triangle.UpdateSettings  ( NST_APU_VOL( APU_TRIANGLE ), rate, fixed );
+			noise.UpdateSettings     ( NST_APU_VOL( APU_NOISE    ), rate, fixed );
+			dmc.UpdateSettings       ( NST_APU_VOL( APU_DPCM     ) );
+
+			#undef NST_APU_VOL
+
+			UpdateMixLut();
 			UpdateVolumes();
 		}
 
@@ -521,6 +536,23 @@ namespace Nes
 				state.Begin( AsciiId<'E','X','T'>::V ).Write16( clock ).End();
 			}
 
+			{
+				/* Both are rebased by EndFrame, so both can outlive the frame
+				 * they were opened in and have to be carried.
+				*/
+				const byte data[6] =
+				{
+					static_cast<byte>(cycles.frameIrqHold & 0xFF),
+					static_cast<byte>(cycles.frameIrqHold >> 8 & 0xFF),
+					static_cast<byte>(cycles.frameIrqHold >> 16 & 0xFF),
+					static_cast<byte>(cycles.frameIrqPhantom & 0xFF),
+					static_cast<byte>(cycles.frameIrqPhantom >> 8 & 0xFF),
+					static_cast<byte>(cycles.frameIrqPhantom >> 16 & 0xFF)
+				};
+
+				state.Begin( AsciiId<'F','I','W'>::V ).Write( data ).End();
+			}
+
 			square[0].SaveState( state, AsciiId<'S','Q','0'>::V );
 			square[1].SaveState( state, AsciiId<'S','Q','1'>::V );
 			triangle.SaveState( state, AsciiId<'T','R','I'>::V );
@@ -546,6 +578,9 @@ namespace Nes
 
 		void Apu::LoadState(State::Loader& state)
 		{
+			cycles.frameIrqHold = 0;
+			cycles.frameIrqPhantom = 0;
+
 			cycles.frameIrqClock = Cpu::CYCLE_MAX;
 			cycles.frameIrqRepeat = 0;
 
@@ -580,6 +615,18 @@ namespace Nes
 						);
 
 						cycles.frameIrqRepeat = (data[2] & 0x3) % 3;
+						break;
+					}
+
+					case AsciiId<'F','I','W'>::V:
+					{
+						State::Loader::Data<6> data( state );
+
+						cycles.frameIrqHold =
+							data[0] | data[1] << 8 | dword(data[2]) << 16;
+						cycles.frameIrqPhantom =
+							data[3] | data[4] << 8 | dword(data[5]) << 16;
+
 						break;
 					}
 
@@ -862,6 +909,24 @@ namespace Nes
 
 			Cycle frame = cpu.GetFrameCycles();
 
+			/* The DMC halt is dispatched two cycles after the output clock,
+			 * so a clock due in the last cycles of a frame is still pending
+			 * here. Cycle is unsigned and the rebase below subtracts the
+			 * frame length from it, so a pending clock wraps to just under
+			 * 2^32 - and the invariant asserted below (NST_ASSUME in release
+			 * builds) states that cannot happen. Retire it now instead: the
+			 * CPU has stopped for the frame, so there is no in-flight read
+			 * left for the DMA to collide with.
+			*/
+			while (cycles.dmcClock < frame)
+				ClockDmc( cycles.dmcClock + cpu.GetClock(2) );
+
+			/* Same for a load scheduled in the last cycles of a frame:
+			 * RebaseFrame clamps at zero, which would silently discard it.
+			*/
+			if (dmc.HasPendingLoad() && dmc.GetLoadClock() < frame)
+				ClockPendingLoad( dmc.GetLoadClock() + cpu.GetClock(2), 0 );
+
 			NST_ASSERT
 			(
 				cycles.dmcClock >= frame &&
@@ -869,6 +934,9 @@ namespace Nes
 			);
 
 			cycles.dmcClock -= frame;
+			dmc.RebaseFrame( frame );
+			cycles.frameIrqHold -= NST_MIN( cycles.frameIrqHold, frame );
+			cycles.frameIrqPhantom -= NST_MIN( cycles.frameIrqPhantom, frame );
 
 			if (cycles.frameIrqClock != Cpu::CYCLE_MAX)
 				cycles.frameIrqClock -= frame;
@@ -908,6 +976,8 @@ namespace Nes
 			rateCounter = 0;
 			frameDivider = 0;
 			frameIrqClock = Cpu::CYCLE_MAX;
+			frameIrqHold = 0;
+			frameIrqPhantom = 0;
 			frameIrqRepeat = 0;
 			dmcClock = Dmc::GetResetFrequency( model );
 			frameCounter = frameClocks[model][0] * fixed;
@@ -1574,64 +1644,49 @@ namespace Nes
 			return lengthCounter.GetCount();
 		}
 
-		dword Apu::Square::GetSample()
+		dword Apu::Square::GetLevel() const
 		{
-			NST_VERIFY( bool(active) == CanOutput() && timer >= 0 );
-
-			dword sum = timer;
-			timer -= idword(rate);
-
-			if (active)
+			static const byte forms[4][8] =
 			{
-				static const byte forms[4][8] =
-				{
-					{0x1F,0x00,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F},
-					{0x1F,0x00,0x00,0x1F,0x1F,0x1F,0x1F,0x1F},
-					{0x1F,0x00,0x00,0x00,0x00,0x1F,0x1F,0x1F},
-					{0x00,0x1F,0x1F,0x00,0x00,0x00,0x00,0x00}
-				};
+				{0x1F,0x00,0x1F,0x1F,0x1F,0x1F,0x1F,0x1F},
+				{0x1F,0x00,0x00,0x1F,0x1F,0x1F,0x1F,0x1F},
+				{0x1F,0x00,0x00,0x00,0x00,0x1F,0x1F,0x1F},
+				{0x00,0x1F,0x1F,0x00,0x00,0x00,0x00,0x00}
+			};
 
-				const byte* const NST_RESTRICT form = forms[duty];
+			return active ? (envelope.Volume() / Channel::OUTPUT_MUL) >> forms[duty][step] : 0;
+		}
 
-				if (timer >= 0)
+		dword Apu::Square::Remaining() const
+		{
+			/* A silenced square sits at zero whatever its phase is doing, so
+			 * the walk never has to stop for it. Advance still runs the phase.
+			*/
+			return active ? dword(timer) : ~dword(0);
+		}
+
+		void Apu::Square::Advance(dword span)
+		{
+			timer -= idword(span);
+
+			if (timer <= 0)
+			{
+				if (active)
 				{
-					amp = envelope.Volume() >> form[step];
+					do
+					{
+						step = (step + 1) & 0x7;
+						timer += idword(frequency);
+					}
+					while (timer <= 0);
 				}
 				else
 				{
-					sum >>= form[step];
-
-					do
-					{
-						sum += NST_MIN(-timer,idword(frequency)) >> form[step = (step + 1) & 0x7];
-						timer += idword(frequency);
-					}
-					while (timer < 0);
-
-					NST_VERIFY( !envelope.Volume() || sum <= 0xFFFFFFFF / envelope.Volume() + rate/2 );
-					amp = (sum * envelope.Volume() + rate/2) / rate;
-				}
-			}
-			else
-			{
-				if (timer < 0)
-				{
-					const uint count = (-timer + frequency - 1) / frequency;
+					const dword count = dword(-timer) / frequency + 1;
 					step = (step + count) & 0x7;
 					timer += idword(count * frequency);
 				}
-
-				if (amp < Channel::OUTPUT_DECAY)
-				{
-					return 0;
-				}
-				else
-				{
-					amp -= Channel::OUTPUT_DECAY;
-				}
 			}
-
-			return amp;
 		}
 
 		#ifdef NST_MSVC_OPTIMIZE
@@ -1812,11 +1867,27 @@ namespace Nes
 				active = false;
 		}
 
-		NST_SINGLE_CALL dword Apu::Triangle::GetSample()
+		NST_SINGLE_CALL dword Apu::Triangle::GetLevel() const
 		{
-			NST_VERIFY( bool(active) == CanOutput() && timer >= 0 );
+			/* amp is the last level the sequencer clocked out, and zero until
+			 * it has clocked at all. Advance is the only thing that sets it.
+			*/
+			return outputVolume ? amp : 0;
+		}
 
-			if (active)
+		NST_SINGLE_CALL dword Apu::Triangle::Remaining() const
+		{
+			return active ? dword(timer) : ~dword(0);
+		}
+
+		NST_SINGLE_CALL void Apu::Triangle::Advance(dword span)
+		{
+			if (!active)
+				return;
+
+			timer -= idword(span);
+
+			while (timer <= 0)
 			{
 				static const byte pyramid[32] =
 				{
@@ -1826,39 +1897,10 @@ namespace Nes
 					0x7,0x6,0x5,0x4,0x3,0x2,0x1,0x0
 				};
 
-				dword sum = timer;
-				timer -= idword(rate);
-
-				if (timer >= 0)
-				{
-					amp = pyramid[step] * outputVolume * 3;
-				}
-				else
-				{
-					sum *= pyramid[step];
-
-					do
-					{
-						sum += NST_MIN(-timer,idword(frequency)) * pyramid[step = (step + 1) & 0x1F];
-						timer += idword(frequency);
-					}
-					while (timer < 0);
-
-					NST_VERIFY( !outputVolume || sum <= 0xFFFFFFFF / outputVolume + rate/2 );
-					amp = (sum * outputVolume + rate/2) / rate * 3;
-				}
+				step = (step + 1) & 0x1F;
+				amp = pyramid[step];
+				timer += idword(frequency);
 			}
-			/*else if (amp < Channel::OUTPUT_DECAY)
-			{
-				return 0;
-			}
-			else
-			{
-				amp -= Channel::OUTPUT_DECAY;
-				step &= STEP_CHECK;
-			}*/
-
-			return amp;
 		}
 
 		inline uint Apu::Triangle::GetLengthCounter() const
@@ -2024,47 +2066,27 @@ namespace Nes
 				active = false;
 		}
 
-		NST_SINGLE_CALL dword Apu::Noise::GetSample()
+		NST_SINGLE_CALL dword Apu::Noise::GetLevel() const
 		{
-			NST_VERIFY( bool(active) == CanOutput() && timer >= 0 );
+			return (active && !(bits & 0x4000)) ? envelope.Volume() / Channel::OUTPUT_MUL : 0;
+		}
 
-			dword sum = timer;
-			timer -= idword(rate);
+		NST_SINGLE_CALL dword Apu::Noise::Remaining() const
+		{
+			return active ? dword(timer) : ~dword(0);
+		}
 
-			if (active)
-			{
-				if (timer >= 0)
-				{
-					if (!(bits & 0x4000))
-						return envelope.Volume() * 2;
-				}
-				else
-				{
-					if (bits & 0x4000)
-						sum = 0;
+		NST_SINGLE_CALL void Apu::Noise::Advance(dword span)
+		{
+			/* Every period feeds the shift register, so no bulk skip here.
+			*/
+			timer -= idword(span);
 
-					do
-					{
-						bits = (bits << 1) | ((bits >> 14 ^ bits >> shifter) & 0x1);
-
-						if (!(bits & 0x4000))
-							sum += NST_MIN(-timer,idword(frequency));
-
-						timer += idword(frequency);
-					}
-					while (timer < 0);
-
-					NST_VERIFY( !envelope.Volume() || sum <= 0xFFFFFFFF / envelope.Volume() + rate/2 );
-					return (sum * envelope.Volume() + rate/2) / rate * 2;
-				}
-			}
-			else while (timer < 0)
+			while (timer <= 0)
 			{
 				bits = (bits << 1) | ((bits >> 14 ^ bits >> shifter) & 0x1);
 				timer += idword(frequency);
 			}
-
-			return 0;
 		}
 
 		inline uint Apu::Noise::GetLengthCounter() const
@@ -2084,6 +2106,8 @@ namespace Nes
 
 		void Apu::Dmc::Reset(const CpuModel model)
 		{
+			loadClock = 0;
+			enableClock = 0;
 			curSample          = 0;
 			linSample          = 0;
 			frequency          = GetResetFrequency( model );
@@ -2091,6 +2115,8 @@ namespace Nes
 			regs.lengthCounter = 1;
 			regs.address       = 0xC000;
 			out.active         = false;
+			lastLoadFetch      = 0;
+			abortClock         = 0;
 			out.shifter        = 0;
 			out.dac            = 0;
 			out.buffer         = 0x00;
@@ -2170,6 +2196,54 @@ namespace Nes
 			}
 
 			{
+				/* Pending DMA scheduling state, as small biased cycle deltas
+				 * from the current CPU cycle. A zero byte encodes none/inert;
+				 * builds without this chunk skip it.
+				*/
+				byte data[3] = {0,0,0};
+
+				const Cycle now = cpu.GetCycles();
+				const long bias = 8;
+
+				if (loadClock)
+				{
+					const long d = ((long) loadClock - (long) now) / (long) cpu.GetClock() + bias;
+					if (d >= 1 && d <= 255) data[0] = static_cast<byte>(d);
+				}
+
+				if (abortClock)
+				{
+					const long d = ((long) abortClock - (long) now) / (long) cpu.GetClock() + bias;
+					if (d >= 1 && d <= 255) data[1] = static_cast<byte>(d);
+				}
+
+				if (lastLoadFetch)
+				{
+					const long d = ((long) lastLoadFetch - (long) now) / (long) cpu.GetClock() + bias;
+					if (d >= 1 && d <= 255 && d <= bias + 8) data[2] = static_cast<byte>(d);
+				}
+
+				state.Begin( AsciiId<'D','M','A'>::V ).Write( data ).End();
+			}
+
+			{
+				/* The $4015 enable in flight, same encoding. Its own chunk rather
+				 * than a fourth byte on DMA, so a state written before this still
+				 * parses and one written after loads in a build without it.
+				*/
+				byte data[1] = {0};
+
+				if (enableClock)
+				{
+					const long bias = 8;
+					const long d = ((long) enableClock - (long) cpu.GetCycles()) / (long) cpu.GetClock() + bias;
+					if (d >= 1 && d <= 255) data[0] = static_cast<byte>(d);
+				}
+
+				state.Begin( AsciiId<'D','M','E'>::V ).Write( data ).End();
+			}
+
+			{
 				const byte data[4] =
 				{
 					static_cast<byte>(linSample & 0xFFU),
@@ -2186,10 +2260,45 @@ namespace Nes
 
 		void Apu::Dmc::LoadState(State::Loader& state,const Cpu& cpu,const CpuModel model,Cycle& dmcClock)
 		{
+			// Defaults for states without the DMA chunk: nothing pending.
+			loadClock = 0;
+			lastLoadFetch = 0;
+			abortClock = 0;
+			enableClock = 0;
+
 			while (const dword chunk = state.Begin())
 			{
 				switch (chunk)
 				{
+					case AsciiId<'D','M','A'>::V:
+					{
+						State::Loader::Data<3> data( state );
+
+						const Cycle now = cpu.GetCycles();
+						const long bias = 8;
+
+						if (data[0])
+							loadClock = now + ((long) data[0] - bias) * (long) cpu.GetClock();
+
+						if (data[1])
+							abortClock = now + ((long) data[1] - bias) * (long) cpu.GetClock();
+
+						if (data[2])
+							lastLoadFetch = now + ((long) data[2] - bias) * (long) cpu.GetClock();
+
+						break;
+					}
+
+					case AsciiId<'D','M','E'>::V:
+					{
+						State::Loader::Data<1> data( state );
+
+						if (data[0])
+							enableClock = cpu.GetCycles() + ((long) data[0] - 8) * (long) cpu.GetClock();
+
+						break;
+					}
+
 					case AsciiId<'R','E','G'>::V:
 					{
 						State::Loader::Data<12> data( state );
@@ -2238,50 +2347,142 @@ namespace Nes
 		#pragma optimize("", on)
 		#endif
 
-		NST_SINGLE_CALL void Apu::Dmc::Disable(const bool disable,Cpu& cpu)
+		void Apu::Dmc::RebaseFrame(const Cycle frame)
+		{
+			// Pending DMA scheduling cycles live in the same timebase as the
+			// DMC clock and must survive the end-of-frame rebase with it.
+			if (loadClock)
+				loadClock -= NST_MIN( loadClock, frame );
+
+			if (abortClock)
+				abortClock -= NST_MIN( abortClock, frame );
+
+			if (enableClock)
+				enableClock -= NST_MIN( enableClock, frame );
+
+			lastLoadFetch -= NST_MIN( lastLoadFetch, frame );
+		}
+
+		NST_SINGLE_CALL void Apu::Dmc::Disable(const bool disable,Cpu& cpu,const Cycle nextDmcClock)
 		{
 			cpu.ClearIRQ( Cpu::IRQ_DMC );
 
 			if (disable)
 			{
+				/* Explicit DMA abort: a DMA committed by the cycle after this
+				 * write (clock passed or load scheduled) has already asserted
+				 * RDY, and releasing it still costs the CPU one cycle.
+				*/
+				bool committed;
+
+				if (loadClock)
+					committed = (loadClock <= cpu.GetCycles() + cpu.GetClock());
+				else
+					committed = (out.shifter == 0 && dma.buffered && dma.lengthCounter && nextDmcClock <= cpu.GetCycles() + cpu.GetClock());
+
+				if (committed)
+					cpu.StealCycles( cpu.GetClock() );
+
 				dma.lengthCounter = 0;
+				loadClock = 0;
+				abortClock = 0;
 			}
 			else if (!dma.lengthCounter)
 			{
 				dma.lengthCounter = regs.lengthCounter;
 				dma.address = regs.address;
 
+				/* The channel is not enabled on the cycle of the write. Until it
+				 * is, a transfer the output timer brings due is neither dropped
+				 * nor run on schedule: it re-attempts every cycle and starts on
+				 * the first one where the channel is enabled.
+				*/
+				enableClock = cpu.GetCycles() + cpu.GetClock( DMC_ENABLE_DELAY );
+
 				if (!dma.buffered)
-					DoDMA( cpu, cpu.GetCycles() );
+					ScheduleLoadDMA( cpu, nextDmcClock );
 			}
 		}
 
-		NST_SINGLE_CALL dword Apu::Dmc::GetSample()
+		void Apu::Dmc::ScheduleLoadDMA(Cpu& cpu,const Cycle putAnchor)
 		{
-			if (curSample != linSample)
+			/* "The first, 'load' DMC DMA after the $4015 write attempts to
+			 * halt on the get cycle during the 2nd following APU cycle."
+			 * (nesdev.org/wiki/DMA)
+			 *
+			 * An APU cycle is a [get,put] pair, so the halt target is pinned
+			 * to the get grid and depends only on which half of its APU cycle
+			 * the write landed in:
+			 *
+			 *   write on a get cycle -> halt 4 CPU cycles later
+			 *   write on a put cycle -> halt 3 CPU cycles later
+			 *
+			 * The DMC clock supplies the grid. It is locked to the put phase
+			 * (a reload halts at clock + 2, on a put, per the same source),
+			 * so a write sharing its parity is itself on a put cycle - which
+			 * is what IsDmaPutCycle reports. DoDMA() derives the halt as
+			 * clock + 2, so loadClock is the halt minus two.
+			*/
+			const Cycle span = (putAnchor >= cpu.GetCycles()) ?
+				(putAnchor - cpu.GetCycles()) : (cpu.GetCycles() - putAnchor);
+
+			const uint haltDelay = (((span / cpu.GetClock()) & 1) == 0) ? 3 : 4;
+
+			loadClock = cpu.GetCycles() + cpu.GetClock( haltDelay - 2 );
+
+			cpu.WakeAt( loadClock + cpu.GetClock(2) );
+		}
+
+		void Apu::Dmc::ClockImplicitAbort(Cpu& cpu)
+		{
+			/* The spurious DMA is aborted one cycle after being triggered:
+			 * the single halted CPU cycle lands on the DMC clock itself.
+			*/
+			const Cycle halt = abortClock;
+			abortClock = 0;
+
+			if (!cpu.IsWriteCycle( halt ))
+				cpu.StealCycles( cpu.GetClock() );
+		}
+
+		void Apu::Dmc::ClockLoadDMA(Cpu& cpu,const uint readAddress,const uint haltParity,const Cycle nextDmcClock)
+		{
+			const Cycle clock = loadClock;
+			loadClock = 0;
+
+			if (!dma.buffered && dma.lengthCounter)
 			{
-				const uint step = outputVolume * INP_STEP;
+				DoDMA( cpu, clock, readAddress, haltParity );
 
-				if (curSample + step - linSample <= step*2)
+				// The sample fetch lands two cycles after the halt (halt + dummy + fetch).
+				lastLoadFetch = clock + cpu.GetClock(4);
+
+				/* Implicit DMA abort: a final-byte load (no looping) completing
+				 * right before the shifter empties triggers a spurious DMA that
+				 * is aborted one cycle later, halting the CPU for one cycle.
+				 * Unlike a normal DMA it is never delayed by a write cycle: it
+				 * simply doesn't happen.
+				*/
+				if (!dma.lengthCounter && !(regs.ctrl & REG0_LOOP) && out.shifter == 0 &&
+					nextDmcClock >= lastLoadFetch && nextDmcClock < lastLoadFetch + cpu.GetClock(2))
 				{
-					linSample = curSample;
-				}
-				else if (curSample > linSample)
-				{
-					linSample += step;
-				}
-				else
-				{
-					linSample -= step;
+					abortClock = nextDmcClock;
+					cpu.WakeAt( abortClock + cpu.GetClock() );
 				}
 			}
-
-			return linSample;
 		}
 
-		void Apu::Dmc::DoDMA(Cpu& cpu,const Cycle clock,const uint readAddress)
+		NST_SINGLE_CALL dword Apu::Dmc::GetLevel() const
 		{
-			NST_VERIFY( !dma.buffered && (!readAddress || !cpu.IsWriteCycle(clock)) );
+			/* Straight off curSample. linSample is retained for the save state
+			 * only; slewing the level would distort what the DAC reads out.
+			*/
+			return outputVolume ? curSample / outputVolume : 0;
+		}
+
+		Cycle Apu::Dmc::DoDMA(Cpu& cpu,const Cycle clock,const uint readAddress,const uint haltParity)
+		{
+			NST_VERIFY( !dma.buffered );
 
 			/* DMC DMA adds:
 			 * case 1: 4 cycles normally
@@ -2292,7 +2493,54 @@ namespace Nes
 			 * https://forums.nesdev.org/viewtopic.php?f=3&t=6100
 			 * https://www.nesdev.org/wiki/DMA
 			*/
-			uint cyclesToSteal = cpu.IsWriteCycle(clock) ? 3 : 4;
+			// The CPU halt takes effect 2 CPU cycles after the DMC output unit clocks.
+			const Cycle haltClock = clock + cpu.GetClock(2);
+
+			/* RDY is only sampled on read cycles: consecutive CPU write cycles
+			 * (e.g. JSR's stack pushes) delay the halt. During an OAM DMA the
+			 * CPU executes no write cycles of its own.
+			*/
+			uint haltDelay = 0;
+
+			/* A transfer held for the enable is delayed exactly as one held by a
+			 * run of CPU write cycles: the halt moves and its parity moves with
+			 * it. That parity is what the ROM is measuring - it says a one-cycle
+			 * hold "will be 3 CPU cycles long instead of the typical 4", which is
+			 * what (haltParity + haltDelay) & 1 produces below. Feeding the hold
+			 * in as a shifted clock instead leaves haltDelay at zero, moves the
+			 * halt but not the parity, and the transfer still steals four.
+			 *
+			 * Only a transfer coming due around the write is held; one landing
+			 * well after it has nothing to wait for.
+			*/
+			if (enableClock)
+			{
+				if (haltClock < enableClock && enableClock - haltClock <= cpu.GetClock(3))
+				{
+					while (haltDelay < 3 && haltClock + cpu.GetClock() * haltDelay < enableClock)
+						++haltDelay;
+				}
+
+				enableClock = 0;
+			}
+
+			if (!cpu.GetOamDMA())
+			{
+				while (haltDelay < 3 && cpu.IsWriteCycle( haltClock + cpu.GetClock() * haltDelay ))
+					++haltDelay;
+			}
+
+			/* Reloads take halt + dummy + alignment + get (4) from their normal
+			 * put-phase halt, one less when a write delay flips the parity.
+			*/
+			uint cyclesToSteal = ((haltParity + haltDelay) & 1) ? 3 : 4;
+
+			/* Loads always take halt + dummy + fetch (3): the transfer start
+			 * delay already aligned the sequence, write delays don't add the
+			 * alignment cycle back.
+			*/
+			if (haltParity)
+				cyclesToSteal = 3;
 
 			if (cpu.GetOamDMA())
 			{
@@ -2310,28 +2558,69 @@ namespace Nes
 				}
 			}
 
-			if (readAddress && cpu.GetCycles() == clock)
+			const bool collision = readAddress && cpu.GetCycles() == haltClock && !cpu.IsWriteCycle(haltClock);
+
+			if (collision)
 			{
 				NST_DEBUG_MSG("DMA/Read conflict!");
 
-				/* According to dmc_dma_during_read4/dma_2007_read, DMC DMA during read causes
-				 * 2-3 extra $2007 reads before the real read. The nesdev wiki states that this
-				 * also happens when polling $2002 for vblank.
+				/* A CPU halted on one of its read cycles keeps repeating that
+				 * read on each halt/dummy/alignment cycle. On $4016/$4017 the
+				 * controller clock filters consecutive reads into one (NES and
+				 * AV Famicom behavior).
 				*/
-				if ((readAddress & 0xF000) != 0x4000)
-				{
-					cpu.Peek( readAddress );
-					cpu.Peek( readAddress );
-				}
+				uint repeats = cyclesToSteal ? cyclesToSteal - 1 : 0;
 
-				cpu.Peek( readAddress );
+				if ((readAddress & 0xFFFE) == 0x4016)
+					repeats = 1;
+
+				while (repeats--)
+					cpu.PeekBus( readAddress );
 			}
 
 			cpu.StealCycles( cpu.GetClock() * cyclesToSteal);
 
-			dma.buffer = cpu.Peek( dma.address );
-			dma.address = 0x8000 | ((dma.address + 1U) & 0x7FFF);
+			const uint sampleAddress = dma.address;
+
+			/* Only a DMA halting the CPU on this very read cycle leaves the
+			 * sample byte on the bus; a DMA processed late has already had
+			 * the bus re-driven by the fetches that followed it.
+			*/
+			dma.buffer = cpu.Peek( sampleAddress );
+
+			// The fetch drives the external bus only - it never reaches the
+			// CPU's internal bus, so it cannot show up in a $4015 read.
+			if (collision)
+				cpu.SetBusData( dma.buffer );
+
+			/* Get-cycle bus conflict: with the halted CPU's address in
+			 * $4000-$401F, the register select lines follow the DMA address
+			 * low bits, so $4000|(sampleAddress&$1F) is read on the same
+			 * cycle as the sample fetch.
+			*/
+			if (collision && (readAddress & 0xFFE0) == 0x4000)
+			{
+				const uint reg = 0x4000 | (sampleAddress & 0x1F);
+
+				if (reg == 0x4015 || reg == 0x4016 || reg == 0x4017)
+					cpu.PeekBus( reg );
+			}
+
+			dma.address = 0x8000 | ((sampleAddress + 1U) & 0x7FFF);
 			dma.buffered = true;
+
+			/* The sample fetch is the last of the stolen cycles: halt, dummy,
+			 * (alignment,) fetch.  The DMC IRQ is asserted there, so it must
+			 * be timestamped with that cycle rather than wherever the CPU
+			 * happens to have reached when the DMA got processed - the hook
+			 * runs at an instruction boundary, which is always later.
+			 *
+			 * GetClock(n) indexes cycles.clock[n-1], so cyclesToSteal must be
+			 * at least 2 before subtracting one from it.  It is 1 in the
+			 * end-of-OAM-DMA case, where the fetch is the halt cycle itself.
+			*/
+			const Cycle fetchClock = (cyclesToSteal > 1) ?
+				haltClock + cpu.GetClock( cyclesToSteal - 1 ) : haltClock;
 
 			NST_VERIFY( dma.lengthCounter );
 
@@ -2344,9 +2633,11 @@ namespace Nes
 				}
 				else if (regs.ctrl & REG0_IRQ_ENABLE)
 				{
-					cpu.DoIRQ( Cpu::IRQ_DMC );
+					cpu.DoIRQ( Cpu::IRQ_DMC, fetchClock );
 				}
 			}
+
+			return fetchClock;
 		}
 
 		NST_SINGLE_CALL bool Apu::Dmc::WriteReg0(const uint data,const CpuModel model)
@@ -2454,20 +2745,79 @@ namespace Nes
 		#pragma optimize("", on)
 		#endif
 
+		bool Apu::IsDmaPutCycle(const Cycle clock) const
+		{
+			// The DMC clock is locked to one phase of the APU get/put pattern
+			// and serves as the grid reference for DMA alignment.
+			const Cycle span = (cycles.dmcClock >= clock) ? (cycles.dmcClock - clock) : (clock - cycles.dmcClock);
+
+			return ((span / cpu.GetClock()) & 1) == 0;
+		}
+
+		void Apu::ClockPendingLoad(const Cycle target,const uint readAddress)
+		{
+			if (dmc.HasPendingLoad() && dmc.GetLoadClock() + cpu.GetClock(2) <= target)
+			{
+				const Cycle halt = dmc.GetLoadClock() + cpu.GetClock(2);
+
+				/* A DMC output clock due at or before the load's sample fetch
+				 * happens first: an empty buffer at that clock stays empty
+				 * rather than seeing the not-yet-fetched sample byte.
+				*/
+				if (cycles.dmcClock < halt + cpu.GetClock(2))
+					ClockDmc( target );
+
+				dmc.ClockLoadDMA( cpu, readAddress, 1, cycles.dmcClock );
+			}
+		}
+
 		Cycle Apu::Clock()
 		{
-			if (cycles.dmcClock <= cpu.GetCycles())
+			// DMAs are processed (and the CPU woken) at their halt time, 2
+			// CPU cycles after the DMC clock, rather than at the clock itself.
+			// A halt landing exactly on the upcoming cycle is left for that
+			// cycle's own memory access to claim, so a halted read observes
+			// the DMA's sample fetch on the bus.
+			ClockPendingLoad( cpu.GetCycles(), 0 );
+
+			if (cycles.dmcClock + cpu.GetClock(2) < cpu.GetCycles())
 				ClockDmc( cpu.GetCycles() );
 
 			if (cycles.frameIrqClock <= cpu.GetCycles())
 				ClockFrameIRQ( cpu.GetCycles() );
 
-			return NST_MIN(cycles.dmcClock,cycles.frameIrqClock);
+			// Evaluated only once the halt cycle has fully passed, so the
+			// write-cycle test sees the instruction that executed on it.
+			if (dmc.GetAbortClock() && dmc.GetAbortClock() + cpu.GetClock() <= cpu.GetCycles())
+				dmc.ClockImplicitAbort( cpu );
+
+			Cycle next = NST_MIN(cycles.dmcClock + cpu.GetClock(2),cycles.frameIrqClock);
+
+			if (dmc.HasPendingLoad())
+				next = NST_MIN(next,dmc.GetLoadClock() + cpu.GetClock(2));
+
+			if (dmc.GetAbortClock())
+				next = NST_MIN(next,dmc.GetAbortClock() + cpu.GetClock(2));
+
+			/* A DMC halt landing exactly on the upcoming cycle is skipped
+			 * above on purpose - that cycle's own memory access claims it via
+			 * ClockDMA, which is what lets the halted read observe the sample
+			 * fetch on the bus. Scheduling the wakeup for that same cycle
+			 * would hand back a target the CPU has already reached, so the
+			 * scheduler re-enters with no progress made. Step past it; the
+			 * pending DMA is still claimed by ClockDMA or the next Clock.
+			*/
+			if (next <= cpu.GetCycles())
+				next = cpu.GetCycles() + cpu.GetClock();
+
+			return next;
 		}
 
 		void Apu::ClockDMA(uint readAddress)
 		{
-			if (cycles.dmcClock <= cpu.GetCycles())
+			ClockPendingLoad( cpu.GetCycles(), readAddress );
+
+			if (cycles.dmcClock + cpu.GetClock(2) <= cpu.GetCycles())
 				ClockDmc( cpu.GetCycles(), readAddress );
 		}
 
@@ -2491,7 +2841,7 @@ namespace Nes
 
 		NST_NO_INLINE void Apu::ClockDmc(const Cycle target,const uint readAddress)
 		{
-			NST_ASSERT( cycles.dmcClock <= target );
+			NST_ASSERT( cycles.dmcClock + cpu.GetClock(2) <= target );
 
 			do
 			{
@@ -2503,7 +2853,7 @@ namespace Nes
 
 				dmc.ClockDMA( cpu, cycles.dmcClock, readAddress );
 			}
-			while (cycles.dmcClock <= target);
+			while (cycles.dmcClock + cpu.GetClock(2) <= target);
 		}
 
 		NST_NO_INLINE void Apu::ClockFrameCounter()
@@ -2519,9 +2869,21 @@ namespace Nes
 
 		NST_NO_INLINE void Apu::ClockFrameIRQ(const Cycle target)
 		{
-			NST_VERIFY( ctrl == STATUS_FRAME_IRQ_ENABLE );
+			NST_VERIFY( !(ctrl & STATUS_SEQUENCE_5_STEP) );
 
-			cpu.DoIRQ( Cpu::IRQ_FRAME, cycles.frameIrqClock );
+			if (ctrl & STATUS_NO_FRAME_IRQ)
+			{
+				/* Inhibited: $4015.6 still reads set on the first two cycles of
+				 * the three, and the third is where the inhibit takes effect.
+				 * The IRQ line is never pulled.
+				*/
+				if (cycles.frameIrqRepeat % 3 == 0)
+					cycles.frameIrqPhantom = cycles.frameIrqClock + cpu.GetClock(2);
+			}
+			else
+			{
+				cpu.DoIRQ( Cpu::IRQ_FRAME, cycles.frameIrqClock );
+			}
 
 			Cycle clock = cycles.frameIrqClock;
 			uint repeat = cycles.frameIrqRepeat;
@@ -2536,17 +2898,65 @@ namespace Nes
 			cycles.frameIrqRepeat = repeat;
 		}
 
+		void Apu::UpdateMixLut()
+		{
+			for (uint i=0; i < 31; ++i)
+			{
+				const dword dac = i * dword(Channel::OUTPUT_MUL);
+				lutPulse[i] = dac ? NLN_SQ_0 / (NLN_SQ_1 / dac + NLN_SQ_2) : 0;
+			}
+
+			for (uint i=0; i < 203; ++i)
+			{
+				const dword dac = i * dword(Channel::OUTPUT_MUL);
+				lutTnd[i] = dac ? NLN_TND_0 / (NLN_TND_1 / dac + NLN_TND_2) : 0;
+			}
+		}
+
 		NST_NO_INLINE Apu::Channel::Sample Apu::GetSample()
 		{
-			dword dac[2];
+			/* Both DACs are non-linear, and f(mean(x)) is not mean(f(x)), so
+			 * the channels have to be mixed at full rate and averaged after.
+			 * Walk the sample period one transition at a time, take the mixed
+			 * level over each span and weight it by the length of the span.
+			 * The walk stops only where a channel changes.
+			 *
+			 * The DMC DAC is driven from the CPU side and cannot move within
+			 * one output sample, so it is read once.
+			*/
+			const dword level = dmc.GetLevel();
+
+			qaword sum = 0;
+			dword left = cycles.rate;
+
+			do
+			{
+				dword span = left;
+
+				span = NST_MIN( span, square[0].Remaining() );
+				span = NST_MIN( span, square[1].Remaining() );
+				span = NST_MIN( span, triangle.Remaining() );
+				span = NST_MIN( span, noise.Remaining() );
+
+				sum += qaword
+				(
+					lutPulse[ square[0].GetLevel() + square[1].GetLevel() ] +
+					lutTnd  [ triangle.GetLevel() * 3 + noise.GetLevel() * 2 + level ]
+				) * span;
+
+				square[0].Advance( span );
+				square[1].Advance( span );
+				triangle.Advance( span );
+				noise.Advance( span );
+
+				left -= span;
+			}
+			while (left);
 
 			return Clamp<Channel::OUTPUT_MIN,Channel::OUTPUT_MAX>
 			(
-				dcBlocker.Apply
-				(
-					(0 != (dac[0] = square[0].GetSample() + square[1].GetSample()) ? NLN_SQ_0 / (NLN_SQ_1 / dac[0] + NLN_SQ_2) : 0) +
-					(0 != (dac[1] = triangle.GetSample() + noise.GetSample() + dmc.GetSample()) ? NLN_TND_0 / (NLN_TND_1 / dac[1] + NLN_TND_2) : 0)
-				) + (extChannel ? extChannel->GetSample() : 0)
+				dcBlocker.Apply( Channel::Sample(sum / cycles.rate) ) +
+				(extChannel ? extChannel->GetSample() : 0)
 			);
 		}
 
@@ -2631,6 +3041,15 @@ namespace Nes
 
 		NES_POKE_D(Apu,4015)
 		{
+			// A DMA halting at or before the cycle after this write completes
+			// in full before the write's effect reaches the DMA unit.
+			cpu.Update();
+
+			ClockPendingLoad( cpu.GetCycles() + cpu.GetClock(), 0 );
+
+			if (cycles.dmcClock + cpu.GetClock(2) <= cpu.GetCycles() + cpu.GetClock())
+				ClockDmc( cpu.GetCycles() + cpu.GetClock() );
+
 			Update();
 
 			data = ~data;
@@ -2639,7 +3058,7 @@ namespace Nes
 			square[1].Disable ( data >> 1 & 0x1  );
 			triangle.Disable  ( data >> 2 & 0x1  );
 			noise.Disable     ( data >> 3 & 0x1  );
-			dmc.Disable       ( data & 0x10, cpu );
+			dmc.Disable       ( data & 0x10, cpu, cycles.dmcClock );
 		}
 
 		NES_PEEK_A(Apu,4015)
@@ -2654,8 +3073,26 @@ namespace Nes
 			if (cycles.frameCounter < elapsed * cycles.fixed)
 				Update( elapsed );
 
-			const uint data = cpu.GetIRQ();
+			uint data = cpu.GetIRQ();
 			cpu.ClearIRQ( Cpu::IRQ_FRAME );
+
+			/* The frame counter flag is cleared on a put-to-get transition of
+			 * the APU cycle: a read landing on a get cycle still observes the
+			 * flag on the immediately following read.
+			*/
+			if (data & Cpu::IRQ_FRAME)
+			{
+				cycles.frameIrqHold = !IsDmaPutCycle( cpu.GetCycles() ) ? cpu.GetCycles() + cpu.GetClock(2) : 0;
+			}
+			else if (cpu.GetCycles() < cycles.frameIrqHold)
+			{
+				data |= Cpu::IRQ_FRAME;
+				cycles.frameIrqHold = 0;
+			}
+			else if (cpu.GetCycles() < cycles.frameIrqPhantom)
+			{
+				data |= Cpu::IRQ_FRAME;
+			}
 
 			return (data & (Cpu::IRQ_FRAME|Cpu::IRQ_DMC)) |
 			(
@@ -2663,7 +3100,8 @@ namespace Nes
 				( square[1].GetLengthCounter() ? 0x02U : 0x00U ) |
 				( triangle.GetLengthCounter()  ? 0x04U : 0x00U ) |
 				( noise.GetLengthCounter()     ? 0x08U : 0x00U ) |
-				( dmc.GetLengthCounter()       ? 0x10U : 0x00U )
+				( dmc.GetLengthCounter()       ? 0x10U : 0x00U ) |
+				( cpu.GetInternalBusData()     & 0x20U )
 			);
 		}
 
@@ -2689,25 +3127,29 @@ namespace Nes
 
 			ctrl = data;
 
-			if (data)
+			if (data & STATUS_NO_FRAME_IRQ)
+				cpu.ClearIRQ( Cpu::IRQ_FRAME );
+
+			if (data & STATUS_SEQUENCE_5_STEP)
 			{
 				cycles.frameIrqClock = Cpu::CYCLE_MAX;
-
-				if (data & STATUS_NO_FRAME_IRQ)
-					cpu.ClearIRQ( Cpu::IRQ_FRAME );
-
-				if (data & STATUS_SEQUENCE_5_STEP)
-					ClockOscillators( true );
+				ClockOscillators( true );
 			}
 			else
 			{
+				// 4-step still runs the sequence when interrupts are inhibited;
+				// the flag sets for two cycles even though the line is not pulled
 				cycles.frameIrqClock = next + Cycles::frameClocks[cpu.GetModel()][0];
 			}
 		}
 
-		NES_PEEK(Apu,40xx)
+		NES_PEEK_A(Apu,40xx)
 		{
-			return 0x40;
+			// Write-only / unmapped register: open bus. Process any DMA that
+			// lands on this read first, since the DMA's sample fetch drives
+			// the data bus that this read will observe.
+			cpu.Update( address );
+			return cpu.GetBusData();
 		}
 	}
 }

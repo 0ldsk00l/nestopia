@@ -125,6 +125,16 @@ namespace Nes
 			dword frame;
 
 		public:
+			/* Controller strobe, tracked separately from what the ports have
+			 * been told, so an ineffective one is never forwarded to them.
+			*/
+			void SyncStrobe();
+			bool StrobeLoaded();
+
+			Cycle strobeRise;
+			bool  strobeHigh;
+			bool  strobeForwarded;
+
 			Cpu cpu;
 			Input::Adapter* extPort;
 			Input::Device* expPort;

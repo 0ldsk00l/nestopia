@@ -183,13 +183,15 @@ namespace Nes
 			NST_FORCE_INLINE void OpenAttribute();
 			NST_FORCE_INLINE void FetchAttribute();
 			NST_FORCE_INLINE void OpenPattern(uint);
-			NST_FORCE_INLINE uint FetchSpPattern() const;
+			NST_FORCE_INLINE uint FetchSpPattern();
 			NST_FORCE_INLINE void FetchBgPattern0();
 			NST_FORCE_INLINE void FetchBgPattern1();
 			NST_FORCE_INLINE void UpdateDecay(byte);
+			qaword OpenBusDecayCycles() const;
 
 			NST_FORCE_INLINE void EvaluateSpritesEven();
 			NST_FORCE_INLINE void EvaluateSpritesOdd();
+			NST_FORCE_INLINE void ReadSecondaryOam();
 
 			void EvaluateSpritesPhase0();
 			void EvaluateSpritesPhase1();
@@ -208,9 +210,14 @@ namespace Nes
 			void UpdatePalette();
 			void LoadExtendedSprites();
 
+			NST_FORCE_INLINE uint SpriteLine() const;
+			NST_FORCE_INLINE bool SpriteInRange(const byte* NST_RESTRICT) const;
+			uint SecondaryOamAddress() const;
+			NST_FORCE_INLINE void CorruptOam();
 			NST_FORCE_INLINE uint OpenSprite() const;
 			NST_FORCE_INLINE uint OpenSprite(const byte* NST_RESTRICT) const;
 			NST_FORCE_INLINE  void LoadSprite(uint,uint,const byte* NST_RESTRICT);
+			NST_FORCE_INLINE  void ClearSprite(const byte* NST_RESTRICT);
 			NST_SINGLE_CALL void PreLoadTiles();
 			NST_SINGLE_CALL void LoadTiles();
 			NST_FORCE_INLINE void RenderPixel();
@@ -280,8 +287,14 @@ namespace Nes
 			{
 				Tiles();
 
+				enum
+				{
+					SERIAL_IN = 0x2
+				};
+
 				byte pattern[2];
 				byte attribute;
+				byte fetched;
 				byte index;
 				byte pixels[16];
 				uint mask;
@@ -322,9 +335,9 @@ namespace Nes
 				enum
 				{
 					SIZE             = 0x100,
-					OFFSET_TO_0_1    = 0xF8,
 					STD_LINE_SPRITES = 8,
 					MAX_LINE_SPRITES = 32,
+					NO_CORRUPTION    = 0xFF,
 					GARBAGE          = 0xFF,
 					COLOR            = 0x03,
 					BEHIND           = 0x20,
@@ -337,7 +350,8 @@ namespace Nes
 
 				struct Output
 				{
-					byte x;
+					byte counter;
+					byte shift;
 					byte behind;
 					byte zero;
 					byte palette;
@@ -352,6 +366,8 @@ namespace Nes
 				uint latch;
 				uint index;
 				byte* buffered;
+				uint secondary;
+				uint corrupt;
 				uint address;
 				uint height;
 				uint mask;
@@ -394,6 +410,8 @@ namespace Nes
 				uint pattern;
 				uint latch;
 				uint buffer;
+				uint busData;
+				uint octalLatch;
 				Core::Io::Line line;
 			};
 
@@ -410,8 +428,8 @@ namespace Nes
 
 			struct
 			{
-				Cycle timestamp[8];
-				Cycle rd2007;
+				qaword timestamp[8];
+				qaword rd2007;
 			}   decay;
 
 			Io io;

@@ -57,6 +57,8 @@ namespace Nes
 			void  EndFrame();
 			void  WriteFrameCtrl(uint);
 			Cycle Clock();
+			void ClockPendingLoad(Cycle,uint);
+			bool IsDmaPutCycle(Cycle) const;
 			void  ClockDMA(uint=0);
 
 			Result SetSampleRate(dword);
@@ -298,6 +300,12 @@ namespace Nes
 
 			NST_NO_INLINE Channel::Sample GetSample();
 
+			/* The two DACs, tabulated. Indexed by a sum of channel levels:
+			 * 0-30 for the square pair, 0-202 for the triangle, noise and DMC.
+			*/
+			dword lutPulse[31];
+			dword lutTnd[203];
+
 			void NST_FASTCALL SyncOn    (Cycle);
 			void NST_FASTCALL SyncOnExt (Cycle);
 			void NST_FASTCALL SyncOff   (Cycle);
@@ -312,6 +320,7 @@ namespace Nes
 
 			void UpdateSettings();
 			void UpdateVolumes();
+			void UpdateMixLut();
 
 			struct Cycles
 			{
@@ -328,6 +337,8 @@ namespace Nes
 				word frameDivider;
 				word frameIrqRepeat;
 				Cycle frameIrqClock;
+				Cycle frameIrqHold;
+				Cycle frameIrqPhantom;
 				Cycle dmcClock;
 
 				static const dword frameClocks[3][4];
@@ -391,7 +402,9 @@ namespace Nes
 				NST_SINGLE_CALL void WriteReg3(uint,Cycle);
 				NST_SINGLE_CALL void Disable(bool);
 
-				dword GetSample();
+				dword GetLevel() const;
+				dword Remaining() const;
+				void Advance(dword);
 
 				NST_SINGLE_CALL void ClockEnvelope();
 				NST_SINGLE_CALL void ClockSweep(uint);
@@ -446,7 +459,9 @@ namespace Nes
 				NST_SINGLE_CALL void WriteReg3(uint,Cycle);
 				NST_SINGLE_CALL void Disable(bool);
 
-				NST_SINGLE_CALL dword GetSample();
+				NST_SINGLE_CALL dword GetLevel() const;
+				NST_SINGLE_CALL dword Remaining() const;
+				NST_SINGLE_CALL void Advance(dword);
 
 				NST_SINGLE_CALL void ClockLinearCounter();
 				NST_SINGLE_CALL void ClockLengthCounter();
@@ -496,7 +511,9 @@ namespace Nes
 				NST_SINGLE_CALL void WriteReg3(uint,Cycle);
 				NST_SINGLE_CALL void Disable(bool);
 
-				NST_SINGLE_CALL dword GetSample();
+				NST_SINGLE_CALL dword GetLevel() const;
+				NST_SINGLE_CALL dword Remaining() const;
+				NST_SINGLE_CALL void Advance(dword);
 
 				NST_SINGLE_CALL void ClockEnvelope();
 				NST_SINGLE_CALL void ClockLengthCounter();
@@ -537,9 +554,25 @@ namespace Nes
 				NST_SINGLE_CALL void WriteReg1(uint);
 				NST_SINGLE_CALL void WriteReg2(uint);
 				NST_SINGLE_CALL void WriteReg3(uint);
-				NST_SINGLE_CALL void Disable(bool,Cpu&);
+				NST_SINGLE_CALL void Disable(bool,Cpu&,Cycle);
+				void ScheduleLoadDMA(Cpu&,Cycle);
 
-				NST_SINGLE_CALL dword GetSample();
+				bool HasPendingLoad() const
+				{
+					return loadClock != 0;
+				}
+
+				Cycle GetLoadClock() const
+				{
+					return loadClock;
+				}
+
+				void ClockLoadDMA(Cpu&,uint,uint,Cycle);
+				void RebaseFrame(Cycle);
+				void ClockImplicitAbort(Cpu&);
+				Cycle GetAbortClock() const { return abortClock; }
+
+				NST_SINGLE_CALL dword GetLevel() const;
 
 				NST_SINGLE_CALL bool ClockDAC();
 				NST_SINGLE_CALL void Update();
@@ -552,7 +585,7 @@ namespace Nes
 
 			private:
 
-				void DoDMA(Cpu&,Cycle,uint=0);
+				Cycle DoDMA(Cpu&,Cycle,uint=0,uint=0);
 
 				enum
 				{
@@ -566,6 +599,10 @@ namespace Nes
 				uint linSample;
 				uint outputVolume;
 				Cycle frequency;
+				Cycle loadClock;
+				Cycle lastLoadFetch;
+				Cycle abortClock;
+				Cycle enableClock;
 
 				struct
 				{

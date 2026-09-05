@@ -47,6 +47,9 @@ namespace Nes
 		:
 		state         (Api::Machine::NTSC),
 		frame         (0),
+		strobeRise    (0),
+		strobeHigh    (false),
+		strobeForwarded (false),
 		extPort       (new Input::AdapterTwo( *new Input::Pad(cpu,0), *new Input::Pad(cpu,1) )),
 		expPort       (new Input::Device( cpu )),
 		image         (NULL),
@@ -369,6 +372,23 @@ namespace Nes
 			ppu.SaveState( saver, AsciiId<'P','P','U'>::V );
 			image->SaveState( saver, AsciiId<'I','M','G'>::V );
 
+			{
+				/* A strobe raised in one frame can be lowered in the next, so
+				 * the tracking has to survive a reload for the ports to latch
+				 * on the same edge they would have.
+				*/
+				const byte data[5] =
+				{
+					static_cast<byte>((strobeHigh ? 0x1 : 0x0) | (strobeForwarded ? 0x2 : 0x0)),
+					static_cast<byte>(strobeRise & 0xFF),
+					static_cast<byte>(strobeRise >> 8 & 0xFF),
+					static_cast<byte>(strobeRise >> 16 & 0xFF),
+					static_cast<byte>(strobeRise >> 24 & 0xFF)
+				};
+
+				saver.Begin( AsciiId<'S','T','B'>::V ).Write( data ).End();
+			}
+
 			saver.Begin( AsciiId<'P','R','T'>::V );
 
 			if (extPort->NumPorts() == 4)
@@ -392,6 +412,13 @@ namespace Nes
 		bool Machine::LoadState(State::Loader& loader,const bool resetOnError)
 		{
 			NST_ASSERT( (state & (Api::Machine::GAME|Api::Machine::ON)) > Api::Machine::ON );
+
+			/* Default for states written before the STB chunk existed. A newer
+			 * state overwrites this from the chunk below.
+			*/
+			strobeHigh = false;
+			strobeForwarded = false;
+			strobeRise = 0;
 
 			try
 			{
@@ -438,6 +465,18 @@ namespace Nes
 
 							image->LoadState( loader );
 							break;
+
+						case AsciiId<'S','T','B'>::V:
+						{
+							State::Loader::Data<5> data( loader );
+
+							strobeHigh      = (data[0] & 0x1) != 0;
+							strobeForwarded = (data[0] & 0x2) != 0;
+							strobeRise      = data[1] | data[2] << 8 |
+								dword(data[3]) << 16 | dword(data[4]) << 24;
+
+							break;
+						}
 
 						case AsciiId<'P','R','T'>::V:
 
@@ -548,16 +587,60 @@ namespace Nes
 			}
 		}
 
+		bool Machine::StrobeLoaded()
+		{
+			// The shift registers load on a get-to-put transition, so a strobe
+			// high for one cycle loads only if that cycle precedes a put.
+			// Anything longer always spans a transition.
+			return !cpu.GetApu().IsDmaPutCycle( strobeRise ) ||
+				cpu.GetCycles() > strobeRise + cpu.GetClock();
+		}
+
+		void Machine::SyncStrobe()
+		{
+			if (strobeHigh && !strobeForwarded && StrobeLoaded())
+			{
+				strobeForwarded = true;
+				extPort->Poke( 1 );
+				expPort->Poke( 1 );
+			}
+		}
+
 		NES_POKE_D(Machine,4016)
 		{
-			extPort->Poke( data );
-			expPort->Poke( data );
+			cpu.Update();
+
+			if (data & 0x1)
+			{
+				if (!strobeHigh)
+				{
+					strobeHigh = true;
+					strobeForwarded = false;
+					strobeRise = cpu.GetCycles();
+				}
+
+				SyncStrobe();
+			}
+			else
+			{
+				SyncStrobe();
+
+				strobeHigh = false;
+
+				if (strobeForwarded)
+				{
+					strobeForwarded = false;
+					extPort->Poke( 0 );
+					expPort->Poke( 0 );
+				}
+			}
 		}
 
 		NES_PEEK_A(Machine,4016)
 		{
 			cpu.Update( address );
-			return OPEN_BUS | extPort->Peek(0) | expPort->Peek(0);
+			SyncStrobe();
+			return (cpu.GetBusData() & 0xE0) | extPort->Peek(0) | expPort->Peek(0);
 		}
 
 		NES_POKE_D(Machine,4017)
@@ -568,7 +651,8 @@ namespace Nes
 		NES_PEEK_A(Machine,4017)
 		{
 			cpu.Update( address );
-			return OPEN_BUS | extPort->Peek(1) | expPort->Peek(1);
+			SyncStrobe();
+			return (cpu.GetBusData() & 0xE0) | extPort->Peek(1) | expPort->Peek(1);
 		}
 	}
 }

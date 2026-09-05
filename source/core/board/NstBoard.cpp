@@ -717,7 +717,22 @@ namespace Nes
 			NES_PEEK_A(Board,Nop)
 			{
 				NST_DEBUG_MSG("read ignored!");
-				return address >> 8;
+
+				/* An open bus read is still a real read cycle. A DMA halting
+				 * on it repeats the read and leaves its sample byte on the
+				 * bus, so the DMA has to be processed with this address, the
+				 * same way a mapped register's peek handler does it.
+				*/
+				cpu.Update( address );
+
+				/* Unmapped address: the data pins float and hold whatever the
+				 * last bus-driving access left on them. Returning address >> 8
+				 * matches for a plain absolute read - the high operand byte was
+				 * the last fetch - but is wrong as soon as the two differ, e.g.
+				 * an indexed read crossing a page boundary, where the fixed-up
+				 * high byte never reaches the bus.
+				*/
+				return cpu.GetBusData();
 			}
 
 			#ifdef NST_MSVC_OPTIMIZE

@@ -109,7 +109,7 @@ namespace Nes
 			0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x30,
 			0x00, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x30, 0x30,
 			0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x60, 0x60,
-			0x1C, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x18, 0x18,
+			0x18, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x18, 0x18,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x30, 0x30,
 			0x00, 0x00, 0x00, 0xC0, 0x00, 0x00, 0x30, 0x30,
 			0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x60, 0x60,
@@ -203,6 +203,7 @@ namespace Nes
 			jammed  = false;
 			ticks   = 0;
 			logged  = 0;
+			busData = busDataInternal = 0;
 
 			pc = RESET_VECTOR;
 
@@ -240,7 +241,7 @@ namespace Nes
 		{
 			NST_VERIFY( pc == RESET_VECTOR );
 
-			pc = map.Peek16( RESET_VECTOR );
+			pc = PeekBus16( RESET_VECTOR );
 
 			if (hard)
 			{
@@ -355,6 +356,8 @@ namespace Nes
 				state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
 			}
 
+			state.Begin( AsciiId<'B','U','S'>::V ).Write8( busData ).End();
+
 			state.Begin( AsciiId<'R','A','M'>::V ).Compress( ram.mem ).End();
 
 			{
@@ -377,6 +380,23 @@ namespace Nes
 
 			state.Begin( AsciiId<'C','L','K'>::V ).Write64( ticks ).End();
 
+			/* Both cross a frame boundary, so a state has to carry them or a
+			 * reload diverges: pollLimit decides the first interrupt poll of
+			 * the next frame, and the internal bus outlives any instruction.
+			*/
+			{
+				const byte data[5] =
+				{
+					static_cast<byte>(busDataInternal),
+					static_cast<byte>((interrupt.pollLimit != CYCLE_MAX) ? 0x1 : 0x0),
+					static_cast<byte>(interrupt.pollLimit & 0xFF),
+					static_cast<byte>(interrupt.pollLimit >> 8 & 0xFF),
+					static_cast<byte>(interrupt.pollLimit >> 16 & 0xFF)
+				};
+
+				state.Begin( AsciiId<'I','B','P'>::V ).Write( data ).End();
+			}
+
 			state.End();
 
 			apu.SaveState( state, apuChunk );
@@ -388,6 +408,13 @@ namespace Nes
 			{
 				CpuModel stateModel = GetModel();
 				ticks = 0;
+				busData = busDataInternal = 0;
+
+				/* Defaults for states written before the IBP chunk existed; a
+				 * newer state overwrites both from it below. Set here rather
+				 * than in a chunk handler so it cannot depend on chunk order.
+				*/
+				interrupt.pollLimit = CYCLE_MAX;
 
 				while (const dword chunk = state.Begin())
 				{
@@ -404,6 +431,23 @@ namespace Nes
 							y  = data[5];
 
 							flags.Unpack( data[6] );
+							break;
+						}
+
+						case AsciiId<'B','U','S'>::V:
+
+							busData = busDataInternal = state.Read8();
+							break;
+
+						case AsciiId<'I','B','P'>::V:
+						{
+							State::Loader::Data<5> data( state );
+
+							busDataInternal = data[0];
+
+							interrupt.pollLimit = (data[1] & 0x1) ?
+								(data[2] | data[3] << 8 | dword(data[4]) << 16) : CYCLE_MAX;
+
 							break;
 						}
 
@@ -426,6 +470,7 @@ namespace Nes
 							interrupt.nmiClock = CYCLE_MAX;
 							interrupt.irqClock = CYCLE_MAX;
 							interrupt.low = 0;
+
 
 							if (data[0] & (0x2|0x4|0x8))
 							{
@@ -743,6 +788,7 @@ namespace Nes
 		{
 			nmiClock = CYCLE_MAX;
 			irqClock = CYCLE_MAX;
+			pollLimit = CYCLE_MAX;
 			low = 0;
 		}
 
@@ -799,9 +845,11 @@ namespace Nes
 		NES_POKE_AD(Cpu::Ram,Ram_2) { mem[address - 0x1000] = data; }
 		NES_POKE_AD(Cpu::Ram,Ram_3) { mem[address - 0x1800] = data; }
 
-		NES_PEEK_A(Cpu,Nop)
+		NES_PEEK(Cpu,Nop)
 		{
-			return address >> 8;
+			// Same as Board::Peek_Nop: open bus holds the last value driven
+			// onto it, not something derived from the address.
+			return busData;
 		}
 
 		NES_POKE(Cpu,Nop)
@@ -831,23 +879,93 @@ namespace Nes
 			return 0xFF;
 		}
 
-		inline uint Cpu::FetchZpg16(const uint address) const
+		inline uint Cpu::FetchZpg16(const uint address)
 		{
-			return ram.mem[address & 0xFF] | uint(ram.mem[(address+1) & 0xFF]) << 8;
+			const uint lo = PeekRam( address & 0xFF );
+			const uint hi = PeekRam( (address+1) & 0xFF );
+			return lo | hi << 8;
+		}
+
+		uint Cpu::PeekBus(const uint address)
+		{
+			const uint data = map.Peek8( address );
+
+			// $4015 is read over the CPU's internal data bus and
+			// leaves the external (open) bus unchanged.
+			busDataInternal = data;
+
+			if (address != 0x4015)
+				busData = data;
+
+			return data;
+		}
+
+		/* Zero page and the stack are ordinary bus cycles on hardware: they
+		 * drive the external data bus exactly like any other read or write.
+		 * The direct ram.mem[] fast paths bypass that, leaving the bus stale,
+		 * which shows up as soon as anything reads open bus afterwards.
+		*/
+		inline uint Cpu::PeekRam(const uint address)
+		{
+			return busData = busDataInternal = ram.mem[address];
+		}
+
+		inline void Cpu::PokeRam(const uint address,const uint data)
+		{
+			ram.mem[address] = busData = busDataInternal = data & 0xFF;
+		}
+
+		inline uint Cpu::PeekBus16(const uint address)
+		{
+			const uint data = map.Peek16( address );
+			busData = busDataInternal = data >> 8;
+			return data;
+		}
+
+		inline void Cpu::PokeBus(const uint address,const uint data)
+		{
+			busData = busDataInternal = data & 0xFF;
+			map.Poke8( address, data );
 		}
 
 		inline uint Cpu::FetchPc8()
 		{
-			const uint data = map.Peek8( pc );
+			const uint data = PeekBus( pc );
 			++pc;
 			return data;
 		}
 
+		/* Implied and accumulator modes read from PC on their second cycle and
+		 * throw the value away. It is only observable when PC lands on a
+		 * read-sensitive register, which is exactly what the test arranges.
+		*/
+		NST_FORCE_INLINE void Cpu::ImpliedDummyRead()
+		{
+			cycles.count += cycles.clock[0];
+			PeekBus( pc );
+		}
+
 		inline uint Cpu::FetchPc16()
 		{
-			const uint data = map.Peek16( pc );
-			pc += 2;
-			return data;
+			/* The two operand bytes are read on the two cycles following the
+			 * opcode fetch, so the counter has to advance between them.
+			 * Reading both while it still sits on the opcode's cycle makes a
+			 * DMA that lands on either fetch invisible to it - the register or
+			 * open-bus read never sees the halt, and the DMA is picked up late
+			 * by the scheduler with no address.
+			 *
+			 * Callers add the remaining cycle of the three they used to add in
+			 * one lump, so instruction lengths are unchanged.
+			*/
+			cycles.count += cycles.clock[0];
+			const uint lo = PeekBus( pc );
+			++pc;
+
+			cycles.count += cycles.clock[0];
+			const uint hi = PeekBus( pc );
+			++pc;
+
+			return lo | hi << 8;
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////
@@ -868,9 +986,9 @@ namespace Nes
 		uint Cpu::Abs_R()
 		{
 			uint data = FetchPc16();
-			cycles.count += cycles.clock[2];
+			cycles.count += cycles.clock[0];
 
-			data = map.Peek8( data );
+			data = PeekBus( data );
 			cycles.count += cycles.clock[0];
 
 			return data;
@@ -879,12 +997,12 @@ namespace Nes
 		uint Cpu::Abs_RW(uint& data)
 		{
 			const uint address = FetchPc16();
-			cycles.count += cycles.clock[2];
-
-			data = map.Peek8( address );
 			cycles.count += cycles.clock[0];
 
-			map.Poke8( address, data );
+			data = PeekBus( address );
+			cycles.count += cycles.clock[0];
+
+			PokeBus( address, data );
 			cycles.count += cycles.clock[0];
 
 			return address;
@@ -893,7 +1011,7 @@ namespace Nes
 		inline uint Cpu::Abs_W()
 		{
 			const uint address = FetchPc16();
-			cycles.count += cycles.clock[2];
+			cycles.count += cycles.clock[0];
 			return address;
 		}
 
@@ -905,14 +1023,14 @@ namespace Nes
 		{
 			const uint address = FetchPc8();
 			cycles.count += cycles.clock[2];
-			return ram.mem[address];
+			return PeekRam( address );
 		}
 
 		inline uint Cpu::Zpg_RW(uint& data)
 		{
 			const uint address = FetchPc8();
 			cycles.count += cycles.clock[4];
-			data = ram.mem[address];
+			data = PeekRam( address );
 			return address;
 		}
 
@@ -931,14 +1049,14 @@ namespace Nes
 		{
 			indexed = (indexed + FetchPc8()) & 0xFF;
 			cycles.count += cycles.clock[3];
-			return ram.mem[indexed];
+			return PeekRam( indexed );
 		}
 
 		inline uint Cpu::ZpgReg_RW(uint& data,uint indexed)
 		{
 			indexed = (indexed + FetchPc8()) & 0xFF;
 			cycles.count += cycles.clock[5];
-			data = ram.mem[indexed];
+			data = PeekRam( indexed );
 			return indexed;
 		}
 
@@ -967,17 +1085,17 @@ namespace Nes
 		uint Cpu::AbsReg_R(uint indexed)
 		{
 			uint data = pc;
-			indexed += map.Peek8( data );
-			data = (map.Peek8( data + 1 ) << 8) + indexed;
+			indexed += PeekBus( data );
+			data = (PeekBus( data + 1 ) << 8) + indexed;
 			cycles.count += cycles.clock[2];
 
 			if (indexed & 0x100)
 			{
-				map.Peek8( data - 0x100 );
+				PeekBus( data - 0x100 );
 				cycles.count += cycles.clock[0];
 			}
 
-			data = map.Peek8( data );
+			data = PeekBus( data );
 			pc += 2;
 			cycles.count += cycles.clock[0];
 
@@ -987,17 +1105,23 @@ namespace Nes
 		uint Cpu::AbsReg_RW(uint& data,uint indexed)
 		{
 			uint address = pc;
-			indexed += map.Peek8( address );
-			address = (map.Peek8( address + 1 ) << 8) + indexed;
-
-			map.Peek8( address - (indexed & 0x100) );
+			indexed += PeekBus( address );
+			address = (PeekBus( address + 1 ) << 8) + indexed;
 			pc += 2;
-			cycles.count += cycles.clock[3];
 
-			data = map.Peek8( address );
+			/* The dummy read is 1 cycle before the real read (cycles 4 and 5
+			 * of the instruction), on opposite phases of the APU get/put
+			 * pattern: register side effects straddling the phase boundary
+			 * (e.g. SLO $4015 observing the frame flag clear) depend on it.
+			*/
+			cycles.count += cycles.clock[2];
+			PeekBus( address - (indexed & 0x100) );
 			cycles.count += cycles.clock[0];
 
-			map.Poke8( address, data );
+			data = PeekBus( address );
+			cycles.count += cycles.clock[0];
+
+			PokeBus( address, data );
 			cycles.count += cycles.clock[0];
 
 			return address;
@@ -1006,10 +1130,10 @@ namespace Nes
 		NST_FORCE_INLINE uint Cpu::AbsReg_W(uint indexed)
 		{
 			uint address = pc;
-			indexed += map.Peek8( address );
-			address = (map.Peek8( address + 1 ) << 8) + indexed;
+			indexed += PeekBus( address );
+			address = (PeekBus( address + 1 ) << 8) + indexed;
 
-			map.Peek8( address - (indexed & 0x100) );
+			PeekBus( address - (indexed & 0x100) );
 			pc += 2;
 			cycles.count += cycles.clock[3];
 
@@ -1037,7 +1161,7 @@ namespace Nes
 			cycles.count += cycles.clock[4];
 			data = FetchZpg16( data );
 
-			data = map.Peek8( data );
+			data = PeekBus( data );
 			cycles.count += cycles.clock[0];
 
 			return data;
@@ -1049,10 +1173,10 @@ namespace Nes
 			cycles.count += cycles.clock[4];
 			address = FetchZpg16( address );
 
-			data = map.Peek8( address );
+			data = PeekBus( address );
 			cycles.count += cycles.clock[0];
 
-			map.Poke8( address, data );
+			PokeBus( address, data );
 			cycles.count += cycles.clock[0];
 
 			return address;
@@ -1074,16 +1198,18 @@ namespace Nes
 			uint data = FetchPc8();
 			cycles.count += cycles.clock[3];
 
-			const uint indexed = ram.mem[data] + y;
-			data = (uint(ram.mem[(data + 1) & 0xFF]) << 8) + indexed;
+			const uint ptrLo = PeekRam( data );
+			const uint ptrHi = PeekRam( (data + 1) & 0xFF );
+			const uint indexed = ptrLo + y;
+			data = (ptrHi << 8) + indexed;
 
 			if (indexed & 0x100)
 			{
-				map.Peek8( data - 0x100 );
+				PeekBus( data - 0x100 );
 				cycles.count += cycles.clock[0];
 			}
 
-			data = map.Peek8( data );
+			data = PeekBus( data );
 			cycles.count += cycles.clock[0];
 
 			return data;
@@ -1094,14 +1220,16 @@ namespace Nes
 			uint address = FetchPc8();
 			cycles.count += cycles.clock[4];
 
-			const uint indexed = ram.mem[address] + y;
-			address = (uint(ram.mem[(address + 1) & 0xFF]) << 8) + indexed;
-			map.Peek8( address - (indexed & 0x100) );
+			const uint ptrLo = PeekRam( address );
+			const uint ptrHi = PeekRam( (address + 1) & 0xFF );
+			const uint indexed = ptrLo + y;
+			address = (ptrHi << 8) + indexed;
+			PeekBus( address - (indexed & 0x100) );
 
-			data = map.Peek8( address );
+			data = PeekBus( address );
 			cycles.count += cycles.clock[0];
 
-			map.Poke8( address, data );
+			PokeBus( address, data );
 			cycles.count += cycles.clock[0];
 
 			return address;
@@ -1112,10 +1240,12 @@ namespace Nes
 			uint address = FetchPc8();
 			cycles.count += cycles.clock[4];
 
-			const uint indexed = ram.mem[address] + y;
-			address = (uint(ram.mem[(address + 1) & 0xFF]) << 8) + indexed;
+			const uint ptrLo = PeekRam( address );
+			const uint ptrHi = PeekRam( (address + 1) & 0xFF );
+			const uint indexed = ptrLo + y;
+			address = (ptrHi << 8) + indexed;
 
-			map.Peek8( address - (indexed & 0x100) );
+			PeekBus( address - (indexed & 0x100) );
 
 			return address;
 		}
@@ -1129,8 +1259,37 @@ namespace Nes
 		{
 			if ((!!tmp) == STATE)
 			{
-				pc = ((tmp=pc+1) + sign_extend_8(uint(map.Peek8( pc )))) & 0xFFFF;
-				cycles.count += cycles.clock[2 + ((tmp^pc) >> 8 & 1)];
+				const uint offset = sign_extend_8(uint(PeekBus( pc )));
+
+				pc = ((tmp=pc+1) + offset) & 0xFFFF;
+
+				const uint crossed = (tmp^pc) >> 8 & 1;
+
+				/* PCL is fixed a cycle before PCH, and the read on that cycle
+				 * goes out with the old high byte. If the branch crosses a
+				 * page a second read goes out at the unfixed address before
+				 * PCH catches up. Both are visible to registers.
+				*/
+				cycles.count += cycles.clock[1];
+				PeekBus( (tmp & 0xFF00) | (pc & 0x00FF) );
+
+				if (crossed)
+				{
+					cycles.count += cycles.clock[0];
+					PeekBus( (tmp & 0xFF00) | (pc & 0x00FF) );
+				}
+
+				cycles.count += cycles.clock[0];
+
+				/* A taken branch polls before its second cycle. If it also
+				 * crosses a page it polls again before the fourth, which is
+				 * the usual "before the final cycle" and needs no special
+				 * case; if it does not, that first poll is the only one, so
+				 * an interrupt asserted afterwards is not seen until the end
+				 * of the following instruction.
+				*/
+				if (!crossed)
+					interrupt.pollLimit = cycles.offset + cycles.clock[1];
 			}
 			else
 			{
@@ -1145,13 +1304,13 @@ namespace Nes
 
 		inline void Cpu::StoreMem(const uint address,const uint data)
 		{
-			map.Poke8( address, data );
+			PokeBus( address, data );
 			cycles.count += cycles.clock[0];
 		}
 
 		inline void Cpu::StoreZpg(const uint address,const uint data)
 		{
-			ram.mem[address] = data;
+			PokeRam( address, data );
 		}
 
 		////////////////////////////////////////////////////////////////////////////////////////
@@ -1165,6 +1324,8 @@ namespace Nes
 			const uint p = sp;
 			sp = (sp - 1) & 0xFF;
 
+			// Stack writes drive both data buses.
+			busData = busDataInternal = data & 0xFF;
 			ram.mem[0x100+p] = data;
 		}
 
@@ -1176,6 +1337,7 @@ namespace Nes
 			const uint p1 = (p0 - 1) & 0xFF;
 			sp = (p1 - 1) & 0xFF;
 
+			busData = busDataInternal = data & 0xFF;
 			ram.mem[0x100+p1] = data & 0xFF;
 			ram.mem[0x100+p0] = data >> 8;
 		}
@@ -1186,7 +1348,9 @@ namespace Nes
 
 			sp = (sp + 1) & 0xFF;
 
-			return ram.mem[0x100+sp];
+			// Stack reads drive both data buses.
+			busData = busDataInternal = ram.mem[0x100+sp];
+			return busData;
 		}
 
 		inline uint Cpu::Pull16()
@@ -1197,6 +1361,7 @@ namespace Nes
 			const uint p1 = (p0 + 1) & 0xFF;
 			sp = p1;
 
+			busData = busDataInternal = ram.mem[0x100+p1];
 			return ram.mem[0x100+p0] | uint(ram.mem[0x100+p1]) << 8;
 		}
 
@@ -1222,28 +1387,32 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::Tax()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			x = a;
 			flags.nz = a;
 		}
 
 		NST_SINGLE_CALL void Cpu::Tay()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			y = a;
 			flags.nz = a;
 		}
 
 		NST_SINGLE_CALL void Cpu::Txa()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			a = x;
 			flags.nz = x;
 		}
 
 		NST_SINGLE_CALL void Cpu::Tya()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			a = y;
 			flags.nz = y;
 		}
@@ -1254,7 +1423,7 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::JmpAbs()
 		{
-			pc = map.Peek16( pc );
+			pc = PeekBus16( pc );
 			cycles.count += cycles.clock[JMP_ABS_CYCLES-1];
 		}
 
@@ -1262,36 +1431,58 @@ namespace Nes
 		{
 			// 6502 trap, can't cross between pages
 
-			const uint pos = map.Peek16( pc );
-			pc = map.Peek8( pos ) | (map.Peek8( (pos & 0xFF00) | ((pos + 1) & 0x00FF) ) << 8);
+			const uint pos = PeekBus16( pc );
+			pc = PeekBus( pos ) | (PeekBus( (pos & 0xFF00) | ((pos + 1) & 0x00FF) ) << 8);
 
 			cycles.count += cycles.clock[JMP_IND_CYCLES-1];
 		}
 
 		NST_SINGLE_CALL void Cpu::Jsr()
 		{
-			// 6502 trap, return address pushed on the stack is
-			// one byte prior to the next instruction
+			/* 6502 trap, return address pushed on the stack is one byte prior
+			 * to the next instruction. The low operand is read before the
+			 * pushes and the high operand after them, so a push landing on the
+			 * high operand changes where the jump goes.
+			*/
+			cycles.count += cycles.clock[0];
+			const uint lo = PeekBus( pc );
+			++pc;
 
-			Push16( pc + 1 );
-			pc = map.Peek16( pc );
-			cycles.count += cycles.clock[JSR_CYCLES-1];
+			cycles.count += cycles.clock[1];
+			Push8( pc >> 8 );
+
+			cycles.count += cycles.clock[0];
+			Push8( pc & 0xFF );
+
+			cycles.count += cycles.clock[0];
+			const uint hi = PeekBus( pc );
+
+			pc = lo | hi << 8;
+			cycles.count += cycles.clock[0];
 		}
 
 		NST_SINGLE_CALL void Cpu::Rts()
 		{
-			opcode = map.Peek8( pc );
-			pc = Pull16() + 1;
-			cycles.count += cycles.clock[RTS_CYCLES-1];
+			ImpliedDummyRead();
+
+			cycles.count += cycles.clock[1];
+			pc = Pull16();
+
+			// cycle 6 reads at the pulled address before the increment
+			cycles.count += cycles.clock[1];
+			PeekBus( pc );
+
+			pc = (pc + 1) & 0xFFFF;
+			cycles.count += cycles.clock[0];
 		}
 
 		NST_SINGLE_CALL void Cpu::Rti()
 		{
-			cycles.count += cycles.clock[RTI_CYCLES-1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[RTI_CYCLES-2];
 
 			{
 				const uint packed = Pull8();
-				opcode = map.Peek8( pc );
 				pc = Pull16();
 				flags.Unpack( packed );
 			}
@@ -1443,28 +1634,32 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::Dex()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			x = (x - 1) & 0xFF;
 			flags.nz = x;
 		}
 
 		NST_SINGLE_CALL void Cpu::Dey()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			y = (y - 1) & 0xFF;
 			flags.nz = y;
 		}
 
 		NST_SINGLE_CALL void Cpu::Inx()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			x = (x + 1) & 0xFF;
 			flags.nz = x;
 		}
 
 		NST_SINGLE_CALL void Cpu::Iny()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			y = (y + 1) & 0xFF;
 			flags.nz = y;
 		}
@@ -1475,37 +1670,43 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::Clc()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			flags.c = 0;
 		}
 
 		NST_SINGLE_CALL void Cpu::Sec()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			flags.c = Flags::C;
 		}
 
 		NST_SINGLE_CALL void Cpu::Cld()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			flags.d = 0;
 		}
 
 		NST_SINGLE_CALL void Cpu::Sed()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			flags.d = Flags::D;
 		}
 
 		NST_SINGLE_CALL void Cpu::Clv()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			flags.v = 0;
 		}
 
 		NST_SINGLE_CALL void Cpu::Sei()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 
 			if (!flags.i)
 			{
@@ -1519,7 +1720,8 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::Cli()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 
 			if (flags.i)
 			{
@@ -1541,7 +1743,8 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::Pha()
 		{
-			cycles.count += cycles.clock[PHA_CYCLES-1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[PHA_CYCLES-2];
 			Push8( a );
 		}
 
@@ -1549,20 +1752,23 @@ namespace Nes
 		{
 			// 6502 trap, B flag joins the club
 
-			cycles.count += cycles.clock[PHP_CYCLES-1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[PHP_CYCLES-2];
 			Push8( flags.Pack() | Flags::B );
 		}
 
 		NST_SINGLE_CALL void Cpu::Pla()
 		{
-			cycles.count += cycles.clock[PLA_CYCLES-1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[PLA_CYCLES-2];
 			a = Pull8();
 			flags.nz = a;
 		}
 
 		NST_SINGLE_CALL void Cpu::Plp()
 		{
-			cycles.count += cycles.clock[PLP_CYCLES-1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[PLP_CYCLES-2];
 
 			const uint i = flags.i;
 			flags.Unpack( Pull8() );
@@ -1584,14 +1790,16 @@ namespace Nes
 
 		NST_SINGLE_CALL void Cpu::Tsx()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			x = sp;
 			flags.nz = sp;
 		}
 
 		NST_SINGLE_CALL void Cpu::Txs()
 		{
-			cycles.count += cycles.clock[1];
+			ImpliedDummyRead();
+			cycles.count += cycles.clock[0];
 			sp = x;
 		}
 
@@ -1713,26 +1921,78 @@ namespace Nes
 			NotifyOp("SBX",1UL << 12);
 		}
 
-		NST_NO_INLINE uint Cpu::Sha(uint address)
+		/* The SH* instructions drop the "& high byte" term when a DMC DMA
+		 * halts the CPU on the dummy read cycle immediately before their
+		 * write: the value that would have been ANDed in is no longer on the
+		 * internal bus by the time the write cycle comes round, so the plain
+		 * register value is stored.  Run the dummy read as a real bus cycle
+		 * and let any DMA due on it take effect, exactly as a register read
+		 * would; if it stole cycles, the AND is suppressed.
+		*/
+		NST_SINGLE_CALL bool Cpu::ShDummyRead(const uint address)
 		{
-			address = a & x & ((address >> 8) + 1);
-			NotifyOp("SHA",1UL << 13);
-			return address;
+			const Cycle before = cycles.count;
+
+			Update( address );
+
+			const bool halted = (cycles.count != before);
+
+			PeekBus( address );
+			cycles.count += cycles.clock[0];
+
+			return halted;
 		}
 
-		NST_SINGLE_CALL uint Cpu::Shs(uint address)
+		/* SHA/SHS/SHX/SHY store (register & (high byte of the un-indexed
+		 * address + 1)).  When the index carries into the high byte the write
+		 * also lands at a corrupted address: the high byte on the address bus
+		 * is ANDed with the same value being stored.  Nestopia modelled that
+		 * for SHX/SHY only - SHA and SHS were handed the already-indexed
+		 * address by NES_I_W_A, so they could compute the stored value but
+		 * had no way to know a page had been crossed.  Like SHX/SHY they now
+		 * take the un-indexed base and do their own addressing.
+		*/
+		NST_NO_INLINE void Cpu::Sha(uint address,const uint indexed)
+		{
+			const uint newaddress = address + indexed;
+			const uint data = a & x & ((address >> 8) + 1);
+
+			const bool dma = ShDummyRead( (address & 0xFF00) | (newaddress & 0x00FF) );
+
+			if ((address ^ newaddress) & 0x100)
+				address = (newaddress & ((a & x) << 8)) | (newaddress & 0x00FF);
+			else
+				address = newaddress;
+
+			NotifyOp("SHA",1UL << 13);
+			StoreMem( address, dma ? (a & x) : data );
+		}
+
+		NST_SINGLE_CALL void Cpu::Shs(uint address)
 		{
 			sp = a & x;
-			address = sp & ((address >> 8) + 1);
+
+			const uint newaddress = address + y;
+			const uint data = sp & ((address >> 8) + 1);
+
+			const bool dma = ShDummyRead( (address & 0xFF00) | (newaddress & 0x00FF) );
+
+			if ((address ^ newaddress) & 0x100)
+				address = (newaddress & (sp << 8)) | (newaddress & 0x00FF);
+			else
+				address = newaddress;
+
 			NotifyOp("SHS",1UL << 14);
-			return address;
+			StoreMem( address, dma ? sp : data );
 		}
 
 		NST_SINGLE_CALL void Cpu::Shx(uint address)
 		{
 			uint newaddress = (address + y);
 			uint data = x & ((address >> 8) + 1);
-			Peek((address & 0xFF00) | (newaddress & 0x00FF)); // Dummy read
+
+			if (ShDummyRead( (address & 0xFF00) | (newaddress & 0x00FF) ))
+				data = x;
 
 			if ((address ^ newaddress) & 0x100)
 			{
@@ -1751,7 +2011,9 @@ namespace Nes
 		{
 			uint newaddress = (address + x);
 			uint data = y & ((address >> 8) + 1);
-			Peek((address & 0xFF00) | (newaddress & 0x00FF)); // Dummy read
+
+			if (ShDummyRead( (address & 0xFF00) | (newaddress & 0x00FF) ))
+				data = y;
 
 			if ((address ^ newaddress) & 0x100)
 			{
@@ -1786,7 +2048,7 @@ namespace Nes
 			return data;
 		}
 
-		void Cpu::Dop()
+		void Cpu::Dop(uint=0)
 		{
 			NotifyOp("DOP",1UL << 19);
 		}
@@ -1804,7 +2066,7 @@ namespace Nes
 		{
 			NST_DEBUG_MSG("6502 BRK");
 
-			opcode = map.Peek8( pc );
+			ImpliedDummyRead();
 			Push16( pc + 1 );
 			Push8( flags.Pack() | Flags::B );
 			flags.i = Flags::I;
@@ -1812,8 +2074,8 @@ namespace Nes
 			NST_VERIFY_MSG(interrupt.irqClock == CYCLE_MAX,"BRK -> IRQ collision!");
 			interrupt.irqClock = CYCLE_MAX;
 
-			cycles.count += cycles.clock[BRK_CYCLES-1];
-			pc = map.Peek16( FetchIRQISRVector() );
+			cycles.count += cycles.clock[BRK_CYCLES-2];
+			pc = PeekBus16( FetchIRQISRVector() );
 		}
 
 		NST_NO_INLINE void Cpu::Jam()
@@ -1839,7 +2101,7 @@ namespace Nes
 		uint Cpu::FetchIRQISRVector()
 		{
 			if (cycles.count >= cycles.frame)
-				map.Peek8( 0x3000 );
+				PeekBus( 0x3000 );
 
 			if (interrupt.nmiClock != CYCLE_MAX)
 			{
@@ -1863,12 +2125,19 @@ namespace Nes
 
 			if (!jammed)
 			{
+				/* Present the interrupt sequence as a BRK-shaped pseudo
+				 * instruction so cycle-type queries (IsWriteCycle) map the
+				 * stack pushes to the correct cycles within the sequence.
+				*/
+				cycles.offset = cycles.count;
+				opcode = 0x00;
+
 				Push16( pc );
 				Push8( flags.Pack() );
 				flags.i = Flags::I;
 
 				cycles.count += cycles.clock[INT_CYCLES-1];
-				pc = map.Peek16( vector == NMI_VECTOR ? NMI_VECTOR : FetchIRQISRVector() );
+				pc = PeekBus16( vector == NMI_VECTOR ? NMI_VECTOR : FetchIRQISRVector() );
 
 				apu.Clock();
 			}
@@ -1931,6 +2200,15 @@ namespace Nes
 
 			if (interrupt.irqClock != CYCLE_MAX)
 				interrupt.irqClock = (interrupt.irqClock > cycles.frame ? interrupt.irqClock - cycles.frame : 0);
+
+			/* pollLimit is a cycle in the same timebase and describes the
+			 * instruction that just ran, which Clock() is still deciding
+			 * about - ExecuteFrame calls Clock() again before executing
+			 * anything new. Left unrebased it becomes a huge value relative
+			 * to the rebased cycles.count and inverts that decision.
+			*/
+			if (interrupt.pollLimit != CYCLE_MAX)
+				interrupt.pollLimit = (interrupt.pollLimit > cycles.frame ? interrupt.pollLimit - cycles.frame : 0);
 		}
 
 		void Cpu::Clock()
@@ -1940,12 +2218,15 @@ namespace Nes
 			if (clock > cycles.frame)
 				clock = cycles.frame;
 
+			const Cycle polled = (interrupt.pollLimit != CYCLE_MAX) ?
+				interrupt.pollLimit : cycles.count;
+
 			if (cycles.count < interrupt.nmiClock)
 			{
 				if (clock > interrupt.nmiClock)
 					clock = interrupt.nmiClock;
 
-				if (cycles.count < interrupt.irqClock)
+				if (polled < interrupt.irqClock)
 				{
 					if (clock > interrupt.irqClock)
 						clock = interrupt.irqClock;
@@ -1973,6 +2254,13 @@ namespace Nes
 		inline void Cpu::ExecuteOp()
 		{
 			cycles.offset = cycles.count;
+
+			/* CYCLE_MAX means "this instruction polled for interrupts before
+			 * its final cycle", which is the normal case and is what comparing
+			 * against cycles.count expresses. Branch() overrides it.
+			*/
+			interrupt.pollLimit = CYCLE_MAX;
+
 			(*this.*opcodes[opcode=FetchPc8()])();
 		}
 
@@ -2070,7 +2358,8 @@ namespace Nes
                                                       \
 		void Cpu::op##hex_()                          \
 		{                                             \
-			cycles.count += cycles.clock[ticks_ - 1]; \
+			ImpliedDummyRead();                       \
+			cycles.count += cycles.clock[ticks_ - 2]; \
 		}
 
 		#define NES_IR___(instr_,addr_,hex_)          \
@@ -2101,7 +2390,8 @@ namespace Nes
                                                       \
 		void Cpu::op##hex_()                          \
 		{                                             \
-			cycles.count += cycles.clock[1];          \
+			ImpliedDummyRead();                       \
+			cycles.count += cycles.clock[0];          \
 			a = instr_( a );                          \
 		}
 
@@ -2119,7 +2409,7 @@ namespace Nes
 		void Cpu::op##hex_()                          \
 		{                                             \
 			const uint dst = FetchPc16();             \
-			cycles.count += cycles.clock[3];          \
+			cycles.count += cycles.clock[0];          \
 			instr_(dst);                              \
 		}
 
@@ -2329,20 +2619,25 @@ namespace Nes
 		NES_IRW__( Dcp, Abs,      0xCF )
 		NES_IRW__( Dcp, AbsX,     0xDF )
 		NES_IRW__( Dcp, AbsY,     0xDB )
-		NES_IP_C_( Dop, 1,     2, 0x80 )
-		NES_IP_C_( Dop, 1,     2, 0x82 )
-		NES_IP_C_( Dop, 1,     2, 0x89 )
-		NES_IP_C_( Dop, 1,     2, 0xC2 )
-		NES_IP_C_( Dop, 1,     2, 0xE2 )
-		NES_IP_C_( Dop, 1,     3, 0x04 )
-		NES_IP_C_( Dop, 1,     3, 0x44 )
-		NES_IP_C_( Dop, 1,     3, 0x64 )
-		NES_IP_C_( Dop, 1,     4, 0x14 )
-		NES_IP_C_( Dop, 1,     4, 0x34 )
-		NES_IP_C_( Dop, 1,     4, 0x54 )
-		NES_IP_C_( Dop, 1,     4, 0x74 )
-		NES_IP_C_( Dop, 1,     4, 0xD4 )
-		NES_IP_C_( Dop, 1,     4, 0xF4 )
+		/* The unofficial NOPs are not no-ops on the bus: each performs the
+		 * read its addressing mode implies. NOP $2002 clears the vblank
+		 * flag, and every one of them drives the data bus. Cycle counts are
+		 * unchanged - the addressing helpers charge what the stubs charged.
+		*/
+		NES_IR___( Dop, Imm,     0x80 )
+		NES_IR___( Dop, Imm,     0x82 )
+		NES_IR___( Dop, Imm,     0x89 )
+		NES_IR___( Dop, Imm,     0xC2 )
+		NES_IR___( Dop, Imm,     0xE2 )
+		NES_IR___( Dop, Zpg,     0x04 )
+		NES_IR___( Dop, Zpg,     0x44 )
+		NES_IR___( Dop, Zpg,     0x64 )
+		NES_IR___( Dop, ZpgX,    0x14 )
+		NES_IR___( Dop, ZpgX,    0x34 )
+		NES_IR___( Dop, ZpgX,    0x54 )
+		NES_IR___( Dop, ZpgX,    0x74 )
+		NES_IR___( Dop, ZpgX,    0xD4 )
+		NES_IR___( Dop, ZpgX,    0xF4 )
 		NES_IRW__( Isb, Zpg,      0xE7 )
 		NES_IRW__( Isb, ZpgX,     0xF7 )
 		NES_IRW__( Isb, Abs,      0xEF )
@@ -2377,9 +2672,31 @@ namespace Nes
 		NES_I_W__( Sax, Abs,      0x8F )
 		NES_I_W__( Sax, IndX,     0x83 )
 		NES_IR___( Sbx, Imm,      0xCB )
-		NES_I_W_A( Sha, AbsY,     0x9F )
-		NES_I_W_A( Sha, IndY,     0x93 )
-		NES_I_W_A( Shs, AbsY,     0x9B )
+		// SHA/SHS: addressing done internally, like SHX/SHY.
+		void Cpu::op0x9F()   // SHA absolute,Y
+		{
+			const uint address = FetchPc16();
+			cycles.count += cycles.clock[0];
+			Sha( address, y );
+		}
+
+		void Cpu::op0x9B()   // SHS absolute,Y
+		{
+			const uint address = FetchPc16();
+			cycles.count += cycles.clock[0];
+			Shs( address );
+		}
+
+		void Cpu::op0x93()   // SHA (zeropage),Y
+		{
+			const uint zp = FetchPc8();
+			cycles.count += cycles.clock[3];
+
+			const uint lo = PeekRam( zp );
+			const uint hi = PeekRam( (zp + 1) & 0xFF );
+
+			Sha( (hi << 8) | lo, y );
+		}
 		NES_I_W_U( Shx,           0x9E ) // Edge case: AbsY done internally
 		NES_I_W_U( Shy,           0x9C ) // Edge case: AbsX done internally
 		NES_IRW__( Slo, Zpg,      0x07 )
@@ -2396,7 +2713,7 @@ namespace Nes
 		NES_IRW__( Sre, AbsY,     0x5B )
 		NES_IRW__( Sre, IndX,     0x43 )
 		NES_IRW__( Sre, IndY,     0x53 )
-		NES_IP_C_( Top, 2,     4, 0x0C )
+		NES_IR___( Top, Abs,      0x0C )
 		NES_IR___( Top, AbsX,     0x1C )
 		NES_IR___( Top, AbsX,     0x3C )
 		NES_IR___( Top, AbsX,     0x5C )

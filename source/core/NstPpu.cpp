@@ -80,10 +80,10 @@ namespace Nes
 		};
 
 		Ppu::Tiles::Tiles()
-		: padding0(0), padding1(0) {}
+		: fetched(0), padding0(0), padding1(0) {}
 
 		Ppu::Oam::Oam()
-		: limit(buffer + STD_LINE_SPRITES*4), spriteLimit(true) {}
+		: limit(buffer + STD_LINE_SPRITES*4), secondary(0), corrupt(NO_CORRUPTION), spriteLimit(true) {}
 
 		Ppu::Output::Output(Video::Screen::Pixel* p)
 		: pixels(p) {}
@@ -180,6 +180,8 @@ namespace Nes
 
 				io.latch = 0;
 				io.buffer = Io::BUFFER_GARBAGE;
+				io.busData = 0;
+				io.octalLatch = 0;
 
 				regs.status = 0;
 				regs.ctrl[0] = 0;
@@ -200,6 +202,8 @@ namespace Nes
 			else if (acknowledged)
 			{
 				io.buffer = 0;
+				io.busData = 0;
+				io.octalLatch = 0;
 
 				regs.status = 0;
 				regs.ctrl[0] = 0;
@@ -245,6 +249,7 @@ namespace Nes
 			io.pattern = 0;
 			io.line.Unset();
 
+			tiles.fetched = 0;
 			tiles.pattern[0] = 0;
 			tiles.pattern[1] = 0;
 			tiles.attribute = 0;
@@ -257,8 +262,12 @@ namespace Nes
 			oam.spriteZeroInLine = false;
 			oam.phase = &Ppu::EvaluateSpritesPhase0;
 			oam.buffered = oam.buffer;
+			oam.secondary = 0;
+			oam.corrupt = Oam::NO_CORRUPTION;
 			oam.visible = oam.output;
 			oam.mask = 0;
+
+			std::memset( oam.buffer, Oam::GARBAGE, sizeof(oam.buffer) );
 
 			output.target = NULL;
 
@@ -332,6 +341,44 @@ namespace Nes
 			state.Begin( AsciiId<'O','A','M'>::V ).Compress( oam.ram       ).End();
 			state.Begin( AsciiId<'N','M','T'>::V ).Compress( nameTable.ram ).End();
 
+			/* The decay window is about twenty frames, so these are meaningless
+			 * unless carried. They sit on the monotonic counter, which the CPU
+			 * chunk restores, so they stay comparable across a reload.
+			*/
+			{
+				byte data[9*8];
+
+				for (uint i=0; i < 9; ++i)
+				{
+					const qaword v = (i < 8) ? decay.timestamp[i] : decay.rd2007;
+
+					for (uint j=0; j < 8; ++j)
+						data[i*8+j] = static_cast<byte>(v >> (j*8) & 0xFF);
+				}
+
+				state.Begin( AsciiId<'D','C','Y'>::V ).Write( data ).End();
+			}
+
+			/* Secondary OAM is cleared on a visible line and read again on the
+			 * pre-render line of the next frame, so its contents and fill level
+			 * outlive the frame and cannot be reset here.
+			*/
+			{
+				const byte data[2] =
+				{
+					static_cast<byte>(oam.secondary),
+					static_cast<byte>(oam.spriteZeroInLine)
+				};
+
+				state.Begin( AsciiId<'S','O','M'>::V ).Write( data ).Compress( oam.buffer ).End();
+			}
+
+			/* A corruption seeded on one frame is not performed until rendering
+			 * resumes, which can be the next frame, so it has to be carried.
+			 * Its own chunk rather than SOM's, so the two stay independent.
+			*/
+			state.Begin( AsciiId<'O','M','C'>::V ).Write8( oam.corrupt ).End();
+
 			if (model == PPU_RP2C02)
 				state.Begin( AsciiId<'F','R','M'>::V ).Write8( (regs.frame & Regs::FRAME_ODD) == 0 ).End();
 
@@ -346,6 +393,25 @@ namespace Nes
 			cycles.hClock = HCLOCK_DUMMY;
 			regs.frame = 0;
 			output.burstPhase = 0;
+
+			/* The decay timestamps sit on the monotonic cycle counter, which
+			 * jumps when a state is loaded, so anything held over would be
+			 * measured against a timebase it never belonged to. Clear them and
+			 * let the latch start out as it does at power on.
+			*/
+			for (uint i=0; i < 8; ++i)
+				decay.timestamp[i] = 0;
+
+			decay.rd2007 = 0;
+
+			/* Defaults for states written before the SOM chunk existed. Empty
+			 * secondary OAM is what those states behaved as, so a reload of one
+			 * replays the way it was recorded.
+			*/
+			oam.secondary = 0;
+			oam.spriteZeroInLine = false;
+			oam.corrupt = Oam::NO_CORRUPTION;
+			std::memset( oam.buffer, Oam::GARBAGE, sizeof(oam.buffer) );
 
 			while (const dword chunk = state.Begin())
 			{
@@ -382,6 +448,44 @@ namespace Nes
 					case AsciiId<'N','M','T'>::V:
 
 						state.Uncompress( nameTable.ram );
+						break;
+
+					case AsciiId<'D','C','Y'>::V:
+					{
+						State::Loader::Data<9*8> data( state );
+
+						for (uint i=0; i < 9; ++i)
+						{
+							qaword v = 0;
+
+							for (uint j=0; j < 8; ++j)
+								v |= qaword(data[i*8+j]) << (j*8);
+
+							if (i < 8)
+								decay.timestamp[i] = v;
+							else
+								decay.rd2007 = v;
+						}
+						break;
+					}
+
+					case AsciiId<'S','O','M'>::V:
+					{
+						State::Loader::Data<2> data( state );
+
+						oam.secondary = NST_MIN(data[0],Oam::MAX_LINE_SPRITES*4);
+						oam.spriteZeroInLine = data[1] & 0x1;
+
+						state.Uncompress( oam.buffer );
+						break;
+					}
+
+					case AsciiId<'O','M','C'>::V:
+
+						oam.corrupt = state.Read8();
+
+						if (oam.corrupt >= Oam::MAX_LINE_SPRITES)
+							oam.corrupt = Oam::NO_CORRUPTION;
 						break;
 
 					case AsciiId<'F','R','M'>::V:
@@ -644,10 +748,16 @@ namespace Nes
 			return accessors[address >> 10 & 0x3].Fetch( 0x3C0 | (address & 0x03F) );
 		}
 
+		/* The address is issued over two dots. This is the first: the low eight
+		 * pins are shared with the data bus, so their value is caught in an
+		 * external latch now and the read a dot later composes its address from
+		 * that latch and whichever high byte the PPU is driving by then.
+		*/
 		NST_FORCE_INLINE void Ppu::UpdateAddressLine(uint address)
 		{
 			NST_ASSERT( address <= 0x3FFF );
 			io.address = address;
+			io.octalLatch = address & 0xFF;
 
 			if (io.line)
 				io.line.Toggle( io.address, GetCycles() );
@@ -679,7 +789,10 @@ namespace Nes
 
 		NST_FORCE_INLINE void Ppu::FetchName()
 		{
-			io.pattern = nmt.FetchName( io.address ) << 4 | scroll.address >> 12 | (regs.ctrl[0] << 8 & 0x1000);
+			const uint address = ((0x2000 | (scroll.address & 0x0FFF)) & 0xFF00) | io.octalLatch;
+
+			io.busData = nmt.FetchName( address );
+			io.pattern = io.busData << 4 | scroll.address >> 12 | (regs.ctrl[0] << 8 & 0x1000);
 		}
 
 		NST_FORCE_INLINE void Ppu::OpenAttribute()
@@ -689,7 +802,10 @@ namespace Nes
 
 		NST_FORCE_INLINE void Ppu::FetchAttribute()
 		{
-			tiles.attribute = nmt.FetchAttribute( io.address ) >> ((scroll.address & 0x2) | (scroll.address >> 4 & 0x4));
+			const uint address = ((0x23C0 | (scroll.address & 0x0C00) | (scroll.address >> 4 & 0x0038) | (scroll.address >> 2 & 0x0007)) & 0xFF00) | io.octalLatch;
+
+			io.busData = nmt.FetchAttribute( address );
+			tiles.attribute = io.busData >> ((scroll.address & 0x2) | (scroll.address >> 4 & 0x4));
 		}
 
 		NST_FORCE_INLINE void Ppu::OpenPattern(uint address)
@@ -697,14 +813,16 @@ namespace Nes
 			UpdateAddressLine( address );
 		}
 
-		NST_FORCE_INLINE uint Ppu::FetchSpPattern() const
+		NST_FORCE_INLINE uint Ppu::FetchSpPattern()
 		{
-			return chr.FetchPattern( io.address );
+			io.busData = chr.FetchPattern( (io.address & 0xFF00) | io.octalLatch );
+			return io.busData;
 		}
 
 		NST_FORCE_INLINE void Ppu::FetchBgPattern0()
 		{
-			const uint pattern = chr.FetchPattern( io.address );
+			const uint pattern = chr.FetchPattern( (io.address & 0xFF00) | io.octalLatch );
+			io.busData = pattern;
 
 			tiles.pattern[1] = pattern >> 0 & 0x55;
 			tiles.pattern[0] = pattern >> 1 & 0x55;
@@ -712,7 +830,10 @@ namespace Nes
 
 		NST_FORCE_INLINE void Ppu::FetchBgPattern1()
 		{
-			const uint pattern = chr.FetchPattern( io.address );
+			const uint pattern = chr.FetchPattern( (io.address & 0xFF00) | io.octalLatch );
+			io.busData = pattern;
+
+			tiles.fetched = 1;
 
 			tiles.pattern[0] |= pattern << 0 & 0xAA;
 			tiles.pattern[1] |= pattern << 1 & 0xAA;
@@ -738,9 +859,25 @@ namespace Nes
 			return (regs.ctrl[1] & Regs::CTRL1_EMPHASIS) << 1;
 		}
 
+		/* PPU open bus decays to zero once nothing refreshes it. This is
+		 * analogue behaviour with no canonical duration - AccuracyCoin asks
+		 * for somewhere between 5 and 30 frames and checks nothing survives
+		 * 120. 600000 CPU cycles is about 20 NTSC / 18 PAL frames. The old
+		 * value of 6144 was in master clocks, i.e. 512 CPU cycles - about a
+		 * sixtieth of a frame.
+		 *
+		 * Timestamps come from the monotonic counter rather than cycles.count,
+		 * which is rebased by the frame length every frame and so cannot
+		 * express an interval longer than one frame.
+		*/
+		qaword Ppu::OpenBusDecayCycles() const
+		{
+			return qaword(600000) * cpu.GetClock();
+		}
+
 		NST_FORCE_INLINE void Ppu::UpdateDecay(byte mask)
 		{
-			Cycle curCyc = cpu.GetCycles();
+			const qaword curCyc = cpu.GetMonotonicCycles();
 
 			for (uint i = 0; i < 8; ++i)
 			{
@@ -778,9 +915,60 @@ namespace Nes
 
 		NES_POKE_D(Ppu,2001)
 		{
-			Update( cycles.one );
+			/* One write, two landing times. The enable bits steer the fetch and
+			 * shift stages, which sit upstream of the pixel, so they take two to
+			 * three dots to show - alignment dependent. Greyscale and emphasis
+			 * are the last stage there is, a mask over a colour already chosen,
+			 * so they land four dots earlier: in time to catch the pixel the
+			 * write started on. Running the PPU to each stop in turn before
+			 * changing what that stop controls is the whole of the behaviour.
+			 *
+			 * Update() is inlined so cpu.Update() runs once and both stops share
+			 * the one timestamp - clocking a pending DMA twice is not free. The
+			 * first stop is skipped unless it is genuinely ahead of the PPU: a
+			 * read-modify-write pokes twice on back-to-back cycles, and the
+			 * second poke's early stop is behind where the first one already ran.
+			*/
+			const Cycle setup = cpu.Update();
+
+			if (setup > GetCycles() + cycles.one)
+			{
+				cycles.count = GetLocalCycles( setup - cycles.one ) - cycles.vClock;
+				Run();
+			}
 
 			NST_VERIFY( cpu.GetCycles() >= cycles.reset || !data );
+
+			if (cpu.GetCycles() >= cycles.reset && ((regs.ctrl[1] ^ data) & (Regs::CTRL1_EMPHASIS|Regs::CTRL1_MONOCHROME)))
+			{
+				/* Coloring() and Emphasis() read the register, which has not been
+				 * given the write yet and must not be until the second stop.
+				*/
+				const uint ce[] =
+				{
+					(data & Regs::CTRL1_MONOCHROME) ? uint(Palette::MONO) : uint(Palette::COLOR),
+					(data & Regs::CTRL1_EMPHASIS) << 1
+				};
+
+				const byte* const NST_RESTRICT map = rgbMap;
+
+				if (!map)
+				{
+					for (uint i=0; i < Palette::SIZE; ++i)
+						output.palette[i] = (palette.ram[i] & ce[0]) | ce[1];
+				}
+				else
+				{
+					for (uint i=0; i < Palette::SIZE; ++i)
+						output.palette[i] = (map[palette.ram[i] & Palette::COLOR] & ce[0]) | ce[1];
+				}
+			}
+
+			if (cycles.count < setup + cycles.one * 3)
+			{
+				cycles.count = GetLocalCycles( setup + cycles.one * 3 ) - cycles.vClock;
+				Run();
+			}
 
 			if (cpu.GetCycles() >= cycles.reset)
 			{
@@ -798,32 +986,22 @@ namespace Nes
 					oam.mask = oam.show[pos];
 
 					if ((regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) && !(data & Regs::CTRL1_BG_SP_ENABLED))
+					{
 						UpdateScrollAddressLine();
+
+						/* Switching rendering off part way through a line leaves
+						 * OAM to be corrupted once rendering comes back. Nothing
+						 * happens yet - only the row is decided here.
+						*/
+						if (scanline != SCANLINE_VBLANK)
+							oam.corrupt = SecondaryOamAddress();
+					}
 				}
 
 				io.latch = data;
 				UpdateDecay(0xFF);
 
-				data = (regs.ctrl[1] ^ data) & (Regs::CTRL1_EMPHASIS|Regs::CTRL1_MONOCHROME);
 				regs.ctrl[1] = io.latch;
-
-				if (data)
-				{
-					const uint ce[] = { Coloring(), Emphasis() };
-
-					const byte* const NST_RESTRICT map = rgbMap;
-
-					if (!map)
-					{
-						for (uint i=0; i < Palette::SIZE; ++i)
-							output.palette[i] = (palette.ram[i] & ce[0]) | ce[1];
-					}
-					else
-					{
-						for (uint i=0; i < Palette::SIZE; ++i)
-							output.palette[i] = (map[palette.ram[i] & Palette::COLOR] & ce[0]) | ce[1];
-					}
-				}
 			}
 		}
 
@@ -836,13 +1014,35 @@ namespace Nes
 
 			regs.status &= (Regs::STATUS_VBLANK^0xFFU);
 			scroll.toggle = 0;
+
+			/* Only the vblank flag is latched when the read begins. The sprite
+			 * flags are not, so what comes back is where they stand as the read
+			 * ends, two dots later - M2 has a 15/24 duty cycle. No address here:
+			 * the access was already issued above and must not be issued twice.
+			 *
+			 * Clearing a sprite flag is seen immediately; setting one is not. The
+			 * hit runs through a pending chain about 1.5 dots long before it
+			 * reaches the bit $2002 reads, while the pre-render clear zeroes both
+			 * that bit and its delayed copy at once. Requiring the flag to stand
+			 * at both ends of the read window expresses exactly that asymmetry: a
+			 * clear inside the window is seen, a set inside it is not.
+			*/
+			{
+				const uint sprites = Regs::STATUS_SP_OVERFLOW|Regs::STATUS_SP_ZERO_HIT;
+
+				Update( cycles.one * 2 );
+				status = (status & ~sprites) | (status & regs.status & sprites);
+			}
+
 			io.latch = (io.latch & Regs::STATUS_LATCH) | status;
 			UpdateDecay(mask);
 
-			Cycle curCyc = cpu.GetCycles();
+			const qaword curCyc = cpu.GetMonotonicCycles();
+			const qaword window = OpenBusDecayCycles();
+
 			for (uint i = 0; i < 5; ++i)
 			{
-				if ((curCyc - decay.timestamp[i]) < 6144)
+				if ((curCyc - decay.timestamp[i]) < window)
 					mask |= (1 << i);
 			}
 
@@ -887,16 +1087,23 @@ namespace Nes
 			{
 				if ((regs.oam & 0x03) == 0x02)
 					data &= 0xE3;
+
+				byte* const NST_RESTRICT value = oam.ram + regs.oam;
+				regs.oam = (regs.oam + 1) & 0xFF;
+				*value = data;
 			}
 			else
 			{
-				data = 0xFF;
+				/* Rendering owns OAM, so the write never lands; all it does is
+				 * step the object counter, which is the top six bits.
+				*/
+				regs.oam = (regs.oam + 4) & 0xFF & 0xFC;
 			}
-
-			byte* const NST_RESTRICT value = oam.ram + regs.oam;
-			regs.oam = (regs.oam + 1) & 0xFF;
-			*value = data;
 		}
+
+#ifndef PPU_2004_READ_DOTS
+#define PPU_2004_READ_DOTS 2
+#endif
 
 		NES_PEEK(Ppu,2004)
 		{
@@ -909,9 +1116,40 @@ namespace Nes
 			}
 			else
 			{
-				Update( cycles.one );
+				/* Update() inlined so the dot the access lands on is known. Run leaves
+				 * cycles.count holding where the PPU now is, not where it was asked
+				 * to stop, and the sprite fetch steps two dots at a time over dots
+				 * where nothing happens - so hClock alone cannot say whether a stop
+				 * at 266 was a request for 265 or for 266. Those two read different
+				 * bytes of secondary OAM.
+				*/
+				const Cycle setup = cpu.Update() + cycles.one * PPU_2004_READ_DOTS;
+				const Cycle here = GetLocalCycles( setup ) - cycles.vClock;
 
-				io.latch = oam.latch;
+				if (cycles.count < setup)
+				{
+					cycles.count = here;
+					Run();
+				}
+
+				/* Dots 257-320 walk secondary OAM straight through: the first
+				 * three dots of an object step the address and the fourth byte
+				 * is then re-read for the remaining five. Nothing in the fetch
+				 * stores that anywhere, and the dispatch skips two dots of
+				 * every eight here, so the byte is derived from the dot rather
+				 * than latched per dot.
+				*/
+				if (here - 257U < 64U)
+				{
+					const uint dot = here - 257;
+					const uint sub = dot & 0x7;
+					io.latch = oam.buffer[((dot >> 3) * 4 + (sub < 3 ? sub : 3)) & 0x1F];
+				}
+				else
+				{
+					io.latch = oam.latch;
+				}
+
 				UpdateDecay(0xFF);
 			}
 
@@ -941,6 +1179,10 @@ namespace Nes
 			}
 		}
 
+#ifndef PPU_2006_V_DELAY
+#define PPU_2006_V_DELAY 4
+#endif
+
 		NES_POKE_D(Ppu,2006)
 		{
 			Update( cycles.one );
@@ -959,9 +1201,18 @@ namespace Nes
 				else
 				{
 					scroll.latch = (scroll.latch & 0x7F00) | data;
+
+					/* Moving t into v is not immediate - hardware takes four PPU cycles
+					 * over it, five on one alignment. Long enough that a write timed
+					 * into a fetch lands between the two halves: the address latch
+					 * still holds the low byte the old v put there, while the high
+					 * byte the read composes comes from the new v.
+					*/
+					Update( cycles.one * PPU_2006_V_DELAY );
+
 					scroll.address = scroll.latch;
 					UpdateScrollAddressLine();
-				}
+						}
 			}
 		}
 
@@ -1009,6 +1260,13 @@ namespace Nes
 			}
 		}
 
+#ifndef PPU_DATA_READ_DELAY
+#define PPU_DATA_READ_DELAY 7
+#endif
+#ifndef PPU_ALE_PARITY
+#define PPU_ALE_PARITY 1
+#endif
+
 		NES_PEEK_A(Ppu,2007)
 		{
 			byte mask = 0xFF;
@@ -1016,17 +1274,27 @@ namespace Nes
 
 			Update( cycles.one, address );
 
-			Cycle curCyc = cpu.GetCycles();
-			Cycle delta = curCyc - decay.rd2007;
+			const qaword curCyc = cpu.GetMonotonicCycles();
+			const qaword delta = curCyc - decay.rd2007;
 			decay.rd2007 = curCyc;
 
 			bool fastread = (delta <= 12);
 
 			address = scroll.address & 0x3FFF;
-			UpdateVramAddress();
 
-			if (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || (scanline == SCANLINE_VBLANK))
+			const bool rendering =
+				(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) && (scanline != SCANLINE_VBLANK);
+
+			/* The access steps v, but not before the state machine has read. With
+			 * rendering on the step is the coarse-X-and-Y glitch, and applying it
+			 * up front leaves every fetch in the window between the CPU read and
+			 * the refill running one tile ahead of where the line actually is.
+			*/
+			if (!rendering)
+			{
+				UpdateVramAddress();
 				UpdateAddressLine(scroll.address & 0x3fff);
+			}
 
 			if ((address & 0x3F00) == 0x3F00) // Palette
 			{
@@ -1044,7 +1312,37 @@ namespace Nes
 
 			UpdateDecay(mask);
 
-			io.buffer = (address >= 0x2000 ? nmt.FetchName( address ) : chr.FetchPattern( address ));
+			/* The buffer is not filled on the dot the CPU read ends. The PPU DATA
+			 * state machine starts then and takes a few more PPU cycles to reach
+			 * its Read. With rendering off nothing else drives the bus, so the
+			 * byte is whatever v addresses and the delay cannot be seen. With
+			 * rendering on the fetch owns the bus and the read goes out through
+			 * the octal latch like any other.
+			 *
+			 * When that Read lands on a dot the fetch is also using for ALE, the
+			 * latch is loaded from the shared pins before the fetch drives them -
+			 * so it takes the byte the previous read left there, not the address
+			 * this fetch wants. Overwriting it after the fetch has issued its
+			 * address is the same end state and needs no extra flag.
+			*/
+			if (!rendering)
+			{
+				io.buffer = (address >= 0x2000 ? nmt.FetchName( address ) : chr.FetchPattern( address ));
+			}
+			else
+			{
+				Update( cycles.one * PPU_DATA_READ_DELAY );
+
+				if (((cycles.hClock + PPU_ALE_PARITY) & 1) == 0)
+					io.octalLatch = io.busData;
+
+				const uint bus = (io.address & 0x3F00) | io.octalLatch;
+
+				io.buffer = (bus >= 0x2000 ? nmt.FetchName( bus ) : chr.FetchPattern( bus ));
+				io.busData = io.buffer;
+
+				UpdateVramAddress();
+			}
 
 			return io.latch;
 		}
@@ -1057,7 +1355,7 @@ namespace Nes
 
 		NES_PEEK(Ppu,2xxx)
 		{
-			if ((cpu.GetCycles() - decay.timestamp[0]) > 6144)
+			if ((cpu.GetMonotonicCycles() - decay.timestamp[0]) > OpenBusDecayCycles())
 				return 0;
 
 			return io.latch;
@@ -1072,14 +1370,22 @@ namespace Nes
 
 		NES_POKE_D(Ppu,4014)
 		{
+			// The transfer cannot halt the CPU on a write cycle, so the first
+			// write of a read-modify-write is superseded by the second: one
+			// transfer runs, and it uses the later page.
+			if (cpu.IsWriteCycle( cpu.GetCycles() + cpu.GetClock() ))
+				return;
+
 			Update( cycles.one );
+
+			cpu.HaltForDma();
 			cpu.StealCycles( cpu.GetClock() );
 
 			NST_ASSERT( regs.oam < 0x100 );
 
 			data <<= 8;
 
-			if ((regs.oam == 0x00 && data < 0x2000) && (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || cpu.GetCycles() <= GetHVIntClock() - cpu.GetClock() * 512))
+			if ((regs.oam == 0x00 && data < 0x2000 && !cpu.AreApuRegsActive()) && (!(regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED) || cpu.GetCycles() <= GetHVIntClock() - cpu.GetClock() * 512))
 			{
 				const byte* const NST_RESTRICT cpuRam = cpu.GetRam() + (data & (Cpu::RAM_SIZE-1));
 				byte* const NST_RESTRICT oamRam = oam.ram;
@@ -1107,40 +1413,92 @@ namespace Nes
 				cpu.SetOamDMA(false);
 
 				io.latch = oamRam[0xFF];
+				cpu.SetBusData( io.latch );
 				UpdateDecay(0xFF);
 			}
-			else do
+			else
 			{
-				io.latch = cpu.Peek( data++ );
-				UpdateDecay(0xFF);
+				cpu.SetOamDMA(true);
+				uint oamIndex = 0;
 
-				cpu.StealCycles( cpu.GetClock() );
-
-				Update( cycles.one );
-				cpu.StealCycles( cpu.GetClock() );
-
-				NST_VERIFY( IsDead() );
-
-				if (IsDead())
+				do
 				{
-					if ((regs.oam & 0x03) == 0x02)
-						io.latch &= 0xE3;
-				}
-				else
-				{
-					io.latch = 0xFF;
-				}
+					cpu.SetOamDMACycle( oamIndex++ );
 
-				byte* const NST_RESTRICT out = oam.ram + regs.oam;
-				regs.oam = (regs.oam + 1) & 0xFF;
-				*out = io.latch;
+					/* The APU registers decode only A0-A4 and answer whatever
+					 * address the DMA presents, but only while the 6502 bus
+					 * sits in $4000-$401F. Inside the $4000-$5FFF window they
+					 * are the sole driver. Outside it memory drives too and
+					 * wins, except that $4015 still drives the bits it owns -
+					 * bit 5 is not one of them - and the controller ports get
+					 * clocked while driving nothing.
+					 * A DMA read always drives the external bus, that being how
+					 * the byte reaches OAM, so $4015 does here unlike a CPU read.
+					*/
+					const uint src = data++;
+					uint value;
+
+					if (!cpu.AreApuRegsActive())
+					{
+						value = ((src & 0xFFE0) == 0x4000) ? cpu.GetBusData() : cpu.Peek( src );
+					}
+					else if ((src & 0xE000) == 0x4000)
+					{
+						value = cpu.Peek( 0x4000 | (src & 0x1F) );
+					}
+					else
+					{
+						value = cpu.Peek( src );
+
+						const uint reg = 0x4000 | (src & 0x1F);
+
+						cpu.SetBusDataAll( value );
+
+						const uint driven = cpu.Peek( reg );
+
+						if (reg == 0x4015)
+							value = driven;
+					}
+
+					io.latch = value;
+					cpu.SetBusData( value );
+					UpdateDecay(0xFF);
+
+					cpu.StealCycles( cpu.GetClock() );
+					cpu.Update();
+
+					Update( cycles.one );
+					cpu.StealCycles( cpu.GetClock() );
+					cpu.Update();
+
+					NST_VERIFY( IsDead() );
+
+					if (IsDead())
+					{
+						if ((regs.oam & 0x03) == 0x02)
+							io.latch &= 0xE3;
+					}
+					else
+					{
+						io.latch = 0xFF;
+					}
+
+					byte* const NST_RESTRICT out = oam.ram + regs.oam;
+					regs.oam = (regs.oam + 1) & 0xFF;
+					*out = io.latch;
+				}
+				while (data & 0xFF);
+
+				cpu.SetOamDMACycle(0);
+				cpu.SetOamDMA(false);
 			}
-			while (data & 0xFF);
 		}
 
-		NES_PEEK(Ppu,4014)
+		NES_PEEK_A(Ppu,4014)
 		{
-			return 0x40;
+			// Write-only register: open bus.
+			cpu.Update( address );
+			return cpu.GetBusData();
 		}
 
 		NST_FORCE_INLINE void Ppu::Scroll::ClockX()
@@ -1182,6 +1540,14 @@ namespace Nes
 
 			byte* const NST_RESTRICT dst = tiles.pixels;
 
+			if (!tiles.fetched)
+			{
+				std::memset( dst, Tiles::SERIAL_IN | ((tiles.attribute & 0x3) << 2), 8 );
+				return;
+			}
+
+			tiles.fetched = 0;
+
 			dst[0] = src[0][0];
 			dst[1] = src[1][0];
 			dst[2] = src[0][1];
@@ -1205,6 +1571,20 @@ namespace Nes
 			byte* const NST_RESTRICT dst = tiles.pixels + tiles.index;
 			tiles.index ^= 8U;
 
+			/* Reaching here at all means rendering is on, so the registers are
+			 * shifting. If the dot the pattern completes on was blanked there is
+			 * nothing to reload with, and the eight dots of shifting take the
+			 * serial input instead: 0 into the low bit plane and 1 into the high,
+			 * carrying whatever the attribute latch holds.
+			*/
+			if (!tiles.fetched)
+			{
+				std::memset( dst, Tiles::SERIAL_IN | ((tiles.attribute & 0x3) << 2), 8 );
+				return;
+			}
+
+			tiles.fetched = 0;
+
 			dst[0] = src[0][0];
 			dst[1] = src[1][0];
 			dst[2] = src[0][1];
@@ -1215,14 +1595,62 @@ namespace Nes
 			dst[7] = src[1][3];
 		}
 
+		/* Where secondary OAM is being addressed right now. Dots 1-64 walk it
+		 * from 0 to $1F as the clear runs, evaluation leaves it at the write
+		 * pointer - always a multiple of four, which is why corruption in that
+		 * window can only land on every fourth row - and the fetch steps it
+		 * once per object.
+		*/
+		uint Ppu::SecondaryOamAddress() const
+		{
+			if (cycles.hClock < 64)
+				return cycles.hClock >> 1;
+
+			if (cycles.hClock < 256)
+				return (oam.buffered - oam.buffer) & 0x1F;
+
+			if (cycles.hClock < 320)
+				return ((cycles.hClock - 256) >> 3) * 4;
+
+			return 0;
+		}
+
+		/* Rendering was switched off part way through a line and has just come
+		 * back: one row of OAM takes a copy of row 0, chosen by where secondary
+		 * OAM was being addressed at the moment it went off. Row 0 copying over
+		 * itself is why this can never disturb a plain sprite zero hit.
+		*/
+		NST_FORCE_INLINE void Ppu::CorruptOam()
+		{
+			const uint row = oam.corrupt * 8;
+
+			oam.corrupt = Oam::NO_CORRUPTION;
+
+			if (row)
+				std::memcpy( oam.ram + row, oam.ram, 8 );
+		}
+
 		NST_FORCE_INLINE void Ppu::EvaluateSpritesEven()
 		{
-			if (cycles.hClock >= 64)
-				oam.latch = oam.ram[oam.address];
+			/* Dots 1-64 are writing $FF into secondary OAM, and a read of $2004
+			 * in that window sees that rather than the object it addresses.
+			*/
+			oam.latch = (cycles.hClock >= 64 ? oam.ram[oam.address] : 0xFF);
+
+			if (oam.corrupt != Oam::NO_CORRUPTION)
+				CorruptOam();
 		}
 
 		NST_FORCE_INLINE void Ppu::EvaluateSpritesOdd()
 		{
+			/* The clear is a real write of $FF into secondary OAM, one byte per
+			 * write cycle, walking the same address SecondaryOamAddress()
+			 * reports. Modelling it as a pointer reset leaves whatever the last
+			 * line put there, which a read of $2004 can see.
+			*/
+			if (cycles.hClock < 64)
+				oam.buffer[cycles.hClock >> 1] = 0xFF;
+
 			(*this.*oam.phase)();
 		}
 
@@ -1234,11 +1662,25 @@ namespace Nes
 		{
 			oam.index++;
 
+			/* The Y byte goes into secondary OAM before anything decides
+			 * whether the object is in range; only the address advances on a
+			 * hit. So the write pointer always holds the last Y examined, and
+			 * that is the byte the reads below return once evaluation stops.
+			*/
+			if (oam.buffered != oam.limit)
+				oam.buffered[0] = oam.latch;
+
 			if (scanline - oam.latch >= oam.height)
 			{
 				if (oam.index != 64)
 				{
-					oam.address = (oam.index != 2 ? oam.address + 4 : 8);
+					/* A miss advances to the next object and re-aligns: the
+					 * add wraps as a byte and the low two bits are dropped, so
+					 * an address left misaligned by a write to $2003 comes back
+					 * to a multiple of four. With OAM aligned the AND does
+					 * nothing, which is why it is so rarely modelled.
+					*/
+					oam.address = (oam.address + 4) & 0xFF & 0xFC;
 				}
 				else
 				{
@@ -1248,7 +1690,7 @@ namespace Nes
 			}
 			else
 			{
-				oam.address++;
+				oam.address = (oam.address + 1) & 0xFF;
 				oam.phase = &Ppu::EvaluateSpritesPhase2;
 				oam.buffered[0] = oam.latch;
 			}
@@ -1256,14 +1698,14 @@ namespace Nes
 
 		void Ppu::EvaluateSpritesPhase2()
 		{
-			oam.address++;
+			oam.address = (oam.address + 1) & 0xFF;
 			oam.phase = &Ppu::EvaluateSpritesPhase3;
 			oam.buffered[1] = oam.latch;
 		}
 
 		void Ppu::EvaluateSpritesPhase3()
 		{
-			oam.address++;
+			oam.address = (oam.address + 1) & 0xFF;
 			oam.phase = &Ppu::EvaluateSpritesPhase4;
 			oam.buffered[2] = oam.latch;
 		}
@@ -1273,21 +1715,28 @@ namespace Nes
 			oam.buffered[3] = oam.latch;
 			oam.buffered += 4;
 
+			/* Secondary OAM keeps its contents until the next clear, which is
+			 * what the pre-render fetch reads; oam.buffered cannot say so
+			 * because it is also the write pointer and restarts every line.
+			*/
+			if (oam.secondary < Oam::MAX_LINE_SPRITES*4)
+				oam.secondary += 4;
+
 			if (oam.index != 64)
 			{
 				oam.phase = (oam.buffered != oam.limit ? &Ppu::EvaluateSpritesPhase1 : &Ppu::EvaluateSpritesPhase5);
 
-				if (oam.index != 2)
-				{
-					oam.address++;
+				if (oam.index == 1)
+					oam.spriteZeroInLine = true;
 
-					if (oam.index == 1)
-						oam.spriteZeroInLine = true;
-				}
-				else
-				{
-					oam.address = 8;
-				}
+				/* Reading the X position runs the same in-range check the Y
+				 * position did, and a miss re-aligns the address the same way.
+				 * Aligned, this lands on the next multiple of four either way.
+				*/
+				oam.address = (oam.address + 1) & 0xFF;
+
+				if (scanline - oam.latch >= oam.height)
+					oam.address &= 0xFC;
 			}
 			else
 			{
@@ -1296,11 +1745,20 @@ namespace Nes
 			}
 		}
 
+		/* Secondary OAM is full or evaluation has stopped, so the write cycle
+		 * reads instead. The pointer is masked to five bits, which is what
+		 * makes the full case read index 0 - it wrapped getting there.
+		*/
+		NST_FORCE_INLINE void Ppu::ReadSecondaryOam()
+		{
+			oam.latch = oam.buffer[(oam.buffered - oam.buffer) & 0x1F];
+		}
+
 		void Ppu::EvaluateSpritesPhase5()
 		{
 			if (scanline - oam.latch >= oam.height)
 			{
-				oam.address = ((oam.address + 4) & 0xFC) + ((oam.address + 1) & 0x03);
+				oam.address = (((oam.address + 4) & 0xFC) + ((oam.address + 1) & 0x03)) & 0xFF;
 
 				if (oam.address <= 5)
 				{
@@ -1314,34 +1772,67 @@ namespace Nes
 				oam.address = (oam.address + 1) & 0xFF;
 				regs.status |= Regs::STATUS_SP_OVERFLOW;
 			}
+
+			ReadSecondaryOam();
 		}
 
 		void Ppu::EvaluateSpritesPhase6()
 		{
 			oam.phase = &Ppu::EvaluateSpritesPhase7;
 			oam.address = (oam.address + 1) & 0xFF;
+
+			ReadSecondaryOam();
 		}
 
 		void Ppu::EvaluateSpritesPhase7()
 		{
 			oam.phase = &Ppu::EvaluateSpritesPhase8;
 			oam.address = (oam.address + 1) & 0xFF;
+
+			ReadSecondaryOam();
 		}
 
+		/* The last of the four bytes an overflow candidate is examined over is
+		 * its X position, and the PPU runs the same vertical in-range check on
+		 * it that the Y byte got. A hit steps a whole object on; a miss steps
+		 * one byte and re-aligns, which lands back on the object just read and
+		 * is why that byte comes out twice.
+		*/
 		void Ppu::EvaluateSpritesPhase8()
 		{
 			oam.phase = &Ppu::EvaluateSpritesPhase9;
-			oam.address = (oam.address + 1) & 0xFF;
 
-			if ((oam.address & 0x3) == 0x3)
-				oam.address++;
+			if (scanline - oam.latch < oam.height)
+				oam.address = (oam.address + 4) & 0xFF;
+			else
+				oam.address = (oam.address + 1) & 0xFF & 0xFC;
 
-			oam.address &= 0xFC;
+			ReadSecondaryOam();
 		}
 
 		void Ppu::EvaluateSpritesPhase9()
 		{
+			ReadSecondaryOam();
 			oam.address = (oam.address + 4) & 0xFF;
+		}
+
+		/* The in-range checks the sprite fetch performs run off the low 8 bits
+		 * of the line counter, so the pre-render line compares as line 5 on
+		 * NTSC (261 & 255) and 55 on PAL/Dendy (311 & 255) rather than as the
+		 * -1 it is represented by here. On a visible line this is the scanline
+		 * itself, so nothing else changes.
+		*/
+		NST_FORCE_INLINE uint Ppu::SpriteLine() const
+		{
+			if (scanline != SCANLINE_HDUMMY)
+				return uint(scanline);
+
+			return (model == PPU_RP2C02 ? PPU_RP2C02_VSYNC-1 : PPU_RP2C07_VSYNC-1) & 0xFF;
+		}
+
+		NST_FORCE_INLINE bool Ppu::SpriteInRange(const byte* const NST_RESTRICT buffer) const
+		{
+			return SpriteLine() - uint(buffer[0]) < oam.height;
 		}
 
 		NST_FORCE_INLINE uint Ppu::OpenSprite() const
@@ -1352,7 +1843,7 @@ namespace Nes
 		NST_FORCE_INLINE uint Ppu::OpenSprite(const byte* const NST_RESTRICT buffer) const
 		{
 			uint address;
-			const uint comparitor = (uint(scanline) - buffer[0]) ^ ((buffer[2] & uint(Oam::Y_FLIP)) ? 0xF : 0x0);
+			const uint comparitor = (SpriteLine() - buffer[0]) ^ ((buffer[2] & uint(Oam::Y_FLIP)) ? 0xF : 0x0);
 
 			if (regs.ctrl[0] & Regs::CTRL0_SP8X16)
 			{
@@ -1373,6 +1864,15 @@ namespace Nes
 
 		NST_FORCE_INLINE void Ppu::LoadSprite(const uint pattern0,const uint pattern1,const byte* const NST_RESTRICT buffer)
 		{
+			/* Each slot of the fetch owns one output unit and replaces it in
+			 * place. Nothing wipes them all at dot 257 - a fetch cut short by
+			 * rendering going off leaves the units it never reached alone.
+			*/
+			Oam::Output* const NST_RESTRICT entry = oam.output + (buffer - oam.buffer) / 4;
+
+			if (oam.visible <= entry)
+				oam.visible = entry + 1;
+
 			if (pattern0 | pattern1)
 			{
 				uint a = (buffer[2] & uint(Oam::X_FLIP)) ? 7 : 0;
@@ -1382,8 +1882,6 @@ namespace Nes
 					(pattern0 >> 1 & 0x0055) | (pattern1 << 0 & 0x00AA) |
 					(pattern0 << 8 & 0x5500) | (pattern1 << 9 & 0xAA00)
 				);
-
-				Oam::Output* const NST_RESTRICT entry = oam.visible++;
 
 				entry->pixels[( a^=6 )] = ( p       ) & 0x3;
 				entry->pixels[( a^=2 )] = ( p >>= 2 ) & 0x3;
@@ -1396,11 +1894,28 @@ namespace Nes
 
 				const uint attribute = buffer[2];
 
-				entry->x       = buffer[3];
+				entry->counter = buffer[3];
+				entry->shift   = 0;
 				entry->palette = Palette::SPRITE_OFFSET + ((attribute & Oam::COLOR) << 2);
 				entry->behind  = (attribute & Oam::BEHIND) ? 0x3 : 0x0;
 				entry->zero    = (buffer == oam.buffer && oam.spriteZeroInLine) ? 0x3 : 0x0;
 			}
+			else
+			{
+				entry->counter = 0;
+				entry->shift   = 8;
+			}
+		}
+
+		NST_FORCE_INLINE void Ppu::ClearSprite(const byte* const NST_RESTRICT buffer)
+		{
+			Oam::Output* const NST_RESTRICT entry = oam.output + (buffer - oam.buffer) / 4;
+
+			if (oam.visible <= entry)
+				oam.visible = entry + 1;
+
+			entry->counter = 0;
+			entry->shift   = 8;
 		}
 
 		void Ppu::LoadExtendedSprites()
@@ -1426,27 +1941,35 @@ namespace Nes
 
 		NST_FORCE_INLINE void Ppu::RenderPixel()
 		{
-			uint clock;
-			uint pixel = tiles.pixels[((clock=cycles.hClock++) + scroll.xFine) & 15] & tiles.mask;
+			uint pixel = tiles.pixels[(cycles.hClock++ + scroll.xFine) & 15] & tiles.mask;
+			uint taken = 0;
 
-			for (const Oam::Output* NST_RESTRICT sprite=oam.output, *const end=oam.visible; sprite != end; ++sprite)
+			/* Every unit steps every dot, so the loop cannot stop at the first
+			 * one that draws: a counter still running has to run whether or not
+			 * a nearer sprite already won the pixel.
+			*/
+			for (Oam::Output* NST_RESTRICT sprite=oam.output, *const end=oam.visible; sprite != end; ++sprite)
 			{
-				uint x = clock - sprite->x;
+				if (sprite->counter)
+				{
+					--sprite->counter;
+					continue;
+				}
 
-				if (x > 7)
+				if (sprite->shift == 8)
 					continue;
 
-				x = sprite->pixels[x] & oam.mask;
+				const uint x = sprite->pixels[sprite->shift++] & oam.mask;
 
-				if (x)
+				if (x && !taken)
 				{
+					taken = 1;
+
 					if (pixel & sprite->zero)
 						regs.status |= Regs::STATUS_SP_ZERO_HIT;
 
 					if (!(pixel & sprite->behind))
 						pixel = sprite->palette + x;
-
-					break;
 				}
 			}
 
@@ -1459,21 +1982,27 @@ namespace Nes
 			cycles.hClock = 256;
 			uint pixel = tiles.pixels[(255 + scroll.xFine) & 15] & tiles.mask;
 
-			for (const Oam::Output* NST_RESTRICT sprite=oam.output, *const end=oam.visible; sprite != end; ++sprite)
-			{
-				uint x = 255U - sprite->x;
+			uint taken = 0;
 
-				if (x > 7)
+			for (Oam::Output* NST_RESTRICT sprite=oam.output, *const end=oam.visible; sprite != end; ++sprite)
+			{
+				if (sprite->counter)
+				{
+					--sprite->counter;
+					continue;
+				}
+
+				if (sprite->shift == 8)
 					continue;
 
-				x = sprite->pixels[x] & oam.mask;
+				const uint x = sprite->pixels[sprite->shift++] & oam.mask;
 
-				if (x)
+				if (x && !taken)
 				{
+					taken = 1;
+
 					if (!(pixel & sprite->behind))
 						pixel = sprite->palette + x;
-
-					break;
 				}
 			}
 
@@ -1870,6 +2399,29 @@ namespace Nes
 			{
 				switch (cycles.hClock)
 				{
+					case 339:
+					HDummyEnd:
+					{
+						uint line = HCLOCK_DUMMY;
+
+						if (regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED)
+						{
+							line = HCLOCK_DUMMY - 1;
+							output.burstPhase = (output.burstPhase + 1) % 3;
+							cpu.SetFrameCycles( PPU_RP2C02_HVSYNC_1 );
+						}
+
+						cycles.hClock = 0;
+						cycles.vClock += line;
+
+						if (cycles.count <= line)
+							break;
+
+						cycles.count -= line;
+
+						goto HActive;
+					}
+
 					case 0:
 					case 8:
 					case 16:
@@ -2214,9 +2766,17 @@ namespace Nes
 					case 64:
 
 						NST_VERIFY( regs.oam == 0 );
-						oam.address = regs.oam & Oam::OFFSET_TO_0_1;
+						oam.address = regs.oam;
 						oam.phase = &Ppu::EvaluateSpritesPhase1;
 						oam.latch = 0xFF;
+
+						/* Dots 1-64 clear secondary OAM. This happens on a
+						 * visible line with rendering on and nowhere else, so
+						 * the pre-render line inherits the last line's sprites
+						 * and can put them in the shifters.
+						*/
+						oam.secondary = 0;
+						oam.spriteZeroInLine = false;
 						goto HActive;
 
 					case 255:
@@ -2242,11 +2802,18 @@ namespace Nes
 
 					case 257:
 
+						/* A real nametable read happens here, and it uses v as it stands
+						 * before the horizontal reset below - which is the whole reason
+						 * the ROM checks this dot. The byte is unused by rendering, so
+						 * Nestopia opened the address and never read it; only something
+						 * sampling the bus can tell.
+						*/
+						io.busData = nmt.FetchName( ((0x2000 | (scroll.address & 0x0FFF)) & 0xFF00) | io.octalLatch );
+
 						if (hBlankHook)
 							hBlankHook.Execute();
 
 						scroll.ResetX();
-						oam.visible = oam.output;
 						cycles.hClock = 258;
 
 						if (cycles.count <= 258)
@@ -2334,6 +2901,8 @@ namespace Nes
 
 						if (buffer < oam.buffered)
 							LoadSprite( io.pattern, FetchSpPattern(), buffer );
+						else
+							ClearSprite( buffer );
 
 						if (cycles.count <= ++cycles.hClock)
 							break;
@@ -2371,11 +2940,25 @@ namespace Nes
 						if (hActiveHook)
 							hActiveHook.Execute();
 
-						oam.latch = oam.ram[0];
+						/* The fetch has replaced every unit by now, so units past the
+						 * last live one can only be empties. Dropping them keeps the
+						 * per-dot loop as short as the line needs - a line with no
+						 * sprites costs nothing. A fetch cut short by rendering going
+						 * off never reaches here, which is what leaves its units be.
+						*/
+						while (oam.visible != oam.output && oam.visible[-1].shift == 8 && !oam.visible[-1].counter)
+							--oam.visible;
+
+						oam.latch = oam.buffer[0];
 						oam.buffered = oam.buffer;
-						oam.spriteZeroInLine = false;
 						oam.index = 0;
 						oam.phase = &Ppu::EvaluateSpritesPhase0;
+
+						/* The sprite fetch holds OAMADDR at zero, so a write to
+						 * $2003 only misaligns the one line that follows it and
+						 * every later line starts from zero again.
+						*/
+						regs.oam = 0;
 						cycles.hClock = 321;
 
 						if (cycles.count <= 321)
@@ -2400,10 +2983,15 @@ namespace Nes
 							break;
 						// fallthrough
 
+					/* Coarse X steps at the end of the tile fetch, not part way
+					 * through it. Nothing between the two dots reads it, so under
+					 * normal running the placement cannot be seen - but rendering
+					 * switched on between them decides whether the step happens at
+					 * all, and the prefetch is where a test can catch that.
+					*/
 					case 323:
 
 						FetchAttribute();
-						scroll.ClockX();
 						cycles.hClock = 324;
 
 						if (cycles.count <= 324)
@@ -2440,6 +3028,7 @@ namespace Nes
 					case 327:
 
 						FetchBgPattern1();
+						scroll.ClockX();
 						cycles.hClock = 328;
 
 						if (cycles.count <= 328)
@@ -2477,7 +3066,6 @@ namespace Nes
 					case 331:
 
 						FetchAttribute();
-						scroll.ClockX();
 						cycles.hClock = 332;
 
 						if (cycles.count <= 332)
@@ -2514,6 +3102,7 @@ namespace Nes
 					case 335:
 
 						FetchBgPattern1();
+						scroll.ClockX();
 						cycles.hClock = 336;
 
 						if (cycles.count <= 336)
@@ -2536,15 +3125,7 @@ namespace Nes
 
 						if (scanline == SCANLINE_HDUMMY && model == PPU_RP2C02)
 						{
-							if (regs.frame)
-							{
-								output.burstPhase = (output.burstPhase + 2) % 3;
-								cpu.SetFrameCycles( PPU_RP2C02_HVSYNC_1 );
-							}
-							else
-							{
-								output.burstPhase = (output.burstPhase + 1) % 3;
-							}
+							output.burstPhase = (output.burstPhase + 1) % 3;
 						}
 
 						cycles.hClock = 338;
@@ -2559,15 +3140,30 @@ namespace Nes
 
 						if (scanline++ != 239)
 						{
-							const uint line = (scanline != 0 || model != PPU_RP2C02 || !regs.frame ? HCLOCK_DUMMY : (HCLOCK_DUMMY - 1));
+							/* An odd frame is one dot short, and whether it loses that dot is
+							 * decided from the rendering flags as they stand at dot 339, two
+							 * dots after the last thing this line does. Stop there rather than
+							 * running the line out, so a write to $2001 landing in between is
+							 * still in time to be counted. Only the pre-render line of an odd
+							 * frame pays for the extra stop.
+							*/
+							if (scanline == 0 && model == PPU_RP2C02 && regs.frame)
+							{
+								cycles.hClock = 339;
+
+								if (cycles.count <= 339)
+									break;
+
+								goto HDummyEnd;
+							}
 
 							cycles.hClock = 0;
-							cycles.vClock += line;
+							cycles.vClock += HCLOCK_DUMMY;
 
-							if (cycles.count <= line)
+							if (cycles.count <= HCLOCK_DUMMY)
 								break;
 
-							cycles.count -= line;
+							cycles.count -= HCLOCK_DUMMY;
 
 							goto HActive;
 						}
@@ -2639,6 +3235,14 @@ namespace Nes
 
 						regs.status = 0;
 						scanline = SCANLINE_HDUMMY;
+						tiles.fetched = 0;
+
+						/* The pre-render line is the first line that renders, so a
+						 * corruption left pending over vblank lands here rather
+						 * than waiting for scanline 0.
+						*/
+						if (oam.corrupt != Oam::NO_CORRUPTION)
+							CorruptOam();
 						// fallthrough
 
 					case HCLOCK_DUMMY+8:
@@ -2844,12 +3448,27 @@ namespace Nes
 					case HCLOCK_DUMMY+300:
 					case HCLOCK_DUMMY+308:
 					case HCLOCK_DUMMY+316:
+					{
+						/* The pre-render line runs the sprite fetch like any
+						 * other, reading whatever secondary OAM still holds.
+						 * Nothing was evaluated into it here, so an entry only
+						 * reaches the shifters if it is in range of this line's
+						 * low 8 bits - and that is how a sprite gets drawn on
+						 * scanline 0.
+						*/
+						const byte* const buffer = oam.buffer + (cycles.hClock - (HCLOCK_DUMMY+260)) / 2;
+						const bool fetch = (buffer < oam.buffer + oam.secondary) && SpriteInRange( buffer );
 
-						OpenPattern( OpenSprite() );
+						OpenPattern( fetch ? OpenSprite(buffer) : OpenSprite() );
+
+						if (fetch)
+							io.pattern = FetchSpPattern();
+
 						cycles.hClock += 2;
 
 						if (cycles.count <= cycles.hClock)
 							break;
+					}
 						// fallthrough
 
 					case HCLOCK_DUMMY+262:
@@ -2860,8 +3479,16 @@ namespace Nes
 					case HCLOCK_DUMMY+302:
 					case HCLOCK_DUMMY+310:
 					case HCLOCK_DUMMY+318:
+					{
+						const byte* const buffer = oam.buffer + (cycles.hClock - (HCLOCK_DUMMY+262)) / 2;
 
 						OpenPattern( io.address | 0x8 );
+
+						if ((buffer < oam.buffer + oam.secondary) && SpriteInRange( buffer ))
+							LoadSprite( io.pattern, FetchSpPattern(), buffer );
+						else
+							ClearSprite( buffer );
+					}
 
 						if (cycles.hClock != HCLOCK_DUMMY+318)
 						{
@@ -2900,6 +3527,29 @@ namespace Nes
 			{
 				switch (cycles.hClock)
 				{
+					case 339:
+					HDummyEndOff:
+					{
+						uint line = HCLOCK_DUMMY;
+
+						if (regs.ctrl[1] & Regs::CTRL1_BG_SP_ENABLED)
+						{
+							line = HCLOCK_DUMMY - 1;
+							output.burstPhase = (output.burstPhase + 1) % 3;
+							cpu.SetFrameCycles( PPU_RP2C02_HVSYNC_1 );
+						}
+
+						cycles.hClock = 0;
+						cycles.vClock += line;
+
+						if (cycles.count <= line)
+							break;
+
+						cycles.count -= line;
+
+						goto HActiveOff;
+					}
+
 					case 0:
 					case 1:
 					case 2:
@@ -3164,18 +3814,29 @@ namespace Nes
 						const uint hClock = NST_MIN(cycles.count,256);
 						NST_ASSERT( i < hClock );
 
+						/* The counters keep running with rendering off - it is only
+						 * the shifting that stops - so a brief blank in the middle of
+						 * a line still leaves a sprite drawn at its own X.
+						*/
+						for (Oam::Output* NST_RESTRICT s=oam.output; s != oam.visible; ++s)
+							s->counter = (s->counter > hClock - i) ? (s->counter - (hClock - i)) : 0;
+
 						cycles.hClock = hClock;
 						tiles.index = (hClock - 1) & 8;
 
-						byte* const NST_RESTRICT tile = tiles.pixels;
 						Video::Screen::Pixel* NST_RESTRICT target = output.target;
 
+						/* The tile buffer is left alone. Nothing reloads the background
+						 * shift registers with rendering off, so they still hold the
+						 * last line drawn and hand it back when rendering returns. The
+						 * backdrop written below is what shows in the meantime, and
+						 * tiles.mask is zero regardless.
+						*/
 						do
 						{
-							tile[i++ & 15] = 0;
 							*target++ = pixel;
 						}
-						while (i != hClock);
+						while (++i != hClock);
 
 						output.target = target;
 
@@ -3197,7 +3858,10 @@ namespace Nes
 						if (hBlankHook)
 							hBlankHook.Execute();
 
-						oam.visible = oam.output;
+						/* Only the sprite fetch reloads the output units, and it does
+						 * not run with rendering off, so whatever was in them stays
+						 * there and is drawn again when rendering comes back.
+						*/
 						cycles.hClock = 258;
 
 						if (cycles.count <= 258)
@@ -3268,7 +3932,6 @@ namespace Nes
 							hActiveHook.Execute();
 
 						oam.buffered = oam.buffer;
-						oam.spriteZeroInLine = false;
 						oam.index = 0;
 						oam.phase = &Ppu::EvaluateSpritesPhase0;
 
@@ -3302,13 +3965,37 @@ namespace Nes
 
 					case 338:
 
+						/* The counters that hold a sprite back until its own X are
+						 * put into the halted state at dot 339 whenever rendering is
+						 * off, and nothing reloads them while it stays off. A sprite
+						 * still in the output units therefore comes back at the left
+						 * edge rather than where it was.
+						*/
+						for (Oam::Output* NST_RESTRICT s=oam.output; s != oam.visible; ++s)
+							s->counter = 0;
+
 						if (scanline++ != 239)
 						{
 							tiles.mask = tiles.show[1];
 							oam.mask = oam.show[1];
 
 							if (scanline == 0 && model == PPU_RP2C02)
+							{
 								output.burstPhase = (output.burstPhase + 1) % 3;
+
+								/* Same stop as the rendering-on path: rendering can come back
+								 * on over those two dots and still take the skip.
+								*/
+								if (regs.frame)
+								{
+									cycles.hClock = 339;
+
+									if (cycles.count <= 339)
+										break;
+
+									goto HDummyEndOff;
+								}
+							}
 
 							cycles.vClock += HCLOCK_DUMMY;
 							cycles.hClock = 0;
