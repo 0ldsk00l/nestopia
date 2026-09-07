@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_TAITO_X1017_H
 #define NST_BOARD_TAITO_X1017_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -46,6 +42,8 @@ namespace Nes
 				private:
 
 					void SubReset(bool);
+					uint NumMemoryRegions() const;
+					MemoryRegion GetMemoryRegion(uint) const;
 					void Load(File&);
 					void Save(File&) const;
 					void SubSave(State::Saver&) const;

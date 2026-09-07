@@ -31,19 +31,11 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void Mmc4::SubReset(const bool hard)
 			{
 				Mmc2::SubReset( hard );
 				Map( 0xA000U, 0xAFFFU, PRG_SWAP_16K_0 );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

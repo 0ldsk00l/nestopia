@@ -32,10 +32,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Result Homebrew::SetExitPort(ushort address) throw()
 		{
 			if (emulator.tracker.IsLocked( true ))
@@ -217,9 +213,6 @@ namespace Nes
 			return RESULT_OK;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }
 

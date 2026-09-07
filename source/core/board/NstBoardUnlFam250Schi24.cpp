@@ -36,10 +36,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Fam250Schi24::SubReset(bool)
 				{
 					bankreg = 0;
@@ -69,10 +65,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'F','S','C'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( bankreg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Fam250Schi24,6000)
 				{

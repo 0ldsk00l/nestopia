@@ -25,10 +25,6 @@
 #ifndef NST_CHIPS_H
 #define NST_CHIPS_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstPins.hpp"
 
 namespace Nes

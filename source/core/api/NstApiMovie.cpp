@@ -30,10 +30,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Movie::EventCaller Movie::eventCallback;
 
 		Result Movie::Play(std::istream& stream) throw()
@@ -67,8 +63,5 @@ namespace Nes
 			return !IsPlaying() && !IsRecording();
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

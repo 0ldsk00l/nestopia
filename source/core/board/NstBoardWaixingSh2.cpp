@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Waixing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Sh2::SubReset(const bool hard)
 				{
 					selector[1] = 0;
@@ -74,10 +70,6 @@ namespace Nes
 						Mmc3::SubLoad( state, baseChunk );
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				inline void Sh2::SwapChr(uint address) const
 				{

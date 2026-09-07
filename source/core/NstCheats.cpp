@@ -30,10 +30,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Cheats::Cheats(Cpu& c)
 		: cpu(c), frameLocked(false) {}
 
@@ -204,10 +200,6 @@ namespace Nes
 
 			return RESULT_OK;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		void Cheats::BeginFrame(bool frameLock)
 		{

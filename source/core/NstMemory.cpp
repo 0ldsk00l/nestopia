@@ -29,10 +29,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		void Memory<0,0,0>::SaveState
 		(
 			State::Saver& state,
@@ -122,9 +118,5 @@ namespace Nes
 
 			return paged;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

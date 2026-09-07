@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				class Super22Games::CartSwitches : public DipSwitches
 				{
 					enum Type
@@ -156,10 +152,6 @@ namespace Nes
 					if (cartSwitches)
 						state.Begin( AsciiId<'B','2','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( cartSwitches->GetHiPrg() ? 0x1 : 0x0 ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Super22Games,8000)
 				{

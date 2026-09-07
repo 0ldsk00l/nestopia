@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Jaleco
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Jf11::SubReset(const bool hard)
 				{
 					Map( 0x6000U, 0x7FFFU, &Jf11::Poke_6000 );
@@ -44,10 +40,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Jf11,6000)
 				{

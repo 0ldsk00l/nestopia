@@ -33,10 +33,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			BandaiHyperShot::BandaiHyperShot(const Cpu& c,Ppu& p)
 			:
 			Device (c,Api::Input::BANDAIHYPERSHOT),
@@ -56,10 +52,6 @@ namespace Nes
 			{
 				saver.Begin( AsciiId<'B','H'>::R(0,0,id) ).End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint BandaiHyperShot::Poll()
 			{

@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			ExcitingBoxing::ExcitingBoxing(const Cpu& c)
 			: Device(c,Api::Input::EXCITINGBOXING)
 			{
@@ -50,10 +46,6 @@ namespace Nes
 			{
 				saver.Begin( AsciiId<'E','B'>::R(0,0,id) ).End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void ExcitingBoxing::Poke(const uint data)
 			{

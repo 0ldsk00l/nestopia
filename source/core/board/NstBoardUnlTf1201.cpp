@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Tf1201::Tf1201(const Context& c)
 				: Board(c), irq(*c.cpu,*c.ppu) {}
 
@@ -117,10 +113,6 @@ namespace Nes
 					state.Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End();
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Tf1201::UpdatePrg(uint bank)
 				{

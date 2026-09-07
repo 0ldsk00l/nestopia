@@ -95,10 +95,6 @@ namespace Nes
 				return *static_cast<std::istream*>(stream) ? data : ~0U;
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void In::Seek(idword distance)
 			{
 				Clear();
@@ -248,10 +244,6 @@ namespace Nes
 				return buffer.Size() + 1;
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
-
 			uint In::Peek8()
 			{
 				const uint data = Read8();
@@ -353,10 +345,6 @@ namespace Nes
 				Write( d, 8 );
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void Out::Clear()
 			{
 				std::ostream& ref = *static_cast<std::ostream*>(stream);
@@ -387,10 +375,6 @@ namespace Nes
 
 				return advanced;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BTL_T230_H
 #define NST_BOARD_BTL_T230_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -41,8 +37,11 @@ namespace Nes
 				{
 				public:
 
+					// VRC4e: the register index comes from A3 and A2. The
+					// lines are fixed by the board, so they are not taken
+					// from the cartridge's chip pin configuration.
 					explicit T230(const Context& c)
-					: Vrc4(c) {}
+					: Vrc4(c,3,2) {}
 
 				private:
 

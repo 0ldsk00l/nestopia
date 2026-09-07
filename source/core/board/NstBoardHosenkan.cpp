@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Hosenkan
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Standard::Standard(const Context& c)
 				:
 				Board (c),
@@ -93,10 +89,6 @@ namespace Nes
 					irq.unit.SaveState( state, AsciiId<'I','R','Q'>::V );
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Standard,A000)
 				{

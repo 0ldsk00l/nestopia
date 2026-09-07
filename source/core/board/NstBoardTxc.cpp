@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Txc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void T22211A::SubReset(const bool hard)
 				{
 					Map( 0x4100U,          &T22211A::Peek_4100 );
@@ -86,10 +82,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'T','2','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( regs ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK(T22211A,4100)
 				{

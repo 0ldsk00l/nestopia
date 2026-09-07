@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			const byte Mmc5::Filler::squared[4] = {0x00,0x55,0xAA,0xFF};
 
 			Mmc5::Sound::Sound(Apu& a,bool connect)
@@ -173,6 +169,34 @@ namespace Nes
 
 				pcm.Reset();
 				dcBlocker.Reset();
+			}
+
+			uint Mmc5::NumMemoryRegions() const
+			{
+				return Board::NumMemoryRegions() + 1;
+			}
+
+			Mmc5::MemoryRegion Mmc5::GetMemoryRegion(uint index) const
+			{
+				const uint base = Board::NumMemoryRegions();
+
+				if (index < base)
+					return Board::GetMemoryRegion( index );
+
+				/* $5C00-$5FFF. Readable as RAM only in ExRAM modes 2 and 3, but
+				 * the storage is live in every mode and games park data there.
+				*/
+				MemoryRegion region;
+				region.space    = MemoryRegion::SPACE_CPU;
+
+				region.type     = MemoryRegion::TYPE_EXPANSION_RAM;
+				region.address  = 0x5C00;
+				region.size     = SIZE_1K;
+				region.data     = const_cast<byte*>(exRam.mem);
+				region.battery  = false;
+				region.writable = true;
+
+				return region;
 			}
 
 			void Mmc5::SubReset(const bool hard)
@@ -533,10 +557,6 @@ namespace Nes
 				amp = (data >> 8) * VOLUME;
 				sample = enabled ? amp : 0;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			inline ibool Mmc5::IsPpuSprite8x16() const
 			{
@@ -1305,7 +1325,14 @@ namespace Nes
 					banks.chrA[address] = data;
 					banks.lastChr = Banks::LAST_CHR_A;
 
-					if (!IsPpuSprite8x16() || !ppu.IsEnabled() || ppu.GetScanline() == Ppu::SCANLINE_VBLANK)
+					/* A bank value written while its own set is the live mapping has to
+					 * reach the PPU on the next fetch, not at the next hook. The MMC5
+					 * picks A or B per fetch; only the choice is latched at 257/320,
+					 * never the contents. Deferring the contents puts a mid-line bank
+					 * change a whole scanline late.
+					*/
+					if (!IsPpuSprite8x16() || !ppu.IsEnabled() || ppu.GetScanline() == Ppu::SCANLINE_VBLANK ||
+						banks.fetchMode == Banks::FETCH_MODE_SP)
 						UpdateChrA();
 				}
 			}
@@ -1322,7 +1349,8 @@ namespace Nes
 					banks.chrB[address] = data;
 					banks.lastChr = Banks::LAST_CHR_B;
 
-					if (!IsPpuSprite8x16() || !ppu.IsEnabled() || ppu.GetScanline() == Ppu::SCANLINE_VBLANK)
+					if (!IsPpuSprite8x16() || !ppu.IsEnabled() || ppu.GetScanline() == Ppu::SCANLINE_VBLANK ||
+						banks.fetchMode == Banks::FETCH_MODE_BG)
 						UpdateChrB();
 				}
 			}

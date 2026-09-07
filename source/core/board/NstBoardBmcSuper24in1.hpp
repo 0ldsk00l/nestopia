@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BMC_SUPER24IN1_H
 #define NST_BOARD_BMC_SUPER24IN1_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -53,15 +49,18 @@ namespace Nes
 					void NST_FASTCALL UpdatePrg(uint,uint);
 					void NST_FASTCALL UpdateChr(uint,uint) const;
 
-					NES_DECL_POKE( 5FF0 );
-					NES_DECL_POKE( 5FF1 );
-					NES_DECL_POKE( 5FF2 );
+					NES_DECL_POKE( 5000 );
 					NES_DECL_POKE( C000 );
 					NES_DECL_POKE( C001 );
 					NES_DECL_POKE( E000 );
 					NES_DECL_POKE( E001 );
 
-					uint exRegs[3];
+					enum
+					{
+						SOLDER_PAD = 0x0010
+					};
+
+					uint exRegs[4];
 				};
 			}
 		}

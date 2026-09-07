@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			SuborKeyboard::SuborKeyboard(const Cpu& c)
 			: Device(c,Api::Input::SUBORKEYBOARD)
 			{
@@ -65,10 +61,6 @@ namespace Nes
                          scan = 0;
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void SuborKeyboard::Poke(const uint data)
 			{

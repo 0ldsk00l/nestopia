@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Ntdec
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Asder::SubReset(const bool hard)
 				{
 					if (hard)
@@ -89,10 +85,6 @@ namespace Nes
 					state.Begin( AsciiId<'B','N','K'>::V ).Write( banks.chr ).End();
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Asder::UpdateChr() const
 				{
@@ -148,10 +140,6 @@ namespace Nes
 					SetMirroringHV( data );
 				}
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void FightingHero::SubReset(const bool hard)
 				{
 					Map( 0x6000U, 0x7FFFU, &FightingHero::Poke_6000 );
@@ -159,10 +147,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(~0U);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(FightingHero,6000)
 				{

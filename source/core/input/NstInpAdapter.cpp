@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Adapter::Adapter(Type t)
 			: type(t) {}
 
@@ -78,10 +74,6 @@ namespace Nes
 					devices[i]->Reset();
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
-
 			uint AdapterTwo::NumPorts() const
 			{
 				return 2;
@@ -116,10 +108,6 @@ namespace Nes
 				NST_ASSERT( line < 2 );
 				return devices[line]->Peek( line );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
 
 			AdapterFour::AdapterFour(Device& a,Device& b,Device& c,Device& d,Type t)
 			: Adapter(t), increaser(1)
@@ -201,10 +189,6 @@ namespace Nes
 					count[1] = (data[2] <= 20) ? data[2] : 0;
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint AdapterFour::NumPorts() const
 			{

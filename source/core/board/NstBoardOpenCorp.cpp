@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace OpenCorp
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Daou306::RemapChr()
 				{
 					chr.SwapBank<SIZE_1K>( 0x0000, (chrHigh[0] << 8) | chrLow[0] );
@@ -177,10 +173,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 			}
 		}
 	}

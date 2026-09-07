@@ -36,21 +36,13 @@
 //
 // NST_DEBUG                 - Debug mode compilation.
 //
-// NST_PRAGMA_ONCE           - Define if #pragma once is supported. Auto-defined if
-//                             compiler is MCW or MSVC.
-//
 // NST_U64 <type>            - For native 64bit (or greater) integer support. May not
 //                             be needed if compiler is BC, GCC, ICC, MSVC or supports
 //                             the C99 long long integer type.
 //
 //                             Example: #define NST_U64 unsigned long long
 //
-//                             If no suitable type is available, a default class based
-//                             implementation will be used which may generate slower code.
-//
-// NST_MM_INTRINSICS         - For MMX/SSE compiler intrinsics support through
-//                             xmmintrin.h/emmintrin.h/mmintrin.h. Auto-defined if
-//                             compiler is Win32 MSVC and _M_IX86 is defined.
+//                             If no suitable type is available, compilation will fail.
 //
 // NST_CALL <attribute>      - Compiler/platform specific calling convention for non-member
 //                             functions. Placed between return type and function name, e.g
@@ -91,24 +83,6 @@
 //                              NST_ASSUME( miss_july == hot );
 //                             #endif
 //
-// NST_FASTDELEGATE          - Define this if your compiler can handle casts between member
-//                             function pointers of different types and calls through them.
-//
-//                             If the size required to store a non-virtual member function
-//                             pointer is deemed too large, as in
-//
-//                             sizeof( void (Class::*)() ) > sizeof( void (*)() )
-//
-//                             this option is not worth using and Nestopia will force a
-//                             compile time error. Auto-defined if compiler is MSVC.
-//
-// Abbrevations:
-//
-// BC - Borland C++
-// GCC - GNU Compiler Collection
-// ICC - Intel C/C++ Compiler
-// MCW - Metrowerks CodeWarrior
-// MSVC - Microsoft Visual C++
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 */
@@ -129,6 +103,8 @@
 // NST_NO_SCALEX  - Scale2x and Scale3x video filters
 //
 // NST_NO_2XSAI   - 2xSaI video filter
+//
+// NST_NO_XBR     - xBR video filters
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 */

@@ -37,10 +37,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		class Nsf::Chips : Apu::Channel
 		{
 			struct Mmc5 : Boards::Mmc5::Sound
@@ -661,10 +657,6 @@ namespace Nes
 			cpu.Poke( 0x4015, 0x0F );
 			cpu.Poke( 0x4017, 0xC0 );
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		void Nsf::BeginFrame()
 		{

@@ -25,10 +25,6 @@
 #ifndef NST_INPUT_TOPRIDER_H
 #define NST_INPUT_TOPRIDER_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

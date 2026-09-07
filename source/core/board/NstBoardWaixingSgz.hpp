@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_WAIXING_SGZ_H
 #define NST_BOARD_WAIXING_SGZ_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardKonamiVrc4.hpp"
 
 namespace Nes

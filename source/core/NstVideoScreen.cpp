@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Video
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Screen::Screen()
 			{
 				std::fill( palette, palette + sizeof(array(palette)), dword(0) );
@@ -46,10 +42,6 @@ namespace Nes
 			{
 				std::fill( pixels, pixels + sizeof(array(pixels)), Pixel(0) );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

@@ -25,10 +25,6 @@
 #ifndef NST_INPUT_BARCODEWORLD_H
 #define NST_INPUT_BARCODEWORLD_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstBarcodeReader.hpp"
 
 namespace Nes

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				GoldenGame260in1::GoldenGame260in1(const Context& c)
 				:
 				Board (c),
@@ -87,10 +83,6 @@ namespace Nes
 					if (selector != 3)
 						state.Begin( AsciiId<'B','G','G'>::V ).Begin( AsciiId<'B','U','S'>::V ).Write8( open != 0 ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(GoldenGame260in1,8000)
 				{

@@ -35,10 +35,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		class Cartridge::Ines::Loader
 		{
 			bool Load(Ram&,dword);
@@ -58,6 +54,7 @@ namespace Nes
 				FFE_MAPPER_8 = 8,
 				FFE_MAPPER_17 = 17,
 				TRAINER_LENGTH = 0x200,
+				MAX_MISC_LENGTH = 0x8000000,
 				MIN_DB_SEARCH_STRIDE = SIZE_8K,
 				MAX_DB_SEARCH_LENGTH = SIZE_16K * 0xFFFUL + SIZE_8K * 0xFFFUL
 			};
@@ -68,6 +65,8 @@ namespace Nes
 			ProfileEx& profileEx;
 			Ram& prg;
 			Ram& chr;
+			Ram& misc;
+			uint miscRoms;
 			const ImageDatabase* const database;
 			Patcher patcher;
 
@@ -81,6 +80,7 @@ namespace Nes
 				Result* const patchResult,
 				Ram& p,
 				Ram& c,
+				Ram& m,
 				const FavoredSystem f,
 				Profile& r,
 				ProfileEx& x,
@@ -93,10 +93,12 @@ namespace Nes
 			profileEx     (x),
 			prg           (p),
 			chr           (c),
+			misc          (m),
+			miscRoms      (0),
 			database      (d),
 			patcher       (patchBypassChecksum)
 			{
-				NST_ASSERT( prg.Empty() && chr.Empty() );
+				NST_ASSERT( prg.Empty() && chr.Empty() && misc.Empty() );
 
 				if (stdStreamPatch)
 					*patchResult = patcher.Load( *stdStreamPatch, stdStreamImage );
@@ -148,6 +150,37 @@ namespace Nes
 
 				if (Load( chr, 16 + prg.Size() ))
 					Log::Flush( "Ines: CHR-ROM was patched" NST_LINEBREAK );
+
+				LoadMisc();
+			}
+
+			/* NES 2.0 Miscellaneous ROM: everything trailing CHR-ROM. The header
+			 * states how many such areas exist but not how large they are, so the
+			 * remainder of the file is taken as one block.
+			*/
+			void LoadMisc()
+			{
+				if (!miscRoms)
+					return;
+
+				const dword size = stream.Length();
+
+				if (!size || size > MAX_MISC_LENGTH)
+				{
+					if (size)
+						Log::Flush( "Ines: warning, Miscellaneous ROM too large, ignored" NST_LINEBREAK );
+
+					return;
+				}
+
+				misc.Set( Ram::ROM, true, false, size );
+
+				// The allocation is rounded up to a power of two and the padding
+				// stays addressable, so give it the value of unprogrammed ROM.
+				if (size <= misc.Masking())
+					std::memset( misc.Mem(size), 0xFF, misc.Masking() + 1 - size );
+
+				stream.Read( misc.Mem(), size );
 			}
 
 		private:
@@ -290,8 +323,9 @@ namespace Nes
 
 				log << title <<
 				(
-					setup.region == Header::REGION_BOTH ? "NTSC/PAL" :
-					setup.region == Header::REGION_PAL  ? "PAL":
+					setup.region == Header::REGION_BOTH  ? "NTSC/PAL" :
+					setup.region == Header::REGION_DENDY ? "Dendy" :
+					setup.region == Header::REGION_PAL   ? "PAL":
                                                           "NTSC"
 				) << " set" NST_LINEBREAK;
 
@@ -353,6 +387,11 @@ namespace Nes
 				}
 
 				log << NST_LINEBREAK;
+
+				miscRoms = setup.miscRoms;
+
+				if (miscRoms)
+					log << title << miscRoms << " Miscellaneous ROM(s) set" NST_LINEBREAK;
 
 				if (setup.version && setup.subMapper)
 					log << title << "submapper " << setup.subMapper << " set" NST_LINEBREAK;
@@ -519,6 +558,13 @@ namespace Nes
 									profile.system.cpu = Profile::System::CPU_RP2A07;
 									profile.system.ppu = Profile::System::PPU_RP2C07;
 								}
+								break;
+
+							case Header::REGION_DENDY:
+
+								profile.system.type = Profile::System::DENDY;
+								profile.system.cpu = Profile::System::CPU_DENDY;
+								profile.system.ppu = Profile::System::PPU_DENDY;
 								break;
 						}
 						break;
@@ -754,6 +800,7 @@ namespace Nes
 			Result* const patchResult,
 			Ram& prg,
 			Ram& chr,
+			Ram& misc,
 			const FavoredSystem favoredSystem,
 			Profile& profile,
 			ProfileEx& profileEx,
@@ -768,6 +815,7 @@ namespace Nes
 				patchResult,
 				prg,
 				chr,
+				misc,
 				favoredSystem,
 				profile,
 				profileEx,
@@ -900,11 +948,41 @@ namespace Nes
 				setup.ppu = Header::PPU_RP2C02;
 			}
 
-			if (setup.version && (header[12] & 0x2U))
+			// NES 2.0 byte 12 holds a two-bit timing mode, not a pair of flags
+			if (setup.version)
 			{
-				setup.region = Header::REGION_BOTH;
+				switch (header[12] & 0x3U)
+				{
+					case 1:
+
+						if (setup.system == Header::SYSTEM_CONSOLE)
+						{
+							setup.region = Header::REGION_PAL;
+							setup.ppu = Header::PPU_RP2C07;
+						}
+						else
+						{
+							setup.region = Header::REGION_NTSC;
+						}
+						break;
+
+					case 2:
+
+						setup.region = Header::REGION_BOTH;
+						break;
+
+					case 3:
+
+						setup.region = (setup.system == Header::SYSTEM_CONSOLE) ? Header::REGION_DENDY : Header::REGION_NTSC;
+						break;
+
+					default:
+
+						setup.region = Header::REGION_NTSC;
+						break;
+				}
 			}
-			else if (header[setup.version ? 12 : 9] & 0x1U)
+			else if (header[9] & 0x1U)
 			{
 				if (setup.system == Header::SYSTEM_CONSOLE)
 				{
@@ -928,6 +1006,7 @@ namespace Nes
 				setup.chrRam   = ((header[11]) & 0xFU) - 1U < 14 ? 64UL << (header[11] & 0xFU) : 0;
 				setup.chrNvRam = ((header[11]) >>   4) - 1U < 14 ? 64UL << (header[11] >>   4) : 0;
 				setup.inputType = header[15];
+				setup.miscRoms = header[14] & 0x3U;
 			}
 			else
 			{
@@ -935,6 +1014,7 @@ namespace Nes
 				setup.prgNvRam = ((header[6] & 0x2U) ? NST_MAX(header[8],1U) * dword(SIZE_8K) : 0);
 				setup.chrRam   = (setup.chrRom ? 0 : SIZE_8K);
 				setup.chrNvRam = 0;
+				setup.miscRoms = 0;
 			}
 
 			return result;
@@ -948,7 +1028,8 @@ namespace Nes
 				(setup.prgRom > (setup.version ? 0xFFFUL * SIZE_16K : 0xFFUL * SIZE_16K)) ||
 				(setup.chrRom > (setup.version ? 0xFFFUL * SIZE_8K : 0xFFUL * SIZE_8K)) ||
 				(setup.mapper > (setup.version ? 0x1FF : 0xFF)) ||
-				(setup.version && setup.subMapper > 0xF)
+				(setup.version && setup.subMapper > 0xF) ||
+				(setup.version && setup.miscRoms > 0x3)
 			)
 				return RESULT_ERR_INVALID_PARAM;
 
@@ -1054,6 +1135,10 @@ namespace Nes
 				{
 					header[12] |= 0x2U;
 				}
+				else if (setup.region == Header::REGION_DENDY)
+				{
+					header[12] |= 0x3U;
+				}
 				else if (setup.region == Header::REGION_PAL)
 				{
 					header[12] |= 0x1U;
@@ -1069,6 +1154,8 @@ namespace Nes
 
 					header[13] |= setup.security << 4;
 				}
+
+				header[14] = setup.miscRoms & 0x3;
 			}
 			else
 			{
@@ -1080,9 +1167,5 @@ namespace Nes
 
 			return RESULT_OK;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

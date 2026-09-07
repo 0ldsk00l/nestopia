@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_JALECO_H
 #define NST_BOARD_JALECO_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardKonamiVrc1.hpp"
 #include "NstBoardJalecoJf11.hpp"
 #include "NstBoardJalecoJf13.hpp"

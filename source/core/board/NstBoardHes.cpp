@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Hes
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Standard::SubReset(const bool hard)
 				{
 					for (uint i=0x4100; i < 0x6000; i += 0x200)
@@ -45,10 +41,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Standard,4100)
 				{

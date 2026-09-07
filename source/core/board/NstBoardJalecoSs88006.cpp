@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Jaleco
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ss88006::Irq::Reset(const bool hard)
 				{
 					if (hard)
@@ -188,10 +184,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				template<uint MASK,uint SHIFT>
 				void Ss88006::SwapPrg(const uint address,const uint data)

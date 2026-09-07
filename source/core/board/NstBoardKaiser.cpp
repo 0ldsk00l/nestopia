@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Kaiser
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Ks202::Ks202(const Context& c)
 				: Board(c), irq(*c.cpu) {}
 
@@ -415,10 +411,6 @@ namespace Nes
 					state.Begin( AsciiId<'R','E','G'>::V ).Write( data ).End();
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Ks202,8000)
 				{

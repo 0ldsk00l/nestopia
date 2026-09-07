@@ -34,10 +34,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Fds::DiskCaller Fds::diskCallback;
 		Fds::DriveCaller Fds::driveCallback;
 
@@ -224,8 +220,5 @@ namespace Nes
 			return emulator.Is(Machine::DISK) && static_cast<const Core::Fds*>(emulator.image)->HasHeader();
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

@@ -25,10 +25,6 @@
 #ifndef NST_CARTRIDGE_UNIF_H
 #define NST_CARTRIDGE_UNIF_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

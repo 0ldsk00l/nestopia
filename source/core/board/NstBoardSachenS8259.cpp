@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Sachen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void S8259::SubReset(const bool hard)
 				{
 					for (uint i=0x4100; i < 0x8000; i += 0x200)
@@ -85,10 +81,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'S','8','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( ctrl ).Write( regs ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(S8259,4100)
 				{

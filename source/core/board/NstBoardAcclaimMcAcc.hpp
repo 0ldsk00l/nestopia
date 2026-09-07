@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_ACCLAIM_MCACC_H
 #define NST_BOARD_ACCLAIM_MCACC_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstTimer.hpp"
 #include "NstBoardMmc3.hpp"
 

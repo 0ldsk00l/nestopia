@@ -25,10 +25,6 @@
 #ifndef NST_CARTRIDGE_INES_H
 #define NST_CARTRIDGE_INES_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -47,6 +43,7 @@ namespace Nes
 				std::istream*,
 				bool,
 				Result*,
+				Ram&,
 				Ram&,
 				Ram&,
 				FavoredSystem,

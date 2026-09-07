@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			PokkunMoguraa::PokkunMoguraa(const Cpu& c)
 			: Device(c,Api::Input::POKKUNMOGURAA)
 			{
@@ -50,10 +46,6 @@ namespace Nes
 			{
 				saver.Begin( AsciiId<'P','M'>::R(0,0,id) ).End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void PokkunMoguraa::Poke(const uint data)
 			{

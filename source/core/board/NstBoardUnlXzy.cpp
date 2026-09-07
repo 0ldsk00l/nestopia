@@ -33,19 +33,11 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Xzy::SubReset(bool)
 				{
 					Map( 0x5FF1U, &Xzy::Poke_5FF1 );
 					Map( 0x5FF2U, CHR_SWAP_8K     );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Xzy,5FF1)
 				{

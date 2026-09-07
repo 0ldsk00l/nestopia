@@ -25,10 +25,6 @@
 #ifndef NST_CHECKSUM_H
 #define NST_CHECKSUM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstCore.hpp"
 #include "NstSha1.hpp"
 

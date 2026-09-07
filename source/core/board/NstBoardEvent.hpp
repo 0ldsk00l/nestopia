@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_EVENT_H
 #define NST_BOARD_EVENT_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstDipSwitches.hpp"
 
 namespace Nes

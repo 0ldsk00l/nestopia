@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void T262::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &T262::Poke_8000 );
@@ -66,10 +62,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','T','6'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( mode ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(T262,8000)
 				{

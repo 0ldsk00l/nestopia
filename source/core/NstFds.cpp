@@ -54,10 +54,6 @@ namespace Nes
 			12 * 8
 		};
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		class Fds::Bios
 		{
 		public:
@@ -130,10 +126,6 @@ namespace Nes
 			}
 		};
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		Fds::Bios Fds::bios;
 
 		NES_PEEK_A(Fds::Bios,Rom)
@@ -150,10 +142,6 @@ namespace Nes
 			NST_ASSERT( i < count );
 			return data + i * dword(SIDE_SIZE);
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		inline void Fds::Adapter::Mount(byte* io,bool protect)
 		{
@@ -459,10 +447,6 @@ namespace Nes
 			);
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		void Fds::SaveState(State::Saver& state,const dword baseChunk) const
 		{
 			state.Begin( baseChunk );
@@ -640,10 +624,6 @@ namespace Nes
 			return sound.ReadSweepGain();
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Fds::Disks::Sides::Sides(std::istream& stdStream)
 		{
 			Stream::In stream( &stdStream );
@@ -785,10 +765,6 @@ namespace Nes
 			latch = 0;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		bool Fds::Unit::Timer::Clock()
 		{
 			bool retval = false;
@@ -809,10 +785,6 @@ namespace Nes
 
 			return retval;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		Fds::Unit::Drive::Drive(const Disks::Sides& s)
 		: sides(s)
@@ -969,10 +941,6 @@ namespace Nes
 				return RESULT_ERR_GENERIC;
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NST_SINGLE_CALL void Fds::Unit::Drive::Write(uint reg)
 		{
@@ -1188,10 +1156,6 @@ namespace Nes
 			return !count || --count;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Fds::Unit::Unit(const Disks::Sides& s)
 		: drive(s)
 		{
@@ -1206,10 +1170,6 @@ namespace Nes
 			status = 0;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		ibool Fds::Unit::Clock()
 		{
 			bool retval = false;
@@ -1222,10 +1182,6 @@ namespace Nes
 
 			return (retval | (drive.Clock() ? 0 : drive.Advance(status)));
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		Fds::Adapter::Adapter(Cpu& c,const Disks::Sides& s)
 		: Timer::M2<Unit>(c,s) {}
@@ -1335,10 +1291,6 @@ namespace Nes
 				}
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NST_SINGLE_CALL uint Fds::Adapter::Activity() const
 		{
@@ -1463,10 +1415,6 @@ namespace Nes
 			}
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Fds::Io::Io()
 		: led(Api::Fds::MOTOR_OFF)
 		{
@@ -1483,10 +1431,6 @@ namespace Nes
 		{
 			std::memset( mem, 0x00, sizeof(mem) );
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NES_PEEK_A(Fds::Ram,Ram)
 		{
@@ -1521,10 +1465,6 @@ namespace Nes
 			return data & 0xFF;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		void Fds::Sound::Envelope::Reset()
 		{
 			ctrl = 0;
@@ -1554,10 +1494,6 @@ namespace Nes
 			gain = data[2] & CTRL_COUNT;
 			output = NST_MIN(gain,GAIN_MAX);
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		inline uint Fds::Sound::Envelope::Gain() const
 		{
@@ -1611,10 +1547,6 @@ namespace Nes
 		{
 			return (status & STATUS_OUTPUT_ENABLED) && wave.length && !wave.writing && output;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		Fds::Sound::Sound(Apu& a,bool connect)
 		: Channel(a)
@@ -1862,10 +1794,6 @@ namespace Nes
 			modulator.active = CanModulate();
 			active = CanOutput();
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		uint Fds::Sound::ReadWaveData(uint address) const
 		{

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ballgames11in1::SubReset(const bool hard)
 				{
 					Map( 0x6000U, 0x7FFFU, &Ballgames11in1::Peek_6000, &Ballgames11in1::Poke_6000 );
@@ -81,10 +77,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','B','G'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( mode | (bank << 4) ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Ballgames11in1::UpdateBanks()
 				{

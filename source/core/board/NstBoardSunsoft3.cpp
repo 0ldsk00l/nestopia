@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Sunsoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				S3::S3(const Context& c)
 				:
 				Board (c),
@@ -100,10 +96,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'S','3'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(S3,C000)
 				{

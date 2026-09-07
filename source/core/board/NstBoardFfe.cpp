@@ -33,10 +33,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Ffe::Trainer::Trainer(const Ram& ram)
 			: available(ram.Size() >= SIZE)
 			{
@@ -178,10 +174,6 @@ namespace Nes
 
 				state.End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			bool Ffe::Irq::Clock()
 			{

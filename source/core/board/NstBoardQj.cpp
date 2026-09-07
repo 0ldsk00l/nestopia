@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void Qj::SubReset(const bool hard)
 			{
 				if (hard)
@@ -69,10 +65,6 @@ namespace Nes
 				Mmc3::SubSave( state );
 				state.Begin( AsciiId<'Q','J'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( exReg ).End().End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void NST_FASTCALL Qj::UpdatePrg(uint address,uint bank)
 			{

@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			KonamiHyperShot::KonamiHyperShot(const Cpu& c)
 			: Device(c,Api::Input::KONAMIHYPERSHOT)
 			{
@@ -57,10 +53,6 @@ namespace Nes
 				if (id == AsciiId<'H','S'>::V)
 					strobe = loader.Read8() & 0x1;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void KonamiHyperShot::Poke(const uint data)
 			{

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Namcot
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				N175::N175(const Context& c)
 				:
 				Board (c)
@@ -62,10 +58,6 @@ namespace Nes
 					Map( 0xF000U, 0xF7FFU, PRG_SWAP_8K_2 );
 				}
 
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(N175,6000)
 				{

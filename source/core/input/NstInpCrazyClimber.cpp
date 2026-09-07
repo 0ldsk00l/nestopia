@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			CrazyClimber::CrazyClimber(const Cpu& c)
 			: Device(c,Api::Input::CRAZYCLIMBER)
 			{
@@ -62,10 +58,6 @@ namespace Nes
 				if (id == AsciiId<'C','C'>::V)
 					shifter = ~loader.Read8() & 0x1;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint CrazyClimber::Peek(const uint port)
 			{

@@ -32,10 +32,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Result NST_CALL Cheats::GameGenieEncode(const Code& code,char (&characters)[9]) throw()
 		{
 			if (code.address < 0x8000)
@@ -347,9 +343,6 @@ namespace Nes
 			return emulator.cpu.GetRam();
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }
 

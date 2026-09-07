@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace RexSoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Dbz5::SubReset(const bool hard)
 				{
 					if (hard)
@@ -72,10 +68,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'R','Z','5'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( exReg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Dbz5,4100)
 				{

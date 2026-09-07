@@ -24,18 +24,5 @@
 ////////////////////////////////////////////////////////////////////////////////////////
 */
 
-#ifdef __INTEL_COMPILER
-#pragma warning( disable : 981 1572 1599 )
-#endif
-
-#ifdef _MSC_VER
-#pragma warning( push )
-#pragma warning( disable : 4127 )
-#endif
-
 #define NES_NTSC_NO_BLITTERS
 #include "../nes_ntsc/nes_ntsc.inl"
-
-#ifdef _MSC_VER
-#pragma warning( pop )
-#endif

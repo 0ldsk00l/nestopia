@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BANDAI_24C0X_H
 #define NST_BOARD_BANDAI_24C0X_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include <cstring>
 
 namespace Nes

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Irem
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				H3001::H3001(const Context& c)
 				: Board(c), irq(*c.cpu) {}
 
@@ -109,10 +105,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'I','H','3'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(H3001,9001)
 				{

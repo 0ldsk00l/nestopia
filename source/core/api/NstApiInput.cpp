@@ -56,10 +56,6 @@
 
 namespace Nes
 {
-	#ifdef NST_MSVC_OPTIMIZE
-	#pragma optimize("s", on)
-	#endif
-
 	namespace Api
 	{
 		Input::ControllerCaller Input::controllerCallback;
@@ -446,8 +442,4 @@ namespace Nes
 			return false;
 		}
 	}
-
-	#ifdef NST_MSVC_OPTIMIZE
-	#pragma optimize("", on)
-	#endif
 }

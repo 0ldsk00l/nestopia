@@ -28,18 +28,6 @@
 #include <iosfwd>
 #include "NstApi.hpp"
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
-#if NST_ICC >= 810
-#pragma warning( push )
-#pragma warning( disable : 304 444 )
-#elif NST_MSVC >= 1200
-#pragma warning( push )
-#pragma warning( disable : 4512 )
-#endif
-
 namespace Nes
 {
 	namespace Api
@@ -473,9 +461,5 @@ namespace Nes
 		};
 	}
 }
-
-#if NST_MSVC >= 1200 || NST_ICC >= 810
-#pragma warning( pop )
-#endif
 
 #endif

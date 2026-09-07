@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Sachen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				/*void Tca01::SubReset(bool)
 				{
 					for (uint i=0x4100; i < 0x6000; i += 0x200)
@@ -63,10 +59,6 @@ namespace Nes
 						cpu.Poke(0x0b, 0xBF);
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Tca01,4100)
 				{

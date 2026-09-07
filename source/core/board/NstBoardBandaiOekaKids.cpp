@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bandai
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void OekaKids::SubReset(const bool hard)
 				{
 					ppu.SetAddressLineHook( Core::Io::Line(this,&OekaKids::Line_Nmt) );
@@ -46,10 +42,6 @@ namespace Nes
 					if (hard)
 						NES_DO_POKE(8000,0x8000,0x00);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_LINE(OekaKids,Nmt)
 				{

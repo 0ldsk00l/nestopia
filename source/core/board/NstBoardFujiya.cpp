@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Fujiya
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Standard::SubReset(bool)
 				{
 					reg = 0x00;
@@ -67,10 +63,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'F','U','A'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Standard,7000)
 				{

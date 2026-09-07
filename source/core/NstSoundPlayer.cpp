@@ -34,10 +34,6 @@ namespace Nes
 	{
 		namespace Sound
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Player::Slot::Slot()
 			: data(NULL) {}
 
@@ -221,10 +217,6 @@ namespace Nes
 			{
 				delete player;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

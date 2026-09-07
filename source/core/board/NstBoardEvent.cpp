@@ -36,10 +36,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Event::CartSwitches::CartSwitches()
 			: time(DEFAULT_DIP), showTime(true) {}
 
@@ -181,10 +177,6 @@ namespace Nes
 			{
 				state.Begin( AsciiId<'E','V','T'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write32( irq.unit.count ).End().End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void NST_FASTCALL Event::UpdateRegisters(const uint index)
 			{

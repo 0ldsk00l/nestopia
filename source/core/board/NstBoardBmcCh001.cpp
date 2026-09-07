@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ch001::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xBFFFU, &Ch001::Peek_8000, &Ch001::Poke_8000 );
@@ -68,10 +64,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','P','F'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( openBus ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Ch001,8000)
 				{

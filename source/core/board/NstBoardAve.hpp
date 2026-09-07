@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_AVE_H
 #define NST_BOARD_AVE_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardAveNina.hpp"
 #include "NstBoardAveD1012.hpp"
 

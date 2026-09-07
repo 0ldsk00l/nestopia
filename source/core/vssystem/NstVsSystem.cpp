@@ -35,10 +35,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		class Cartridge::VsSystem::Dip
 		{
 			class Proxy;
@@ -220,10 +216,6 @@ namespace Nes
 			regs[1] |= (table[dip][value] & DIPSWITCH_4017_MASK) << DIPSWITCH_4017_SHIFT;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		void Cartridge::VsSystem::VsDipSwitches::BeginFrame(Input::Controllers* const input)
 		{
 			if (!coinTimer)
@@ -244,10 +236,6 @@ namespace Nes
 				regs[0] &= ~uint(COIN);
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		struct Cartridge::VsSystem::Context
 		{
@@ -1283,10 +1271,6 @@ namespace Nes
 			delete vsSystem;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		struct Cartridge::VsSystem::InputMapper::Type1 : InputMapper
 		{
 			void Fix(Pad (&pads)[4],const uint (&ports)[2]) const
@@ -1384,10 +1368,6 @@ namespace Nes
 			Input::Controllers::Pad::callback.Set( userCallback, userData );
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Cartridge::VsSystem::InputMapper* Cartridge::VsSystem::InputMapper::Create(Type type)
 		{
 			switch (type)
@@ -1456,10 +1436,6 @@ namespace Nes
 				state.End();
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NES_PEEK_A(Cartridge::VsSystem,Nop)
 		{

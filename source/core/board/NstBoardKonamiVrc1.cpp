@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Konami
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Vrc1::SubReset(bool)
 				{
 					if (board.HasBattery() && board.GetSavableWram())
@@ -51,10 +47,6 @@ namespace Nes
 					Map( 0xE000U, 0xEFFFU, &Vrc1::Poke_E000 );
 					Map( 0xF000U, 0xFFFFU, &Vrc1::Poke_F000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Vrc1,6000)
 				{

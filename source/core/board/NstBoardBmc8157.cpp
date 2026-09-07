@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				B8157::CartSwitches::CartSwitches()
 				: mode(0x100) {}
 
@@ -123,10 +119,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','8','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( (cartSwitches.GetMode() ? 0x1U : 0x0U) | (trash ? 0x2U : 0x0U) ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(B8157,8000)
 				{

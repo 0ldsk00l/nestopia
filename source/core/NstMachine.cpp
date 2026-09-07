@@ -39,14 +39,11 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Machine::Machine()
 		:
 		state         (Api::Machine::NTSC),
 		frame         (0),
+		systemForced  (false),
 		strobeRise    (0),
 		strobeHigh    (false),
 		strobeForwarded (false),
@@ -99,6 +96,7 @@ namespace Nes
 				patchBypassChecksum,
 				patchResult,
 				system,
+				systemForced,
 				ask,
 				imageDatabase
 			);
@@ -335,6 +333,11 @@ namespace Nes
 			cpu.SetRamPowerState(state);
 		}
 
+		void Machine::SetSystemForced(bool forced)
+		{
+			systemForced = forced;
+		}
+
 		void Machine::SwitchMode()
 		{
 			NST_ASSERT( !(state & Api::Machine::ON) );
@@ -532,10 +535,6 @@ namespace Nes
 			return true;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		void Machine::Execute
 		(
 			Video::Output* const video,
@@ -567,6 +566,15 @@ namespace Nes
 					renderer.Blit( *video, ppu.GetScreen(), ppu.GetBurstPhase() );
 
 				cpu.EndFrame();
+
+				/* The strobe timestamp is in the CPU's timebase and has to
+				 * follow the same rebase. Left alone it sits a whole frame
+				 * ahead of the rebased cycle count, and StrobeLoaded() then
+				 * reports a strobe that straddles the frame boundary as never
+				 * having loaded - the shift registers keep the previous poll's
+				 * exhausted state and every button reads as pressed.
+				*/
+				strobeRise = (strobeRise > cpu.GetFrameCycles() ? strobeRise - cpu.GetFrameCycles() : 0);
 
 				if (image)
 					image->VSync();

@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void T230::SubReset(const bool hard)
 				{
 					Vrc4::SubReset( hard );
@@ -46,10 +42,6 @@ namespace Nes
 					Map( 0x8000U, 0x8FFFU, NOP_POKE         );
 					Map( 0xA000U, 0xAFFFU, &T230::Poke_A000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(T230,A000)
 				{

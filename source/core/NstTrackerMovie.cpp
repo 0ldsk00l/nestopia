@@ -35,10 +35,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		class Tracker::Movie::Player
 		{
 		public:
@@ -239,10 +235,6 @@ namespace Nes
 				ports[i] = cpu.Link( 0x4016 + i, Cpu::LEVEL_HIGHEST, this, &Player::Peek_Port, &Player::Poke_Port );
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		NES_PEEK_A(Tracker::Movie::Player,Port)
 		{
 			address &= 0x1;
@@ -263,10 +255,6 @@ namespace Nes
 		{
 			ports[address & 0x1]->Poke( address, data );
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		class Tracker::Movie::Recorder
 		{
@@ -412,10 +400,6 @@ namespace Nes
 			}
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		NES_PEEK_A(Tracker::Movie::Recorder,Port)
 		{
 			const uint data = ports[address & 0x1]->Peek( address );
@@ -439,10 +423,6 @@ namespace Nes
 		{
 			ports[address & 0x1]->Poke( address, data );
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		Tracker::Movie::Movie(Machine& e,EmuLoadState l,EmuSaveState s,Cpu& c,dword crc)
 		:
@@ -574,10 +554,6 @@ namespace Nes
 			if (recorder)
 				recorder->Resync();
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		bool Tracker::Movie::Execute()
 		{

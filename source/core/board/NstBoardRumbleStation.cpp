@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void RumbleStation::SubReset(bool)
 			{
 				Map( 0x6000U, 0x7FFFU, &RumbleStation::Poke_6000 );
@@ -42,10 +38,6 @@ namespace Nes
 
 				prg.SwapBank<SIZE_32K,0x0000>(0);
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_POKE_D(RumbleStation,6000)
 			{

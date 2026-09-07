@@ -89,10 +89,6 @@ namespace Nes
 				}
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			bool Renderer::FilterNtsc::Check(const RenderState& state)
 			{
 				return (state.width == NTSC_WIDTH && state.height == HEIGHT) &&
@@ -191,10 +187,6 @@ namespace Nes
 			lut    (palette,sharpness,resolution,bleed,artifacts,fringing,fieldMerging)
 			{
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

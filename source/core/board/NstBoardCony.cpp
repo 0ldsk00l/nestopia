@@ -36,10 +36,6 @@ namespace Nes
 		{
 			namespace Cony
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				class Standard::CartSwitches : public DipSwitches
 				{
 					enum
@@ -280,10 +276,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Standard::UpdatePrg()
 				{

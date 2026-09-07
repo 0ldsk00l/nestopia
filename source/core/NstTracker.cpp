@@ -33,10 +33,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Tracker::Tracker()
 		:
 		frame           (0),
@@ -257,10 +253,6 @@ namespace Nes
 
 			UpdateRewinderState( true );
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		Result Tracker::StartRewinding() const
 		{

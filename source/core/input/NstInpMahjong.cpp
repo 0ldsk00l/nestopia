@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Mahjong::Mahjong(const Cpu& c)
 			: Device(c,Api::Input::MAHJONG)
 			{
@@ -50,10 +46,6 @@ namespace Nes
 			{
 				saver.Begin( AsciiId<'M','J'>::R(0,0,id) ).End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void Mahjong::Poke(uint data)
 			{

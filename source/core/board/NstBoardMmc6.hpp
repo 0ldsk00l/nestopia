@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_MMC6_H
 #define NST_BOARD_MMC6_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardMmc3.hpp"
 
 namespace Nes
@@ -47,6 +43,8 @@ namespace Nes
 
 				void SubReset(bool);
 				void Save(File&) const;
+				uint NumMemoryRegions() const;
+				MemoryRegion GetMemoryRegion(uint) const;
 				void Load(File&);
 				void SubSave(State::Saver&) const;
 				void SubLoad(State::Loader&,dword);

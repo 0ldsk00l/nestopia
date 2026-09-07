@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BANDAI_DATACH_H
 #define NST_BOARD_BANDAI_DATACH_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstBarcodeReader.hpp"
 
 namespace Nes

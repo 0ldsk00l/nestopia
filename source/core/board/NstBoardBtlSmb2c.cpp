@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Smb2c::Smb2c(const Context& c)
 				:
 				Board          (c),
@@ -91,10 +87,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'B','2','C'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Smb2c::Irq::Reset(const bool hard)
 				{

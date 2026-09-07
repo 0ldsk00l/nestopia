@@ -45,6 +45,7 @@ namespace Nes
 
 					regs[0] = 0x80;
 					regs[1] = 0x00;
+					led     = 0x00;
 
 					UpdatePrg();
 				}

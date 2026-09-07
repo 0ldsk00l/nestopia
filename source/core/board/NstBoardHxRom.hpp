@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_HXROM_H
 #define NST_BOARD_HXROM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardMmc6.hpp"
 
 namespace Nes

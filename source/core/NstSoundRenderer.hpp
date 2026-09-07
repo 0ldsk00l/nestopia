@@ -25,10 +25,6 @@
 #ifndef NST_SOUND_RENDERER_H
 #define NST_SOUND_RENDERER_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -62,42 +58,9 @@ namespace Nes
 				void Reset(bool=true);
 				void operator >> (Block&);
 
-				template<typename,uint>
 				class Renderer;
 
 			private:
-
-				template<typename T>
-				class BaseRenderer : public ImplicitBool< BaseRenderer<T> >
-				{
-				protected:
-
-					T* NST_RESTRICT dst;
-					const T* const end;
-
-					inline BaseRenderer(void*,uint);
-
-				public:
-
-					inline bool operator !() const;
-				};
-
-				struct History
-				{
-					template<typename T>
-					inline void operator >> (T&) const;
-
-					inline void operator << (Sample);
-
-					enum
-					{
-						SIZE = 0x40,
-						MASK = SIZE-1
-					};
-
-					uint pos;
-					iword buffer[SIZE];
-				};
 
 				uint pos;
 				uint start;
@@ -106,56 +69,20 @@ namespace Nes
 			public:
 
 				inline void operator << (const Sample);
-
-				History history;
 			};
 
-			template<>
-			class Buffer::Renderer<iword,0U> : public Buffer::BaseRenderer<iword>
+			class Buffer::Renderer : public ImplicitBool<Buffer::Renderer>
 			{
+				iword* NST_RESTRICT dst;
+				const iword* const end;
+
 			public:
 
-				inline Renderer(void*,uint,const History&);
+				inline Renderer(void*,uint);
 
+				inline bool operator !() const;
 				inline void operator << (Sample);
 				NST_FORCE_INLINE bool operator << (const Block&);
-			};
-
-			template<>
-			class Buffer::Renderer<iword,1U> : public Buffer::BaseRenderer<iword>
-			{
-				History& history;
-
-			public:
-
-				inline Renderer(void*,uint,History&);
-
-				inline void operator << (Sample);
-				NST_FORCE_INLINE bool operator << (Block&);
-			};
-
-			template<>
-			class Buffer::Renderer<byte,0U> : public Buffer::BaseRenderer<byte>
-			{
-			public:
-
-				inline Renderer(void*,uint,const History&);
-
-				inline void operator << (Sample);
-				NST_FORCE_INLINE bool operator << (Block&);
-			};
-
-			template<>
-			class Buffer::Renderer<byte,1U> : public Buffer::BaseRenderer<byte>
-			{
-				History& history;
-
-			public:
-
-				inline Renderer(void*,uint,History&);
-
-				inline void operator << (Sample);
-				NST_FORCE_INLINE bool operator << (Block&);
 			};
 		}
 	}

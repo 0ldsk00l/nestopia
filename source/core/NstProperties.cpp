@@ -31,10 +31,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		struct Properties::Container
 		{
 			typedef std::map<uint,std::wstring> Map;
@@ -124,9 +120,5 @@ namespace Nes
 		{
 			return function;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

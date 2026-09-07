@@ -30,10 +30,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Checksum::Checksum()
 		: crc32(0) {}
 
@@ -72,9 +68,5 @@ namespace Nes
 			NST_VERIFY( !crc32 == !sha1 );
 			return !crc32 && !sha1;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

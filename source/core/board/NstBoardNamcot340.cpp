@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Namcot
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				N340::N340(const Context& c)
 				:
 				Board (c)
@@ -58,10 +54,6 @@ namespace Nes
 					Map( 0xE800U, 0xEFFFU, PRG_SWAP_8K_1 );
 					Map( 0xF000U, 0xF7FFU, PRG_SWAP_8K_2 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(N340,E000)
 				{

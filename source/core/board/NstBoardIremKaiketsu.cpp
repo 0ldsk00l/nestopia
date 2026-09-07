@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Irem
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Kaiketsu::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xBFFFU, &Kaiketsu::Poke_8000 );
@@ -44,10 +40,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBanks<SIZE_16K,0x0000>( ~0U, 0U );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Kaiketsu,8000)
 				{

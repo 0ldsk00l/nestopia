@@ -31,10 +31,6 @@
 #include "NstChecksum.hpp"
 #include "api/NstApiFds.hpp"
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -506,6 +502,29 @@ namespace Nes
 			uint NumDisks() const
 			{
 				return (disks.sides.count / 2U) + (disks.sides.count % 2U);
+			}
+
+			uint NumMemoryRegions() const
+			{
+				return 1;
+			}
+
+			/* 32k of program RAM the BIOS loads disk content into, mapped from
+			 * $6000 upwards. This is where FDS game state lives.
+			*/
+			MemoryRegion GetMemoryRegion(uint index) const
+			{
+				MemoryRegion region;
+
+				region.space   = MemoryRegion::SPACE_CPU;
+				region.type    = MemoryRegion::TYPE_DISK_RAM;
+				region.address = 0x6000;
+				region.size    = (index == 0) ? dword(SIZE_32K) : 0;
+				region.data    = (index == 0) ? const_cast<byte*>(ram.mem) : NULL;
+				region.battery = false;
+				region.writable = true;
+
+				return region;
 			}
 
 			dword GetPrgCrc() const

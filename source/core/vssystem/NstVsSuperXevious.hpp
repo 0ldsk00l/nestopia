@@ -25,10 +25,6 @@
 #ifndef NST_VS_SUPERXEVIOUS_H
 #define NST_VS_SUPERXEVIOUS_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

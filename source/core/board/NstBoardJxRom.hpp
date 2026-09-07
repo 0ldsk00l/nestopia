@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_JXROM_H
 #define NST_BOARD_JXROM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardSunsoftFme7.hpp"
 
 namespace Nes

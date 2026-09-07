@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_NROM_H
 #define NST_BOARD_NROM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

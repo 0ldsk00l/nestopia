@@ -139,7 +139,7 @@ namespace Nestopia
 					dialog->GetAdapter(),
 					nesSound.GetSampleRate(),
 					16,
-					nesSound.GetSpeaker() == Nes::Sound::SPEAKER_STEREO ? DirectX::DirectSound::STEREO : DirectX::DirectSound::MONO,
+					DirectX::DirectSound::MONO,
 					emulator.IsNsf() ? 500 : (dialog->GetLatency() + 2) * 21,
 					dialog->GetPool(),
 					CanRunInBackground()

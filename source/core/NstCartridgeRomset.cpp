@@ -39,10 +39,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		class Cartridge::Romset::Loader
 		{
 			typedef std::vector<Profile> Profiles;
@@ -991,9 +987,5 @@ namespace Nes
 
 			loader.Load();
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

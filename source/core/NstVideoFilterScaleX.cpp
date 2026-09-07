@@ -225,10 +225,6 @@ namespace Nes
 				Blit3xLine<T,-WIDTH,0>( dst, src + WIDTH, input.palette, pad );
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Renderer::FilterScaleX::Path Renderer::FilterScaleX::GetPath(const RenderState& state)
 			{
 				if (state.filter == RenderState::FILTER_SCALE2X)
@@ -263,9 +259,6 @@ namespace Nes
 				);
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

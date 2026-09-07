@@ -30,10 +30,6 @@ namespace Nes
 	{
 		namespace Video
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			/**
 			 * Constructor
 			 */

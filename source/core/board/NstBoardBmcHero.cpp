@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Hero::SubReset(const bool hard)
 				{
 					if (hard)
@@ -89,10 +85,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'B','H','R'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Hero,6000)
 				{

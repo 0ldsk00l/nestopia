@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_SUNSOFT_H
 #define NST_BOARD_SUNSOFT_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardSunsoft1.hpp"
 #include "NstBoardSunsoft2.hpp"
 #include "NstBoardSunsoft3.hpp"

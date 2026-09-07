@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Cne
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Psb::SubReset(bool)
 				{
 					for (uint i=0x6000; i < 0x6800; i += 0x8)
@@ -51,10 +47,6 @@ namespace Nes
 						Map( i + 0x7, CHR_SWAP_2K_3 );
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 			}
 		}
 	}

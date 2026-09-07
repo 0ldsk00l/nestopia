@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2023-2026 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -69,7 +70,8 @@ namespace Nes
 			void   Mute(bool);
 			void   SetAutoTranspose(bool);
 			void   SetGenie(bool);
-			void   EnableStereo(bool);
+			void   SetFilter(bool);
+			void   SetDmcPopReducer(bool);
 
 			void SaveState(State::Saver&,dword) const;
 			void LoadState(State::Loader&);
@@ -227,6 +229,7 @@ namespace Nes
 					DcBlocker();
 
 					void Reset();
+					void Prime(Sample);
 					Sample Apply(Sample);
 					void LoadState(State::Loader&);
 					void SaveState(State::Saver&,dword) const;
@@ -241,6 +244,55 @@ namespace Nes
 					idword prev;
 					idword next;
 					idword acc;
+				};
+
+				/* Approximates the analog stage after the DAC: a first order
+				 * high pass over a first order low pass. Section design from
+				 * "Designing Audio Effect Plugins in C++", Will Pirkle, p182.
+				*/
+				class Filter
+				{
+				public:
+
+					Filter();
+
+					void Reset(dword);
+					Sample Apply(Sample);
+
+				private:
+
+					enum
+					{
+						HIGH_PASS = 0,
+						LOW_PASS  = 1,
+						SECTIONS  = 2
+					};
+
+					enum
+					{
+						HIGH_PASS_FREQ =   220,
+						LOW_PASS_FREQ  = 14000,
+
+						// Matches Settings::rate, for the pre-power-on state.
+						DEFAULT_RATE   = 44100
+					};
+
+					// The a2/b2 taps of the general form are zero at first
+					// order, so they and the history they multiply are gone.
+					struct Section
+					{
+						void Reset(bool,dword,dword);
+						Sample Apply(Sample);
+
+						float a0;
+						float a1;
+						float b1;
+
+						float x1;
+						float y1;
+					};
+
+					Section sections[SECTIONS];
 				};
 			};
 
@@ -299,6 +351,8 @@ namespace Nes
 			NES_DECL_PEEK( 40xx );
 
 			NST_NO_INLINE Channel::Sample GetSample();
+			NST_NO_INLINE void NST_FASTCALL WalkSpan(dword);
+			NST_SINGLE_CALL dword MixLevel(dword) const;
 
 			/* The two DACs, tabulated. Indexed by a sum of channel levels:
 			 * 0-30 for the square pair, 0-202 for the triangle, noise and DMC.
@@ -315,10 +369,10 @@ namespace Nes
 			NST_NO_INLINE void ClockDmc(Cycle,uint=0);
 			NST_NO_INLINE void ClockOscillators(bool);
 
-			template<typename T,bool STEREO>
 			void FlushSound();
 
 			void UpdateSettings();
+			void UpdateChannelSettings();
 			void UpdateVolumes();
 			void UpdateMixLut();
 
@@ -331,6 +385,7 @@ namespace Nes
 
 				uint fixed;
 				Cycle rate;
+				uint sampleShift;
 				Cycle rateCounter;
 				Cycle frameCounter;
 				Cycle extCounter;
@@ -340,6 +395,15 @@ namespace Nes
 				Cycle frameIrqHold;
 				Cycle frameIrqPhantom;
 				Cycle dmcClock;
+
+				/* The output sample in progress, plus the rising half of the
+				 * window that carries into the next one. The walk stops on
+				 * events rather than on sample boundaries, so one sample is
+				 * built over several calls. Transients - reset with the buffer.
+				*/
+				qaword sampleSum;
+				qaword sampleNext;
+				dword sampleSpan;
 
 				static const dword frameClocks[3][4];
 				static const dword oscillatorClocks[3][2][4];
@@ -470,11 +534,12 @@ namespace Nes
 
 			private:
 
-				inline bool CanOutput() const;
+				inline void UpdateGate();
 
 				enum
 				{
-					MIN_FRQ                   = 2 + 1,
+					MIN_FRQ                   = 2,
+					PARK_LEVEL                = 7,
 					STEP_CHECK                = 0x1F,
 					REG0_LINEAR_COUNTER_LOAD  = 0x7F,
 					REG0_LINEAR_COUNTER_START = 0x80,
@@ -489,6 +554,7 @@ namespace Nes
 				};
 
 				uint step;
+				ibool gate;
 				uint outputVolume;
 				Status status;
 				word waveLength;
@@ -551,7 +617,7 @@ namespace Nes
 				void SaveState(State::Saver&,dword,const Cpu&,Cycle) const;
 
 				NST_SINGLE_CALL bool WriteReg0(uint,CpuModel);
-				NST_SINGLE_CALL void WriteReg1(uint);
+				NST_SINGLE_CALL void WriteReg1(uint,bool);
 				NST_SINGLE_CALL void WriteReg2(uint);
 				NST_SINGLE_CALL void WriteReg3(uint);
 				NST_SINGLE_CALL void Disable(bool,Cpu&,Cycle);
@@ -592,7 +658,8 @@ namespace Nes
 					REG0_FREQUENCY  = 0x0F,
 					REG0_LOOP       = 0x40,
 					REG0_IRQ_ENABLE = 0x80,
-					INP_STEP        = 8
+					INP_STEP        = 8,
+					POP_STEP        = 50
 				};
 
 				uint curSample;
@@ -639,8 +706,9 @@ namespace Nes
 				bool muted;
 				bool transpose;
 				bool genie;
-				bool stereo;
 				bool audible;
+				bool filter;
+				bool dmcPopReducer;
 				byte volumes[MAX_CHANNELS];
 			};
 
@@ -655,6 +723,7 @@ namespace Nes
 			Dmc dmc;
 			Channel* extChannel;
 			Channel::DcBlocker dcBlocker;
+			Channel::Filter filter;
 			Sound::Output* stream;
 			Sound::Buffer buffer;
 			Settings settings;
@@ -681,9 +750,14 @@ namespace Nes
 				return settings.genie;
 			}
 
-			bool InStereo() const
+			bool IsFiltered() const
 			{
-				return settings.stereo;
+				return settings.filter;
+			}
+
+			bool IsDmcPopReduced() const
+			{
+				return settings.dmcPopReducer;
 			}
 
 			bool IsMuted() const

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_REXSOFT_SL1632_H
 #define NST_BOARD_REXSOFT_SL1632_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void VsSystem::SubReset(const bool hard)
 			{
 				p4016 = cpu.Map( 0x4016 );
@@ -43,10 +39,6 @@ namespace Nes
 				if (hard)
 					prg.SwapBank<SIZE_32K,0x0000>(0);
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_POKE_D(VsSystem,4016)
 			{

@@ -31,10 +31,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Rewinder::StateCaller Rewinder::stateCallback;
 
 		Result Rewinder::Enable(bool enable) throw()
@@ -96,8 +92,5 @@ namespace Nes
 				emulator.tracker.ResetRewinder();
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

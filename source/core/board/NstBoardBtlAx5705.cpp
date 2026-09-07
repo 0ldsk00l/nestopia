@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ax5705::SubReset(bool)
 				{
 					for (uint i=0x0000; i < 0x1000; i += 0x10)
@@ -62,10 +58,6 @@ namespace Nes
 						Map( i + 0xE003, &Ax5705::Poke_E003 );
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Ax5705,8000)
 				{

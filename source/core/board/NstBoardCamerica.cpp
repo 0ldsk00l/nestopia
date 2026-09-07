@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Camerica
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Bf9093::SubReset(bool)
 				{
 					Map( 0xC000U, 0xFFFFU, PRG_SWAP_16K_0 );
@@ -64,10 +60,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_16K,0x4000>( 0x0F );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Bf9093,C000)
 				{

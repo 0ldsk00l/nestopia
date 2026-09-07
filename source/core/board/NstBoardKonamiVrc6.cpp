@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Konami
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Vrc6::Sound::Sound(Apu& a,bool connect)
 				: Channel(a)
 				{
@@ -328,10 +324,6 @@ namespace Nes
 						state.End();
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NST_SINGLE_CALL void Vrc6::Sound::Square::WriteReg0(const uint data)
 				{

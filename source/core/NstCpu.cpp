@@ -139,15 +139,6 @@ namespace Nes
 			0x00, 0x00, 0x00, 0x60, 0x00, 0x00, 0x60, 0x60
 		};
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
-		#if NST_MSVC >= 1200
-		#pragma warning( push )
-		#pragma warning( disable : 4355 )
-		#endif
-
 		Cpu::Cpu()
 		:
 		model ( CPU_RP2A03 ),
@@ -157,10 +148,6 @@ namespace Nes
 			cycles.UpdateTable( GetModel() );
 			Reset( false, false );
 		}
-
-		#if NST_MSVC >= 1200
-		#pragma warning( pop )
-		#endif
 
 		void Cpu::PowerOff()
 		{
@@ -204,6 +191,9 @@ namespace Nes
 			ticks   = 0;
 			logged  = 0;
 			busData = busDataInternal = 0;
+
+			dmaOam      = false;
+			dmaOamCycle = 0;
 
 			pc = RESET_VECTOR;
 
@@ -276,10 +266,6 @@ namespace Nes
 			hooks.Remove( hook );
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		bool Cpu::IsOddCycle() const
 		{
 			return uint((ticks + cycles.count) % cycles.clock[1]);
@@ -332,10 +318,6 @@ namespace Nes
 		{
 			return clock[0] + clock[0] / 2;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		void Cpu::SaveState(State::Saver& state,const dword cpuChunk,const dword apuChunk) const
 		{
@@ -600,10 +582,6 @@ namespace Nes
 			}
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		inline uint Cpu::Hooks::Size() const
 		{
 			return size;
@@ -613,10 +591,6 @@ namespace Nes
 		{
 			return hooks;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
 
 		Cpu::Linker::Chain::Chain(const Port& p,uint a,uint l)
 		: Port(p), address(a), level(l) {}
@@ -751,10 +725,6 @@ namespace Nes
 				clock[i] = (i+1) * cc;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
-
 		uint Cpu::Flags::Pack() const
 		{
 			NST_ASSERT( (i == 0 || i == I) && (c == 0 || c == C) && (d == 0 || d == D) );
@@ -780,10 +750,6 @@ namespace Nes
 			d =  f & D;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		void Cpu::Interrupt::Reset()
 		{
 			nmiClock = CYCLE_MAX;
@@ -795,10 +761,6 @@ namespace Nes
 		template<typename T,typename U>
 		Cpu::IoMap::IoMap(Cpu* cpu,T peek,U poke)
 		: Io::Map<SIZE_64K>( cpu, peek, poke ) {}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		inline uint Cpu::IoMap::Peek8(const uint address) const
 		{
@@ -818,10 +780,6 @@ namespace Nes
 			ports[address].Poke( address, data );
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		void Cpu::Ram::Reset(const CpuModel model)
 		{
 			switch (powerstate) {
@@ -830,10 +788,6 @@ namespace Nes
 				default: std::memset( mem, 0x00, sizeof(mem) ); break;
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NES_PEEK_A(Cpu::Ram,Ram_0) { return mem[address - 0x0000]; }
 		NES_PEEK_A(Cpu::Ram,Ram_1) { return mem[address - 0x0800]; }
@@ -1807,10 +1761,6 @@ namespace Nes
 		// undocumented instructions, rarely used
 		////////////////////////////////////////////////////////////////////////////////////////
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		NST_NO_INLINE void Cpu::Anc(const uint data)
 		{
 			a &= data;
@@ -2093,10 +2043,6 @@ namespace Nes
 				Api::User::eventCallback( Api::User::EVENT_CPU_JAM );
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		uint Cpu::FetchIRQISRVector()
 		{
@@ -2585,10 +2531,6 @@ namespace Nes
 		NES_I____( Txs,           0x9A )
 		NES_I____( Tya,           0x98 )
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		// rarely executed
 
 		NES_I____( Brk,           0x00 )
@@ -2720,10 +2662,6 @@ namespace Nes
 		NES_IR___( Top, AbsX,     0x7C )
 		NES_IR___( Top, AbsX,     0xDC )
 		NES_IR___( Top, AbsX,     0xFC )
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		#undef StoreZpgX
 		#undef StoreZpgY

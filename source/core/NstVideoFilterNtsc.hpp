@@ -27,10 +27,6 @@
 
 #include "../nes_ntsc/nes_ntsc.h"
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

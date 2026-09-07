@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Konami
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				uint Vrc4::GetPrgLineShift(const Context& c,const uint pin,const uint def)
 				{
 					if (const Chips::Type* const vrc4 = c.chips.Find(L"Konami VRC IV"))
@@ -59,6 +55,16 @@ namespace Nes
 				prgLineA (GetPrgLineShift(c,3,1)),
 				prgLineB (GetPrgLineShift(c,4,0))
 				{
+				}
+
+				Vrc4::Vrc4(const Context& c,const uint lineA,const uint lineB)
+				:
+				Board    (c),
+				irq      (*c.cpu),
+				prgLineA (lineA),
+				prgLineB (lineB)
+				{
+					NST_ASSERT( lineA < 8 && lineB < 8 );
 				}
 
 				void Vrc4::BaseIrq::Reset(bool)
@@ -174,10 +180,6 @@ namespace Nes
 
 					state.Begin( chunk ).Write( data ).End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Vrc4,6000)
 				{

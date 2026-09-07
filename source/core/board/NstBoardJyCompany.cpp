@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace JyCompany
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Standard::CartSwitches::CartSwitches(uint d,bool l)
 				: data(d), ppuLatched(l) {}
 
@@ -53,17 +49,8 @@ namespace Nes
 				Standard::Irq::M2::M2(Irq& irq)
 				: base(irq) {}
 
-				#if NST_MSVC >= 1200
-				#pragma warning( push )
-				#pragma warning( disable : 4355 )
-				#endif
-
 				Standard::Irq::Irq(Cpu& cpu,Ppu& ppu)
 				: a12(cpu,ppu,*this), m2(cpu,*this) {}
-
-				#if NST_MSVC >= 1200
-				#pragma warning( pop )
-				#endif
 
 				Standard::Standard(const Context& c)
 				:
@@ -397,10 +384,6 @@ namespace Nes
 					else
 						return Board::QueryDevice( type );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				inline uint Standard::CartSwitches::GetSetting() const
 				{

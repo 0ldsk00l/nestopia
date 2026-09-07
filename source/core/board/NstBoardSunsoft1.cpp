@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace Sunsoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void S1::SubReset(bool)
 				{
 					Map( 0x6000U, 0x7FFFU, &S1::Poke_6000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(S1,6000)
 				{

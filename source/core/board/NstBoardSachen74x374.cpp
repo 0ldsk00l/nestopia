@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Sachen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				class S74x374b::CartSwitches : public DipSwitches
 				{
 					enum
@@ -200,10 +196,6 @@ namespace Nes
 					if (cartSwitches)
 						state.Begin( AsciiId<'S','7','B'>::V ).Begin( AsciiId<'D','I','P'>::V ).Write8( cartSwitches->GetCopyright() ? 0x1 : 0x0 ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void S74x374a::UpdatePrg(uint bank)
 				{

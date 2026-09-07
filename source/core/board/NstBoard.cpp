@@ -96,6 +96,7 @@
 #include "NstBoardVsSystem.hpp"
 #include "NstBoardWaixing.hpp"
 #include "NstBoardWhirlwind.hpp"
+#include "NstBoardBatlabSrrx.hpp"
 #include "NstBoardBenshengBs5.hpp"
 #include "NstBoardUnl158b.hpp"
 #include "NstBoardUnlA9746.hpp"
@@ -156,6 +157,7 @@
 #include "NstBoardBmcGoldenCard6in1.hpp"
 #include "NstBoardBmcGoldenGame260in1.hpp"
 #include "NstBoardBmcHero.hpp"
+#include "NstBoardBmcSfc12.hpp"
 #include "NstBoardBmcMarioParty7in1.hpp"
 #include "NstBoardBmcNovelDiamond.hpp"
 #include "NstBoardBmcCh001.hpp"
@@ -181,10 +183,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Board::Type::Type()
 			:
 			id       (UNKNOWN),
@@ -333,6 +331,7 @@ namespace Nes
 			chr   (context.ppu->GetChrMem()),
 			nmt   (context.ppu->GetNmtMem()),
 			vram  (Ram::RAM,true,true,context.type.GetVram()),
+			misc  (context.misc),
 			board (context.type)
 			{
 				prg.Source(0).Set( context.prg );
@@ -473,6 +472,68 @@ namespace Nes
 					file.Load( File::BATTERY, wrk.Source().Mem(), board.GetSavableWram() );
 			}
 
+			/* Region 0 is work RAM when the board has any. After it come the four
+			 * 8k program windows and the eight 1k pattern pages, each reported as
+			 * currently banked. Banking means these are a snapshot: a caller that
+			 * needs to follow bank switches has to re-read them.
+			*/
+			uint Board::NumMemoryRegions() const
+			{
+				return (board.GetWram() ? 1 : 0) + PRG_WINDOWS + CHR_PAGES;
+			}
+
+			Board::MemoryRegion Board::GetMemoryRegion(uint index) const
+			{
+				MemoryRegion region;
+
+				region.space    = MemoryRegion::SPACE_CPU;
+				region.type     = MemoryRegion::TYPE_WORK_RAM;
+				region.address  = 0x6000;
+				region.size     = 0;
+				region.data     = NULL;
+				region.battery  = false;
+				region.writable = true;
+
+				const uint wram = board.GetWram() ? 1 : 0;
+
+				if (wram && index == 0)
+				{
+					region.size    = board.GetWram();
+					region.data    = wrk.Source().Mem();
+					region.battery = board.HasBattery() && board.GetSavableWram();
+					return region;
+				}
+
+				index -= wram;
+
+				if (index < PRG_WINDOWS)
+				{
+					region.type     = MemoryRegion::TYPE_PRG_ROM;
+					region.address  = 0x8000 + index * dword(SIZE_8K);
+					region.size     = SIZE_8K;
+					region.data     = const_cast<byte*>(prg[index]);
+					region.writable = false;
+					return region;
+				}
+
+				index -= PRG_WINDOWS;
+
+				if (index < CHR_PAGES)
+				{
+					region.space    = MemoryRegion::SPACE_PPU;
+					region.type     = MemoryRegion::TYPE_CHR;
+					region.address  = index * dword(SIZE_1K);
+					region.size     = SIZE_1K;
+					region.data     = const_cast<byte*>(chr[index]);
+					region.writable = board.GetChrRam() > 0;
+					return region;
+				}
+
+				region.size = 0;
+				region.data = NULL;
+				return region;
+			}
+
 			void Board::SaveState(State::Saver& state,const dword baseChunk) const
 			{
 				state.Begin( baseChunk );
@@ -586,10 +647,6 @@ namespace Nes
 			{
 				cpu.Map(a,b).Set( &Board::Peek_Nop, &Board::Poke_Nop );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_PEEK_A(Board,Prg_8) { return prg[0][address - 0x8000]; }
 			NES_PEEK_A(Board,Prg_A) { return prg[1][address - 0xA000]; }
@@ -735,10 +792,6 @@ namespace Nes
 				return cpu.GetBusData();
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Board::Context::Context
 			(
 				Cpu* c,
@@ -746,6 +799,7 @@ namespace Nes
 				Ppu* p,
 				Ram& pr,
 				Ram& cr,
+				Ram& mi,
 				const Ram& t,
 				Type::Nmt n,
 				bool wb,
@@ -759,6 +813,7 @@ namespace Nes
 			ppu         (p),
 			prg         (pr),
 			chr         (cr),
+			misc        (mi),
 			trainer     (t),
 			nmt         (n),
 			chips       (h),
@@ -846,6 +901,7 @@ namespace Nes
 					{ "CAMERICA-BF9097",             Type::CAMERICA_BF9097          },
 					{ "CAMERICA-GAMEGENIE",          Type::STD_NROM                 },
 					{ "COLORDREAMS-74*377",          Type::DISCRETE_74_377          },
+					{ "COLORDREAMS-74*377-NBC",      Type::DISCRETE_74_377_NBC      },
 					{ "DREAMTECH01",                 Type::DREAMTECH01              },
 					{ "HVC-AMROM",                   Type::STD_AMROM                },
 					{ "HVC-AN1ROM",                  Type::STD_AN1ROM               },
@@ -1123,7 +1179,8 @@ namespace Nes
 					{ "UNL-158B",                    Type::UNL_158B                 },
 					{ "UNL-22211",                   Type::TXC_22211A               },
 					{ "UNL-603-5052",                Type::BTL_6035052              },
-					{ "UNL-8237",                    Type::SUPERGAME_POCAHONTAS2    },
+					{ "UNL-8237",                    Type::SUPERGAME_8237           },
+					{ "UNL-8237A",                   Type::SUPERGAME_8237A          },
 					{ "UNL-A9746",                   Type::UNL_A9746                },
 					{ "UNL-AX5705",                  Type::BTL_AX5705               },
 					{ "UNL-CC-21",                   Type::UNL_CC21                 },
@@ -1137,6 +1194,7 @@ namespace Nes
 					{ "UNL-KS7032",                  Type::KAISER_KS7032            },
 					{ "UNL-KS7037",                  Type::KAISER_KS7037            },
 					{ "UNL-KS7057",                  Type::KAISER_KS7057            },
+					{ "UNL-LH53",                    Type::WHIRLWIND_LH53           },
 					{ "UNL-N625092",                 Type::UNL_N625092              },
 					{ "UNL-SA-0036",                 Type::SACHEN_SA0036            },
 					{ "UNL-SA-0037",                 Type::SACHEN_SA0037            },
@@ -3153,15 +3211,15 @@ namespace Nes
 
 					case 215:
 
-						if (prg == SIZE_256K && chr == SIZE_512K)
+						if (submapper == 1)
 						{
-							name = "SUPERGAME MK3E";
-							id = Type::SUPERGAME_MK3E;
+							name = "UNL-8237A";
+							id = Type::SUPERGAME_8237A;
 						}
 						else
 						{
-							name = "SUPERGAME BOOGERMAN";
-							id = Type::SUPERGAME_BOOGERMAN;
+							name = "UNL-8237";
+							id = Type::SUPERGAME_8237;
 						}
 						break;
 
@@ -3529,10 +3587,28 @@ namespace Nes
 
 						break;
 
+					case 372:
+
+						name = "SFC-12";
+						id = Type::BMC_SFC12;
+						break;
+
 					case 400:
 
 						name = "UNL-RET-X7-GBL";
 						id = Type::UNL_RETX7GBL;
+						break;
+
+					case 413:
+
+						name = "BATMAP-SRR-X";
+						id = Type::BATLAB_SRRX;
+						break;
+
+					case 512:
+
+						name = "SACHEN ZHONGGUO DAHENG";
+						id = Type::SACHEN_DAHENG;
 						break;
 
 					case 521:
@@ -3551,6 +3627,12 @@ namespace Nes
 
 						name = "UNL-AX5705";
 						id = Type::BTL_AX5705;
+						break;
+
+					case 535:
+
+						name = "UNL-LH53";
+						id = Type::WHIRLWIND_LH53;
 						break;
 
 					case 554:
@@ -3652,7 +3734,8 @@ namespace Nes
 					case Type::STD_UXROM                  :
 					case Type::STD_UNROM512               :
 					case Type::UNL_UXROM                  : return new UxRom(c);
-					case Type::DISCRETE_74_377            : return new Discrete::Ic74x377(c);
+					case Type::DISCRETE_74_377            :
+					case Type::DISCRETE_74_377_NBC        : return new Discrete::Ic74x377(c);
 					case Type::DISCRETE_74_139_74         : return new Discrete::Ic74x139x74(c);
 					case Type::DISCRETE_74_161_138        : return new Discrete::Ic74x161x138(c);
 					case Type::DISCRETE_74_161_161_32_A   :
@@ -3725,6 +3808,7 @@ namespace Nes
 					case Type::BMC_GKA                    : return new Bmc::GamestarA(c);
 					case Type::BMC_GKB                    : return new Bmc::GamestarB(c);
 					case Type::BMC_HERO                   : return new Bmc::Hero(c);
+					case Type::BMC_SFC12                  : return new Bmc::Sfc12(c);
 					case Type::BMC_MARIOPARTY_7IN1        : return new Bmc::MarioParty7in1(c);
 					case Type::BMC_NOVELDIAMOND           : return new Bmc::NovelDiamond(c);
 					case Type::BMC_CH001                  : return new Bmc::Ch001(c);
@@ -3777,6 +3861,7 @@ namespace Nes
 					case Type::FUKUTAKE_SBX               : return new Fukutake::Sbx(c);
 					case Type::GOUDER_37017               : return new Gouder::G37017(c);
 					case Type::HES_STD                    : return new Hes::Standard(c);
+					case Type::BATLAB_SRRX                : return new Batlab::Srrx(c);
 					case Type::BENSHENG_BS5               : return new Bensheng::Bs5(c);
 					case Type::HENGEDIANZI_STD            : return new Hengedianzi::Standard(c);
 					case Type::HENGEDIANZI_XJZB           : return new Hengedianzi::Xjzb(c);
@@ -3893,6 +3978,7 @@ namespace Nes
 					case Type::SACHEN_8259B               :
 					case Type::SACHEN_8259C               :
 					case Type::SACHEN_8259D               : return new Sachen::S8259(c);
+					case Type::SACHEN_DAHENG              : return new Sachen::Daheng(c);
 					case Type::SACHEN_TCA01               : return new Sachen::Tca01(c);
 					case Type::SACHEN_TCU01               : return new Sachen::Tcu01(c);
 					case Type::SACHEN_TCU02               : return new Sachen::Tcu02(c);
@@ -3919,9 +4005,8 @@ namespace Nes
 					case Type::SUNSOFT_FME7_0             :
 					case Type::SUNSOFT_FME7_1             : return new Sunsoft::Fme7(c);
 					case Type::SUPERGAME_LIONKING         : return new SuperGame::LionKing(c);
-					case Type::SUPERGAME_BOOGERMAN        : return new SuperGame::Boogerman(c);
-					case Type::SUPERGAME_MK3E             : return new SuperGame::Mk3e(c);
-					case Type::SUPERGAME_POCAHONTAS2      : return new SuperGame::Pocahontas2(c);
+					case Type::SUPERGAME_8237             :
+					case Type::SUPERGAME_8237A            : return new SuperGame::Unl8237(c);
 					case Type::TAITO_TC0190FMC            : return new Taito::Tc0190fmc(c);
 					case Type::TAITO_TC0190FMC_PAL16R4    : return new Taito::Tc0190fmcPal16r4(c);
 					case Type::TAITO_X1005                : return new Taito::X1005(c);
@@ -3979,6 +4064,7 @@ namespace Nes
 					case Type::WAIXING_SECURITY_0         :
 					case Type::WAIXING_SECURITY_1         : return new Waixing::Security(c);
 					case Type::WHIRLWIND_2706             : return new Whirlwind::W2706(c);
+					case Type::WHIRLWIND_LH53             : return new Whirlwind::Lh53(c);
 					case Type::UNKNOWN                    : default: break;
 				}
 
@@ -3989,10 +4075,6 @@ namespace Nes
 			{
 				delete board;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Acclaim
 			{
-#ifdef NST_MSVC_OPTIMIZE
-#pragma optimize("s", on)
-#endif
-
 				McAcc::McAcc(const Context& c)
 					:
 					Board (c),
@@ -152,10 +148,6 @@ namespace Nes
 
 					state.End();
 				}
-
-#ifdef NST_MSVC_OPTIMIZE
-#pragma optimize("", on)
-#endif
 
 				NES_POKE_D(McAcc,8000)
 				{

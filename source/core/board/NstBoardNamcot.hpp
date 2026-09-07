@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_NAMCOT_H
 #define NST_BOARD_NAMCOT_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardNamcot163.hpp"
 #include "NstBoardNamcot175.hpp"
 #include "NstBoardNamcot340.hpp"

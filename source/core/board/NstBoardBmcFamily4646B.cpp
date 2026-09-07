@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Family4646B::SubReset(const bool hard)
 				{
 					if (hard)
@@ -71,10 +67,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'B','F','K'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( exReg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Family4646B,6001)
 				{

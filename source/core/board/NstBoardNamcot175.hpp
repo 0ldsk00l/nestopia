@@ -26,10 +26,6 @@
 #ifndef NST_BOARD_NAMCOT_175_H
 #define NST_BOARD_NAMCOT_175_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

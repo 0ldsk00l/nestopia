@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Bensheng
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				class Bs5::CartSwitches : public DipSwitches
 				{
 					enum Type
@@ -206,10 +202,6 @@ namespace Nes
 					if (cartSwitches)
 						state.Begin( AsciiId<'B','S','5'>::V ).Begin( AsciiId<'D','I','P'>::V ).Write8( cartSwitches->GetMode() ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(Bs5,8000)
 				{

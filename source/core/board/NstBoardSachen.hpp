@@ -25,10 +25,7 @@
 #ifndef NST_BOARD_SACHEN_H
 #define NST_BOARD_SACHEN_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
+#include "NstBoardSachenDaheng.hpp"
 #include "NstBoardSachenS8259.hpp"
 #include "NstBoardSachenTca01.hpp"
 #include "NstBoardSachenTcu.hpp"

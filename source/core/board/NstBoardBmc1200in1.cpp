@@ -33,19 +33,11 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void B1200in1::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &B1200in1::Poke_8000 );
 					NES_DO_POKE(8000,0x8000,0x00);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(B1200in1,8000)
 				{

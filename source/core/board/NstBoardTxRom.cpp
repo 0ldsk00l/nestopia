@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void TksRom::SubReset(const bool hard)
 			{
 				Mmc3::SubReset( hard );
@@ -42,10 +38,6 @@ namespace Nes
 				for (uint i=0x0000; i < 0x2000; i += 0x2)
 					Map( 0xA000 + i, NOP_POKE );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void NST_FASTCALL TksRom::UpdateChr(uint address,uint bank) const
 			{

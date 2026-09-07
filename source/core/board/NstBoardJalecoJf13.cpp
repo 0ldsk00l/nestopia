@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Jaleco
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Jf13::Jf13(const Context& c)
 				:
 				Board (c),
@@ -60,10 +56,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Jf13,6000)
 				{

@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				class GamestarA::CartSwitches : public DipSwitches
 				{
 					enum Type
@@ -214,10 +210,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'B','G','A'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK(GamestarA,6000)
 				{

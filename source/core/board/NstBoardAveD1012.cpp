@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Ave
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void D1012::SubReset(const bool hard)
 				{
 					Map( 0xFF80U, 0xFF9FU, &D1012::Peek_FF80, &D1012::Poke_FF80 );
@@ -74,10 +70,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'A','D','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write16( regs[0] | uint(regs[1]) << 8 ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void D1012::Update()
 				{

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Gouder
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void G37017::SubReset(const bool hard)
 				{
 					if (hard)
@@ -76,10 +72,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'G','D','R'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( regs.buffer ).Write8( regs.select ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void NST_FASTCALL G37017::UpdatePrg(uint,uint)
 				{

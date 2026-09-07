@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Discrete
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ic74x161x161x32::SubReset(bool)
 				{
 					if (board == Type::DISCRETE_74_161_161_32_A)
@@ -60,15 +56,16 @@ namespace Nes
 
 				void Ic74x377::SubReset(const bool hard)
 				{
-					Map( 0x8000U, 0xFFFFU, &Ic74x377::Poke_8000 );
+					// Some Color Dreams boards, among them the ones used by the
+					// Free Fall and Secret Scout prototypes, have no bus conflicts.
+					if (board == Type::DISCRETE_74_377_NBC)
+						Map( 0x8000U, 0xFFFFU, &Ic74x377::Poke_8000_NBC );
+					else
+						Map( 0x8000U, 0xFFFFU, &Ic74x377::Poke_8000 );
 
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Ic74x161x161x32,8000_0)
 				{
@@ -103,6 +100,13 @@ namespace Nes
 				{
 					ppu.Update();
 					data = GetBusData(address,data);
+					prg.SwapBank<SIZE_32K,0x0000>( data );
+					chr.SwapBank<SIZE_8K,0x0000>( data >> 4 );
+				}
+
+				NES_POKE_D(Ic74x377,8000_NBC)
+				{
+					ppu.Update();
 					prg.SwapBank<SIZE_32K,0x0000>( data );
 					chr.SwapBank<SIZE_8K,0x0000>( data >> 4 );
 				}

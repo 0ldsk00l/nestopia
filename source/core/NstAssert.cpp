@@ -43,15 +43,7 @@
  #define NST_MESSAGEBOX MessageBox
 #endif
 
-#if NST_MSVC >= 1200
- #ifdef _UNICODE
-  #define NST_DEBUGSTRING(s_) OutputDebugStringA( s_ );
- #else
-  #define NST_DEBUGSTRING(s_) OutputDebugString( s_ );
- #endif
-#else
- #define NST_DEBUGSTRING(s_)
-#endif
+#define NST_DEBUGSTRING(s_)
 
 namespace Nes
 {

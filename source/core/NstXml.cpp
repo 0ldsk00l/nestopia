@@ -35,10 +35,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Xml::Xml()
 		: root(NULL) {}
 
@@ -52,10 +48,6 @@ namespace Nes
 			delete root;
 			root = NULL;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		Xml::Format::Format()
 		:

@@ -25,10 +25,6 @@
 #ifndef NST_RAM_H
 #define NST_RAM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstPins.hpp"
 
 namespace Nes

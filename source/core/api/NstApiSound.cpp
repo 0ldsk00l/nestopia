@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2023-2026 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -27,10 +28,6 @@
 
 namespace Nes
 {
-	#ifdef NST_MSVC_OPTIMIZE
-	#pragma optimize("s", on)
-	#endif
-
 	namespace Core
 	{
 		namespace Sound
@@ -82,12 +79,17 @@ namespace Nes
 			emulator.cpu.GetApu().SetGenie( enable );
 		}
 
-		void Sound::SetSpeaker(Speaker speaker) throw()
+		void Sound::SetFilter(bool enable) throw()
 		{
-			emulator.cpu.GetApu().EnableStereo( speaker == SPEAKER_STEREO );
+			emulator.cpu.GetApu().SetFilter( enable );
 		}
 
-		ulong Sound::GetSampleRate() const throw()
+		void Sound::SetDmcPopReducer(bool enable) throw()
+		{
+			emulator.cpu.GetApu().SetDmcPopReducer( enable );
+		}
+
+				ulong Sound::GetSampleRate() const throw()
 		{
 			return emulator.cpu.GetApu().GetSampleRate();
 		}
@@ -127,19 +129,20 @@ namespace Nes
 			return emulator.cpu.GetApu().IsGenie();
 		}
 
-		Sound::Speaker Sound::GetSpeaker() const throw()
+		bool Sound::IsFiltered() const throw()
 		{
-			return emulator.cpu.GetApu().InStereo() ? SPEAKER_STEREO : SPEAKER_MONO;
+			return emulator.cpu.GetApu().IsFiltered();
 		}
 
-		void Sound::EmptyBuffer() throw()
+		bool Sound::IsDmcPopReduced() const throw()
+		{
+			return emulator.cpu.GetApu().IsDmcPopReduced();
+		}
+
+				void Sound::EmptyBuffer() throw()
 		{
 			emulator.cpu.GetApu().ClearBuffers();
 		}
 	}
-
-	#ifdef NST_MSVC_OPTIMIZE
-	#pragma optimize("", on)
-	#endif
 }
 

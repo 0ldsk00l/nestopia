@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace SomeriTeam
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Sl12::Sl12(const Context& c)
 				:
 				Board (c),
@@ -161,10 +157,6 @@ namespace Nes
 					irq.unit.SaveState( state, AsciiId<'I','R','Q'>::V );
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Sl12::UpdatePrg()
 				{

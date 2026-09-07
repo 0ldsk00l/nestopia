@@ -22,6 +22,7 @@
 //
 ////////////////////////////////////////////////////////////////////////////////////////
 
+#include <cstring>
 #include "NstBoard.hpp"
 #include "NstBoardMmc6.hpp"
 #include "../NstFile.hpp"
@@ -32,12 +33,12 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Mmc6::Mmc6(const Context& c)
-			: Mmc3(c,REV_A) {}
+			: Mmc3(c,REV_A)
+			{
+				// Not in SubReset: Load() runs after the ctor and before Reset(hard).
+				std::memset( ram, 0, sizeof(ram) );
+			}
 
 			void Mmc6::SubReset(const bool hard)
 			{
@@ -50,6 +51,35 @@ namespace Nes
 
 				for (uint i=0xA001; i < 0xC000; i += 0x2)
 					Map( i, &Mmc6::Poke_A001 );
+			}
+
+			uint Mmc6::NumMemoryRegions() const
+			{
+				return Board::NumMemoryRegions() + 1;
+			}
+
+			Mmc6::MemoryRegion Mmc6::GetMemoryRegion(uint index) const
+			{
+				const uint base = Board::NumMemoryRegions();
+
+				if (index < base)
+					return Board::GetMemoryRegion( index );
+
+				/* Internal to the MMC6, not board work RAM: 1k mirrored across
+				 * $7000-$7FFF. Reads are gated by the enable bits, the storage
+				 * is live regardless.
+				*/
+				MemoryRegion region;
+				region.space    = MemoryRegion::SPACE_CPU;
+
+				region.type     = MemoryRegion::TYPE_WORK_RAM;
+				region.address  = 0x7000;
+				region.size     = sizeof(ram);
+				region.data     = const_cast<byte*>(ram);
+				region.battery  = board.HasBattery();
+				region.writable = true;
+
+				return region;
 			}
 
 			void Mmc6::Load(File& file)
@@ -101,10 +131,6 @@ namespace Nes
 				state.Begin( AsciiId<'R','A','M'>::V ).Compress( ram ).End();
 				state.End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			inline bool Mmc6::IsRamEnabled() const
 			{

@@ -41,10 +41,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Mmc3BigPrgRom::SubReset(const bool hard)
 				{
 					Mmc3::SubReset( hard );
@@ -121,10 +117,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Mmc3BigPrgRom,8001)
 				{

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void B150in1::SubReset(const bool hard)
 				{
 					Map( 0x4020U, 0xFFFFU, &B150in1::Poke_8000 );
@@ -44,10 +40,6 @@ namespace Nes
 					if (hard)
 						NES_DO_POKE(8000,0x8000,0x00);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(B150in1,8000)
 				{

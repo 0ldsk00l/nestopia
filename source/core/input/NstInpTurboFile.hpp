@@ -25,10 +25,6 @@
 #ifndef NST_INPUT_TURBOFILE_H
 #define NST_INPUT_TURBOFILE_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstFile.hpp"
 
 namespace Nes

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_SOMERITEAM_SL12_H
 #define NST_BOARD_SOMERITEAM_SL12_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_UNL_RETX7GBL_H
 #define NST_BOARD_UNL_RETX7GBL_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

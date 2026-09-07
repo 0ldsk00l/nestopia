@@ -25,115 +25,12 @@
 #ifndef NST_IO_PORT_H
 #define NST_IO_PORT_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
 	{
 		namespace Io
 		{
-		#ifdef NST_FASTDELEGATE
-
-			class Port
-			{
-				class Component {};
-
-				typedef Data (NST_FASTCALL Component::*Reader)(Address);
-				typedef void (NST_FASTCALL Component::*Writer)(Address,Data);
-
-				Component* component;
-				Reader reader;
-				Writer writer;
-
-				NST_COMPILE_ASSERT
-				(
-					sizeof( Reader ) <= sizeof( Data (*)(void*,Address)      ) &&
-					sizeof( Writer ) <= sizeof( Data (*)(void*,Address,Data) )
-				);
-
-			public:
-
-				Port() {}
-
-				template<typename T>
-				Port(T* c,Data (NST_FASTCALL T::*r)(Address),void (NST_FASTCALL T::*w)(Address,Data))
-				:
-				component ( reinterpret_cast<Component*>(c) ),
-				reader    ( reinterpret_cast<Reader>(r)    ),
-				writer    ( reinterpret_cast<Writer>(w)    )
-				{
-					NST_COMPILE_ASSERT( sizeof(reader) == sizeof(r) && sizeof(writer) == sizeof(w) );
-				}
-
-				template<typename T>
-				void Set(T* c,Data (NST_FASTCALL T::*r)(Address),void (NST_FASTCALL T::*w)(Address,Data))
-				{
-					NST_COMPILE_ASSERT( sizeof(reader) == sizeof(r) && sizeof(writer) == sizeof(w) );
-
-					component = reinterpret_cast<Component*>(c);
-					reader    = reinterpret_cast<Reader>(r);
-					writer    = reinterpret_cast<Writer>(w);
-				}
-
-				template<typename T>
-				void Set(Data (NST_FASTCALL T::*r)(Address))
-				{
-					NST_COMPILE_ASSERT( sizeof(reader) == sizeof(r) );
-
-					reader = reinterpret_cast<Reader>(r);
-				}
-
-				template<typename T>
-				void Set(void (NST_FASTCALL T::*w)(Address,Data))
-				{
-					NST_COMPILE_ASSERT( sizeof(writer) == sizeof(w) );
-
-					writer = reinterpret_cast<Writer>(w);
-				}
-
-				template<typename T>
-				void Set(Data (NST_FASTCALL T::*r)(Address),void (NST_FASTCALL T::*w)(Address,Data))
-				{
-					NST_COMPILE_ASSERT( sizeof(reader) == sizeof(r) && sizeof(writer) == sizeof(w) );
-
-					reader = reinterpret_cast<Reader>(r);
-					writer = reinterpret_cast<Writer>(w);
-				}
-
-				uint Peek(Address address) const
-				{
-					return (*component.*reader)( address );
-				}
-
-				void Poke(Address address,Data data) const
-				{
-					(*component.*writer)( address, data );
-				}
-
-				bool operator == (const Port& p) const
-				{
-					return component == p.component && reader == p.reader && writer == p.writer;
-				}
-			};
-
-			#define NES_DECL_PEEK(a_) Data NST_FASTCALL Peek_##a_(Address)
-			#define NES_DECL_POKE(a_) void NST_FASTCALL Poke_##a_(Address,Data)
-
-			#define NES_PEEK(o_,a_) Data NST_FASTCALL o_::Peek_##a_(Address)
-			#define NES_PEEK_A(o_,a_) Data NST_FASTCALL o_::Peek_##a_(Address address)
-
-			#define NES_POKE(o_,a_) void NST_FASTCALL o_::Poke_##a_(Address,Data)
-			#define NES_POKE_A(o_,a_) void NST_FASTCALL o_::Poke_##a_(Address address,Data)
-			#define NES_POKE_D(o_,a_) void NST_FASTCALL o_::Poke_##a_(Address,Data data)
-			#define NES_POKE_AD(o_,a_) void NST_FASTCALL o_::Poke_##a_(Address address,Data data)
-
-			#define NES_DO_POKE(a_,p_,d_) Poke_##a_(p_,d_)
-			#define NES_DO_PEEK(a_,p_) Peek_##a_(p_)
-
-		#else
 
 			class Port
 			{
@@ -262,7 +159,6 @@ namespace Nes
 			#define NES_DO_POKE(a_,p_,d_) Poke_##a_(this,p_,d_)
 			#define NES_DO_PEEK(a_,p_)    Peek_##a_(this,p_)
 
-		#endif
 		}
 	}
 }

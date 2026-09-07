@@ -32,10 +32,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Homebrew::Homebrew(Cpu& c)
 		: cpu(c)
 		, exitAddress(0)
@@ -209,10 +205,6 @@ namespace Nes
 				+ (stdOutPort != NULL ? 1 : 0)
 				+ (stdErrPort != NULL ? 1 : 0);
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NES_PEEK_A(Homebrew,Exit)
 		{

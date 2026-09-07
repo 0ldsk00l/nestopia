@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_AVE_NINA001_H
 #define NST_BOARD_AVE_NINA001_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardDiscrete.hpp"
 
 namespace Nes

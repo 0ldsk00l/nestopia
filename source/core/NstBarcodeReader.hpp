@@ -25,10 +25,6 @@
 #ifndef NST_BARCODEREADER_H
 #define NST_BARCODEREADER_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void B22Games::SubReset(const bool hard)
 				{
 					if (hard)
@@ -77,10 +73,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','2','G'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( romSwitch ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(B22Games,8000)
 				{

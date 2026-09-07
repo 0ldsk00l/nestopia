@@ -31,10 +31,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		void Cartridge::VsSystem::TkoBoxing::Reset()
 		{
 			cpu.Map( 0x5E00 ).Set( &TkoBoxing::Peek_5E00 );
@@ -53,10 +49,6 @@ namespace Nes
 			if (chunk == AsciiId<'T','K','O'>::V)
 				counter = state.Read8() & 0x1F;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NES_PEEK(Cartridge::VsSystem::TkoBoxing,5E00)
 		{

@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Taito
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				X1017::X1017(const Context& c)
 				: Board(c)
 				{
@@ -80,6 +76,32 @@ namespace Nes
 
 					for (uint i=2; i < 6; ++i)
 						regs.chr[i] = chr.GetBank<SIZE_1K>( 0x1000 | (i - 2) << 10 );
+				}
+
+				uint X1017::NumMemoryRegions() const
+				{
+					return Board::NumMemoryRegions() + 1;
+				}
+
+				X1017::MemoryRegion X1017::GetMemoryRegion(uint index) const
+				{
+					const uint base = Board::NumMemoryRegions();
+
+					if (index < base)
+						return Board::GetMemoryRegion( index );
+
+					/* 5k inside the X1-017, mapped linearly across $6000-$73FF. */
+					MemoryRegion region;
+					region.space    = MemoryRegion::SPACE_CPU;
+
+					region.type     = MemoryRegion::TYPE_WORK_RAM;
+					region.address  = 0x6000;
+					region.size     = sizeof(ram);
+					region.data     = const_cast<byte*>(ram);
+					region.battery  = board.HasBattery();
+					region.writable = true;
+
+					return region;
 				}
 
 				void X1017::Load(File& file)
@@ -152,10 +174,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void X1017::UpdateChr() const
 				{

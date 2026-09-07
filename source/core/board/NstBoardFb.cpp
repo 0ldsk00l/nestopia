@@ -33,10 +33,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Fb::Fb(const Context& c)
 			: Board(c), cartSwitch(wrk) {}
 
@@ -134,10 +130,6 @@ namespace Nes
 				NST_ASSERT( value < 2 );
 				wrk.Source().SetSecurity( true, !value );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_POKE_AD(Fb,Wrk_6)
 			{

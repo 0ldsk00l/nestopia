@@ -25,72 +25,12 @@
 #ifndef NST_IO_LINE_H
 #define NST_IO_LINE_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
 	{
 		namespace Io
 		{
-		#ifdef NST_FASTDELEGATE
-
-			class Line : public ImplicitBool<Line>
-			{
-				class Component {};
-				typedef void (NST_FASTCALL Component::*Toggler)(Address,Cycle);
-
-				Component* component;
-				Toggler toggler;
-
-				NST_COMPILE_ASSERT( sizeof(Toggler) <= sizeof(void (*)(void*,Address,Cycle)) );
-
-			public:
-
-				Line() {}
-
-				template<typename T>
-				Line(T* c,void (NST_FASTCALL T::*t)(Address,Cycle))
-				:
-				component ( reinterpret_cast<Component*>(c) ),
-				toggler   ( reinterpret_cast<Toggler>(t) )
-				{
-					NST_COMPILE_ASSERT( sizeof(toggler) == sizeof(t) );
-				}
-
-				template<typename T>
-				void Set(T* c,void (NST_FASTCALL T::*t)(Address,Cycle))
-				{
-					NST_COMPILE_ASSERT( sizeof(toggler) == sizeof(t) );
-
-					component = reinterpret_cast<Component*>(c);
-					toggler   = reinterpret_cast<Toggler>(t);
-				}
-
-				void Unset()
-				{
-					component = NULL;
-					toggler = NULL;
-				}
-
-				bool operator ! () const
-				{
-					return component == NULL;
-				}
-
-				void Toggle(Address address,Cycle cycle) const
-				{
-					(*component.*toggler)( address, cycle );
-				}
-			};
-
-			#define NES_DECL_LINE(a_) void NST_FASTCALL Line_##a_(Address,Cycle)
-			#define NES_LINE(o_,a_) void NST_FASTCALL o_::Line_##a_(Address address,Cycle cycle)
-			#define NES_LINE_T(t_,o_,a_) t_ void NST_FASTCALL o_::Line_##a_(Address address,Cycle cycle)
-
-		#else
 
 			class Line : public ImplicitBool<Line>
 			{
@@ -156,7 +96,6 @@ namespace Nes
                                                                                                    \
 				t_ NST_FORCE_INLINE void NST_FASTCALL o_::Line_M_##a_(Address address,Cycle cycle)
 
-		#endif
 		}
 	}
 }

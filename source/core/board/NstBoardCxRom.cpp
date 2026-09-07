@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			CnRom::Ce::Ce(const Context& c)
 			: mask(0x0), state(0x0)
 			{
@@ -87,10 +83,6 @@ namespace Nes
 				if (hard)
 					chr.SwapBank<SIZE_4K,0x1000>(0);
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_ACCESSOR(CnRom,ChrOpenBus)
 			{

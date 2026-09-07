@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Waixing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Sgzlz::SubReset(const bool hard)
 				{
 					Map( 0x4800U, NMT_SWAP_HV );
@@ -70,10 +66,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'W','L','Z'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Sgzlz,4801)
 				{

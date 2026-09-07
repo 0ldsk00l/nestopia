@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Mouse::Mouse(const Cpu& c)
 			: Device(c,Api::Input::MOUSE)
 			{
@@ -68,10 +64,6 @@ namespace Nes
 					stream = data[1] ^ 0xFF;
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint Mouse::Peek(uint)
 			{

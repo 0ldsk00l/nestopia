@@ -3,6 +3,7 @@
 // Nestopia - NES/Famicom emulator written in C++
 //
 // Copyright (C) 2003-2008 Martin Freij
+// Copyright (C) 2023-2026 Rupert Carmichael
 //
 // This file is part of Nestopia.
 //
@@ -26,18 +27,6 @@
 #define NST_API_SOUND_H
 
 #include "NstApi.hpp"
-
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
-#if NST_ICC >= 810
-#pragma warning( push )
-#pragma warning( disable : 304 444 )
-#elif NST_MSVC >= 1200
-#pragma warning( push )
-#pragma warning( disable : 4512 )
-#endif
 
 namespace Nes
 {
@@ -234,20 +223,6 @@ namespace Nes
 				ALL_CHANNELS = APU_CHANNELS|EXT_CHANNELS
 			};
 
-			/**
-			* Speaker type.
-			*/
-			enum Speaker
-			{
-				/**
-				* Mono sound (default).
-				*/
-				SPEAKER_MONO,
-				/**
-				* Pseudo stereo sound.
-				*/
-				SPEAKER_STEREO
-			};
 
 			enum
 			{
@@ -274,19 +249,7 @@ namespace Nes
 			*/
 			ulong GetSampleRate() const throw();
 
-			/**
-			* Sets the speaker type.
-			*
-			* @param speaker speaker type, default is SPEAKER_MONO
-			*/
-			void SetSpeaker(Speaker speaker) throw();
 
-			/**
-			* Returns the speaker type.
-			*
-			* @return speaker type
-			*/
-			Speaker GetSpeaker() const throw();
 
 			/**
 			* Sets one or more channel volumes.
@@ -349,6 +312,29 @@ namespace Nes
 			void SetGenie(bool genie) throw();
 
 			/**
+			* Enables the audio output filter.
+			*
+			* Approximates the analog stage following the DAC on a real
+			* console: a first order 220Hz high pass followed by a first
+			* order 14kHz low pass, applied to the mixed output.
+			*
+			* @param filter true to enable
+			*/
+			void SetFilter(bool filter) throw();
+
+			/**
+			* Enables DMC pop reduction.
+			*
+			* A direct load to $4011 far from the current DMC level steps the
+			* DAC hard enough to be heard as a click. When enabled, a step of
+			* more than 50 is halved. This is deliberately inaccurate and will
+			* quieten samples streamed as large swings through $4011.
+			*
+			* @param reduce true to enable
+			*/
+			void SetDmcPopReducer(bool reduce) throw();
+
+			/**
 			* Checks if automatic transposing is enabled.
 			*
 			* @return true if enabled
@@ -361,6 +347,20 @@ namespace Nes
 			* @return true if enabled
 			*/
 			bool IsGenie() const throw();
+
+			/**
+			* Checks if the audio output filter is enabled.
+			*
+			* @return true if enabled
+			*/
+			bool IsFiltered() const throw();
+
+			/**
+			* Checks if DMC pop reduction is enabled.
+			*
+			* @return true if enabled
+			*/
+			bool IsDmcPopReduced() const throw();
 
 			/**
 			* Checks if sound is audible at all.
@@ -381,9 +381,5 @@ namespace Nes
 		};
 	}
 }
-
-#if NST_MSVC >= 1200 || NST_ICC >= 810
-#pragma warning( pop )
-#endif
 
 #endif

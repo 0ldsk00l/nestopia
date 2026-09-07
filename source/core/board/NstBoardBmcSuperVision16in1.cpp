@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				SuperVision16in1::SuperVision16in1(const Context& c)
 				:
 				Board      (c),
@@ -88,10 +84,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','S','V'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write16( regs[0] | uint(regs[1]) << 8 ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void SuperVision16in1::UpdatePrg()
 				{

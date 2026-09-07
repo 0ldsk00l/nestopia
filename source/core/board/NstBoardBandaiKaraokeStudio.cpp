@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bandai
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void KaraokeStudio::SubReset(const bool hard)
 				{
 					Map( 0x6000U, 0x7FFFU, &KaraokeStudio::Peek_6000 );
@@ -46,10 +42,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_16K,0x4000>(0x7);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(KaraokeStudio,8000)
 				{

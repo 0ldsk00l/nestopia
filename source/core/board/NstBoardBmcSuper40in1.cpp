@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Super40in1::SubReset(const bool hard)
 				{
 					reg = 0x00;
@@ -71,10 +67,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','S','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Super40in1,6000)
 				{

@@ -25,10 +25,6 @@
 #ifndef NST_VIDEO_SCREEN_H
 #define NST_VIDEO_SCREEN_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

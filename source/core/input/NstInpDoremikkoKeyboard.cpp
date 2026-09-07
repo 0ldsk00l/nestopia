@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			DoremikkoKeyboard::DoremikkoKeyboard(const Cpu& c)
 			: Device(c,Api::Input::DOREMIKKOKEYBOARD)
 			{
@@ -52,10 +48,6 @@ namespace Nes
 			{
 				saver.Begin( AsciiId<'D','K'>::R(0,0,id) ).End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void DoremikkoKeyboard::Poke(const uint data)
 			{

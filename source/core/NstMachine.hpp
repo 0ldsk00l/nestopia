@@ -98,6 +98,7 @@ namespace Nes
 			Result PowerOff(Result=RESULT_OK);
 			void   Reset(bool);
 			void   SetRamPowerState(uint);
+			void   SetSystemForced(bool);
 			void   SwitchMode();
 			bool   LoadState(State::Loader&,bool);
 			void   SaveState(State::Saver&) const;
@@ -123,6 +124,7 @@ namespace Nes
 
 			uint state;
 			dword frame;
+			bool systemForced;
 
 		public:
 			/* Controller strobe, tracked separately from what the ports have

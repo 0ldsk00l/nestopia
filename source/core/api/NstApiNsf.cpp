@@ -31,10 +31,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Nsf::EventCaller Nsf::eventCallback;
 
 		const char* Nsf::GetName() const throw()
@@ -184,9 +180,5 @@ namespace Nes
 		{
 			return emulator.Is(Machine::SOUND) && static_cast<Core::Nsf*>(emulator.image)->UsesBankSwitching();
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

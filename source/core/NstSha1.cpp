@@ -101,10 +101,6 @@ namespace Nes
 					key.Compute( data, length );
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Key::Key()
 			{
 				Clear();
@@ -120,10 +116,6 @@ namespace Nes
 				state[4] = 0xC3D2E1F0;
 				finalized = false;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			inline void Key::Update() const
 			{

@@ -25,10 +25,6 @@
 #ifndef NST_PROPERTIES_H
 #define NST_PROPERTIES_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

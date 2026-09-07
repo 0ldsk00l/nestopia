@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_TAITO_TC0190FMCPAL16R4_H
 #define NST_BOARD_TAITO_TC0190FMCPAL16R4_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardMmc3.hpp"
 #include "NstBoardTaitoTc0190fmc.hpp"
 

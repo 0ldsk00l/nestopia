@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void GoldenCard6in1::SubReset(const bool hard)
 				{
 					if (hard)
@@ -90,10 +86,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'B','G','C'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( exRegs ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void NST_FASTCALL GoldenCard6in1::UpdatePrg(uint address,uint bank)
 				{

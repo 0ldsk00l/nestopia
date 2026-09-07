@@ -33,10 +33,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		struct Log::Object
 		{
 			std::string string;
@@ -142,9 +138,5 @@ namespace Nes
 			if (enabled)
 				Api::User::logCallback( string, length );
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

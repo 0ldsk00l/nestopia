@@ -33,10 +33,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Mmc1::Mmc1(const Context& c,Revision rev)
 			: Board(c), revision(rev)
 			{
@@ -115,10 +111,6 @@ namespace Nes
 
 				state.Begin( AsciiId<'M','M','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void Mmc1::Save(File& file) const
 			{

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_IREM_H
 #define NST_BOARD_IREM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardIremG101.hpp"
 #include "NstBoardIremH3001.hpp"
 #include "NstBoardIremLrog017.hpp"

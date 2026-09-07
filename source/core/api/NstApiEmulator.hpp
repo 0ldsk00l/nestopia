@@ -29,14 +29,6 @@
 #include "../NstBase.hpp"
 #endif
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
-#if NST_MSVC >= 1200
-#pragma warning( push )
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -106,9 +98,5 @@ namespace Nes
 		};
 	}
 }
-
-#if NST_MSVC >= 1200
-#pragma warning( pop )
-#endif
 
 #endif

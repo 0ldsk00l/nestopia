@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace Sachen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Sa0036::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &Sa0036::Poke_8000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Sa0036,8000)
 				{

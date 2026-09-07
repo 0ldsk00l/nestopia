@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void AxRom::SubReset(const bool hard)
 			{
 				if (board == Type::STD_AMROM)
@@ -45,10 +41,6 @@ namespace Nes
 				if (hard)
 					prg.SwapBank<SIZE_32K,0x0000>(0);
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_POKE_D(AxRom,8000_0)
 			{

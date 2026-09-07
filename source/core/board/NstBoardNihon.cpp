@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace Nihon
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void UnRomM5::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, PRG_SWAP_16K_1 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 			}
 		}
 	}

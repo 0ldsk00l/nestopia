@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Txc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Tw::SubReset(const bool hard)
 				{
 					Mmc3::SubReset( hard );
@@ -46,10 +42,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Tw,4120)
 				{

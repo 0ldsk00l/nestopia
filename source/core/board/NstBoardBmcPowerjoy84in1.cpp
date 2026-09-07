@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Powerjoy84in1::SubReset(const bool hard)
 				{
 					if (hard)
@@ -80,10 +76,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'B','P','J'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( exRegs ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				uint Powerjoy84in1::GetExChrExBank() const
 				{

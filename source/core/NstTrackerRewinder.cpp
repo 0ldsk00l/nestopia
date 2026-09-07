@@ -119,10 +119,6 @@ namespace Nes
 			}
 		};
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Tracker::Rewinder::ReverseVideo::ReverseVideo(Ppu& p)
 		:
 		pingpong (1),
@@ -271,7 +267,6 @@ namespace Nes
 			const dword old = size * sizeof(iword);
 
 			rate = apu.GetSampleRate();
-			stereo = apu.InStereo();
 			size = rate << (stereo+1);
 
 			const dword total = size * sizeof(iword);
@@ -299,10 +294,6 @@ namespace Nes
 
 			return true;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		inline void Tracker::Rewinder::Key::Input::Invalidate()
 		{
@@ -583,7 +574,7 @@ namespace Nes
 		{
 			NST_COMPILE_ASSERT( NUM_FRAMES % 2 == 0 );
 
-			if (!buffer || (rate ^ apu.GetSampleRate()) | (stereo ^ uint(bool(apu.InStereo()))))
+			if (!buffer || (rate ^ apu.GetSampleRate()))
 			{
 				if (!good || !Update() || !enabled)
 					return NULL;

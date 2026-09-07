@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Irem
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void G101::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0x8FFFU, &G101::Poke_8000 );
@@ -95,10 +91,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'I','G','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void G101::UpdatePrg()
 				{

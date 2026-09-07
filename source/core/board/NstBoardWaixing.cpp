@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Waixing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void TypeA::SubReset(const bool hard)
 				{
 					TypeI::SubReset( hard );
@@ -151,10 +147,6 @@ namespace Nes
 					for (uint i=0x0000; i < 0x8000; i += 0x2000)
 						exPrg[GetPrgIndex(i)] = prg.GetBank<SIZE_8K>(i);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(TypeI,5000)
 				{

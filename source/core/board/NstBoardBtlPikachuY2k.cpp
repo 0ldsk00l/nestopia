@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void PikachuY2k::SubReset(const bool hard)
 				{
 					security = ~0U;
@@ -73,10 +69,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'B','P','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( security & 0x1 ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(PikachuY2k,6000)
 				{

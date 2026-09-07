@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void ResetBased4in1::SubReset(const bool hard)
 				{
 					if (hard)
@@ -68,10 +64,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','R','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( resetSwitch ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 			}
 		}
 	}

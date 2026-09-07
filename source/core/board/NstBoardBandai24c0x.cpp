@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bandai
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void X24C0X<0>::Reset()
 				{
 					line.scl      = 0;
@@ -113,10 +109,6 @@ namespace Nes
 						state.End();
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
 
 				void X24C0X<0>::Stop()
 				{

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				MortalKombat2::MortalKombat2(const Context& c)
 				: Board(c), irq(*c.cpu,*c.ppu,false) {}
 
@@ -80,10 +76,6 @@ namespace Nes
 					irq.unit.SaveState( state, AsciiId<'I','R','Q'>::V );
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE(MortalKombat2,7002)
 				{

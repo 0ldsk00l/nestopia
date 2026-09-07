@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Txc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Mxmdhtwo::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xFFFFU, PRG_SWAP_32K );
@@ -44,10 +40,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 			}
 		}
 	}

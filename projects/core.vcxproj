@@ -125,6 +125,7 @@
     <ClInclude Include="..\source\core\api\NstApiFds.hpp" />
     <ClInclude Include="..\source\core\api\NstApiInput.hpp" />
     <ClInclude Include="..\source\core\api\NstApiMachine.hpp" />
+    <ClInclude Include="..\source\core\api\NstApiMemory.hpp" />
     <ClInclude Include="..\source\core\api\NstApiMovie.hpp" />
     <ClInclude Include="..\source\core\api\NstApiNsf.hpp" />
     <ClInclude Include="..\source\core\api\NstApiRewinder.hpp" />
@@ -306,9 +307,11 @@
     <ClInclude Include="..\source\core\board\NstBoardSunsoftDcs.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardSunsoftFme7.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardSuperGame.hpp" />
-    <ClInclude Include="..\source\core\board\NstBoardSuperGameBoogerman.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardSuperGameLionKing.hpp" />
-    <ClInclude Include="..\source\core\board\NstBoardSuperGamePocahontas2.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSuperGame8237.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardSachenDaheng.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBmcSfc12.hpp" />
+    <ClInclude Include="..\source\core\board\NstBoardBatlabSrrx.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardTaito.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardTaitoTc0190fmc.hpp" />
     <ClInclude Include="..\source\core\board\NstBoardTaitoTc0190fmcPal16r4.hpp" />
@@ -463,6 +466,7 @@
     <ClCompile Include="..\source\core\api\NstApiFds.cpp" />
     <ClCompile Include="..\source\core\api\NstApiInput.cpp" />
     <ClCompile Include="..\source\core\api\NstApiMachine.cpp" />
+    <ClCompile Include="..\source\core\api\NstApiMemory.cpp" />
     <ClCompile Include="..\source\core\api\NstApiMovie.cpp" />
     <ClCompile Include="..\source\core\api\NstApiNsf.cpp" />
     <ClCompile Include="..\source\core\api\NstApiRewinder.cpp" />
@@ -617,9 +621,11 @@
     <ClCompile Include="..\source\core\board\NstBoardSunsoft5b.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardSunsoftDcs.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardSunsoftFme7.cpp" />
-    <ClCompile Include="..\source\core\board\NstBoardSuperGameBoogerman.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardSuperGameLionKing.cpp" />
-    <ClCompile Include="..\source\core\board\NstBoardSuperGamePocahontas2.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSuperGame8237.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardSachenDaheng.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBmcSfc12.cpp" />
+    <ClCompile Include="..\source\core\board\NstBoardBatlabSrrx.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardTaitoTc0190fmc.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardTaitoTc0190fmcPal16r4.cpp" />
     <ClCompile Include="..\source\core\board\NstBoardTaitoX1005.cpp" />

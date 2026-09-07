@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_WAIXING_H
 #define NST_BOARD_WAIXING_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardMmc3.hpp"
 #include "NstBoardWaixingPs2.hpp"
 #include "NstBoardWaixingFfv.hpp"

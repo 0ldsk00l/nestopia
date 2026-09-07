@@ -107,10 +107,6 @@ namespace Nes
 				0xAF, 0xAF, 0xAE, 0xAE, 0xAE, 0x8E, 0x00, 0x00
 			};
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Zapper::Zapper(const Cpu& c,Ppu& p)
 			:
 			Device (c,Api::Input::ZAPPER),
@@ -157,10 +153,6 @@ namespace Nes
 					}
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint Zapper::Poll()
 			{

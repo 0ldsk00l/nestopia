@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				WorldHero::WorldHero(const Context& c)
 				: Board(c), irq(*c.cpu) {}
 
@@ -115,10 +111,6 @@ namespace Nes
 					irq.SaveState( state, AsciiId<'I','R','Q'>::V );
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(WorldHero,8000)
 				{

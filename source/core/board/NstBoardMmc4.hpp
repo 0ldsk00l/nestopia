@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_MMC4_H
 #define NST_BOARD_MMC4_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardMmc2.hpp"
 
 namespace Nes

@@ -49,10 +49,6 @@ namespace Nes
 			return emulator.tracker.IsLocked();
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Result Machine::Load(std::istream& stream,FavoredSystem system,AskProfile ask,Patch* patch,uint type)
 		{
 			Result result;
@@ -192,6 +188,12 @@ namespace Nes
 			return RESULT_OK;
 		}
 
+		Result Machine::SetSystemForced(const bool state) throw()
+		{
+			emulator.SetSystemForced(state);
+			return RESULT_OK;
+		}
+
 		Machine::Mode Machine::GetMode() const throw()
 		{
 			return static_cast<Mode>(Is(NTSC|PAL));
@@ -275,8 +277,5 @@ namespace Nes
 			return RESULT_OK;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BANDAI_AEROBICSSTUDIO_H
 #define NST_BOARD_BANDAI_AEROBICSSTUDIO_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardCxRom.hpp"
 
 namespace Nes

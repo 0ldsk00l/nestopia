@@ -69,10 +69,6 @@ namespace Nes
 					{0x21,0x72,0x0D,0x00,0xC1,0xD5,0x56,0x06 }  // Electric Guitar
 				};
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Vrc7::Sound::Tables::Tables()
 				{
 					FpuPrecision precision;
@@ -468,10 +464,6 @@ namespace Nes
 						state.End();
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Vrc7,9010)
 				{

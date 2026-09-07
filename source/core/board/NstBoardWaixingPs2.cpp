@@ -33,20 +33,12 @@ namespace Nes
 		{
 			namespace Waixing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ps2::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &Ps2::Poke_8000 );
 
 					prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Ps2,8000)
 				{

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_TENGEN_RAMBO1_H
 #define NST_BOARD_TENGEN_RAMBO1_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstTimer.hpp"
 
 namespace Nes

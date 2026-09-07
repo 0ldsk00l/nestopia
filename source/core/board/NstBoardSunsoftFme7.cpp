@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Sunsoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Fme7::Fme7(const Context& c)
 				:
 				Board  (c),
@@ -115,10 +111,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Fme7,6000)
 				{

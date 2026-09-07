@@ -145,10 +145,6 @@ namespace Nes
 				}
 			};
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			FamilyKeyboard::FamilyKeyboard(Cpu& c,bool connectDataRecorder)
 			:
 			Device       (c,Api::Input::FAMILYKEYBOARD),
@@ -437,10 +433,6 @@ namespace Nes
 
 				return RESULT_OK;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void FamilyKeyboard::EndFrame()
 			{

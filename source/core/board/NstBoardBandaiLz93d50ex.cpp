@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Bandai
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Lz93d50Ex::Lz93d50Ex(const Context& c)
 				:
 				Lz93d50 (c),
@@ -158,10 +154,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK(Lz93d50Ex,6000_24c01)
 				{

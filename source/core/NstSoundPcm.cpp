@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Sound
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Pcm::Pcm(Apu& a)
 			: Channel(a)
 			{
@@ -60,10 +56,6 @@ namespace Nes
 
 				return true;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void Pcm::Play(const iword* w,dword l,dword r)
 			{

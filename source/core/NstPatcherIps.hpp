@@ -25,10 +25,6 @@
 #ifndef NST_IPS_H
 #define NST_IPS_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include <vector>
 
 namespace Nes

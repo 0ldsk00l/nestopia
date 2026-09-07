@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void Action53::SubReset(const bool hard)
 			{
 				Map( 0x5000U, 0x5FFFU, &Action53::Poke_5000 );
@@ -42,8 +38,13 @@ namespace Nes
 
 				if (hard)
 				{
+					preg[0] = 0x00;
 					preg[1] = 0xf;
+					preg[2] = 0x00;
 					preg[3] = 0x3f;
+
+					mirroring = 0x00;
+					index     = 0x00;
 				}
 			}
 
@@ -82,10 +83,6 @@ namespace Nes
 
 				state.Begin( AsciiId<'A','5','3'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_POKE_D(Action53, 5000)
 			{

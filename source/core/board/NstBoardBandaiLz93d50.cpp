@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Bandai
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Lz93d50::Lz93d50(const Context& c)
 				: Board(c), irq(*c.cpu)
 				{
@@ -166,10 +162,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Lz93d50,8000)
 				{

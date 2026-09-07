@@ -28,10 +28,6 @@
 #include <cstring>
 #include <iosfwd>
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

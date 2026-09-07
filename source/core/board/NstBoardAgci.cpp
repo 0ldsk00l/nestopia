@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Agci
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void A50282::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xFFFFU, &A50282::Poke_8000 );
@@ -44,10 +40,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(A50282,8000)
 				{

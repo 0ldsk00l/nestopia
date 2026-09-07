@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace SuperGame
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void LionKing::SubReset(const bool hard)
 				{
 					exRegs[0] = 0x00;
@@ -89,10 +85,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'S','L','K'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(LionKing,5000)
 				{

@@ -31,10 +31,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		void Cartridge::VsSystem::RbiBaseball::Reset()
 		{
 			cpu.Map( 0x5E00 ).Set( &RbiBaseball::Peek_5E00 );
@@ -53,10 +49,6 @@ namespace Nes
 			if (chunk == AsciiId<'R','B','I'>::V)
 				counter = state.Read8();
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NES_PEEK(Cartridge::VsSystem::RbiBaseball,5E00)
 		{

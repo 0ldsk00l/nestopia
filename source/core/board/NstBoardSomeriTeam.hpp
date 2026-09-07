@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_SOMERITEAM_H
 #define NST_BOARD_SOMERITEAM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardSomeriTeamSl12.hpp"
 
 #endif

@@ -29,10 +29,6 @@
 #include "NstCore.hpp"
 #endif
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #ifndef NST_DEBUG
 
   #define NST_DEBUG_MSG(msg_) NST_NOP()
@@ -41,24 +37,14 @@
 
 #elif defined(NST_WIN32)
 
-  #if NST_GCC >= 200 || NST_MWERKS >= 0x3000
+  #if NST_GCC >= 200
    #define NST_FUNC_NAME __PRETTY_FUNCTION__
-  #elif NST_MSVC >= 1300
-   #define NST_FUNC_NAME __FUNCTION__
-  #elif NST_BCC >= 0x550
-   #define NST_FUNC_NAME __FUNC__
   #else
    #define NST_FUNC_NAME 0
   #endif
 
-  #if NST_MSVC >= 1300
-   #define NST_HALT() __debugbreak()
-  #elif NST_MSVC >= 1200 && defined(_M_IX86)
-   #define NST_HALT() __asm {int 3} NST_NOP()
-  #else
-   #include <cstdlib>
-   #define NST_HALT() std::abort()
-  #endif
+  #include <cstdlib>
+  #define NST_HALT() std::abort()
 
   namespace Nes
   {

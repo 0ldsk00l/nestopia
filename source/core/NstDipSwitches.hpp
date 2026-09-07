@@ -25,10 +25,6 @@
 #ifndef NST_DIPSWITCHES_H
 #define NST_DIPSWITCHES_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

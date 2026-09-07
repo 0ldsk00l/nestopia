@@ -31,10 +31,6 @@
 #include "NstBase.hpp"
 #endif
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #if defined(_WIN32) || defined(WIN32) || defined(__WIN32__)
 #define NST_WIN32
 #endif
@@ -51,10 +47,6 @@
   #endif
 
   #if NST_MSVC >= 1200
-
-   #ifndef NST_FASTDELEGATE
-   #define NST_FASTDELEGATE
-   #endif
 
    #ifndef _DEBUG
    #define NST_MSVC_OPTIMIZE
@@ -79,10 +71,6 @@
 	#define NST_UNREACHABLE() __assume(0)
 	#endif
 
-	#if !defined(NST_MM_INTRINSICS) && defined(NST_WIN32) && defined(_M_IX86)
-	#define NST_MM_INTRINSICS
-	#endif
-
 	#define NST_NO_VTABLE __declspec(novtable)
 
 	#if NST_MSVC >= 1400
@@ -92,13 +80,6 @@
      #endif
 
      #pragma warning( default : 4191 4263 4287 4289 4296 4350 4545 4546 4547 4549 4555 4557 4686 4836 4905 4906 4928 4946 )
-
-     #if 0
-     #pragma warning( default : 4820 ) // byte padding on structs
-     #pragma warning( default : 4710 ) // function not inlined
-     #pragma warning( default : 4711 ) // function auto inlined
-     #pragma warning( default : 4100 ) // unreferenced parameter
-     #endif
 
 	#endif
 
@@ -145,10 +126,10 @@
 
 #endif
 
-#if NST_MSVC
-#define NST_UNUSED
-#else
+#if NST_GCC
 #define NST_UNUSED __attribute__ ((unused))
+#else
+#define NST_UNUSED
 #endif
 
 #define NST_NOP() ((void)0)
@@ -459,12 +440,10 @@ namespace Nes
 #ifdef NST_U64
 
 	typedef NST_U64 qaword;
-	#define NST_NATIVE_QWORD
 
 #elif (ULONG_MAX > 0xFFFFFFFF) && (ULONG_MAX / 0xFFFFFFFF - 1 > 0xFFFFFFFF)
 
 	typedef unsigned long qaword;
-	#define NST_NATIVE_QWORD
 
 #elif (defined(ULLONG_MAX) && (ULLONG_MAX > 0xFFFFFFFF) && (ULLONG_MAX / 0xFFFFFFFF - 1 > 0xFFFFFFFF)) || (NST_GCC >= 300)
 
@@ -473,296 +452,14 @@ namespace Nes
 	#else
 	typedef unsigned long long qaword;
 	#endif
-	#define NST_NATIVE_QWORD
 
-#elif defined(_UI64_MAX) && (NST_MSVC >= 900 || NST_BCB >= 0x530)
+#elif defined(_UI64_MAX)
 
 	typedef unsigned __int64 qaword;
-	#define NST_NATIVE_QWORD
 
 #else
 
-	class qaword
-	{
-		void Multiply(qaword);
-		static void Divide(qaword&,const qaword,bool);
-		void Shl(uint);
-		void Shr(uint);
-
-		enum
-		{
-			LO_MASK = 0xFFFFFFFF,
-			LO_MSB  = 0x80000000
-		};
-
-		dword lo;
-		dword hi;
-
-	public:
-
-		qaword() {}
-
-		qaword(dword v)
-		: lo(v), hi(0) {}
-
-		qaword(dword msdw,dword lsdw)
-		: lo(lsdw), hi(msdw) {}
-
-		qaword(const qaword& v)
-		: lo(v.lo), hi(v.hi) {}
-
-		template<typename V>
-		qaword& operator = (const V& v)
-		{
-			lo = v;
-			hi = 0;
-			return *this;
-		}
-
-		qaword& operator = (const qaword& v)
-		{
-			lo = v.lo;
-			hi = v.hi;
-			return *this;
-		}
-
-		template<typename V>
-		qaword& operator += (const V& v)
-		{
-			dword t = lo;
-			lo = (lo + v) & LO_MASK;
-			hi = (hi + (t > lo)) & LO_MASK;
-			return *this;
-		}
-
-		template<typename V>
-		qaword& operator -= (const V& v)
-		{
-			dword t = lo;
-			lo = (lo - v) & LO_MASK;
-			hi = (hi - (t < lo)) & LO_MASK;
-			return *this;
-		}
-
-		qaword operator ++ (int)
-		{
-			qaword t;
-			t.lo = lo;
-			lo = (lo + 1) & LO_MASK;
-			t.hi = hi;
-			hi = (hi + (t.lo > lo)) & LO_MASK;
-			return t;
-		}
-
-		qaword& operator ++ ()
-		{
-			dword t = lo;
-			lo = (lo + 1) & LO_MASK;
-			hi = (hi + (t > lo)) & LO_MASK;
-			return *this;
-		}
-
-		qaword operator -- (int)
-		{
-			qaword t;
-			t.lo = lo;
-			lo = (lo - 1) & LO_MASK;
-			t.hi = hi;
-			hi = (hi - (t.lo < lo)) & LO_MASK;
-			return t;
-		}
-
-		qaword& operator -- ()
-		{
-			dword t = lo;
-			lo = (lo - 1) & LO_MASK;
-			hi = (hi - (t < lo)) & LO_MASK;
-			return *this;
-		}
-
-		template<typename V>
-		qaword& operator *= (const V& v)
-		{
-			if (!(((lo | v) & 0xFFFF0000) | hi))
-				lo = (lo * v) & LO_MASK;
-			else
-				Multiply( qaword(v) );
-
-			return *this;
-		}
-
-		template<typename V>
-		qaword& operator /= (const V& v)
-		{
-			if (!hi)
-				lo /= v;
-			else
-				Divide( *this, qaword(v), false );
-
-			return *this;
-		}
-
-		template<typename V>
-		qaword& operator %= (const V& v)
-		{
-			if (!hi)
-				lo %= v;
-			else
-				Divide( *this, qaword(v), true );
-
-			return *this;
-		}
-
-		template<typename V> qaword operator + (const V& v) const { return qaword(*this) += v; }
-		template<typename V> qaword operator - (const V& v) const { return qaword(*this) -= v; }
-		template<typename V> qaword operator * (const V& v) const { return qaword(*this) *= v; }
-		template<typename V> qaword operator / (const V& v) const { return qaword(*this) /= v; }
-		template<typename V> qaword operator % (const V& v) const { return qaword(*this) %= v; }
-
-		template<typename V> qaword& operator |= (const V& v) { lo |= v;         return *this; }
-		template<typename V> qaword& operator &= (const V& v) { lo &= v; hi = 0; return *this; }
-		template<typename V> qaword& operator ^= (const V& v) { lo ^= v;         return *this; }
-
-		template<typename V> qaword operator | (const V& v) const { return qaword( hi, lo | v ); }
-		template<typename V> qaword operator & (const V& v) const { return qaword(     lo & v ); }
-		template<typename V> qaword operator ^ (const V& v) const { return qaword( hi, lo ^ v ); }
-
-		template<typename V> qaword& operator >>= (const V& v) { Shr(v); return *this; }
-		template<typename V> qaword& operator <<= (const V& v) { Shl(v); return *this; }
-
-		template<typename V> qaword operator >> (const V& v) const { return qaword(*this) >>= v; }
-		template<typename V> qaword operator << (const V& v) const { return qaword(*this) <<= v; }
-
-		qaword operator ~() const
-		{
-			return qaword( hi ^ LO_MASK, lo ^ LO_MASK );
-		}
-
-		template<typename V>
-		bool operator == (const V& v) const
-		{
-			return !((lo - v) | hi);
-		}
-
-		template<typename V>
-		bool operator < (const V& v) const
-		{
-			return (lo < v && !hi);
-		}
-
-		template<typename V>
-		bool operator <= (const V& v) const
-		{
-			return (lo <= v && !hi);
-		}
-
-		template<typename V>
-		bool operator != (const V& v) const
-		{
-			return !(*this == v);
-		}
-
-		template<typename V>
-		bool operator > (const V& v) const
-		{
-			return !(*this <= v);
-		}
-
-		template<typename V>
-		bool operator >= (const V& v) const
-		{
-			return !(*this < v);
-		}
-
-		bool operator !() const
-		{
-			return !(lo|hi);
-		}
-
-		operator bool() const
-		{
-			return (lo|hi);
-		}
-
-		operator int    () const { return lo; }
-		operator uint   () const { return lo; }
-		operator char   () const { return lo; }
-		operator schar  () const { return lo; }
-		operator uchar  () const { return lo; }
-		operator short  () const { return lo; }
-		operator ushort () const { return lo; }
-		operator long   () const { return lo; }
-		operator ulong  () const { return lo; }
-	};
-
-	template<>
-	inline qaword& qaword::operator += (const qaword& v)
-	{
-		dword t = lo;
-		lo = (lo + v.lo) & LO_MASK;
-		hi = (hi + (t > lo) + v.hi) & LO_MASK;
-		return *this;
-	}
-
-	template<>
-	inline qaword& qaword::operator -= (const qaword& v)
-	{
-		dword t = lo;
-		lo = (lo - v.lo) & LO_MASK;
-		hi = (hi - ((t < lo) + v.hi)) & LO_MASK;
-		return *this;
-	}
-
-	template<>
-	inline qaword& qaword::operator *= (const qaword& v)
-	{
-		Multiply( v );
-		return *this;
-	}
-
-	template<>
-	inline qaword& qaword::operator /= (const qaword& v)
-	{
-		if (hi | v.hi)
-			Divide( *this, v, false );
-		else
-			lo /= v.lo;
-
-		return *this;
-	}
-
-	template<>
-	inline qaword& qaword::operator %= (const qaword& v)
-	{
-		Divide( *this, v, true );
-		return *this;
-	}
-
-	template<> inline qaword& qaword::operator |= (const qaword& v) { lo |= v.lo; hi |= v.hi; return *this; }
-	template<> inline qaword& qaword::operator &= (const qaword& v) { lo &= v.lo; hi &= v.hi; return *this; }
-	template<> inline qaword& qaword::operator ^= (const qaword& v) { lo ^= v.lo; hi ^= v.hi; return *this; }
-
-	template<> inline qaword qaword::operator | (const qaword& v) const { return qaword( hi | v.hi, lo | v.lo ); }
-	template<> inline qaword qaword::operator & (const qaword& v) const { return qaword( hi & v.hi, lo & v.lo ); }
-	template<> inline qaword qaword::operator ^ (const qaword& v) const { return qaword( hi ^ v.hi, lo ^ v.lo ); }
-
-	template<>
-	inline bool qaword::operator == (const qaword& v) const
-	{
-		return !((lo - v.lo) | (hi - v.hi));
-	}
-
-	template<>
-	inline bool qaword::operator < (const qaword& v) const
-	{
-		return (hi < v.hi) || (lo < v.lo && hi == v.hi);
-	}
-
-	template<>
-	inline bool qaword::operator <= (const qaword& v) const
-	{
-		return (hi < v.hi) || (hi == v.hi ? (lo <= v.lo) : false);
-	}
+	#error "Nestopia requires a native 64bit integer type; define NST_U64 to one."
 
 #endif
 }

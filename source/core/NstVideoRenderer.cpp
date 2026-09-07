@@ -158,10 +158,6 @@ namespace Nes
 				{ 0.40, 0.68, 1.00, 1.00 }
 			};
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			inline Renderer::Palette::Custom::Custom()
 			: emphasis(NULL) {}
 
@@ -808,10 +804,6 @@ namespace Nes
 
 				state.update = 0;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void Renderer::Blit(Output& output,Input& input,uint burstPhase)
 			{

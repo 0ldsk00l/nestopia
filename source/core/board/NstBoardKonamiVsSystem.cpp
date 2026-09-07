@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Konami
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void VsSystem::SubReset(bool)
 				{
 					Map( 0x8000U, 0x8FFFU, PRG_SWAP_8K_0 );
@@ -45,10 +41,6 @@ namespace Nes
 					Map( 0xE000U, 0xEFFFU, CHR_SWAP_4K_0 );
 					Map( 0xF000U, 0xFFFFU, CHR_SWAP_4K_1 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 			}
 		}
 	}

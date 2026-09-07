@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Subor
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Type0::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &Type0::Poke_8000 );
@@ -75,10 +71,6 @@ namespace Nes
 						}
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				uint Type0::GetMode() const
 				{

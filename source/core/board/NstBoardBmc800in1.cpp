@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Game800in1::CartSwitches::CartSwitches(const Context& c)
 				:
 				type (DetectType(c)),
@@ -163,10 +159,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','8','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( cartSwitches.GetMode() | (mode << 4) ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Game800in1,8000)
 				{

@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace DreamTech
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void D01::SubReset(bool)
 				{
 					Map( 0x5020U, PRG_SWAP_16K_0 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 			}
 		}
 	}

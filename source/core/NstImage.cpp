@@ -31,10 +31,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Image::Image(Type t)
 		: type(t) {}
 
@@ -113,9 +109,5 @@ namespace Nes
 				return SYSTEM_NES_PAL;
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

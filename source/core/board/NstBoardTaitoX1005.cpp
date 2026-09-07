@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Taito
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				X1005::X1005(const Context& c)
 				: Board(c), version(DetectVersion(c))
 				{
@@ -91,6 +87,34 @@ namespace Nes
 					Map( 0x7F00U, 0x7FFFU, &X1005::Peek_7F00, &X1005::Poke_7F00 );
 				}
 
+				uint X1005::NumMemoryRegions() const
+				{
+					return Board::NumMemoryRegions() + 1;
+				}
+
+				X1005::MemoryRegion X1005::GetMemoryRegion(uint index) const
+				{
+					const uint base = Board::NumMemoryRegions();
+
+					if (index < base)
+						return Board::GetMemoryRegion( index );
+
+					/* 128 bytes inside the X1-005, mirrored across $7F00-$7FFF and
+					 * only readable once the security handshake has passed.
+					*/
+					MemoryRegion region;
+					region.space    = MemoryRegion::SPACE_CPU;
+
+					region.type     = MemoryRegion::TYPE_WORK_RAM;
+					region.address  = 0x7F00;
+					region.size     = sizeof(ram);
+					region.data     = const_cast<byte*>(ram);
+					region.battery  = board.HasBattery();
+					region.writable = true;
+
+					return region;
+				}
+
 				void X1005::Load(File& file)
 				{
 					if (board.HasBattery())
@@ -136,10 +160,6 @@ namespace Nes
 					state.Begin( AsciiId<'R','A','M'>::V ).Compress( ram ).End();
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(X1005,7EF0_0)
 				{

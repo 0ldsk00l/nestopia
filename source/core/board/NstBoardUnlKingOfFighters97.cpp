@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void KingOfFighters97::SubReset(const bool hard)
 				{
 					Mmc3::SubReset( hard );
@@ -63,10 +59,6 @@ namespace Nes
 
 					Map( 0xF000U, &KingOfFighters97::Poke_E001 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				uint KingOfFighters97::Unscramble(uint data)
 				{

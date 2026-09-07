@@ -25,10 +25,6 @@
 #ifndef NST_PINS_H
 #define NST_PINS_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstProperties.hpp"
 
 namespace Nes

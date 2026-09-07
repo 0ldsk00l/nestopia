@@ -252,8 +252,8 @@
 #define IDC_SOUND_LATENCY                       2005
 #define IDC_SOUND_LATENCY_ONE                   2006
 #define IDC_SOUND_LATENCY_TEN                   2007
-#define IDC_SOUND_MONO                          2008
-#define IDC_SOUND_STEREO                        2009
+#define IDC_SOUND_FILTER                        2008
+#define IDC_SOUND_DMC_POP                       2009
 #define IDC_SOUND_POOL_SYSTEM                   2010
 #define IDC_SOUND_POOL_HARDWARE                 2011
 #define IDC_SOUND_ADJUST_PITCH                  2012

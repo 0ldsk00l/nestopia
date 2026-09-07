@@ -30,10 +30,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		void Cartridge::VsSystem::SuperXevious::Reset()
 		{
 			cpu.Map( 0x54FF ).Set( &SuperXevious::Peek_54FF );
@@ -43,10 +39,6 @@ namespace Nes
 
 			protection = 0;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		NES_PEEK(Cartridge::VsSystem::SuperXevious,54FF) { return 0x05;                              }
 		NES_PEEK(Cartridge::VsSystem::SuperXevious,5567) { return (protection ^= 0x1) ? 0x37 : 0x3E; }

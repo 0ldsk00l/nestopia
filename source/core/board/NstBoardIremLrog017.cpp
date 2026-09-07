@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Irem
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Lrog017::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xFFFFU, &Lrog017::Poke_8000 );
@@ -48,10 +44,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Lrog017,8000)
 				{

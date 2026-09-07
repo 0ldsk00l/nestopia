@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			TurboFile::TurboFile(const Cpu& cpu)
 			: Device(cpu,Api::Input::TURBOFILE)
 			{
@@ -106,10 +102,6 @@ namespace Nes
 					}
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void TurboFile::Poke(uint data)
 			{

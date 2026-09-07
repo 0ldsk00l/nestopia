@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_MMC5_H
 #define NST_BOARD_MMC5_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -170,6 +166,9 @@ namespace Nes
 				};
 
 			private:
+
+				uint NumMemoryRegions() const;
+				MemoryRegion GetMemoryRegion(uint) const;
 
 				void SubReset(bool);
 				void VBlank();

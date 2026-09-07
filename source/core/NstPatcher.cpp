@@ -32,10 +32,6 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Patcher::Patcher(bool b)
 		:
 		ips            (NULL),
@@ -57,10 +53,6 @@ namespace Nes
 			delete ups;
 			ups = NULL;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		Result Patcher::Load(std::istream& stream)
 		{

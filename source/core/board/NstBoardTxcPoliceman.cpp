@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Txc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Policeman::SubReset(const bool hard)
 				{
 					Map( 0x8400U, 0xFFFEU, &Policeman::Poke_8400 );
@@ -44,10 +40,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Policeman,8400)
 				{

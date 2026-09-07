@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_KAY_H
 #define NST_BOARD_KAY_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardKayH2288.hpp"
 #include "NstBoardKayPandaPrince.hpp"
 

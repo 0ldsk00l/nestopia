@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			BarcodeWorld::BarcodeWorld(const Cpu& cpu)
 			: Device(cpu,Api::Input::BARCODEWORLD)
 			{
@@ -158,10 +154,6 @@ namespace Nes
 
 				return true;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint BarcodeWorld::Reader::Read()
 			{

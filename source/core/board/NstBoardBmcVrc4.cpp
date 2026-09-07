@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Vrc4::SubReset(const bool hard)
 				{
 					Konami::Vrc4::SubReset( hard );
@@ -46,10 +42,6 @@ namespace Nes
 					Map( 0xA000U, 0xAFFFU, &Vrc4::Poke_A000 );
 					Map( 0xB000U, 0xEFFFU, &Vrc4::Poke_B000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Vrc4,8000)
 				{

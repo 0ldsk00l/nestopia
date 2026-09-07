@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Sachen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Tcu01::SubReset(const bool hard)
 				{
 					for (dword i=0x4100; i < 0x10000; i += 0x200)
@@ -84,10 +80,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'S','0','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK(Tcu02,4100)
 				{

@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_REXSOFT_H
 #define NST_BOARD_REXSOFT_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardRexSoftSl1632.hpp"
 #include "NstBoardRexSoftDb5z.hpp"
 

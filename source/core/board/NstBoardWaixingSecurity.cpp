@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Waixing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Security::SubReset(const bool hard)
 				{
 					if (hard)
@@ -70,10 +66,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'R','E','G'>::V ).Write8( exReg ).End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Security,5000)
 				{

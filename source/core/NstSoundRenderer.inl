@@ -52,30 +52,6 @@ namespace Nes
 			inline Buffer::Block::Block(uint l)
 			: length(l) {}
 
-			template<typename T>
-			inline Buffer::BaseRenderer<T>::BaseRenderer(void* samples,uint length)
-			:
-			dst (static_cast<T*>(samples)),
-			end (static_cast<const T*>(samples) + length)
-			{}
-
-			template<typename T>
-			inline bool Buffer::BaseRenderer<T>::operator !() const
-			{
-				return dst == end;
-			}
-
-			template<typename T>
-			inline void Buffer::History::operator >> (T& sample) const
-			{
-				sample = buffer[pos & MASK];
-			}
-
-			inline void Buffer::History::operator << (Sample sample)
-			{
-				buffer[pos++ & MASK] = sample;
-			}
-
 			inline void Buffer::operator << (const Sample sample)
 			{
 				const uint p = pos;
@@ -83,15 +59,23 @@ namespace Nes
 				output[p] = sample;
 			}
 
-			inline Buffer::Renderer<iword,0U>::Renderer(void* samples,uint length,const History&)
-			: BaseRenderer<iword>(samples,length) {}
+			inline Buffer::Renderer::Renderer(void* samples,uint length)
+			:
+			dst (static_cast<iword*>(samples)),
+			end (static_cast<const iword*>(samples) + length)
+			{}
 
-			inline void Buffer::Renderer<iword,0U>::operator << (Sample sample)
+			inline bool Buffer::Renderer::operator !() const
+			{
+				return dst == end;
+			}
+
+			inline void Buffer::Renderer::operator << (Sample sample)
 			{
 				*dst++ = sample;
 			}
 
-			NST_FORCE_INLINE bool Buffer::Renderer<iword,0U>::operator << (const Block& block)
+			NST_FORCE_INLINE bool Buffer::Renderer::operator << (const Block& block)
 			{
 				NST_ASSERT( end - dst >= block.length );
 
@@ -114,72 +98,6 @@ namespace Nes
 				return dst != end;
 			}
 
-			inline Buffer::Renderer<iword,1U>::Renderer(void* samples,uint length,History& h)
-			: BaseRenderer<iword>(samples,length << 1), history(h) {}
-
-			inline void Buffer::Renderer<iword,1U>::operator << (Sample sample)
-			{
-				history >> dst[0];
-				history << sample;
-				dst[1] = sample;
-				dst += 2;
-			}
-
-			NST_FORCE_INLINE bool Buffer::Renderer<iword,1U>::operator << (Block& block)
-			{
-				NST_ASSERT( end - dst >= block.length );
-
-				block.length += block.start;
-
-				for (uint i=block.start; i < block.length; ++i)
-					(*this) << Sample( block.data[i & MASK] );
-
-				return dst != end;
-			}
-
-			inline Buffer::Renderer<byte,0U>::Renderer(void* samples,uint length,const History&)
-			: BaseRenderer<byte>(samples,length) {}
-
-			inline void Buffer::Renderer<byte,0U>::operator << (Sample sample)
-			{
-				*dst++ = dword(sample + 32768L) >> 8;
-			}
-
-			NST_FORCE_INLINE bool Buffer::Renderer<byte,0U>::operator << (Block& block)
-			{
-				NST_ASSERT( end - dst >= block.length );
-
-				block.length += block.start;
-
-				for (uint i=block.start; i < block.length; ++i)
-					(*this) << Sample( block.data[i & MASK] );
-
-				return dst != end;
-			}
-
-			inline Buffer::Renderer<byte,1U>::Renderer(void* samples,uint length,History& h)
-			: BaseRenderer<byte>(samples,length << 1), history(h) {}
-
-			inline void Buffer::Renderer<byte,1U>::operator << (Sample sample)
-			{
-				history >> dst[0];
-				sample = dword(sample + 32768L) >> 8;
-				history << sample;
-				dst[1] = sample;
-				dst += 2;
-			}
-
-			NST_FORCE_INLINE bool Buffer::Renderer<byte,1U>::operator << (Block& block)
-			{
-				NST_ASSERT( end - dst >= block.length );
-
-				block.length += block.start;
-
-				for (uint i=block.start; i < block.length; ++i)
-					(*this) << Sample( block.data[i & MASK] );
-
-				return dst != end;
-			}
 		}
 	}
 }

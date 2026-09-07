@@ -25,67 +25,12 @@
 #ifndef NST_IO_ACCESSOR_H
 #define NST_IO_ACCESSOR_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
 	{
 		namespace Io
 		{
-		#ifdef NST_FASTDELEGATE
-
-			class Accessor
-			{
-			public:
-
-				template<typename T> struct Type
-				{
-					typedef Data (NST_FASTCALL T::*Function)(Address);
-				};
-
-			private:
-
-				class Component {};
-				typedef Type<Component>::Function Function;
-
-				Component* component;
-				Function function;
-
-			public:
-
-				Accessor() {}
-
-				template<typename T>
-				Accessor(T* c,typename Type<T>::Function f)
-				:
-				component ( reinterpret_cast<Component*>(c) ),
-				function  ( reinterpret_cast<Function>(f) )
-				{
-					NST_COMPILE_ASSERT( sizeof(function) == sizeof(f) );
-				}
-
-				template<typename T>
-				void Set(T* c,typename Type<T>::Function f)
-				{
-					NST_COMPILE_ASSERT( sizeof(function) == sizeof(f) );
-
-					component = reinterpret_cast<Component*>(c);
-					function  = reinterpret_cast<Function>(f);
-				}
-
-				Data Fetch(Address address) const
-				{
-					return (*component.*function)( address );
-				}
-			};
-
-			#define NES_DECL_ACCESSOR(a_) Data NST_FASTCALL Access_##a_(Address)
-			#define NES_ACCESSOR(o_,a_) Data NST_FASTCALL o_::Access_##a_(Address address)
-
-		#else
 
 			class Accessor
 			{
@@ -136,7 +81,6 @@ namespace Nes
                                                                                       \
 				NST_SINGLE_CALL Data NST_FASTCALL o_::Access_M_##a_(Address address)
 
-		#endif
 		}
 	}
 }

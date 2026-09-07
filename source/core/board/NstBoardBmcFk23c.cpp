@@ -36,10 +36,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				class Fk23c::CartSwitches : public DipSwitches
 				{
 					enum Type
@@ -278,10 +274,6 @@ namespace Nes
 					state.Begin( AsciiId<'B','F','K'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
-
 				void NST_FASTCALL Fk23c::UpdatePrg(uint address,uint bank)
 				{
 					if ((exRegs[0] & 0x7U) - 3 > 1 && (!(exRegs[3] & 0x2U) || address < 0x4000))
@@ -358,6 +350,13 @@ namespace Nes
 						unromChr = (exRegs[0] & 0x30U) ? 0x0 : data & 0x3;
 
 						Fk23c::UpdateChr();
+					}
+					/* The chipset decodes $E003, not the MMC3's $E001, so the
+					 * odd pair of each register window answers to nothing at
+					 * all - $9FFF in particular must not reach $8001.
+					*/
+					else if (address & 0x2)
+					{
 					}
 					else switch (address & 0xE001)
 					{

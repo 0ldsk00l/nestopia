@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Taito
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Tc0190fmcPal16r4::Tc0190fmcPal16r4(const Context& c)
 				: Tc0190fmc(c), irq(*c.cpu,*c.ppu,false) {}
 
@@ -79,10 +75,6 @@ namespace Nes
 					irq.unit.SaveState( state, AsciiId<'I','R','Q'>::V );
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Tc0190fmcPal16r4,C000)
 				{

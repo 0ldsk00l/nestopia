@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Sunsoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Dcs::SubReset(const bool hard)
 				{
 					counter = SIGNAL;
@@ -80,10 +76,6 @@ namespace Nes
 					S4::SubSave( state );
 					state.Begin( AsciiId<'S','D','C'>::V ).Begin( AsciiId<'D','B','C'>::V ).Write8( prgBank ).Write16( counter ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Dcs,6000)
 				{

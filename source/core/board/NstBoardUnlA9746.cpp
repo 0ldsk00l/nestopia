@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void A9746::SubReset(const bool hard)
 				{
 					exRegs[0] = 0;
@@ -92,10 +88,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'A','9','7'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(A9746,8000)
 				{

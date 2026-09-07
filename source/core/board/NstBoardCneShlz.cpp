@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace Cne
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Shlz::SubReset(bool)
 				{
 					Map( 0x4020U, 0x5FFFU, &Shlz::Poke_4020 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Shlz,4020)
 				{

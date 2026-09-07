@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void B2708::SubReset(const bool hard)
 				{
 					if (hard)
@@ -74,10 +70,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'2','7','8'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( mode ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(B2708,6000)
 				{

@@ -25,67 +25,10 @@
 #ifndef NST_HOOK_H
 #define NST_HOOK_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
 	{
-	#ifdef NST_FASTDELEGATE
-
-		class Hook : public ImplicitBool<Hook>
-		{
-			class Component {};
-			typedef void (Component::*Executor)();
-
-			Component* component;
-			Executor executor;
-
-			NST_COMPILE_ASSERT( sizeof(Executor) <= sizeof(void (*)(void*)) );
-
-		public:
-
-			Hook() {}
-
-			template<typename T>
-			Hook(T* c,void (T::*e)())
-			:
-			component ( reinterpret_cast<Component*>(c) ),
-			executor  ( reinterpret_cast<Executor>(e) )
-			{
-				NST_COMPILE_ASSERT( sizeof(executor) == sizeof(e) );
-			}
-
-			void Execute() const
-			{
-				(*component.*executor)();
-			}
-
-			void Unset()
-			{
-				component = NULL;
-				executor = NULL;
-			}
-
-			bool operator ! () const
-			{
-				return !executor;
-			}
-
-			bool operator == (const Hook& h) const
-			{
-				return executor == h.executor && component == h.component;
-			}
-		};
-
-		#define NES_DECL_HOOK(a_) void Hook_##a_()
-		#define NES_HOOK(o_,a_) void o_::Hook_##a_()
-		#define NES_HOOK_T(t_,o_,a_) t_ void o_::Hook_##a_()
-		#define NES_DO_HOOK(a_) Hook_##a_()
-
-	#else
 
 		class Hook : public ImplicitBool<Hook>
 		{
@@ -152,7 +95,6 @@ namespace Nes
 
 		#define NES_DO_HOOK(a_) Hook_##a_(this)
 
-	#endif
 	}
 }
 

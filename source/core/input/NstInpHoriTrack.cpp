@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			HoriTrack::HoriTrack(const Cpu& c)
 			: Device(c,Api::Input::HORITRACK)
 			{
@@ -61,10 +57,6 @@ namespace Nes
 					stream = loader.Read32();
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint HoriTrack::Peek(uint port)
 			{

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Smb3::Smb3(const Context& c)
 				: Board(c), irq(*c.cpu) {}
 
@@ -101,10 +97,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'B','S','3'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Smb3::UpdateChr(uint address,uint data) const
 				{

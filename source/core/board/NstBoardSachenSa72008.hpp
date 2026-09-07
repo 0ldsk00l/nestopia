@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_SACHEN_SA72008_H
 #define NST_BOARD_SACHEN_SA72008_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Cne
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Decathlon::SubReset(const bool hard)
 				{
 					Map( 0x8065U, 0x80A4U, &Decathlon::Poke_8065 );
@@ -45,10 +41,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(Decathlon,8065)
 				{

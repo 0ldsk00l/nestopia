@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Tengen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Rambo1::Irq::Irq(Cpu& cpu,Ppu& ppu)
 				:
 				a12 ( cpu, ppu, unit ),
@@ -80,7 +76,9 @@ namespace Nes
 					if (hard)
 						regs.Reset();
 
-					for (uint i=0x0000; i < 0x1000; i += 0x2)
+					// Each register pair answers across a full 8k window, not
+					// just the low half of it.
+					for (uint i=0x0000; i < 0x2000; i += 0x2)
 					{
 						Map( 0x8000 + i, &Rambo1::Poke_8000 );
 						Map( 0x8001 + i, &Rambo1::Poke_8001 );
@@ -183,10 +181,6 @@ namespace Nes
 					state.End();
 				}
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
-
 				bool Rambo1::Irq::Unit::Clock()
 				{
 					cycles++;
@@ -232,11 +226,14 @@ namespace Nes
 
 				void Rambo1::UpdatePrg()
 				{
+					/* Only $8000 and $C000 trade places when the PRG mode bit is
+					 * set; $A000 stays on R7 either way.
+					*/
 					prg.SwapBanks<SIZE_8K,0x0000>
 					(
 						regs.prg[(regs.ctrl & 0x40U) ? 2 : 0],
-						regs.prg[(regs.ctrl & 0x40U) ? 0 : 1],
-						regs.prg[(regs.ctrl & 0x40U) ? 1 : 2],
+						regs.prg[1],
+						regs.prg[(regs.ctrl & 0x40U) ? 0 : 2],
 						0xFF
 					);
 				}

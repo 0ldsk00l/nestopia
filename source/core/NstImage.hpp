@@ -25,10 +25,6 @@
 #ifndef NST_IMAGE_H
 #define NST_IMAGE_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include <iosfwd>
 
 namespace Nes
@@ -60,6 +56,38 @@ namespace Nes
 
 			typedef void* ExternalDevice;
 
+			/* A block of emulated memory a frontend may inspect, e.g. to build
+			 * an achievement or cheat-search memory map. Regions are reported
+			 * whether or not they are battery backed; the battery file path is
+			 * about persistence, not visibility.
+			*/
+			struct MemoryRegion
+			{
+				enum Space
+				{
+					SPACE_CPU,      // visible on the 6502 bus
+					SPACE_PPU,      // visible on the PPU bus
+					SPACE_INTERNAL  // addressable by neither, e.g. OAM
+				};
+
+				enum Type
+				{
+					TYPE_WORK_RAM,      // cartridge RAM, commonly $6000-$7FFF
+					TYPE_EXPANSION_RAM, // mapper RAM outside the usual window
+					TYPE_DISK_RAM,      // FDS program RAM
+					TYPE_PRG_ROM,       // program ROM, as currently banked
+					TYPE_CHR            // pattern data, as currently banked
+				};
+
+				Space space;
+				Type type;
+				word address;   // address within its space
+				dword size;
+				byte* data;
+				bool battery;
+				bool writable;
+			};
+
 			enum ExternalDeviceType
 			{
 				EXT_DIP_SWITCHES = 1,
@@ -77,12 +105,13 @@ namespace Nes
 				const bool patchBypassChecksum;
 				Result* const patchResult;
 				const FavoredSystem favoredSystem;
+				const bool forcedSystem;
 				const bool askProfile;
 				const ImageDatabase* const database;
 				Result result;
 
-				Context(Type t,Cpu& c,Apu& a,Ppu& p,std::istream& s,std::istream* h,bool k,Result* r,FavoredSystem f,bool b,const ImageDatabase* d)
-				: type(t), cpu(c), apu(a), ppu(p), stream(s), patch(h), patchBypassChecksum(k), patchResult(r), favoredSystem(f), askProfile(b), database(d), result(RESULT_OK) {}
+				Context(Type t,Cpu& c,Apu& a,Ppu& p,std::istream& s,std::istream* h,bool k,Result* r,FavoredSystem f,bool e,bool b,const ImageDatabase* d)
+				: type(t), cpu(c), apu(a), ppu(p), stream(s), patch(h), patchBypassChecksum(k), patchResult(r), favoredSystem(f), forcedSystem(e), askProfile(b), database(d), result(RESULT_OK) {}
 			};
 
 			static Image* Load(Context&);
@@ -113,6 +142,24 @@ namespace Nes
 			virtual ExternalDevice QueryExternalDevice(ExternalDeviceType)
 			{
 				return NULL;
+			}
+
+			virtual uint NumMemoryRegions() const
+			{
+				return 0;
+			}
+
+			virtual MemoryRegion GetMemoryRegion(uint) const
+			{
+				MemoryRegion region;
+				region.space    = MemoryRegion::SPACE_CPU;
+				region.type     = MemoryRegion::TYPE_WORK_RAM;
+				region.address  = 0;
+				region.size     = 0;
+				region.data     = NULL;
+				region.battery  = false;
+				region.writable = false;
+				return region;
 			}
 
 		protected:

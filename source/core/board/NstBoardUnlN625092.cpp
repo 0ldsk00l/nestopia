@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void N625092::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xBFFFU, &N625092::Poke_8000 );
@@ -81,10 +77,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'N','6','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void N625092::UpdatePrg()
 				{

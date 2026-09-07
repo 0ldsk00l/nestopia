@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_CNE_H
 #define NST_BOARD_CNE_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardCneDecathlon.hpp"
 #include "NstBoardCnePsb.hpp"
 #include "NstBoardCneShlz.hpp"

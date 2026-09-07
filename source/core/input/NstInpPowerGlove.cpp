@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			PowerGlove::PowerGlove(const Cpu& c)
 			: Device(c,Api::Input::POWERGLOVE)
 			{
@@ -103,10 +99,6 @@ namespace Nes
 					counter = NST_MIN(data[3],8+3);
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void PowerGlove::BeginFrame(Controllers* i)
 			{

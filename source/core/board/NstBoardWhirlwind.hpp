@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_WHIRLWIND_H
 #define NST_BOARD_WHIRLWIND_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -50,6 +46,37 @@ namespace Nes
 
 					NES_DECL_PEEK( 6000 );
 					NES_DECL_POKE( 8FFF );
+				};
+
+				class Lh53 : public Board
+				{
+				public:
+
+					explicit Lh53(const Context&);
+
+				private:
+
+					void SubReset(bool);
+					void SubSave(State::Saver&) const;
+					void SubLoad(State::Loader&,dword);
+					void Sync(Event,Input::Controllers*);
+
+					NES_DECL_PEEK( 6000 );
+					NES_DECL_PEEK( B800 );
+					NES_DECL_POKE( B800 );
+					NES_DECL_POKE( E000 );
+					NES_DECL_POKE( F000 );
+
+					struct Irq
+					{
+						void Reset(bool);
+						bool Clock();
+
+						uint count;
+					};
+
+					byte reg;
+					Timer::M2<Irq> irq;
 				};
 			}
 		}

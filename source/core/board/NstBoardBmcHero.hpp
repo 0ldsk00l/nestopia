@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BMC_HERO_H
 #define NST_BOARD_BMC_HERO_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -44,6 +40,12 @@ namespace Nes
 					explicit Hero(const Context& c)
 					: Mmc3(c) {}
 
+				protected:
+
+					void NST_FASTCALL UpdateChr(uint,uint) const;
+
+					uint exRegs[5];
+
 				private:
 
 					void SubReset(bool);
@@ -51,11 +53,8 @@ namespace Nes
 					void SubLoad(State::Loader&,dword);
 
 					void NST_FASTCALL UpdatePrg(uint,uint);
-					void NST_FASTCALL UpdateChr(uint,uint) const;
 
 					NES_DECL_POKE( 6000 );
-
-					uint exRegs[5];
 				};
 			}
 		}

@@ -33,10 +33,6 @@
 #include "NstPpu.hpp"
 #endif
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -230,7 +226,7 @@ namespace Nes
 
 				template<typename Param>
 				A12(Cpu& c,Ppu& p,Param& a)
-				: cpu(c), ppu(p), unit(a) {}
+				: line(0), cpu(c), ppu(p), unit(a) {}
 
 				void Connect(bool connect)
 				{

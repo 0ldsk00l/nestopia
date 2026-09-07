@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			FamilyTrainer::FamilyTrainer(const Cpu& c)
 			: Device(c,Api::Input::FAMILYTRAINER)
 			{
@@ -57,10 +53,6 @@ namespace Nes
 				if (id == AsciiId<'F','T'>::V)
 					output = loader.Read8() & 0x1E;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void FamilyTrainer::Poll()
 			{

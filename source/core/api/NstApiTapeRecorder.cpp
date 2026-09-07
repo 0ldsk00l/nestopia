@@ -32,10 +32,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		TapeRecorder::EventCaller TapeRecorder::eventCallback;
 
 		Core::Input::FamilyKeyboard* TapeRecorder::Query() const
@@ -116,8 +112,5 @@ namespace Nes
 			return RESULT_NOP;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

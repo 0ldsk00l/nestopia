@@ -335,10 +335,6 @@ namespace Nes
 				}
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Renderer::FilterHqX::Lut::Lut(const bool bpp32,const byte (&formatShifts)[3],dword* tmp)
 			: rgb(tmp = (bpp32 ? new dword [0x10000] : NULL))
 			{
@@ -472,9 +468,6 @@ namespace Nes
 				}
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

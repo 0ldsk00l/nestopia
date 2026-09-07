@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bandai
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				AerobicsStudio::AerobicsStudio(const Context& c)
 				:
 				CnRom (c),
@@ -56,10 +52,6 @@ namespace Nes
 					if (sound)
 						Map( 0x6000U, &AerobicsStudio::Poke_6000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(AerobicsStudio,6000)
 				{

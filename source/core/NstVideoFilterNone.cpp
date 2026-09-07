@@ -85,10 +85,6 @@ namespace Nes
 				}
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Renderer::FilterNone::FilterNone(const RenderState& state)
 			: Filter(state)
 			{
@@ -103,10 +99,6 @@ namespace Nes
 					(state.width == WIDTH && state.height == HEIGHT)
 				);
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

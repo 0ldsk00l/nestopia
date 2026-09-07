@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Kay
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void PandaPrince::SubReset(const bool hard)
 				{
 					exRegs[0] = 0;
@@ -87,10 +83,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'K','P','P'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void NST_FASTCALL PandaPrince::UpdatePrg(uint address,uint bank)
 				{

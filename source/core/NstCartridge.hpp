@@ -30,10 +30,6 @@
 #include "NstFile.hpp"
 #include "api/NstApiCartridge.hpp"
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -92,6 +88,7 @@ namespace Nes
 			(
 				Ram&,
 				Ram&,
+				Ram&,
 				Boards::Board**,
 				const Context*,
 				Profile&,
@@ -114,15 +111,19 @@ namespace Nes
 			System GetDesiredSystem(Region,CpuModel*,PpuModel*) const;
 
 			ExternalDevice QueryExternalDevice(ExternalDeviceType);
+			uint NumMemoryRegions() const;
+			MemoryRegion GetMemoryRegion(uint) const;
 
 			Boards::Board* board;
 			VsSystem* vs;
 			Ram prg;
 			Ram chr;
+			Ram misc;
 			Profile profile;
 			dword prgCrc;
 			File savefile;
 			const FavoredSystem favoredSystem;
+			const bool forcedSystem;
 
 		public:
 

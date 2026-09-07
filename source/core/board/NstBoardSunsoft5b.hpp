@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_SUNSOFT_5B_H
 #define NST_BOARD_SUNSOFT_5B_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

@@ -38,8 +38,8 @@ namespace Nestopia
 			IDC_SOUND_LATENCY       == IDC_SOUND_SAMPLE_RATE + 3 &&
 			IDC_SOUND_LATENCY_ONE   == IDC_SOUND_SAMPLE_RATE + 4 &&
 			IDC_SOUND_LATENCY_TEN   == IDC_SOUND_SAMPLE_RATE + 5 &&
-			IDC_SOUND_MONO          == IDC_SOUND_SAMPLE_RATE + 6 &&
-			IDC_SOUND_STEREO        == IDC_SOUND_SAMPLE_RATE + 7 &&
+			IDC_SOUND_FILTER        == IDC_SOUND_SAMPLE_RATE + 6 &&
+			IDC_SOUND_DMC_POP       == IDC_SOUND_SAMPLE_RATE + 7 &&
 			IDC_SOUND_POOL_SYSTEM   == IDC_SOUND_SAMPLE_RATE + 8 &&
 			IDC_SOUND_POOL_HARDWARE == IDC_SOUND_SAMPLE_RATE + 9 &&
 			IDC_SOUND_ADJUST_PITCH  == IDC_SOUND_SAMPLE_RATE + 10
@@ -119,7 +119,8 @@ namespace Nestopia
 			}
 
 			nes.SetAutoTranspose( sound["adjust-pitch"].Yes() );
-			nes.SetSpeaker( sound["speakers"].Str() == L"stereo" ? Nes::Sound::SPEAKER_STEREO : Nes::Sound::SPEAKER_MONO );
+			nes.SetFilter( sound["filter"].Yes() );
+			nes.SetDmcPopReducer( sound["dmc-pop-reducer"].Yes() );
 			settings.pool = (sound["memory-pool"].Str() == L"hardware" ? DirectSound::POOL_HARDWARE : DirectSound::POOL_SYSTEM);
 
 			settings.latency = sound["buffers"].Int( DEFAULT_LATENCY );
@@ -163,7 +164,8 @@ namespace Nestopia
 
 			sound[ "sample-rate"  ].Int() = nes.GetSampleRate();
 			sound[ "buffers"      ].Int() = settings.latency;
-			sound[ "speakers"     ].Str() = (nes.GetSpeaker() == Nes::Sound::SPEAKER_STEREO ? "stereo" : "mono");
+			sound[ "filter"       ].YesNo() = nes.IsFiltered();
+			sound[ "dmc-pop-reducer" ].YesNo() = nes.IsDmcPopReduced();
 			sound[ "adjust-pitch" ].YesNo() = nes.IsAutoTransposing();
 			sound[ "memory-pool"  ].Str() = (settings.pool == DirectSound::POOL_SYSTEM ? "system" : "hardware");
 
@@ -241,7 +243,8 @@ namespace Nestopia
 					comboBox[index].Select();
 				}
 
-				dialog.RadioButton( nes.GetSpeaker() == Nes::Sound::SPEAKER_STEREO ? IDC_SOUND_STEREO : IDC_SOUND_MONO ).Check();
+				dialog.CheckBox( IDC_SOUND_FILTER ).Check( nes.IsFiltered() );
+				dialog.CheckBox( IDC_SOUND_DMC_POP ).Check( nes.IsDmcPopReduced() );
 				dialog.RadioButton( settings.pool == DirectSound::POOL_HARDWARE ? IDC_SOUND_POOL_HARDWARE : IDC_SOUND_POOL_SYSTEM ).Check();
 
 				for (uint i=0; i < NUM_CHANNELS; ++i)
@@ -358,8 +361,8 @@ namespace Nestopia
 				dialog.ComboBox( IDC_SOUND_DEVICE )[GetDefaultAdapter()+1].Select();
 				dialog.ComboBox( IDC_SOUND_SAMPLE_RATE )[1].Select();
 
-				dialog.RadioButton( IDC_SOUND_MONO ).Check();
-				dialog.RadioButton( IDC_SOUND_STEREO ).Uncheck();
+				dialog.CheckBox( IDC_SOUND_FILTER ).Uncheck();
+				dialog.CheckBox( IDC_SOUND_DMC_POP ).Uncheck();
 
 				dialog.RadioButton( IDC_SOUND_POOL_HARDWARE ).Uncheck();
 				dialog.RadioButton( IDC_SOUND_POOL_SYSTEM ).Check();
@@ -386,7 +389,8 @@ namespace Nestopia
 					static const uint rates[] = {44100,48000,88200,96000};
 
 					nes.SetSampleRate( rates[dialog.ComboBox( IDC_SOUND_SAMPLE_RATE ).Selection().GetIndex()] );
-					nes.SetSpeaker( dialog.RadioButton( IDC_SOUND_STEREO ).Checked() ? Nes::Sound::SPEAKER_STEREO : Nes::Sound::SPEAKER_MONO );
+					nes.SetFilter( dialog.CheckBox( IDC_SOUND_FILTER ).Checked() );
+					nes.SetDmcPopReducer( dialog.CheckBox( IDC_SOUND_DMC_POP ).Checked() );
 					nes.SetAutoTranspose( dialog.CheckBox( IDC_SOUND_ADJUST_PITCH ).Checked() );
 
 					for (uint i=0; i < NUM_CHANNELS; ++i)

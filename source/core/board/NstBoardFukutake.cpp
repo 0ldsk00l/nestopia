@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Fukutake
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Sbx::SubReset(const bool hard)
 				{
 					Map( 0x4200U, 0x4201U, &Sbx::Peek_4200 );
@@ -62,10 +58,6 @@ namespace Nes
 						prg.SwapBanks<SIZE_16K,0x0000>(0,0);
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK(Sbx,4200)
 				{

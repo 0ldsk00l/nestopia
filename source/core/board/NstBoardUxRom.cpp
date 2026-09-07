@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void UxRom::SubReset(bool)
 			{
 				switch (board.GetId())
@@ -67,10 +63,6 @@ namespace Nes
 						break;
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_POKE_AD(UxRom,8000_D2)
 			{

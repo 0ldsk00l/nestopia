@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Waixing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ffv::SubReset(bool)
 				{
 					for (uint i=0x5000; i < 0x6000; i += 0x400)
@@ -74,10 +70,6 @@ namespace Nes
 						}
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Ffv,5000)
 				{

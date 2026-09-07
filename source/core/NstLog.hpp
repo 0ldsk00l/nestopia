@@ -29,10 +29,6 @@
 #include "NstCore.hpp"
 #endif
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #ifndef NST_LINEBREAK
 #ifdef NST_WIN32
 #define NST_LINEBREAK "\r\n"

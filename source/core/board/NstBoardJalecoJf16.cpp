@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace Jaleco
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Jf16::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &Jf16::Poke_8000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Jf16,8000)
 				{

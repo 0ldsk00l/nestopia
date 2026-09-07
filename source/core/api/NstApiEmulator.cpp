@@ -29,10 +29,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Emulator::Emulator()
 		: machine(*new Core::Machine)
 		{
@@ -42,10 +38,6 @@ namespace Nes
 		{
 			delete &machine;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		Result Emulator::Execute
 		(

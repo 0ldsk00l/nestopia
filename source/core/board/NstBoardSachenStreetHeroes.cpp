@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Sachen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				StreetHeroes::CartSwitches::CartSwitches()
 				: region(0x00) {}
 
@@ -135,10 +131,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'S','S','H'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void NST_FASTCALL StreetHeroes::UpdateChr(uint address,uint bank) const
 				{

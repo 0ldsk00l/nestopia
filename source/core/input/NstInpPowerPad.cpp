@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			PowerPad::PowerPad(const Cpu& c)
 			: Device(c,Api::Input::POWERPAD)
 			{
@@ -61,10 +57,6 @@ namespace Nes
 					stream = ((loader.Read16() & 0x55FFUL) ^ 0x55FFUL) << 3;
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint PowerPad::Peek(uint)
 			{

@@ -37,10 +37,6 @@ namespace Nes
 		{
 			namespace Tengen
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void T800008::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &T800008::Poke_8000 );
@@ -53,10 +49,6 @@ namespace Nes
 					for (uint i=0x0000; i < 0x1000; i += 0x2)
 						Map( 0xA000 + i, NOP_POKE );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(T800008,8000)
 				{

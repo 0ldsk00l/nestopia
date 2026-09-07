@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Paddle::Paddle(const Cpu& c,bool p)
 			: Device(c,Api::Input::PADDLE), expPort(p)
 			{
@@ -60,10 +56,6 @@ namespace Nes
 				if (id == AsciiId<'P','L'>::V)
 					shifter = ~loader.Read8() & 0x1;
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			uint Paddle::Peek(uint port)
 			{

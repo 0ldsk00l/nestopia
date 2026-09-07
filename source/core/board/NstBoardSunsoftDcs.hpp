@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_SUNSOFT_DCS_H
 #define NST_BOARD_SUNSOFT_DCS_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardSunsoft4.hpp"
 
 namespace Nes

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Nanjing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Standard::SubReset(bool)
 				{
 					strobe = 0xFF;
@@ -118,10 +114,6 @@ namespace Nes
 
 					state.End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK(Standard,5000)
 				{

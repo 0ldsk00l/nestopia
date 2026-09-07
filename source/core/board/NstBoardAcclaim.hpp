@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_ACCLAIM_H
 #define NST_BOARD_ACCLAIM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstFile.hpp"
 #include "NstBoardAcclaimMcAcc.hpp"
 

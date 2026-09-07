@@ -25,10 +25,6 @@
 #ifndef NST_INPUT_POWERPAD_H
 #define NST_INPUT_POWERPAD_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

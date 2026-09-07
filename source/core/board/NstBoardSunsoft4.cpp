@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Sunsoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void S4::SubReset(const bool hard)
 				{
 					if (hard)
@@ -94,10 +90,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'S','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void S4::UpdateMirroring() const
 				{

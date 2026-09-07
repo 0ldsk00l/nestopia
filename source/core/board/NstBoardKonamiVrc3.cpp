@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Konami
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Vrc3::Vrc3(const Context& c)
 				: Board(c), irq(*c.cpu) {}
 
@@ -94,10 +90,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'K','V','3'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				bool Vrc3::Irq::Clock()
 				{

@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace FutureMedia
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Standard::Standard(const Context& c)
 				: Board(c), irq(*c.cpu,*c.ppu) {}
 
@@ -105,10 +101,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'F','D','A'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				bool Standard::Irq::Clock()
 				{

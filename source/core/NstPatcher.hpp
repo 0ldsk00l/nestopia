@@ -25,10 +25,6 @@
 #ifndef NST_PATCHER_H
 #define NST_PATCHER_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include <iosfwd>
 
 namespace Nes

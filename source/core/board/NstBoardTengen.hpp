@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_TENGEN_H
 #define NST_BOARD_TENGEN_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardTengenRambo1.hpp"
 
 namespace Nes

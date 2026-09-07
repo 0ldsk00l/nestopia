@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void B60311c::SubReset(const bool hard)
 				{
 					Map( 0x6000U, &B60311c::Poke_6000 );
@@ -105,10 +101,6 @@ namespace Nes
 					chr.Source().SetSecurity(true, regs[0] & 0x04 ? false : true);
 					ppu.SetMirroring( (regs[0] & 0x08) ? Ppu::NMT_H : Ppu::NMT_V );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(B60311c,6000)
 				{

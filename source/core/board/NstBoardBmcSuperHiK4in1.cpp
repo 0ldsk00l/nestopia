@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void SuperHiK4in1::SubReset(const bool hard)
 				{
 					if (hard)
@@ -73,10 +69,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'B','H','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( exReg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(SuperHiK4in1,6000)
 				{

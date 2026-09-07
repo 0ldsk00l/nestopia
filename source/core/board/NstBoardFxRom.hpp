@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_FXROM_H
 #define NST_BOARD_FXROM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardMmc4.hpp"
 
 namespace Nes

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Konami
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				uint Vrc2::GetPrgLineShift(const Context& c,const uint pin,const uint def)
 				{
 					if (const Chips::Type* const vrc2 = c.chips.Find(L"Konami VRC II"))
@@ -132,10 +128,6 @@ namespace Nes
 					if (!board.GetWram())
 						state.Begin( AsciiId<'K','V','2'>::V ).Begin( AsciiId<'S','E','C'>::V ).Write8( security ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Vrc2,6000)
 				{

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Y2k64in1::SubReset(bool)
 				{
 					Map( 0x5000U, 0x5003U, &Y2k64in1::Poke_5000 );
@@ -70,10 +66,6 @@ namespace Nes
 				{
 					state.Begin(AsciiId<'B','Y','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( regs ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Y2k64in1::Update()
 				{

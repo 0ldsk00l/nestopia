@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Taito
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Tc0190fmc::SubReset(bool)
 				{
 					for (uint i=0x0000; i < 0x1000; i += 0x4)
@@ -51,10 +47,6 @@ namespace Nes
 						Map( 0xA003 + i, CHR_SWAP_1K_7 );
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Tc0190fmc,8000)
 				{

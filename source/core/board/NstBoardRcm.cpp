@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Rcm
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Gs2015::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xFFFFU, &Gs2015::Poke_8000 );
@@ -76,10 +72,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Gs2013,6000)
 				{

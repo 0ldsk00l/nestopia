@@ -66,6 +66,9 @@
     <ClInclude Include="..\source\core\api\NstApiMachine.hpp">
       <Filter>Api</Filter>
     </ClInclude>
+    <ClInclude Include="..\source\core\api\NstApiMemory.hpp">
+      <Filter>API</Filter>
+    </ClInclude>
     <ClInclude Include="..\source\core\api\NstApiMovie.hpp">
       <Filter>Api</Filter>
     </ClInclude>
@@ -573,13 +576,19 @@
     <ClInclude Include="..\source\core\board\NstBoardSuperGame.hpp">
       <Filter>Board\3rdparty</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\core\board\NstBoardSuperGameBoogerman.hpp">
-      <Filter>Board\3rdparty</Filter>
-    </ClInclude>
     <ClInclude Include="..\source\core\board\NstBoardSuperGameLionKing.hpp">
       <Filter>Board\3rdparty</Filter>
     </ClInclude>
-    <ClInclude Include="..\source\core\board\NstBoardSuperGamePocahontas2.hpp">
+    <ClInclude Include="..\source\core\board\NstBoardSuperGame8237.hpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardSachenDaheng.hpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardBmcSfc12.hpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClInclude>
+    <ClInclude Include="..\source\core\board\NstBoardBatlabSrrx.hpp">
       <Filter>Board\3rdparty</Filter>
     </ClInclude>
     <ClInclude Include="..\source\core\board\NstBoardTaito.hpp">
@@ -967,6 +976,9 @@
     </ClCompile>
     <ClCompile Include="..\source\core\api\NstApiMachine.cpp">
       <Filter>Api</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\api\NstApiMemory.cpp">
+      <Filter>API</Filter>
     </ClCompile>
     <ClCompile Include="..\source\core\api\NstApiMovie.cpp">
       <Filter>Api</Filter>
@@ -1397,13 +1409,19 @@
     <ClCompile Include="..\source\core\board\NstBoardSunsoftFme7.cpp">
       <Filter>Board\3rdparty</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\core\board\NstBoardSuperGameBoogerman.cpp">
-      <Filter>Board\3rdparty</Filter>
-    </ClCompile>
     <ClCompile Include="..\source\core\board\NstBoardSuperGameLionKing.cpp">
       <Filter>Board\3rdparty</Filter>
     </ClCompile>
-    <ClCompile Include="..\source\core\board\NstBoardSuperGamePocahontas2.cpp">
+    <ClCompile Include="..\source\core\board\NstBoardSuperGame8237.cpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardSachenDaheng.cpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardBmcSfc12.cpp">
+      <Filter>Board\3rdparty</Filter>
+    </ClCompile>
+    <ClCompile Include="..\source\core\board\NstBoardBatlabSrrx.cpp">
       <Filter>Board\3rdparty</Filter>
     </ClCompile>
     <ClCompile Include="..\source\core\board\NstBoardTaitoTc0190fmc.cpp">

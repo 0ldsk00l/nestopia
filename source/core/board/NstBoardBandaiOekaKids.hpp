@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BANDAI_OEKAKIDS_H
 #define NST_BOARD_BANDAI_OEKAKIDS_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core

@@ -371,10 +371,10 @@ STYLE DS_MODALFRAME | DS_SHELLFONT | WS_CAPTION | WS_POPUP | WS_SYSMENU
 CAPTION "About Nestopia"
 FONT 8, "MS Shell Dlg", 400, 0, 1
 {
-    GROUPBOX        "", IDC_STATIC, 7, 7, 147, 141, 0, WS_EX_LEFT
-    LTEXT           "Nestopia UE 1.53.2", IDC_ABOUT_NAMEVERSION, 47, 14, 63, 9, SS_LEFT, WS_EX_LEFT
+    GROUPBOX        "", IDC_STATIC, 2, 4294967294, 157, 157, 0, WS_EX_LEFT
+    LTEXT           "Nestopia UE 1.99.0", IDC_ABOUT_NAMEVERSION, 47, 14, 63, 9, SS_LEFT, WS_EX_LEFT
     ICON            "", IDC_ABOUT_ICON, 70, 36, 21, 20, SS_ICON, WS_EX_LEFT
-    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2025 R. Danbrook\nCopyright © 2020-2025 Rupert Carmichael", IDC_STATIC, 12, 69, 140, 28, SS_CENTER, WS_EX_LEFT
+    CTEXT           "Copyright © 2003-2008 Martin Freij\nCopyright © 2012-2026 R. Danbrook\nCopyright © 2020-2026 Rupert Carmichael", IDC_STATIC, 5, 69, 150, 25, SS_CENTER, WS_EX_LEFT
     LTEXT           "Homepage", IDC_STATIC, 13, 124, 8, 1, SS_LEFT, WS_EX_LEFT
     CTEXT           "0ldsk00l.ca/nestopia", IDC_ABOUT_URL, 46, 107, 67, 8, SS_CENTER | SS_NOTIFY, WS_EX_LEFT
     DEFPUSHBUTTON   "OK", IDOK, 62, 125, 37, 13, 0, WS_EX_LEFT
@@ -1049,8 +1049,8 @@ FONT 8, "MS Shell Dlg", 400, 0, 1
     COMBOBOX        IDC_SOUND_DEVICE, 14, 20, 130, 46, WS_GROUP | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWNLIST, WS_EX_LEFT
     GROUPBOX        "Output", IDC_STATIC, 7, 50, 164, 64, 0, WS_EX_LEFT
     COMBOBOX        IDC_SOUND_SAMPLE_RATE, 14, 69, 67, 41, WS_GROUP | WS_TABSTOP | WS_VSCROLL | CBS_DROPDOWNLIST, WS_EX_LEFT
-    AUTORADIOBUTTON "Mono", IDC_SOUND_MONO, 14, 95, 32, 10, WS_GROUP | WS_TABSTOP, WS_EX_LEFT
-    AUTORADIOBUTTON "Stereo", IDC_SOUND_STEREO, 53, 95, 35, 10, WS_TABSTOP, WS_EX_LEFT
+    AUTOCHECKBOX    "DMC pop reducer", IDC_SOUND_DMC_POP, 90, 72, 74, 10, 0, WS_EX_LEFT
+    AUTOCHECKBOX    "Audio filter", IDC_SOUND_FILTER, 14, 95, 56, 10, WS_GROUP, WS_EX_LEFT
     AUTOCHECKBOX    "Adjust pitch", IDC_SOUND_ADJUST_PITCH, 111, 95, 54, 10, WS_GROUP, WS_EX_LEFT
     GROUPBOX        "Memory Pool", IDC_STATIC, 7, 118, 164, 33, 0, WS_EX_LEFT
     AUTORADIOBUTTON "System", IDC_SOUND_POOL_SYSTEM, 29, 132, 38, 9, WS_TABSTOP, WS_EX_LEFT
@@ -1934,7 +1934,7 @@ VS_VERSION_INFO VERSIONINFO
             VALUE "LegalCopyright", "Copyright © 2003-2008 Martin Freij"
             VALUE "OriginalFilename", "English.nlg"
             VALUE "ProductName", "Nestopia Language Plugin - English (US)"
-            VALUE "ProductVersion", "1.53.2"
+            VALUE "ProductVersion", "1.99.0"
         }
     }
     BLOCK "VarFileInfo"

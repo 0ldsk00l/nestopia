@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void TobidaseDaisakusen::SubReset(const bool hard)
 				{
 					if (hard)
@@ -50,10 +46,6 @@ namespace Nes
 
 					Map( 0x6000U, 0x7FFFU, &TobidaseDaisakusen::Peek_6000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(TobidaseDaisakusen,6000)
 				{

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Caltron
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Mc6in1::SubReset(const bool hard)
 				{
 					Map( 0x6000U, 0x67FFU, &Mc6in1::Poke_6000 );
@@ -69,10 +65,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'C','6','1'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( reg ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(Mc6in1,6000)
 				{

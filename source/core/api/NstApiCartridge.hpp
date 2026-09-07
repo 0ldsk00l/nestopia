@@ -31,15 +31,6 @@
 #include "NstApiInput.hpp"
 #include "NstApiMachine.hpp"
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
-#if NST_MSVC >= 1200
-#pragma warning( push )
-#pragma warning( disable : 4512 )
-#endif
-
 namespace Nes
 {
 	namespace Api
@@ -1119,7 +1110,11 @@ namespace Nes
 					/**
 					* Both PAL and NTSC.
 					*/
-					REGION_BOTH
+					REGION_BOTH,
+					/**
+					* Dendy.
+					*/
+					REGION_DENDY
 				};
 
 				/**
@@ -1314,6 +1309,11 @@ namespace Nes
 				* Input Device Type.
 				*/
 				uchar inputType;
+
+				/**
+				* Number of Miscellaneous ROMs (NES 2.0 only).
+				*/
+				uchar miscRoms;
 			};
 
 			/**
@@ -1402,9 +1402,5 @@ namespace Nes
 		};
 	}
 }
-
-#if NST_MSVC >= 1200
-#pragma warning( pop )
-#endif
 
 #endif

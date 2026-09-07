@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Waixing
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Dqv7::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xFFFFU, &Dqv7::Poke_8000 );
@@ -52,10 +48,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(Dqv7,8000)
 				{

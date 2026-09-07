@@ -34,10 +34,6 @@ namespace Nes
 		{
 			uint Pad::mic;
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Pad::Pad(const Cpu& c,uint i)
 			: Device(c,Type(uint(Api::Input::PAD1) + i))
 			{
@@ -81,10 +77,6 @@ namespace Nes
 					stream = data[1] ^ 0xFF;
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void Pad::BeginFrame(Controllers* i)
 			{

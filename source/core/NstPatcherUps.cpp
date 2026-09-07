@@ -121,10 +121,6 @@ namespace Nes
 			}
 		};
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Ups::Ups()
 		:
 		srcSize (0),
@@ -150,10 +146,6 @@ namespace Nes
 			delete [] patch;
 			patch = NULL;
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		bool Ups::IsUps(std::istream& stream)
 		{

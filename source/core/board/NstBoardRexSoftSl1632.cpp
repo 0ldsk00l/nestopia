@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace RexSoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Sl1632::SubReset(const bool hard)
 				{
 					exMode = 0;
@@ -110,10 +106,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'R','1','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void NST_FASTCALL Sl1632::UpdatePrg(uint address,uint bank)
 				{

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void B6035052::SubReset(const bool hard)
 				{
 					security = 0x0;
@@ -67,10 +63,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','6','0'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( security ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK(B6035052,4020)
 				{

@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Bandai
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Datach::Datach(const Context& c)
 				:
 				Lz93d50Ex     (c),
@@ -322,10 +318,6 @@ namespace Nes
 
 					return true;
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_HOOK(Datach::Reader,Fetcher)
 				{

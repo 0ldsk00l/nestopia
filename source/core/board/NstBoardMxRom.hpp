@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_MXROM_H
 #define NST_BOARD_MXROM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardGxRom.hpp"
 
 namespace Nes

@@ -25,10 +25,6 @@
 #ifndef NST_INPUT_DEVICE_H
 #define NST_INPUT_DEVICE_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstState.hpp"
 #include "../api/NstApiInput.hpp"
 

@@ -29,10 +29,7 @@
 #include "../NstPpu.hpp"
 #include "../NstChips.hpp"
 #include "../NstState.hpp"
-
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
+#include "../NstImage.hpp"
 
 namespace Nes
 {
@@ -211,6 +208,7 @@ namespace Nes
 						STD_UNROM512               = MakeId<   30,  512,    0,  0,  0, CRM_32, NMT_X,  0 >::ID,
 						// Discrete Logic
 						DISCRETE_74_377            = MakeId<   11,  128,  128,  0,  0, CRM_0,  NMT_X,  0 >::ID,
+						DISCRETE_74_377_NBC        = MakeId<   11,  128,  128,  0,  0, CRM_0,  NMT_X,  2 >::ID,
 						DISCRETE_74_139_74         = MakeId<   87,   32,   32,  0,  0, CRM_0,  NMT_X,  4 >::ID,
 						DISCRETE_74_161_138        = MakeId<   38,  128,   32,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						DISCRETE_74_161_161_32_A   = MakeId<   70,  128,  128,  0,  0, CRM_0,  NMT_X,  0 >::ID,
@@ -258,6 +256,8 @@ namespace Nes
 						BANDAI_KARAOKESTUDIO       = MakeId<  188,  256,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
 						BANDAI_AEROBICSSTUDIO      = MakeId<    3,   32,   32,  0,  0, CRM_0,  NMT_X,  2 >::ID,
 						BANDAI_OEKAKIDS            = MakeId<   96,  128,    0,  0,  0, CRM_32, NMT_1,  0 >::ID,
+						// Batlab
+						BATLAB_SRRX                = MakeId<  413,  256,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Bensheng
 						BENSHENG_BS5               = MakeId<  286,  128,   64,  0,  0, CRM_0,  NMT_V,  2 >::ID,
 						// Bootleg multicarts
@@ -292,6 +292,7 @@ namespace Nes
 						BMC_GKB                    = MakeId<   58,  128,   64,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_GOLDENCARD_6IN1        = MakeId<  217, 1024, 1024,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_HERO                   = MakeId<   45, 4096, 2048,  8,  0, CRM_0,  NMT_X,  0 >::ID,
+						BMC_SFC12                  = MakeId<  372, 4096, 2048,  8,  0, CRM_8,  NMT_X,  0 >::ID,
 						BMC_MARIOPARTY_7IN1        = MakeId<   52, 1024, 1024,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						BMC_NOVELDIAMOND           = MakeId<   54,  128,   64,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						BMC_CH001                  = MakeId<   63, 4096,    0,  0,  0, CRM_8,  NMT_V,  0 >::ID,
@@ -491,6 +492,7 @@ namespace Nes
 						SACHEN_8259B               = MakeId<  138,  256,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						SACHEN_8259C               = MakeId<  139,  256,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						SACHEN_8259D               = MakeId<  137,  256,  256,  0,  0, CRM_0,  NMT_X,  0 >::ID,
+						SACHEN_DAHENG              = MakeId<  512,  256,  128,  8,  0, CRM_8,  NMT_4,  0 >::ID,
 						SACHEN_TCA01               = MakeId<  143,   32,    8,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						SACHEN_TCU01               = MakeId<  147,  128,  128,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						SACHEN_TCU02               = MakeId<  136,   32,   32,  0,  0, CRM_0,  NMT_X,  0 >::ID,
@@ -521,9 +523,8 @@ namespace Nes
 						SUNSOFT_FME7_1             = MakeId<   69,  256,  256,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						// Super Game
 						SUPERGAME_LIONKING         = MakeId<  114,  256,  512,  0,  0, CRM_0,  NMT_V,  0 >::ID,
-						SUPERGAME_BOOGERMAN        = MakeId<  215,  512,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,
-						SUPERGAME_MK3E             = MakeId<  215,  256,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,
-						SUPERGAME_POCAHONTAS2      = MakeId< NMPR,  512,  512,  0,  0, CRM_0,  NMT_X,  0 >::ID,
+						SUPERGAME_8237             = MakeId<  215, 1024, 1024,  0,  0, CRM_0,  NMT_X,  0 >::ID,
+						SUPERGAME_8237A            = MakeId<  215, 2048, 2048,  0,  0, CRM_0,  NMT_X,  0 >::ID,
 						// Taito
 						TAITO_TC0190FMC            = MakeId<   33,  256,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
 						TAITO_TC0190FMC_PAL16R4    = MakeId<   48,  256,  256,  0,  0, CRM_0,  NMT_V,  0 >::ID,
@@ -596,6 +597,7 @@ namespace Nes
 						WAIXING_SECURITY_1         = MakeId<  249,  512,  256,  8,  0, CRM_0,  NMT_V,  0 >::ID,
 						// Whirlwind
 						WHIRLWIND_2706             = MakeId<  108,  128,    0,  0,  0, CRM_8,  NMT_X,  0 >::ID,
+						WHIRLWIND_LH53             = MakeId<  535,  128,    0,  0,  8, CRM_8,  NMT_X,  0 >::ID,
 						// Unknown
 						UNKNOWN                    = 0
 					};
@@ -663,7 +665,7 @@ namespace Nes
 
 				public:
 
-					Context(Cpu*,Apu*,Ppu*,Ram&,Ram&,const Ram&,Type::Nmt,bool,bool,Chips&);
+					Context(Cpu*,Apu*,Ppu*,Ram&,Ram&,Ram&,const Ram&,Type::Nmt,bool,bool,Chips&);
 
 					bool DetectBoard(wcstring,dword);
 					bool DetectBoard(word,byte,dword,dword,bool);
@@ -675,6 +677,7 @@ namespace Nes
 					Ppu* const ppu;
 					Ram& prg;
 					Ram& chr;
+					Ram& misc;
 					const Ram& trainer;
 					const Type::Nmt nmt;
 					Chips& chips;
@@ -715,6 +718,21 @@ namespace Nes
 					return NULL;
 				}
 
+				/* Memory a frontend may inspect. The base board reports its work
+				 * RAM; boards carrying extra RAM append to it. Index 0 is always
+				 * the work RAM when there is any, so callers can rely on that.
+				*/
+				typedef Image::MemoryRegion MemoryRegion;
+
+				enum
+				{
+					PRG_WINDOWS = 4,   // 8k each, $8000-$FFFF
+					CHR_PAGES   = 8    // 1k each, PPU $0000-$1FFF
+				};
+
+				virtual uint NumMemoryRegions() const;
+				virtual MemoryRegion GetMemoryRegion(uint) const;
+
 			protected:
 
 				explicit Board(const Context&);
@@ -733,6 +751,7 @@ namespace Nes
 				Nmt& nmt;
 				Wrk wrk;
 				const Vram vram;
+				const Ram misc;
 				const Type board;
 
 			private:

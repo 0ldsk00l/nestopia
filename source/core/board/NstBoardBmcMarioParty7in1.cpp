@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void MarioParty7in1::SubReset(const bool hard)
 				{
 					if (hard)
@@ -86,10 +82,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'B','M','P'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(MarioParty7in1,6000)
 				{

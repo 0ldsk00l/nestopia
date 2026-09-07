@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_DISCRETE_H
 #define NST_BOARD_DISCRETE_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -94,6 +90,7 @@ namespace Nes
 					void SubReset(bool);
 
 					NES_DECL_POKE( 8000 );
+					NES_DECL_POKE( 8000_NBC );
 				};
 			}
 		}

@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Ave
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Nina001::SubReset(const bool hard)
 				{
 					Map( 0x7FFDU, PRG_SWAP_32K  );
@@ -55,10 +51,6 @@ namespace Nes
 					if (hard)
 						prg.SwapBank<SIZE_32K,0x0000>(0);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(Nina06,4100)
 				{

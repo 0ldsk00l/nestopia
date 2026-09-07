@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Edu2000::SubReset(const bool hard)
 				{
 					Map( 0x6000U, 0x7FFFU, &Edu2000::Peek_6000, &Edu2000::Poke_6000 );
@@ -45,10 +41,6 @@ namespace Nes
 					if (hard)
 						NES_DO_POKE(8000,0x8000,0x00);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_PEEK_A(Edu2000,6000)
 				{

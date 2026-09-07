@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Mmc3::Mmc3(const Context& c,Revision revision)
 			:
 			Board (c),
@@ -189,10 +185,6 @@ namespace Nes
 
 				state.End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			NES_POKE_D(Mmc3,8000)
 			{

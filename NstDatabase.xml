@@ -307,6 +307,16 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="NES-NTSC" dump="unknown" crc="037006F7" sha1="C0BABB7AA3D15F3FC66E017CD923C34EEDA22C33">
+            <board mapper="512">
+                <prg size="256k" />
+                <chr size="128k" />
+                <vram size="12k" />
+                <wram size="8k" battery="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="039B4A9C" sha1="9DC65B4848FFBB9E6D23986D1987803E7250337C">
             <board mapper="1">
                 <prg size="128k" />
@@ -2661,7 +2671,7 @@
         </cartridge>
     </game>
     <game>
-        <cartridge system="Famicom" dump="unknown" crc="1A2A7EF7" sha1="5437F45450954EF46B97E92517A9B48304772596">
+        <cartridge system="Dendy" dump="unknown" crc="1A2A7EF7" sha1="5437F45450954EF46B97E92517A9B48304772596">
             <board mapper="178">
                 <prg size="512k" />
                 <vram size="8k" />
@@ -10968,6 +10978,15 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="NES-NTSC" dump="unknown" crc="692F2096" sha1="0FAECB09767528CC2C9CD4FE4EDBD0C6ECEFB999">
+            <board type="COLORDREAMS-74*377-NBC" mapper="11">
+                <prg size="64k" />
+                <chr size="64k" />
+                <pad h="1" v="0" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="NES-NTSC" dump="ok" crc="6944A01A" sha1="85A9C596E9916C77E5619700F0F82FC64020451D">
             <board type="NES-TLROM" mapper="4">
                 <prg size="128k" />
@@ -17672,7 +17691,7 @@
     </game>
     <game>
         <cartridge system="NES-NTSC" dump="unknown" crc="A781FFAA" sha1="87C929090C3B04739BAAED90B9A8F40B29327FC2">
-            <board mapper="11">
+            <board type="COLORDREAMS-74*377-NBC" mapper="11">
                 <prg size="64k" />
                 <chr size="64k" />
                 <pad h="1" v="0" />
@@ -19284,6 +19303,16 @@
                 <prg size="256k" />
                 <chr size="128k" />
                 <chip type="MMC3C" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="Dendy" dump="unknown" crc="B5E83C9A" sha1="3C72706AF5998133EC6BE703994C10466A094EAB">
+            <board mapper="177">
+                <prg size="512k" />
+                <vram size="8k" />
+                <wram size="8k" battery="1" />
+                <pad h="0" v="1" />
             </board>
         </cartridge>
     </game>
@@ -23617,6 +23646,15 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="NES-NTSC" dump="unknown" crc="DD1D4355" sha1="B5B3666DE22D1114C6CA5C416F567B89733443DB">
+            <board type="NES-CNROM" mapper="3">
+                <prg size="32k" />
+                <chr size="32k" />
+                <pad h="0" v="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="ok" crc="DD29FD59" sha1="F349533119E3D3FEBCD8109ABFD1A2460867D8FF">
             <board type="NAMCOT-3406" mapper="206">
                 <prg size="128k" />
@@ -26132,6 +26170,19 @@
         </cartridge>
     </game>
     <game>
+        <cartridge system="Famicom" dump="unknown" crc="F6036ED8" sha1="078D7B73A6DCE6A518DF9496C0D63533E15C42CA">
+            <board type="KONAMI-VRC-4" mapper="23">
+                <prg size="128k" />
+                <chr size="128k" />
+                <wram size="8k" />
+                <chip type="Konami VRC IV">
+                    <pin number="3" function="PRG A1" />
+                    <pin number="4" function="PRG A0" />
+                </chip>
+            </board>
+        </cartridge>
+    </game>
+    <game>
         <cartridge system="Famicom" dump="unknown" crc="F6139EE9" sha1="E7D6AF180962EEF5121D6A319985ACD33142C946">
             <board mapper="2">
                 <prg size="128k" />
@@ -26708,6 +26759,16 @@
                 <prg size="256k" />
                 <vram size="8k" />
                 <wram size="8k" battery="1" />
+            </board>
+        </cartridge>
+    </game>
+    <game>
+        <cartridge system="Dendy" dump="unknown" crc="FB2B6B10" sha1="BFA31777E077E64AF0E274B5A22B57C6765D36E1">
+            <board mapper="241">
+                <prg size="1024k" />
+                <vram size="8k" />
+                <wram size="8k" battery="1" />
+                <pad h="0" v="1" />
             </board>
         </cartridge>
     </game>

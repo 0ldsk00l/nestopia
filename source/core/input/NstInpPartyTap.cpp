@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			PartyTap::PartyTap(const Cpu& c)
 			: Device(c,Api::Input::PARTYTAP)
 			{
@@ -53,10 +49,6 @@ namespace Nes
 			{
 				saver.Begin( AsciiId<'P','T'>::R(0,0,id) ).End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void PartyTap::Poke(const uint data)
 			{

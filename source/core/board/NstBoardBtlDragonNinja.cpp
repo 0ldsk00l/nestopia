@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				DragonNinja::DragonNinja(const Context& c)
 				: Board(c), irq(*c.cpu,*c.ppu) {}
 
@@ -87,10 +83,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','D','N'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write8( irq.unit.count ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				bool DragonNinja::Irq::Clock()
 				{

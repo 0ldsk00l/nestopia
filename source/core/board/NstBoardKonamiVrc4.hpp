@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_KONAMI_VRC4_H
 #define NST_BOARD_KONAMI_VRC4_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 namespace Nes
 {
 	namespace Core
@@ -44,6 +40,10 @@ namespace Nes
 					explicit Vrc4(const Context&);
 
 				protected:
+
+					// For clones whose register lines are a property of the
+					// board rather than of the individual cartridge.
+					Vrc4(const Context&,uint,uint);
 
 					void SubReset(bool);
 

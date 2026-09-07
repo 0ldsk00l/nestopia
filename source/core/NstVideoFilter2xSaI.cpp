@@ -36,10 +36,6 @@ namespace Nes
 	{
 		namespace Video
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Renderer::Filter2xSaI::Filter2xSaI(const RenderState& state)
 			:
 			Filter (state),
@@ -56,10 +52,6 @@ namespace Nes
 					(state.filter == RenderState::FILTER_2XSAI && state.width == WIDTH*2 && state.height == HEIGHT*2)
 				);
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			inline dword Renderer::Filter2xSaI::Blend(dword a,dword b) const
 			{

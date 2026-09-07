@@ -39,10 +39,6 @@ namespace Nes
 
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Result Video::EnableUnlimSprites(bool state) throw()
 		{
 			if (emulator.tracker.IsLocked( true ))
@@ -372,8 +368,5 @@ namespace Nes
 			return emulator.renderer.GetPalette();
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Kay
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void H2288::SubReset(const bool hard)
 				{
 					if (hard)
@@ -90,10 +86,6 @@ namespace Nes
 
 					state.Begin( AsciiId<'K','H','2'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void NST_FASTCALL H2288::UpdatePrg(uint address,uint bank)
 				{

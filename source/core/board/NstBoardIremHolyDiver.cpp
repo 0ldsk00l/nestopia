@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace Irem
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void HolyDiver::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &HolyDiver::Poke_8000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(HolyDiver,8000)
 				{

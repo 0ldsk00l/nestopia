@@ -39,15 +39,11 @@ namespace Nes
 {
 	namespace Core
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Cartridge::ProfileEx::ProfileEx()
 		: nmt(NMT_DEFAULT), battery(false), wramAuto(false) {}
 
 		Cartridge::Cartridge(Context& context)
-		: Image(CARTRIDGE), board(NULL), vs(NULL), favoredSystem(context.favoredSystem)
+		: Image(CARTRIDGE), board(NULL), vs(NULL), favoredSystem(context.favoredSystem), forcedSystem(context.forcedSystem)
 		{
 			try
 			{
@@ -65,6 +61,7 @@ namespace Nes
 							context.patchResult,
 							prg,
 							chr,
+							misc,
 							context.favoredSystem,
 							profile,
 							profileEx,
@@ -102,6 +99,7 @@ namespace Nes
 								context.patchResult,
 								prg,
 								chr,
+								misc,
 								context.favoredSystem,
 								profile,
 								profileEx,
@@ -132,7 +130,7 @@ namespace Nes
 				else
 					context.result = RESULT_OK;
 
-				const Result result = SetupBoard( prg, chr, &board, &context, profile, profileEx, &prgCrc );
+				const Result result = SetupBoard( prg, chr, misc, &board, &context, profile, profileEx, &prgCrc );
 
 				if (NES_FAILED(result))
 					throw result;
@@ -180,28 +178,28 @@ namespace Nes
 		void Cartridge::ReadRomset(std::istream& stream,FavoredSystem favoredSystem,bool askSystem,Profile& profile)
 		{
 			Log::Suppressor logSupressor;
-			Ram prg, chr;
+			Ram prg, chr, misc;
 			ProfileEx profileEx;
 			Romset::Load( stream, NULL, false, NULL, prg, chr, favoredSystem, askSystem, profile, true );
-			SetupBoard( prg, chr, NULL, NULL, profile, profileEx, NULL, true );
+			SetupBoard( prg, chr, misc, NULL, NULL, profile, profileEx, NULL, true );
 		}
 
 		void Cartridge::ReadInes(std::istream& stream,FavoredSystem favoredSystem,Profile& profile)
 		{
 			Log::Suppressor logSupressor;
-			Ram prg, chr;
+			Ram prg, chr, misc;
 			ProfileEx profileEx;
-			Ines::Load( stream, NULL, false, NULL, prg, chr, favoredSystem, profile, profileEx, NULL );
-			SetupBoard( prg, chr, NULL, NULL, profile, profileEx, NULL );
+			Ines::Load( stream, NULL, false, NULL, prg, chr, misc, favoredSystem, profile, profileEx, NULL );
+			SetupBoard( prg, chr, misc, NULL, NULL, profile, profileEx, NULL );
 		}
 
 		void Cartridge::ReadUnif(std::istream& stream,FavoredSystem favoredSystem,Profile& profile)
 		{
 			Log::Suppressor logSupressor;
-			Ram prg, chr;
+			Ram prg, chr, misc;
 			ProfileEx profileEx;
 			Unif::Load( stream, NULL, false, NULL, prg, chr, favoredSystem, profile, profileEx, NULL );
-			SetupBoard( prg, chr, NULL, NULL, profile, profileEx, NULL );
+			SetupBoard( prg, chr, misc, NULL, NULL, profile, profileEx, NULL );
 		}
 
 		uint Cartridge::GetDesiredController(uint port) const
@@ -213,6 +211,19 @@ namespace Nes
 		uint Cartridge::GetDesiredAdapter() const
 		{
 			return profile.game.adapter;
+		}
+
+		uint Cartridge::NumMemoryRegions() const
+		{
+			return board ? board->NumMemoryRegions() : 0;
+		}
+
+		Cartridge::MemoryRegion Cartridge::GetMemoryRegion(uint index) const
+		{
+			if (board && index < board->NumMemoryRegions())
+				return board->GetMemoryRegion( index );
+
+			return Image::GetMemoryRegion( index );
 		}
 
 		Cartridge::ExternalDevice Cartridge::QueryExternalDevice(ExternalDeviceType deviceType)
@@ -240,6 +251,7 @@ namespace Nes
 		(
 			Ram& prg,
 			Ram& chr,
+			Ram& misc,
 			Boards::Board** board,
 			const Context* const context,
 			Profile& profile,
@@ -288,6 +300,7 @@ namespace Nes
 				context ? &context->ppu : NULL,
 				prg,
 				chr,
+				misc,
 				profileEx.trainer,
 				nmt,
 				profileEx.battery || profile.board.HasWramBattery(),
@@ -462,6 +475,23 @@ namespace Nes
 		{
 			if (region == Cartridge::GetDesiredRegion())
 			{
+				/* Dendy shares its region with PAL, so unlike every other system
+				 * override this one cannot be picked up by the region mismatch
+				 * below. Only an explicitly forced system overrides the profile;
+				 * a favored one is a tie-breaker and leaves a Dendy image alone.
+				 */
+				if (forcedSystem && favoredSystem == FAVORED_NES_PAL && region == REGION_PAL &&
+					profile.system.type == Profile::System::DENDY)
+				{
+					if (cpu)
+						*cpu = CPU_RP2A07;
+
+					if (ppu)
+						*ppu = PPU_RP2C07;
+
+					return SYSTEM_NES_PAL;
+				}
+
 				if (favoredSystem == FAVORED_DENDY && region == REGION_PAL)
 				{
 					switch (profile.system.type)
@@ -503,10 +533,6 @@ namespace Nes
 				return Image::GetDesiredSystem( region, cpu, ppu );
 			}
 		}
-
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 
 		void Cartridge::BeginFrame(const Api::Input& input,Input::Controllers* controllers)
 		{

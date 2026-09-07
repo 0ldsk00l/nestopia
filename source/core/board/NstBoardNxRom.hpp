@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_NXROM_H
 #define NST_BOARD_NXROM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardSunsoft.hpp"
 
 namespace Nes

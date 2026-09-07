@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Rob::Rob(const Cpu& c,const Ppu& ppu)
 			: Device(c,Api::Input::ROB), palette(ppu.GetPalette().ram)
 			{
@@ -82,10 +78,6 @@ namespace Nes
 					code = data[4] | (data[5] << 8 & 0x100);
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void Rob::BeginFrame(Controllers*)
 			{

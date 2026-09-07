@@ -84,10 +84,6 @@ namespace Nes
 					state.Begin( AsciiId<'K','A','S'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
-
 				void NST_FASTCALL Standard::UpdatePrg(uint address,uint bank)
 				{
 					if (exRegs[0] & 0x80)

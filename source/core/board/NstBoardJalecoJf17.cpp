@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Jaleco
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				Jf17::Jf17(const Context& c)
 				:
 				Board (c),
@@ -54,10 +50,6 @@ namespace Nes
 				{
 					Map( 0x8000U, 0xFFFFU, &Jf17::Poke_8000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Jf17,8000)
 				{

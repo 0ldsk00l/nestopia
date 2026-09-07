@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Super24in1::SubReset(const bool hard)
 				{
 					if (hard)
@@ -45,13 +41,24 @@ namespace Nes
 						exRegs[0] = 0x24;
 						exRegs[1] = 0x9F;
 						exRegs[2] = 0x00;
+						exRegs[3] = 0x00;
 					}
 
 					Mmc3::SubReset( hard );
 
-					Map( 0x5FF0U, &Super24in1::Poke_5FF0 );
-					Map( 0x5FF1U, &Super24in1::Poke_5FF1 );
-					Map( 0x5FF2U, &Super24in1::Poke_5FF2 );
+					/* The chipset decodes $E003, not the MMC3's $E001. Writes
+					 * with A1 set reach no register, which some multicarts rely
+					 * on - $9FFF must not act as a bank data write.
+					*/
+					for (uint i=0x0002; i < 0x2000; i += 0x4)
+					{
+						Map( 0x8000 + i, 0x8001 + i, NOP_POKE );
+						Map( 0xA000 + i, 0xA001 + i, NOP_POKE );
+						Map( 0xC000 + i, 0xC001 + i, NOP_POKE );
+						Map( 0xE000 + i, 0xE001 + i, NOP_POKE );
+					}
+
+					Map( 0x5000U, 0x5FFFU, &Super24in1::Poke_5000 );
 				}
 
 				void Super24in1::SubLoad(State::Loader& state,const dword baseChunk)
@@ -67,6 +74,7 @@ namespace Nes
 								exRegs[0] = data[0];
 								exRegs[1] = data[1];
 								exRegs[2] = data[2];
+								exRegs[3] = 0x00;
 							}
 
 							state.End();
@@ -92,35 +100,42 @@ namespace Nes
 					state.Begin( AsciiId<'B','2','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
 
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
-
-				NES_POKE_D(Super24in1,5FF0)
+				/* The registers answer across $5000-$5FFF, selected by the low
+				 * two address bits and gated by one bit chosen with a solder
+				 * pad. Setting zero - the $5013 mask - is the one that works for
+				 * any image, and it still covers the $5FFx writes that carts
+				 * wired for other settings use, since those have every pad bit
+				 * set.
+				*/
+				NES_POKE_AD(Super24in1,5000)
 				{
-					if (exRegs[0] != data)
-					{
-						exRegs[0] = data;
-						Mmc3::UpdateChr();
-						Mmc3::UpdatePrg();
-					}
-				}
+					if (!(address & SOLDER_PAD))
+						return;
 
-				NES_POKE_D(Super24in1,5FF1)
-				{
-					if (exRegs[1] != data)
-					{
-						exRegs[1] = data;
-						Mmc3::UpdatePrg();
-					}
-				}
+					const uint index = address & 0x3;
 
-				NES_POKE_D(Super24in1,5FF2)
-				{
-					if (exRegs[2] != data)
+					if (exRegs[index] == data)
+						return;
+
+					exRegs[index] = data;
+
+					switch (index)
 					{
-						exRegs[2] = data;
-						Mmc3::UpdateChr();
+						case 0:
+
+							Mmc3::UpdateChr();
+							Mmc3::UpdatePrg();
+							break;
+
+						case 1:
+
+							Mmc3::UpdatePrg();
+							break;
+
+						case 2:
+
+							Mmc3::UpdateChr();
+							break;
 					}
 				}
 

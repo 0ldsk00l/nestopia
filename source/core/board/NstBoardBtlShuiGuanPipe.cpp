@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Btl
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				ShuiGuanPipe::ShuiGuanPipe(const Context& c)
 				: Board(c), irq(*c.cpu) {}
 
@@ -99,10 +95,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'B','S','P'>::V ).Begin( AsciiId<'I','R','Q'>::V ).Write16( (irq.unit.enabled != false) | (irq.unit.count[1] & 0xFF) << 8 ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				bool ShuiGuanPipe::Irq::Clock()
 				{

@@ -35,10 +35,6 @@ namespace Nes
 		{
 			namespace Sunsoft
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				const word S5b::Sound::levels[32] =
 				{
 					// 32 levels, 1.5dB per step
@@ -330,10 +326,6 @@ namespace Nes
 						state.End();
 					}
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(S5b,C000)
 				{

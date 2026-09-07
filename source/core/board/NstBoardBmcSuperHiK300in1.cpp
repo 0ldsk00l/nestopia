@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void SuperHiK300in1::SubReset(const bool hard)
 				{
 					Map( 0x8000U, 0xBFFFU, &SuperHiK300in1::Poke_8000 );
@@ -45,10 +41,6 @@ namespace Nes
 					if (hard)
 						NES_DO_POKE(C000,0xFFFF,0x00);
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void SuperHiK300in1::SwapGfx(const uint address) const
 				{

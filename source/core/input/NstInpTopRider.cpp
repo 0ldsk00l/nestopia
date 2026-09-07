@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Input
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			TopRider::TopRider(const Cpu& c)
 			: Device(c,Api::Input::TOPRIDER)
 			{
@@ -58,10 +54,6 @@ namespace Nes
 			{
 				saver.Begin( AsciiId<'T','R'>::R(0,0,id) ).End();
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void TopRider::BeginFrame(Controllers* const controllers)
 			{

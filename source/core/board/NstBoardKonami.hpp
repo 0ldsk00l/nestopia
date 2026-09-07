@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_KONAMI_H
 #define NST_BOARD_KONAMI_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardKonamiVrc1.hpp"
 #include "NstBoardKonamiVrc2.hpp"
 #include "NstBoardKonamiVrc3.hpp"

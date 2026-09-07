@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Bmc
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Ctc65::SubReset(bool)
 				{
 					for (uint i=0x0000; i < 0x8000; i += 0x2)
@@ -79,10 +75,6 @@ namespace Nes
 					const byte data[2] = { static_cast<byte>(regs[0]), static_cast<byte>(regs[1]) };
 					state.Begin( AsciiId<'B','C','T'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( data ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void Ctc65::UpdatePrg()
 				{

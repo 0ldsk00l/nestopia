@@ -32,10 +32,6 @@ namespace Nes
 	{
 		namespace Sound
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Buffer::Buffer(uint bits)
 			: output(new iword [SIZE])
 			{
@@ -50,17 +46,10 @@ namespace Nes
 			void Buffer::Reset(bool clear)
 			{
 				pos = start = 0;
-				history.pos = 0;
-
-				std::fill( history.buffer, history.buffer+History::SIZE, iword(0) );
 
 				if (clear)
 					std::fill( output, output+SIZE, iword(0) );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 		}
 	}
 }

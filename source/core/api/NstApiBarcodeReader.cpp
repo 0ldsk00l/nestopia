@@ -36,10 +36,6 @@ namespace Nes
 {
 	namespace Api
 	{
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("s", on)
-		#endif
-
 		Core::BarcodeReader* BarcodeReader::Query() const
 		{
 			if (emulator.image)
@@ -120,8 +116,5 @@ namespace Nes
 			return RESULT_ERR_NOT_READY;
 		}
 
-		#ifdef NST_MSVC_OPTIMIZE
-		#pragma optimize("", on)
-		#endif
 	}
 }

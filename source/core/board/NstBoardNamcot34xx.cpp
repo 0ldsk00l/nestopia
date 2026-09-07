@@ -33,10 +33,6 @@ namespace Nes
 		{
 			namespace Namcot
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void N34x3::SubReset(const bool hard)
 				{
 					if (hard)
@@ -77,10 +73,6 @@ namespace Nes
 				{
 					state.Begin( AsciiId<'N','3','4'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write8( ctrl ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_D(N34x3,8000)
 				{

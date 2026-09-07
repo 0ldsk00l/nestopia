@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_DXROM_H
 #define NST_BOARD_DXROM_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardNamcot.hpp"
 
 namespace Nes

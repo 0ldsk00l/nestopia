@@ -37,10 +37,6 @@ namespace Nes
 				ZLIB_COMPRESSION
 			};
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Saver::Saver(StdStream p,bool c,bool i,dword append)
 			: stream(p), chunks(CHUNK_RESERVE), useCompression(c), internal(i)
 			{
@@ -61,10 +57,6 @@ namespace Nes
 			{
 				NST_VERIFY( chunks.Size() == 1 );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			Saver& Saver::Begin(dword chunk)
 			{
@@ -148,10 +140,6 @@ namespace Nes
 				return *this;
 			}
 
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			Loader::Loader(StdStream p,bool c)
 			: stream(p), chunks(CHUNK_RESERVE), checkCrc(c)
 			{
@@ -162,10 +150,6 @@ namespace Nes
 			{
 				NST_VERIFY( chunks.Size() <= 1 );
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			dword Loader::Begin()
 			{

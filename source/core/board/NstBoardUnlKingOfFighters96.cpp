@@ -34,10 +34,6 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void KingOfFighters96::SubReset(const bool hard)
 				{
 					for (uint i=0; i < 4; ++i)
@@ -80,10 +76,6 @@ namespace Nes
 					Mmc3::SubSave( state );
 					state.Begin( AsciiId<'U','K','6'>::V ).Begin( AsciiId<'R','E','G'>::V ).Write( exRegs ).End().End();
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				void NST_FASTCALL KingOfFighters96::UpdatePrg(uint address,uint bank)
 				{

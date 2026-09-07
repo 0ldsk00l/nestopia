@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_TAITO_H
 #define NST_BOARD_TAITO_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "NstBoardTaitoTc0190fmcPal16r4.hpp"
 #include "NstBoardTaitoX1005.hpp"
 #include "NstBoardTaitoX1017.hpp"

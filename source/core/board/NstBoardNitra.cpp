@@ -34,20 +34,12 @@ namespace Nes
 		{
 			namespace Nitra
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Tda::SubReset(const bool hard)
 				{
 					Mmc3::SubReset( hard );
 
 					Map( 0x8000U, 0xFFFFU, &Tda::Poke_8000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_AD(Tda,8000)
 				{

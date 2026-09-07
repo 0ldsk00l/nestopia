@@ -31,10 +31,6 @@ namespace Nes
 	{
 		namespace Boards
 		{
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("s", on)
-			#endif
-
 			void InlNsf::SubReset(const bool hard)
 			{
 				Map ( 0x5000U, 0x5FFFU, &InlNsf::Poke_5000 );
@@ -71,10 +67,6 @@ namespace Nes
 					}
 				}
 			}
-
-			#ifdef NST_MSVC_OPTIMIZE
-			#pragma optimize("", on)
-			#endif
 
 			void InlNsf::Bank(uint slot, Data data)
 			{

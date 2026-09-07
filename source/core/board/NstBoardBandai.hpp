@@ -25,10 +25,6 @@
 #ifndef NST_BOARD_BANDAI_H
 #define NST_BOARD_BANDAI_H
 
-#ifdef NST_PRAGMA_ONCE
-#pragma once
-#endif
-
 #include "../NstFile.hpp"
 #include "NstBoardBandai24c0x.hpp"
 #include "NstBoardBandaiLz93d50.hpp"

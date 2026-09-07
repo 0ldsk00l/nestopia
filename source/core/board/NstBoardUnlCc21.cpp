@@ -33,18 +33,10 @@ namespace Nes
 		{
 			namespace Unlicensed
 			{
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("s", on)
-				#endif
-
 				void Cc21::SubReset(bool)
 				{
 					Map( 0x8000U, 0xFFFFU, &Cc21::Poke_8000 );
 				}
-
-				#ifdef NST_MSVC_OPTIMIZE
-				#pragma optimize("", on)
-				#endif
 
 				NES_POKE_A(Cc21,8000)
 				{
