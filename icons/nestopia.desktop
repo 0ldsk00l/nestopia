@@ -1,8 +1,0 @@
-[Desktop Entry]
-Name=Nestopia
-Comment=Accurate NES Emulator
-Exec=nestopia %f
-Icon=nestopia
-Terminal=false
-Type=Application
-Categories=Game;Emulator;

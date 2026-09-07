@@ -4,22 +4,9 @@ blargg's NTSC filter
 Copyright (C) 2006-2007 Shay Green
 For details, read source/nes_ntsc/*
 
-inih -- simple .INI file parser Copyright (c) 2009, Brush Technology
-All rights reserved. For details, read source/unix/ini.h
-
-LodePNG version 20141130
-Copyright (c) 2005-2014 Lode Vandevenne
-For details, read source/unix/png.h
-
 zlib compression library
 Copyright (C) 1995-2005 Jean-loup Gailly and Mark Adler
 For details, read source/zlib/*
-
-nespad.svg based on work by Fant0men
-http://commons.wikimedia.org/wiki/File:Nes_controller.svg
-
-nestopia.svg based on work by Trollekop, with permission
-http://trollekop.deviantart.com/art/Zombie-NES-controller-Color-160691868
 
 Palettes from FirebrandX, with permission
 extras/Unsaturated-V5.pal
